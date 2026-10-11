@@ -396,6 +396,7 @@ it.each(["popover", "drawer"] as const)(
     trigger.click();
     await delay();
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
+    expect(trigger.getAttribute("aria-label")).toBe("Filters");
     const surface = node(
       document,
       part(mode === "drawer" ? "filters-panel" : "filters-popover")

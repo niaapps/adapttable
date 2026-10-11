@@ -41,6 +41,7 @@ import { MENU_PANEL_STYLE, menuPopover } from "./menuPopover";
   selector: "adapt-column-menu-row",
   imports: [...TAIGA_CONTROLS, AdaptAttrs, AdaptIcon, AdaptLiveRegion],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: "./columnMenu.css",
   host: { style: "display: contents" },
   template: `
     @let r = row();
@@ -226,6 +227,7 @@ export class AdaptColumnMenuRow extends AdaptColumnMenuRowModel {}
   selector: "adapt-column-menu-edge-row",
   imports: [...TAIGA_CONTROLS, AdaptIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: "./columnMenu.css",
   host: { style: "display: contents" },
   template: `
     @let hidden = layout().isHidden(columnKey());
@@ -283,6 +285,7 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
   providers: [{ provide: TUI_ANCHOR_SUPPORT, useValue: false }],
   imports: [...TAIGA_CONTROLS, AdaptColumnMenuRow, AdaptColumnMenuEdgeRow],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: "./columnMenu.css",
   template: `
     @let p = props();
     <div

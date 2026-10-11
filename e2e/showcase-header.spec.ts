@@ -208,7 +208,7 @@ for (const kit of ["material", "angular-cdk"]) {
       page.getByRole("radio", { name: "Comfortable", exact: true })
     ).not.toBeChecked();
     await expect
-      .poll(async () => (await rows.first().boundingBox())!.height)
+      .poll(async () => (await rows.first().boundingBox())?.height ?? Infinity)
       .toBeLessThan(comfortable);
     await page
       .getByRole("searchbox", { name: "Search", exact: true })

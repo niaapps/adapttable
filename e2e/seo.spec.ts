@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { matrixPages } from "../apps/showcase/matrix.mjs";
+import { SHOWCASE_PAGES } from "../apps/showcase/pages.mjs";
 
 /**
  * Every demo page answers without JavaScript.
@@ -16,14 +16,13 @@ import { matrixPages } from "../apps/showcase/matrix.mjs";
  * from the manifest, so a page that ships is a page held to this bar without
  * being listed twice.
  */
-const PAGES = [
-  { path: "/", name: "live demo" },
-  { path: "/all-options/", name: "Feature Lab" },
-  ...matrixPages().map((page) => ({
-    path: `/${page.dir}/`,
-    name: page.feature ? `${page.adapter} ${page.feature}` : page.adapter,
-  })),
-] as const;
+const PAGES = SHOWCASE_PAGES.filter((page) => page.indexable).map((page) => ({
+  path:
+    page.key === "main"
+      ? "/"
+      : page.html.replace(/^\./, "").replace(/index\.html$/, ""),
+  name: page.key,
+}));
 
 for (const { path, name } of PAGES) {
   test(`${name}: is readable with JavaScript disabled`, async ({ browser }) => {

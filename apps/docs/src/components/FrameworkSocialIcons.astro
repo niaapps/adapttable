@@ -6,7 +6,7 @@ const framework = selectedFramework(Astro.url.pathname);
 const links = (config.social || []).map((link) => ({
   ...link,
   href: link.label === "Live demo"
-    ? framework === "vue" ? "/vue/demo/unstyled/" : framework === "angular" ? "/angular/demo/unstyled/" : link.href
+    ? framework === "vue" ? "/vue/demo/" : framework === "angular" ? "/angular/demo/" : link.href
     : link.href,
 }));
 ---

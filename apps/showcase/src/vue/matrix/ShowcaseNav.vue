@@ -28,6 +28,8 @@ const emit = defineEmits<{ toggleDark: [] }>();
 const adapters = adaptersOf("vue").filter((adapter) => adapter.built);
 const features = featuresOf(props.kit);
 const kitPath = pathOf(props.kit);
+const demoHref = (lab = false) =>
+  `${vueHref(lab ? "all-options" : "")}?kit=${encodeURIComponent(props.kit.key)}`;
 const docs = docsUrl("getting-started", "vue");
 const repo = "https://github.com/orwa-mahmoud/adapttable";
 const open = shallowRef(false);
@@ -129,6 +131,9 @@ function switchPage(event: Event): void {
   if (!(event.target instanceof HTMLSelectElement)) return;
   const selected = event.target.value;
   const destinations = [
+    demoHref(),
+    demoHref(true),
+    vueHref("unstyled/workspace"),
     ...adapters.map((adapter) => vueHref(pathOf(adapter))),
     ...features.map((feature) => vueHref(`${kitPath}/${feature.slug}`)),
   ];
@@ -167,10 +172,16 @@ onScopeDispose(() => {
       <ShowcaseWordmark :href="SITE_HOME" />
       <nav class="nav__links" aria-label="Demo pages">
         <a
-          :href="vueHref(kitPath)"
-          :class="{ 'is-on': active === kitPath }"
-          :aria-current="active === kitPath ? 'page' : undefined"
+          :href="demoHref()"
+          :class="{ 'is-on': active === 'demo' }"
+          :aria-current="active === 'demo' ? 'page' : undefined"
           >Live demo</a
+        >
+        <a
+          :href="demoHref(true)"
+          :class="{ 'is-on': active === 'all-options' }"
+          :aria-current="active === 'all-options' ? 'page' : undefined"
+          >Feature Lab</a
         >
         <a
           :href="vueHref(`${kitPath}/ai`)"
@@ -183,7 +194,11 @@ onScopeDispose(() => {
           <button
             type="button"
             class="nav__trigger"
-            :class="{ 'is-on': !active.endsWith('/ai') }"
+            :class="{
+              'is-on':
+                !['demo', 'all-options'].includes(active) &&
+                !active.endsWith('/ai'),
+            }"
             aria-controls="vue-adapter-menu"
             aria-haspopup="menu"
             :aria-expanded="open"
@@ -237,6 +252,20 @@ onScopeDispose(() => {
       </nav>
       <label class="nav__mobile">
         <select aria-label="Demo page" @change="switchPage">
+          <optgroup label="Demo">
+            <option :value="demoHref()" :selected="active === 'demo'">
+              Live demo
+            </option>
+            <option
+              :value="demoHref(true)"
+              :selected="active === 'all-options'"
+            >
+              Feature Lab
+            </option>
+            <option :value="vueHref('unstyled/workspace')">
+              Order workspace
+            </option>
+          </optgroup>
           <optgroup label="Adapters">
             <option
               v-for="adapter in adapters"

@@ -114,6 +114,13 @@ export const SHOWCASE_PAGES = [
     framework: SHOWCASE_FRAMEWORK,
   },
   demo("all-options"),
+  ...[false, true].map((lab) => ({
+    key: lab ? "vue-all-options" : "vue-main",
+    html: `./${lab ? "vue-all-options" : "vue-main"}/index.html`,
+    route: demoRoute(lab ? "all-options" : "", "vue"),
+    indexable: true,
+    framework: "vue",
+  })),
   ...[...VUE_NATIVE_PAGES, ...VUE_KIT_PAGES, ...VUE_KIT_LAB_PAGES].map(
     (page) => ({
       key: page.key,

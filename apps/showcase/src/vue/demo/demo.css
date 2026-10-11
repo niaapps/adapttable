@@ -1,0 +1,115 @@
+.vue-demo {
+  padding-block: 2rem 4rem;
+}
+.vue-demo__intro h1 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  margin: 0 0 0.75rem;
+}
+.vue-demo__intro p {
+  color: var(--ink-2);
+  margin-block-end: 1.5rem;
+}
+.vue-demo .adapterbar {
+  overflow-x: auto;
+  padding-block: 0.25rem;
+}
+.vue-demo .adtab {
+  min-inline-size: 8rem;
+}
+.vue-demo .adtab.is-on {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 1px var(--brand);
+}
+.vue-demo__install,
+.vue-demo__options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-block: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--page-surface);
+}
+.vue-demo__options p {
+  margin: 0.25rem 0 0;
+  color: var(--ink-2);
+}
+.vue-demo .controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  margin-block: 1rem;
+}
+.vue-demo__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 44px;
+}
+.vue-demo__toggle input {
+  accent-color: var(--brand);
+  inline-size: 18px;
+  block-size: 18px;
+}
+.vue-demo .mx-demo__body {
+  padding: 0;
+}
+.vue-demo__dialog {
+  inline-size: min(28rem, calc(100vw - 2rem));
+  max-block-size: calc(100dvh - 2rem);
+  overflow: auto;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  background: var(--page-surface);
+}
+.vue-demo__dialog::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+.vue-demo__dialog header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.vue-demo__dialog h2 {
+  font-size: 1.2rem;
+}
+.vue-demo__dialog label {
+  display: flex;
+}
+.vue-demo__dialog button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--page-surface);
+  min-block-size: 44px;
+}
+.vue-demo__discovery a {
+  display: inline-block;
+  margin-inline-end: 1rem;
+  padding-block: 0.5rem;
+}
+@media (max-width: 600px) {
+  .vue-demo__install code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .vue-demo__options .nav__docs {
+    display: inline-flex;
+  }
+}
+
+.vue-demo__dialog footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block-start: 1rem;
+}

@@ -88,7 +88,7 @@ test("Angular sidebar and header remain in Angular after changing topics", async
   await openNavigation(page);
   await expect(
     page.getByRole("link", { name: "Live demo", exact: true }).first()
-  ).toHaveAttribute("href", "/angular/demo/unstyled/");
+  ).toHaveAttribute("href", "/angular/demo/");
   await page.locator('#starlight__sidebar a[href="/angular/sorting/"]').click();
   await expect(page).toHaveURL(`${DOCS_URL}/angular/sorting/`);
   await page.goBack();
@@ -251,7 +251,7 @@ test("Vue docs expose all published guides and supported counterparts", async ({
   await openNavigation(page);
   await expect(
     page.getByRole("link", { name: "Live demo", exact: true }).first()
-  ).toHaveAttribute("href", "/vue/demo/unstyled/");
+  ).toHaveAttribute("href", "/vue/demo/");
   await openNavigation(page);
   await page
     .locator('#starlight__sidebar a[href="/vue/getting-started/"]')
@@ -262,14 +262,10 @@ test("Vue docs expose all published guides and supported counterparts", async ({
   await expect(page.locator(SWITCH).first()).toHaveValue("vue");
   await page.goto("/react/filtering/");
   await page.locator(SWITCH).first().selectOption("vue");
-  await expect(page).toHaveURL(
-    `${DOCS_URL}/vue/getting-started/?unavailable=filtering`
-  );
-  await expect(page.locator("[data-framework-notice]")).toContainText(
-    "not available for Vue"
-  );
+  await expect(page).toHaveURL(`${DOCS_URL}/vue/filtering/`);
+  await expect(page.locator("[data-framework-notice]")).toHaveCount(0);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    `${ORIGIN}/vue/getting-started/`
+    `${ORIGIN}/vue/filtering/`
   );
 });

@@ -48,6 +48,7 @@ import ScaleBody from "./bodies/ScaleBody.vue";
 import SelectionBody from "./bodies/SelectionBody.vue";
 import TreeBody from "./bodies/TreeBody.vue";
 import { SHOWCASE_PRESENTATION } from "./data";
+import MoreExamples from "./MoreExamples.vue";
 import { demoFileHref, vueHref } from "./routes";
 import { useShowcaseKit } from "./showcaseKit";
 import ShowcaseNav from "./ShowcaseNav.vue";
@@ -411,6 +412,7 @@ function copy(which: "code" | "install", text: string): void {
           </div>
         </section>
       </template>
+      <MoreExamples :kit-key="adapter.key" />
     </div>
   </main>
 

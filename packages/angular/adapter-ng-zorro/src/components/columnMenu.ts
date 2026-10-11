@@ -56,6 +56,7 @@ import { AdaptOverlayOrigin, OVERLAY_Z } from "./overlayPlacement";
     AdaptOverlayOrigin,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: "./columnMenu.css",
   host: { style: "display: contents" },
   template: `
     @let r = row();
@@ -219,6 +220,7 @@ export class AdaptColumnMenuRow extends AdaptColumnMenuRowModel {}
   selector: "adapt-column-menu-edge-row",
   imports: [AdaptIcon, NzButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: "./columnMenu.css",
   host: { style: "display: contents" },
   template: `
     @let hidden = layout().isHidden(columnKey());
@@ -273,6 +275,7 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
     NzPopoverModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: "./columnMenu.css",
   template: `
     @let p = props();
     <div #root [dir]="p.dir ?? 'ltr'">

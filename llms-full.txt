@@ -2,7 +2,7 @@
 
 > AdaptTable v3 documentation: a framework-neutral data engine in @adapttable/core, headless React, Angular and Vue bindings, and native table adapters. React kits include Mantine, MUI, Chakra UI, Ant Design, Radix Themes, Base UI, shadcn/ui and unstyled Tailwind. Angular kits include native unstyled, NG-ZORRO, Material, ng-bootstrap, ngx-bootstrap, Spartan, Taiga UI, Aria and CDK. Individually imported features include filtering, grouping, pivot tables, formulas, editing, virtualization and export. Responsive mobile cards, URL state, i18n/RTL and optional provider-neutral AI sessions. MIT licensed; applications own data and persistence.
 
-Start with your framework's getting-started and the shared concepts for package ownership, then features for opt-in composition. The Angular binding, all nine native kits and @adapttable/ai-angular are available on npm. The Angular 0.5 binding changes canonical import paths; use its migration guide and compatible kit releases when upgrading. Vue has an experimental 0.1.0 public binding and eight kits — native Unstyled, Element Plus, Naive UI, Nuxt UI, Quasar, Reka UI, shadcn-vue and Vuetify — each covering the full feature set with its own controls, plus optional agents, assistant UI and speech through @adapttable/ai-vue. The Vue packages are published on npm. Use the v2-to-v3 migration guide when upgrading React; historical migration examples describe their named versions, not current import paths. This file is generated from the canonical guides; the linked index is at https://adapttable.orwamahmoud.com/llms.txt.
+Start with your framework's getting-started and the shared concepts for package ownership, then features for opt-in composition. The Angular binding, all nine native kits and @adapttable/ai-angular are available on npm. The Angular 0.5 binding changes canonical import paths; use its migration guide and compatible kit releases when upgrading. Vue has a published public binding and eight kits — native Unstyled, Element Plus, Naive UI, Nuxt UI, Quasar, Reka UI, shadcn-vue and Vuetify — each covering the full feature set with its own controls, plus optional agents, assistant UI and speech through @adapttable/ai-vue. The Vue packages are published on npm. Use the v2-to-v3 migration guide when upgrading React; historical migration examples describe their named versions, not current import paths. This file is generated from the canonical guides; the linked index is at https://adapttable.orwamahmoud.com/llms.txt.
 
 
 ---
@@ -25209,7 +25209,7 @@ The package includes native overlay/control fixtures, the feature-conformance
 suite, server-rendering and hydration tests, and CSS isolation/license checks.
 Final acceptance requires the integrated Angular compiler, tests and browser
 checks for mobile, RTL, keyboard focus, portal placement and kit switching.
-Release preparation is not a claim that those gates have passed.
+These checks also cover the documented upstream event-replay limitation.
 
 ---
 
@@ -32166,7 +32166,7 @@ checkboxes, selects, popovers, drawers and message boxes.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/element-plus`
+This is a public `0.1.0` package. Install `@adapttable/element-plus`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32265,7 +32265,7 @@ Naive UI supplies the visible controls and their styling.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/naive-ui`
+This is a public `0.1.0` package. Install `@adapttable/naive-ui`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32350,7 +32350,7 @@ the buttons, inputs, selects, checkboxes, popovers, drawers and menus.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/nuxt-ui`
+This is a public `0.1.0` package. Install `@adapttable/nuxt-ui`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32452,7 +32452,7 @@ components.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/quasar`
+This is a public `0.1.0` package. Install `@adapttable/quasar`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32546,7 +32546,7 @@ menu primitives.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/reka-ui`
+This is a public `0.1.0` package. Install `@adapttable/reka-ui`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32624,7 +32624,7 @@ shadcn-vue controls built on Reka UI.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/shadcn-vue`
+This is a public `0.1.0` package. Install `@adapttable/shadcn-vue`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32700,7 +32700,7 @@ supplies the buttons, fields, selects, checkboxes, menus and dialogs.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/vuetify`
+This is a public `0.1.0` package. Install `@adapttable/vuetify`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -33042,6 +33042,408 @@ outside the preset until their format entry is imported.
 
 ## Filtering
 
+See [vue table filtering](./filtering.md) for the complete examples and contracts.
+
+## Compact inline header controls
+
+See [vue table header filters](./header-filters.md) for the complete examples and contracts.
+
+## Editing and host persistence
+
+See [vue cell, row and batch editing](./cell-editing.md) for the complete examples and contracts.
+
+## Grouping, trees and expandable rows
+
+See [vue row grouping and tree data](./row-grouping.md) for the complete examples and contracts.
+
+## Columns, rows and actions
+
+See [vue column layout and row controls](./rows.md) for the complete examples and contracts.
+
+## Density, fullscreen and Saved Views
+
+See [vue saved views and table preferences](./saved-views.md) for the complete examples and contracts.
+
+## Composition and lifetime boundaries
+
+Feature declarations are descriptions. The shell owns their effect scopes,
+state and registrations. A feature with unchanged identity/dependencies keeps
+its mounted model through unrelated row renders; removal disposes it. Use refs
+or getters for documented reactive state, and replace a feature declaration
+when changing ordinary callbacks/options that are not reactive inputs.
+Explicit defined table options override feature patches.
+
+Required control slots have no native fallback in the binding. A custom kit
+must fill filter/editor/view-control slots and conditional table controls such
+as ResizeHandle, ColumnGroupToggle, GroupRow, TreeToggle, RowDetailToggle and
+RowActions. Missing required controls throw. Native factories fill these
+contracts for the unstyled kit.
+
+Component resources begin after mount, suspend during `KeepAlive` deactivation,
+and end on unmount. Retained editor/confirmation/resize callbacks cannot
+continue writing through a removed feature. Async host persistence and network
+requests still belong to the host. SSR does not start DOM measurements,
+browser listeners, lazy children or default local-storage access. Resource-backed
+controls activate after mount; use identical initial rows, IDs, direction,
+URL seed and responsive settings for deterministic hydration.
+
+## Assistant and approvals
+
+The optional native `/assistant` entry exports `TableAssistant`, `AgentApproval`,
+`tableAssistant()` and `agentApproval()`, plus `TableAssistantProps` and
+`AgentApprovalProps`. The native `/features` barrel also forwards these exports.
+These UI entries have no dependency on `@adapttable/ai`. Use
+`@adapttable/ai-vue` separately for `tableAgent`, `useTableAssistant` and
+`useSpeechInput`. Read [assistant and approvals](./assistant.md) for the full
+integration and try the [native assistant showcase](/vue/demo/unstyled/assistant/).
+
+## Features together in the showcase
+
+The [order workspace](/vue/demo/unstyled/workspace/) composes the real native
+features without changing their ownership contracts. Its order desk uses
+`nestedTable` to mount another `DataTable` with independent rows and columns.
+`groupingPanel`, the page summary, `cellNavigation`, `findInTable`, filters,
+editing and CSV export remain active on the parent table. Row selection drives
+bulk actions; the independent cell range drives range export.
+
+The local assistant opts into `@adapttable/ai-vue` and the native `/assistant`
+entry. Selecting pending orders across the workspace requires approval. The result
+message comes from the agent receipt after the host accepts the controlled
+selection. The page explicitly identifies its scripted transport and includes no
+provider SDK or model connection.
+
+The dispatch view derives its loaded tree from shared Ready orders. Review orders
+stay at the desk; Dispatched orders are complete. Stable order IDs retain the host’s
+plan order through owner edits and status changes. Tree selection and sibling moves
+compose with a separate pickup manifest that uses real row spans, navigation, selection,
+export and a page summary. Spans are desktop geometry; mobile cards show every
+field. This small demonstration makes no virtual-window or covered-cell Find
+claim. The existing feature-union route retains the larger windowed regression
+scenario.
+
+Switching workspace views keeps each table's state with Vue `KeepAlive`.
+Pausing the order desk deactivates its table and resumes the same view. The host
+owns the data array, so an accepted edit is visible after a view switch; nothing
+is written to a remote service. The binding owns independent `workspace-orders`,
+`workspace-dispatch`, `workspace-manifest`, `workspace-revenue` and
+`workspace-pivot` URL namespaces. The controlled `useGroupCollapseUrlState`
+pairs keep independent order/revenue collapse namespaces; the page owns view, language, layout and theme
+parameters and restores them on Back/Forward. The order desk also mounts the native
+Saved Views menu with a unique browser-storage key. Its management panel uses the
+same table-owned model for rename, reordering, default selection and deletion.
+Saving captures the Orders URL namespace; applying a view leaves edited orders,
+selection and other tables’ parameters intact. A stored default is considered once
+on a fresh Orders link with no explicit table state. User interaction or history
+navigation retires automatic application; tab changes do not reapply it.
+
+Cell-range export is offered only while the binding reports a valid desktop
+range. Cards disable that scope, and layout or query changes clear the prior
+rectangle through the binding’s grid controller. A final before-export guard
+rejects a stale request without creating a file. Page and all-filtered exports
+remain distinct choices; row selection never masquerades as a cell range.
+
+Chunk recovery checkpoints only host-owned authored values, stable plan IDs,
+selection and detail expansion. A retry reloads only after that checkpoint is
+written successfully; if storage is unavailable, it keeps the current workspace
+in memory and explains how to return to another view. Pending approvals and
+transient cell ranges are not replayed. Table queries and pivot configuration
+are restored by the binding’s URL state, not a copied query engine.
+
+Arabic pivot captions use shared aggregation labels and presentational column
+headers derived from the unchanged pivot leaves. Region and Status captions are
+localized in row and nested column dimensions; canonical field names, leaf paths,
+row/column keys and serialized pivot configuration stay unchanged.
+
+## Styled feature labs
+
+Start with the [live adapter switcher](/vue/demo/) or [Feature Lab](/vue/demo/all-options/) to compose the common features with any of the eight kits. Each kit also has a landing page and dedicated examples for all 21 matrix features. The [order workspace](/vue/demo/unstyled/workspace/) connects multiple views with host-owned updates.
+
+Separate, non-indexed integration labs exercise additional adapter combinations:
+
+- [shadcn-vue filters](/vue/demo/shadcn-vue/filter-panel/): real filter controls,
+  popover/drawer dismissal, focus, RTL and mobile behavior.
+- [shadcn-vue table features](/vue/demo/shadcn-vue/feature-parity/): grouping,
+  Saved Views, row menus, keyboard moves and commands.
+- [shadcn-vue action surfaces](/vue/demo/shadcn-vue/action-surfaces/): assistant,
+  context and command surfaces, plus controlled side panels.
+- [Nuxt UI workspace](/vue/demo/nuxt-ui/workspace/): command/context actions,
+  Saved Views, controlled panels, row reordering and suspension/resume.
+
+These labs use fictional in-browser data and host-owned writes. The showcase browser suite exercises their native controls; they do not connect to a production backend.
+
+---
+
+# Vue table sorting and search
+
+Sort Vue table columns, compose multi-sort and search reactive data with shared query state and native controls.
+
+Search and sorting are built into the native Vue table. Mark individual columns `sortable`; the adapter renders the sort controls. This example starts with Name ascending and allows multi-sort. The browser URL can override initial defaults.
+
+```vue
+<script setup lang="ts">
+import { shallowRef } from "vue";
+import type { ColumnDef } from "@adapttable/vue";
+import { DataTable } from "@adapttable/vue-unstyled";
+
+interface Person {
+  id: string;
+  name: string;
+  score: number;
+}
+const rows = shallowRef<readonly Person[]>([
+  { id: "ada", name: "Ada", score: 10 },
+  { id: "grace", name: "Grace", score: 20 },
+]);
+const columns: ColumnDef<Person>[] = [
+  { key: "name", header: "Name", sortable: true },
+  { key: "score", header: "Score", sortable: true },
+];
+const rowKey = (row: Person) => row.id;
+</script>
+
+<template>
+  <DataTable
+    :data="rows"
+    :columns="columns"
+    :row-key="rowKey"
+    table-label="People"
+    url-key="people"
+    :multi-sort="true"
+    :defaults="{ sortBy: 'name', sortDir: 'asc' }"
+  />
+</template>
+```
+
+Use `searchable="false"` to omit the search field, and `getSearchText` to choose the text searched for each row. `searchDebounceMs` controls the draft delay. With a supplied server source, query changes request data from the host; the table does not download the complete dataset to sort it.
+
+A custom header owns its sort control. Invoke the provided `toggleSort` callback instead of changing the row array. For headless surfaces, use the sorting state and requests exposed by `useDataTable`; see the [API](./api.md).
+
+## Try the native adapters
+
+Use the [live demo](/vue/demo/) or [Feature Lab](/vue/demo/all-options/) to switch all eight Vue kits. Dedicated kit examples show the same feature with each UI kit’s controls.
+
+---
+
+# Vue table pagination and infinite loading
+
+Page Vue tables or use infinite loading with reactive sources, synchronized query state and native page controls.
+
+The native table renders page controls for `paginationMode="paged"`. `defaults.limit` supplies the initial page size; source and URL state own later changes.
+
+```vue
+<script setup lang="ts">
+import { shallowRef } from "vue";
+import type { ColumnDef } from "@adapttable/vue";
+import { DataTable } from "@adapttable/vue-unstyled";
+
+interface Person {
+  id: string;
+  name: string;
+  score: number;
+}
+const rows = shallowRef<readonly Person[]>([
+  { id: "ada", name: "Ada", score: 10 },
+  { id: "grace", name: "Grace", score: 20 },
+]);
+const columns: ColumnDef<Person>[] = [
+  { key: "name", header: "Name", sortable: true },
+  { key: "score", header: "Score", sortable: true },
+];
+const rowKey = (row: Person) => row.id;
+</script>
+
+<template>
+  <DataTable
+    :data="rows"
+    :columns="columns"
+    :row-key="rowKey"
+    table-label="People"
+    url-key="people"
+    pagination-mode="paged"
+    :defaults="{ limit: 10 }"
+  />
+</template>
+```
+
+Use `paginationMode="infinite"` for the infinite layout. A frontend source pages its supplied rows locally; a server source receives the query and publishes the returned rows and total. A total is the number of matching rows, not the length of the current page. The table never creates your endpoint.
+
+Changing search or filters resets the query to the first page. Give independent tables distinct `urlKey` values, or set `urlSync="false"` for local-only state. Mobile cards use infinite loading in place of the desktop pager; see [mobile cards](./mobile-cards.md) and [data tiers](./data-tiers.md).
+
+## Try the native adapters
+
+Use the [live demo](/vue/demo/) or [Feature Lab](/vue/demo/all-options/) to switch all eight Vue kits. Dedicated kit examples show the same feature with each UI kit’s controls.
+
+---
+
+# Vue table row selection and bulk actions
+
+Control selected Vue row IDs, retain stable row identity and compose native bulk actions without transferring ownership of data.
+
+Selection uses stable IDs from `rowKey`. This example keeps selected IDs in the Vue host with `v-model:selected-ids`. `selectable` enables native row checkboxes.
+
+```vue
+<script setup lang="ts">
+import { shallowRef } from "vue";
+import type { ColumnDef } from "@adapttable/vue";
+import { DataTable } from "@adapttable/vue-unstyled";
+
+interface Person {
+  id: string;
+  name: string;
+  score: number;
+}
+const rows = shallowRef<readonly Person[]>([
+  { id: "ada", name: "Ada", score: 10 },
+  { id: "grace", name: "Grace", score: 20 },
+]);
+const columns: ColumnDef<Person>[] = [
+  { key: "name", header: "Name", sortable: true },
+  { key: "score", header: "Score", sortable: true },
+];
+const rowKey = (row: Person) => row.id;
+const selectedIds = shallowRef<string[]>([]);
+</script>
+
+<template>
+  <DataTable
+    :data="rows"
+    :columns="columns"
+    :row-key="rowKey"
+    table-label="People"
+    url-key="people"
+    selectable
+    v-model:selected-ids="selectedIds"
+  />
+</template>
+```
+
+To validate or reject a selection request, pass `selectedIds` and handle `update:selectedIds` instead of accepting every model event. `defaultSelectedIds` initializes local selection; it does not reset later changes.
+
+Selection is not an edit or delete operation. Compose your adapter’s `/bulk-actions` factory to request host-owned operations over selected IDs. Filtering and paging can change the visible rows; use the selection model and the callback’s IDs instead of deriving selection from checkbox DOM nodes. Selection and edit drafts are not restored by Saved Views. See [actions](./actions.md), [saved views](./saved-views.md) and [row controls](./rows.md).
+
+## Try the native adapters
+
+Use the [live demo](/vue/demo/) or [Feature Lab](/vue/demo/all-options/) to switch all eight Vue kits. Dedicated kit examples show the same feature with each UI kit’s controls.
+
+---
+
+# Responsive Vue tables and mobile cards
+
+Render responsive Vue table cards with native controls, shared columns, editing, selection and RTL across eight adapters.
+
+The native table can render responsive cards below `mobileBreakpoint`. `forceMobile` requests cards explicitly. Columns and query state remain shared across the desktop and card layouts.
+
+```vue
+<script setup lang="ts">
+import { shallowRef } from "vue";
+import type { ColumnDef } from "@adapttable/vue";
+import { DataTable } from "@adapttable/vue-unstyled";
+
+interface Person {
+  id: string;
+  name: string;
+  score: number;
+}
+const rows = shallowRef<readonly Person[]>([
+  { id: "ada", name: "Ada", score: 10 },
+  { id: "grace", name: "Grace", score: 20 },
+]);
+const columns: ColumnDef<Person>[] = [
+  { key: "name", header: "Name", sortable: true },
+  { key: "score", header: "Score", sortable: true },
+];
+const rowKey = (row: Person) => row.id;
+</script>
+
+<template>
+  <DataTable
+    :data="rows"
+    :columns="columns"
+    :row-key="rowKey"
+    table-label="People"
+    url-key="people"
+    :mobile-breakpoint="768"
+    :force-mobile="true"
+    locale="ar"
+    dir="rtl"
+  />
+</template>
+```
+
+Each adapter owns its card presentation and native controls. Sorting, filtering, selection, row actions and composed editing continue to use the same models. Mobile cards use infinite loading instead of desktop pagination.
+
+Use `locale` for translated labels and `dir` for reading direction; changing direction alone does not translate text. `classNames` exposes semantic card parts in the Unstyled adapter, where the host supplies appearance. Follow the chosen kit’s provider and stylesheet setup for styled adapters. See [getting started](./getting-started.md#choose-a-ui-kit) and [editing](./cell-editing.md).
+
+## Try the native adapters
+
+Use the [live demo](/vue/demo/) or [Feature Lab](/vue/demo/all-options/) to switch all eight Vue kits. Dedicated kit examples show the same feature with each UI kit’s controls.
+
+---
+
+# Vue reactive data sources and data tiers
+
+Choose Vue frontend or server data sources, reactive refs and headless controllers with host-owned fetching and query state.
+
+Use a source when you want to own fetching or share a table's query state with
+other UI. The source is a readonly shallow ref. In script, read `source.value`;
+a top-level ref is unwrapped automatically in a Vue template.
+
+```ts
+import { shallowRef } from "vue";
+import { useDataTable, useFrontendData } from "@adapttable/vue";
+import type { ColumnDef } from "@adapttable/vue";
+
+interface Person {
+  id: string;
+  name: string;
+}
+
+// Run inside setup() or an explicitly owned effectScope().
+const rows = shallowRef<readonly Person[]>([{ id: "ada", name: "Ada" }]);
+const columns: ColumnDef<Person>[] = [{ key: "name", sortable: true }];
+const source = useFrontendData({ data: rows, columns, urlSync: false });
+const table = useDataTable({
+  source,
+  columns,
+  rowKey: (row: Person) => row.id,
+});
+const { rows: visibleRows, searchValue, setSearchValue } = table;
+
+setSearchValue("Ada"); // Debounced input; table.setSearch commits immediately.
+// visibleRows and searchValue remain reactive after destructuring.
+```
+
+Pass this source to the native table as `:source="source"`, or render your own
+surface with `useDataTable`. A supplied source wins over `data` and owns query
+state; the native table's fallback data source does not claim its URL namespace.
+
+Reactive value inputs accept a plain value, a ref or a getter. Optional inputs
+also accept refs/getters whose current value is `undefined`. Callbacks such as
+`rowKey`, `getSearchText`, `refetch` and `onQueryChange` remain callbacks. To
+replace callback identities reactively, pass a getter for the whole options
+object. Never wrap a renderer in a getter just to make it reactive.
+
+For remote rows, choose `useServerData` when the host performs requests and
+publishes `rows`/`total`, or `useQuerySource` when an existing query composable
+owns fetching and cancellation. See [source contracts](./api.md#data-sources)
+for request cancellation and query-library lifecycle rules.
+
+## Server query ownership
+
+`useServerData` accepts reactive `rows`, `total`, `loading` and `error`, and an `onQueryChange` callback. The host fetches or computes a response and publishes it through those refs. Use the callback context’s abort signal to avoid applying replies after a newer query or disposal. Declare only the server capabilities your endpoint actually implements.
+
+The complete signatures are in the [Vue API](./api.md); the [server query contract](../server-queries.md) describes query parameters and endpoint ownership. The [live demo](/vue/demo/) uses a simulated server for its Server mode. It does not provision a backend.
+
+---
+
+# Vue table filtering
+
+Compose popover and drawer filters, checklist choices and AND/OR trees with native Vue kit controls.
+
+These examples use `@adapttable/vue-unstyled`. Import matching feature paths
+from your selected adapter so its own kit renders the controls. See
+[Vue installation and providers](./getting-started.md).
+
 ```ts
 import { filters } from "@adapttable/vue-unstyled/filters";
 import { headerFilters } from "@adapttable/vue-unstyled/header-filters";
@@ -33128,7 +33530,22 @@ and `FilterTreeBuilder` for standalone native fields/builders, and
 `FilterFieldOptions<TRow>`, `ChecklistFilterProps<TRow>`,
 `FilterTreeBuilderProps<TRow>` and `HeaderFilterOptions<TRow>`.
 
-## Compact inline header controls
+## Explore the implementation
+
+Use the [Vue live demo](https://adapttable.orwamahmoud.com/vue/demo/) to switch
+adapters and the [Vue Feature Lab](https://adapttable.orwamahmoud.com/vue/demo/all-options/)
+to compose features. The [feature index](./features.md) lists native imports and
+[API reference](./api.md) documents the binding and controlled contracts.
+
+---
+
+# Vue table header filters
+
+Use compact column filter controls over the same Vue filter model, including operator and field layouts.
+
+These examples use `@adapttable/vue-unstyled`. Import matching feature paths
+from your selected adapter so its own kit renders the controls. See
+[Vue installation and providers](./getting-started.md).
 
 `FilterHeaderControl` renders one compact search, select, boolean, range or
 multi-choice control. `FilterHeaderRow` places those controls in a second
@@ -33213,7 +33630,22 @@ and `FilterHeaderMultiProps`; select and multi choices use `FilterHeaderOption`.
 The binding supplies structure and never substitutes a native control for a
 missing slot.
 
-## Editing and host persistence
+## Explore the implementation
+
+Use the [Vue live demo](https://adapttable.orwamahmoud.com/vue/demo/) to switch
+adapters and the [Vue Feature Lab](https://adapttable.orwamahmoud.com/vue/demo/all-options/)
+to compose features. The [feature index](./features.md) lists native imports and
+[API reference](./api.md) documents the binding and controlled contracts.
+
+---
+
+# Vue cell, row and batch editing
+
+Edit Vue table cells, rows or batches with validation, host-owned saves, dirty state and undo/redo.
+
+These examples use `@adapttable/vue-unstyled`. Import matching feature paths
+from your selected adapter so its own kit renders the controls. See
+[Vue installation and providers](./getting-started.md).
 
 Mark editable columns with `editable: true`, then provide the host write:
 
@@ -33320,7 +33752,22 @@ builds row-action props and its batch model builds the shared save bar.
 `editableCellSlotKey`, `rowEditActionsSlotKey` and `batchEditBarSlotKey`
 specialize required feature slots to the same row type.
 
-## Grouping, trees and expandable rows
+## Explore the implementation
+
+Use the [Vue live demo](https://adapttable.orwamahmoud.com/vue/demo/) to switch
+adapters and the [Vue Feature Lab](https://adapttable.orwamahmoud.com/vue/demo/all-options/)
+to compose features. The [feature index](./features.md) lists native imports and
+[API reference](./api.md) documents the binding and controlled contracts.
+
+---
+
+# Vue row grouping and tree data
+
+Group Vue table rows, aggregate values and expand trees or row details while keeping selection and scope explicit.
+
+These examples use `@adapttable/vue-unstyled`. Import matching feature paths
+from your selected adapter so its own kit renders the controls. See
+[Vue installation and providers](./getting-started.md).
 
 ```ts
 import { shallowRef } from "vue";
@@ -33452,7 +33899,22 @@ and tree models are active; choose one hierarchy intentionally. Data-cell spans
 are clipped at structural group boundaries and open detail rows. Mobile cards
 preserve complete cell values instead of applying grid spans.
 
-## Columns, rows and actions
+## Explore the implementation
+
+Use the [Vue live demo](https://adapttable.orwamahmoud.com/vue/demo/) to switch
+adapters and the [Vue Feature Lab](https://adapttable.orwamahmoud.com/vue/demo/all-options/)
+to compose features. The [feature index](./features.md) lists native imports and
+[API reference](./api.md) documents the binding and controlled contracts.
+
+---
+
+# Vue column layout and row controls
+
+Compose Vue column resizing, grouped headers, row pinning, spans, details and host-owned row actions.
+
+These examples use `@adapttable/vue-unstyled`. Import matching feature paths
+from your selected adapter so its own kit renders the controls. See
+[Vue installation and providers](./getting-started.md).
 
 `resizableColumns()`, `collapsibleColumnGroups()`, `multiSort()` and
 `fitColumns()` return `StaticTableFeature`. Desktop resize/group controls
@@ -33559,7 +34021,22 @@ produces labeled, semantic controls and guards delayed confirmation against
 feature removal. Use it when implementing a kit; the native table already
 uses this projection.
 
-## Density, fullscreen and Saved Views
+## Explore the implementation
+
+Use the [Vue live demo](https://adapttable.orwamahmoud.com/vue/demo/) to switch
+adapters and the [Vue Feature Lab](https://adapttable.orwamahmoud.com/vue/demo/all-options/)
+to compose features. The [feature index](./features.md) lists native imports and
+[API reference](./api.md) documents the binding and controlled contracts.
+
+---
+
+# Vue saved views and table preferences
+
+Capture named Vue table views, persist column layout explicitly, and compose density and fullscreen controls.
+
+These examples use `@adapttable/vue-unstyled`. Import matching feature paths
+from your selected adapter so its own kit renders the controls. See
+[Vue installation and providers](./getting-started.md).
 
 ```ts
 import { densityChooser } from "@adapttable/vue-unstyled/density";
@@ -33762,113 +34239,12 @@ attrs, current value, localized options and `onChange`.
 `SavedViewsMenuSlots`: Trigger, Button, Input and Panel. It owns disclosure,
 keyboard and focus state; the kit draws each control/surface.
 
-## Composition and lifetime boundaries
+## Explore the implementation
 
-Feature declarations are descriptions. The shell owns their effect scopes,
-state and registrations. A feature with unchanged identity/dependencies keeps
-its mounted model through unrelated row renders; removal disposes it. Use refs
-or getters for documented reactive state, and replace a feature declaration
-when changing ordinary callbacks/options that are not reactive inputs.
-Explicit defined table options override feature patches.
-
-Required control slots have no native fallback in the binding. A custom kit
-must fill filter/editor/view-control slots and conditional table controls such
-as ResizeHandle, ColumnGroupToggle, GroupRow, TreeToggle, RowDetailToggle and
-RowActions. Missing required controls throw. Native factories fill these
-contracts for the unstyled kit.
-
-Component resources begin after mount, suspend during `KeepAlive` deactivation,
-and end on unmount. Retained editor/confirmation/resize callbacks cannot
-continue writing through a removed feature. Async host persistence and network
-requests still belong to the host. SSR does not start DOM measurements,
-browser listeners, lazy children or default local-storage access. Resource-backed
-controls activate after mount; use identical initial rows, IDs, direction,
-URL seed and responsive settings for deterministic hydration.
-
-## Assistant and approvals
-
-The optional native `/assistant` entry exports `TableAssistant`, `AgentApproval`,
-`tableAssistant()` and `agentApproval()`, plus `TableAssistantProps` and
-`AgentApprovalProps`. The native `/features` barrel also forwards these exports.
-These UI entries have no dependency on `@adapttable/ai`. Use
-`@adapttable/ai-vue` separately for `tableAgent`, `useTableAssistant` and
-`useSpeechInput`. Read [assistant and approvals](./assistant.md) for the full
-integration and try the [native assistant showcase](/vue/demo/unstyled/assistant/).
-
-## Features together in the showcase
-
-The [order workspace](/vue/demo/unstyled/workspace/) composes the real native
-features without changing their ownership contracts. Its order desk uses
-`nestedTable` to mount another `DataTable` with independent rows and columns.
-`groupingPanel`, the page summary, `cellNavigation`, `findInTable`, filters,
-editing and CSV export remain active on the parent table. Row selection drives
-bulk actions; the independent cell range drives range export.
-
-The local assistant opts into `@adapttable/ai-vue` and the native `/assistant`
-entry. Selecting pending orders across the workspace requires approval. The result
-message comes from the agent receipt after the host accepts the controlled
-selection. The page explicitly identifies its scripted transport and includes no
-provider SDK or model connection.
-
-The dispatch view derives its loaded tree from shared Ready orders. Review orders
-stay at the desk; Dispatched orders are complete. Stable order IDs retain the host’s
-plan order through owner edits and status changes. Tree selection and sibling moves
-compose with a separate pickup manifest that uses real row spans, navigation, selection,
-export and a page summary. Spans are desktop geometry; mobile cards show every
-field. This small demonstration makes no virtual-window or covered-cell Find
-claim. The existing feature-union route retains the larger windowed regression
-scenario.
-
-Switching workspace views keeps each table's state with Vue `KeepAlive`.
-Pausing the order desk deactivates its table and resumes the same view. The host
-owns the data array, so an accepted edit is visible after a view switch; nothing
-is written to a remote service. The binding owns independent `workspace-orders`,
-`workspace-dispatch`, `workspace-manifest`, `workspace-revenue` and
-`workspace-pivot` URL namespaces. The controlled `useGroupCollapseUrlState`
-pairs keep independent order/revenue collapse namespaces; the page owns view, language, layout and theme
-parameters and restores them on Back/Forward. The order desk also mounts the native
-Saved Views menu with a unique browser-storage key. Its management panel uses the
-same table-owned model for rename, reordering, default selection and deletion.
-Saving captures the Orders URL namespace; applying a view leaves edited orders,
-selection and other tables’ parameters intact. A stored default is considered once
-on a fresh Orders link with no explicit table state. User interaction or history
-navigation retires automatic application; tab changes do not reapply it.
-
-Cell-range export is offered only while the binding reports a valid desktop
-range. Cards disable that scope, and layout or query changes clear the prior
-rectangle through the binding’s grid controller. A final before-export guard
-rejects a stale request without creating a file. Page and all-filtered exports
-remain distinct choices; row selection never masquerades as a cell range.
-
-Chunk recovery checkpoints only host-owned authored values, stable plan IDs,
-selection and detail expansion. A retry reloads only after that checkpoint is
-written successfully; if storage is unavailable, it keeps the current workspace
-in memory and explains how to return to another view. Pending approvals and
-transient cell ranges are not replayed. Table queries and pivot configuration
-are restored by the binding’s URL state, not a copied query engine.
-
-Arabic pivot captions use shared aggregation labels and presentational column
-headers derived from the unchanged pivot leaves. Region and Status captions are
-localized in row and nested column dimensions; canonical field names, leaf paths,
-row/column keys and serialized pivot configuration stay unchanged.
-
-## Styled feature labs
-
-The seven basic kit previews remain small order-desk examples. Separate,
-non-indexed feature labs mount the actual adapter fixtures and are registered
-with the existing showcase browser suite:
-
-- [shadcn-vue filters](/vue/demo/shadcn-vue/filter-panel/): real filter controls,
-  popover/drawer dismissal, focus, RTL and mobile behavior.
-- [shadcn-vue table features](/vue/demo/shadcn-vue/feature-parity/): grouping,
-  Saved Views, row menus, keyboard moves and commands.
-- [shadcn-vue action surfaces](/vue/demo/shadcn-vue/action-surfaces/): assistant,
-  context and command surfaces, plus controlled side panels.
-- [Nuxt UI workspace](/vue/demo/nuxt-ui/workspace/): command/context actions,
-  Saved Views, controlled panels, row reordering and suspension/resume.
-
-These are integration fixtures, not npm releases or a claim that browser CI has
-passed. They use fictional in-browser data and host-owned writes.
+Use the [Vue live demo](https://adapttable.orwamahmoud.com/vue/demo/) to switch
+adapters and the [Vue Feature Lab](https://adapttable.orwamahmoud.com/vue/demo/all-options/)
+to compose features. The [feature index](./features.md) lists native imports and
+[API reference](./api.md) documents the binding and controlled contracts.
 
 ---
 

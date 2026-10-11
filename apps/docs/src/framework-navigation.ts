@@ -70,8 +70,12 @@ function updateFrameworkNavigation() {
     )
       return;
     if (/^\/(react|angular|vue)\/demo\//.test(url.pathname)) {
-      if (framework === "angular" && url.pathname === "/react/demo/")
-        link.href = "/angular/demo/unstyled/";
+      if (
+        url.pathname === "/react/demo/" ||
+        url.pathname === "/angular/demo/" ||
+        url.pathname === "/vue/demo/"
+      )
+        link.href = `/${framework}/demo/`;
       return;
     }
     // An explicit link into the Vue guide remains a useful cross-link.

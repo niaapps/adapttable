@@ -7,7 +7,7 @@ checkboxes, selects, popovers, drawers and message boxes.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/element-plus`
+This is a public `0.1.0` package. Install `@adapttable/element-plus`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 

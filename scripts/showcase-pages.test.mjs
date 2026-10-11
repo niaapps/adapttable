@@ -67,6 +67,8 @@ const VUE_KIT_LAB_WRAPPERS = new Map([
 ]);
 
 const STANDALONE_ENTRIES = new Map([
+  ["vue-main", "src/vue/demo/entry-demo.ts"],
+  ["vue-all-options", "src/vue/demo/entry-demo.ts"],
   ["main", "src/main.tsx"],
   ["all-options", "src/entry-all-options.tsx"],
   ["agent-approval", "src/entry-agent-approval.tsx"],
@@ -169,46 +171,64 @@ const bootingPages = () =>
     };
   }).filter((entry) => entry.module);
 
+function assertVueExampleEntry(page, source) {
+  const lab = [...VUE_KIT_LAB_ENTRIES.keys()].find(
+    (path) => page.key === `vue-${path.replaceAll("/", "-")}`
+  );
+  if (lab) {
+    assert.equal(page.route, `/vue/demo/${lab}/`);
+    assert.equal(page.indexable, false);
+    assert.doesNotMatch(source, /data-matrix-page/);
+    return;
+  }
+  const kit = [...VUE_KIT_PREVIEW_ENTRIES.keys()].find(
+    (key) => page.key === `vue-${key}-orders`
+  );
+  if (kit) {
+    assert.equal(page.route, `/vue/demo/${kit}/orders/`);
+    assert.equal(page.indexable, false);
+    assert.doesNotMatch(source, /data-matrix-page/);
+    return;
+  }
+  const preview = [...VUE_PREVIEW_ENTRIES].find(
+    ([slug]) => page.key === `vue-unstyled-${slug}`
+  );
+  assert.ok(preview, page.html);
+  const [slug] = preview;
+  assert.equal(page.route, `/vue/demo/unstyled/${slug}/`);
+  assert.equal(page.indexable, false);
+  assert.doesNotMatch(source, /data-matrix-page/);
+}
+
+function assertSharedDemoEntry(page, source) {
+  const lab = page.key === `${page.framework}-all-options`;
+  assert.equal(
+    page.key,
+    lab ? `${page.framework}-all-options` : `${page.framework}-main`
+  );
+  assert.equal(page.route, demoRoute(lab ? "all-options" : "", page.framework));
+  assert.equal(page.indexable, true, page.html);
+  assert.ok(
+    source.includes(`data-${page.framework}-mode="${lab ? "lab" : "live"}"`)
+  );
+  assert.doesNotMatch(source, /data-matrix-page/);
+}
+
 function assertStandaloneEntry(page, source, entry) {
   assert.ok(STANDALONE_ENTRIES.has(page.key), page.html);
   assert.equal(entry, STANDALONE_ENTRIES.get(page.key), page.html);
-  if (page.framework === "angular") {
-    const lab = page.key === "angular-all-options";
-    assert.equal(page.key, lab ? "angular-all-options" : "angular-main");
-    assert.equal(page.route, demoRoute(lab ? "all-options" : "", "angular"));
-    assert.equal(page.indexable, true, page.html);
-    assert.ok(source.includes(`data-angular-mode="${lab ? "lab" : "live"}"`));
-    assert.doesNotMatch(source, /data-matrix-page/);
-  } else if (page.framework === "vue") {
-    const lab = [...VUE_KIT_LAB_ENTRIES.keys()].find(
-      (path) => page.key === `vue-${path.replaceAll("/", "-")}`
-    );
-    if (lab) {
-      assert.equal(page.route, `/vue/demo/${lab}/`);
-      assert.equal(page.indexable, false);
-      assert.doesNotMatch(source, /data-matrix-page/);
-      return;
-    }
-    const kit = [...VUE_KIT_PREVIEW_ENTRIES.keys()].find(
-      (key) => page.key === `vue-${key}-orders`
-    );
-    if (kit) {
-      assert.equal(page.route, `/vue/demo/${kit}/orders/`);
-      assert.equal(page.indexable, false);
-      assert.doesNotMatch(source, /data-matrix-page/);
-      return;
-    }
-    const preview = [...VUE_PREVIEW_ENTRIES].find(
-      ([slug]) => page.key === `vue-unstyled-${slug}`
-    );
-    assert.ok(preview, page.html);
-    const [slug] = preview;
-    assert.equal(page.route, `/vue/demo/unstyled/${slug}/`);
-    assert.equal(page.indexable, false);
-    assert.doesNotMatch(source, /data-matrix-page/);
-  } else {
-    assert.equal(page.framework, "react", page.html);
+  if (
+    page.framework === "angular" ||
+    ["vue-main", "vue-all-options"].includes(page.key)
+  ) {
+    assertSharedDemoEntry(page, source);
+    return;
   }
+  if (page.framework === "vue") {
+    assertVueExampleEntry(page, source);
+    return;
+  }
+  assert.equal(page.framework, "react", page.html);
 }
 
 describe("the showcase page manifest", () => {

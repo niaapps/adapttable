@@ -30,6 +30,7 @@ export const VuetifyFiltersPanel = defineComponent({
         h(VuetifyButton, {
           attrs: {
             ...trigger.attrs,
+            "aria-label": trigger.label,
             ref: trigger.triggerRef,
             class: names.value.filtersButton,
             onPointerdown: trigger.onPointerDown,

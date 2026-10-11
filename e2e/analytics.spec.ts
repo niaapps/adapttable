@@ -28,7 +28,16 @@ const TRACKERS = [
 ];
 
 /** Pages with different shells: the landing page, the lab, and a kit page. */
-const PAGES = ["/", "/all-options/", "/mui/rows/"];
+const PAGES = [
+  "/",
+  "/all-options/",
+  "/mui/rows/",
+  "/angular-main/",
+  "/angular-all-options/",
+  "/vue-main/",
+  "/vue-all-options/",
+  "/vue/element-plus/columns/",
+];
 
 for (const path of PAGES) {
   test(`no analytics request leaves localhost from ${path}`, async ({
