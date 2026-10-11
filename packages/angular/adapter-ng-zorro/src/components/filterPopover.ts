@@ -3,14 +3,16 @@ import {
   type FilterOverlaySlotProps,
   injectPopoverSpace,
 } from "@adapttable/angular/adapter";
-import { NgTemplateOutlet } from "@angular/common";
+import { DOCUMENT, NgTemplateOutlet } from "@angular/common";
 import {
-  afterRenderEffect,
+  afterEveryRender,
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   type ElementRef,
+  inject,
   input,
   type TemplateRef,
   viewChild,
@@ -145,10 +147,16 @@ export class AdaptFilterPopover {
   }
 
   constructor() {
-    afterRenderEffect(() => {
+    const update = (): void => {
       if (!this.props().open) return;
       pushPopoverIntoViewport(this.popover());
-    });
+    };
+    afterEveryRender(update);
+    const viewport = inject(DOCUMENT).defaultView;
+    viewport?.addEventListener("resize", update);
+    inject(DestroyRef).onDestroy(() =>
+      viewport?.removeEventListener("resize", update)
+    );
     effect((onCleanup) => {
       const { open, onClose } = this.props();
       if (!open) return;

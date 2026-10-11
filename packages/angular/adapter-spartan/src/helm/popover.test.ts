@@ -58,9 +58,20 @@ describe("native Brain popover names", () => {
     );
     expectNamedPopover(action, "Row actions");
     expect(action.closest(".cdk-overlay-pane")).toBe(pane);
+    const host = pane!.parentElement!;
+    expect(host.style.inlineSize).toBe("");
+    host.setAttribute("popover", "manual");
+    host.style.width = "100%";
+    // jsdom has no showPopover(); represent the already-open native host.
+    host.style.display = "block";
 
     fixture.componentInstance.label.set("Actions de la ligne");
     await fixture.whenStable();
+    expect(host.style.inlineSize).toBe(`${String(window.innerWidth)}px`);
+    expect(host.style.getPropertyPriority("inline-size")).toBe("important");
+    host.style.inlineSize = "400px";
+    window.dispatchEvent(new Event("resize"));
+    expect(host.style.inlineSize).toBe(`${String(window.innerWidth)}px`);
     expectNamedPopover(action, "Actions de la ligne");
     expect(
       within(document.body).queryByRole("dialog", { name: "Row actions" })

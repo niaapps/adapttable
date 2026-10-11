@@ -165,7 +165,21 @@ describe("NG-ZORRO filter overlays", () => {
     const directive = fixture.debugElement
       .query(By.directive(NzPopoverDirective))
       .injector.get(NzPopoverDirective);
+    const host = directive.component!.overlay.overlayRef.hostElement;
+    host.setAttribute("popover", "manual");
+    directive.component!.overlay.push = false;
+    const update = vi.spyOn(
+      directive.component!.overlay.overlayRef,
+      "updatePosition"
+    );
     pushPopoverIntoViewport(directive);
+    pushPopoverIntoViewport(directive);
+    expect(update).toHaveBeenCalledTimes(1);
+    expect(host.style.inlineSize).toBe(`${String(window.innerWidth)}px`);
+    expect(host.style.getPropertyPriority("inline-size")).toBe("important");
+    host.style.inlineSize = "400px";
+    window.dispatchEvent(new Event("resize"));
+    expect(host.style.inlineSize).toBe(`${String(window.innerWidth)}px`);
     expect(directive.component?.overlay.push).toBe(true);
     expect(directive.component?.overlay.viewportMargin).toBe(23);
   });

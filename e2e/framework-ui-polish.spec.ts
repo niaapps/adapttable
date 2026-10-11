@@ -103,6 +103,18 @@ for (const framework of ["react", "angular", "vue"]) {
         await page.screenshot({
           path: info.outputPath(`${kit.key}-${variant.width}-filters.png`),
         });
+        if (
+          variant.width < 600 &&
+          (kit.key === "ng-zorro" || kit.key === "spartan")
+        ) {
+          await page.setViewportSize({ width: 360, height: variant.height });
+          await expect
+            .poll(async () => {
+              const box = await surface.boundingBox();
+              return !!box && box.x >= -1 && box.x + box.width <= 361;
+            })
+            .toBe(true);
+        }
         if (framework !== "react") {
           await done.click();
           await expect(surface).toBeHidden();

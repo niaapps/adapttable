@@ -43,11 +43,19 @@ export function registerOverlayOrigin(
 export function pushPopoverIntoViewport(popover: NzPopoverDirective): void {
   const overlay = popover.component?.overlay;
   if (overlay) {
+    const host = overlay.overlayRef?.hostElement;
+    // A top-layer 100% host can resolve against the root's reserved gutter.
+    // CDK's right offsets use window coordinates, so keep the same viewport.
+    // CDK reapplies its physical width after render; retain this logical width.
+    const inlineSize = `${String(window.innerWidth)}px`;
+    if (host?.hasAttribute("popover") && host.style.inlineSize !== inlineSize)
+      host.style.setProperty("inline-size", inlineSize, "important");
     // CDK's top-layer host excludes a classic scrollbar, while its RTL
     // right offsets use the window width. Reserve that difference as well.
     const width = document.documentElement.clientWidth;
     const scrollbar = width > 0 ? Math.max(0, window.innerWidth - width) : 0;
     const margin = 8 + scrollbar;
+    if (overlay.push && overlay.viewportMargin === margin) return;
     overlay.push = true;
     overlay.viewportMargin = margin;
     const strategy = overlay.overlayRef?.getConfig().positionStrategy;
