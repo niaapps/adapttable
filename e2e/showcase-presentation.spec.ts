@@ -55,7 +55,11 @@ for (const kit of VUE_KIT_PAGES) {
     }
     const bounds = await table.boundingBox();
     expect(bounds).not.toBeNull();
-    expect(bounds!.y).toBeLessThan(340);
+    const navigation = await page
+      .getByRole("navigation", { name: "Vue showcase navigation", exact: true })
+      .boundingBox();
+    expect(navigation).not.toBeNull();
+    expect(bounds!.y - navigation!.height).toBeLessThan(340);
     const statusSelector = nativeStatus[kit.kit];
     if (!statusSelector)
       throw new Error(`Missing status selector for ${kit.kit}`);

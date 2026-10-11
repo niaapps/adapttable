@@ -40,22 +40,20 @@ for (const path of SWITCHER_PAGES) {
       }
       const root = tableRoot(page);
       await expect(root).toBeVisible();
+      await expect(
+        root,
+        `${path} (${kit}) mounts the unstyled table with no class map`
+      ).toHaveClass(/rounded|border/);
 
       const look = await root.evaluate((element) => {
         const style = getComputedStyle(element);
         return {
-          className: element.className,
           radius: parseFloat(style.borderTopLeftRadius),
           borderWidth: parseFloat(style.borderTopWidth),
         };
       });
 
-      // The utility classes are on the element…
-      expect(
-        look.className,
-        `${path} (${kit}) mounts the unstyled table with no class map`
-      ).toMatch(/rounded|border/);
-      // …and Tailwind compiled them, so they actually draw the kit.
+      // Tailwind compiled those classes, so they actually draw the kit.
       expect(look.radius).toBeGreaterThan(0);
       expect(look.borderWidth).toBeGreaterThan(0);
     });
