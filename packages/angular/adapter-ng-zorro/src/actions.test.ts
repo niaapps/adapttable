@@ -339,7 +339,9 @@ describe("the NG-ZORRO Angular row actions", () => {
     const edit = menu.querySelector<HTMLButtonElement>(
       'button[role="menuitem"]'
     )!;
-    expect(document.activeElement).toBe(edit);
+    // NG-ZORRO attaches asynchronously; the adapter focuses its connected
+    // items in the following render phase.
+    await vi.waitFor(() => expect(document.activeElement).toBe(edit));
     edit.dispatchEvent(
       new KeyboardEvent("keydown", {
         key: "ArrowDown",
