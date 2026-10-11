@@ -60,6 +60,11 @@ overrides:
   # host confusion via backslash authority introducer, and via an unclosed
   # bracket in the authority
   fast-uri: "^3.1.8"
+  # Retain current cache APIs and the Vary/prototype fixes; the stale-reuse
+  # remedy remains a source patch until upstream includes the complete guard.
+  http-cache-semantics: "^4.3.0"
+  # Current sprintf API with bounded precision in every argparse consumer.
+  sprintf-js: "1.1.3"
   # merge-key chains force quadratic CPU; 4.3.1 still burns on empty sources
   "js-yaml@3": "^3.15.0"
   "js-yaml@4": "^4.3.2"
@@ -97,8 +102,8 @@ overrides:
 # Local security remedy until a patched upstream release exists; see patches/README.md.
 patchedDependencies:
   braces@3.0.3: patches/braces@3.0.3.patch
-  http-cache-semantics@4.2.0: patches/http-cache-semantics@4.2.0.patch
-  sprintf-js@1.0.3: patches/sprintf-js@1.0.3.patch
+  http-cache-semantics@4.3.0: patches/http-cache-semantics@4.3.0.patch
+  sprintf-js@1.1.3: patches/sprintf-js@1.1.3.patch
 
 peerDependencyRules:
   allowedVersions:

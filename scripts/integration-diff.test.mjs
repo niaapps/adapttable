@@ -119,6 +119,21 @@ describe("Vue CI package gates", () => {
       assert.match(lane, /github.event_name == 'pull_request' && '--affected'/);
       if (job === "unit-shard") {
         assert.match(lane, /- name: vue/);
+      } else if (job === "eslint") {
+        assert.match(
+          lane,
+          /name: \[core, react, vue, antd, mui, kits, angular, showcase, tools\]/
+        );
+        assert.match(
+          lane,
+          /angular\) f="--filter=\.\/packages\/angular\/\*" ;;/
+        );
+        assert.match(lane, /showcase\) f="--filter=@adapttable\/showcase" ;;/);
+        const tools = lane.match(/tools\) f="([^"]+)" ;;/)?.[1];
+        assert.equal(
+          tools,
+          "--filter=@adapttable/cli --filter=@adapttable/i18n --filter=@adapttable/server --filter=@adapttable/ai --filter=@adapttable/examples"
+        );
       } else {
         assert.match(
           lane,

@@ -110,13 +110,20 @@ function runPlaywright(args) {
   });
 }
 
-function main() {
+async function main() {
   const files = changedFiles();
   if (files === null) {
     console.log(
       "e2e: could not diff against origin/main — running the full suite."
     );
     runPlaywright([]);
+    return;
+  }
+  const { verifiedVersionDiff } = await import("./version-diff.mjs");
+  if (verifiedVersionDiff(files, { base: "origin/main", cwd: REPO_ROOT })) {
+    console.log(
+      "e2e: verified release metadata preserves the dependency graph — skipping."
+    );
     return;
   }
   const plan = e2ePlan(files);
@@ -139,5 +146,5 @@ function main() {
 
 const thisFile = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === thisFile) {
-  main();
+  await main();
 }
