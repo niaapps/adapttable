@@ -1,8 +1,8 @@
 diff --git a/index.js b/index.js
-index f01e9a16b4781dc24c8f43dc7a4c8e6d1e4ae5eb..6ebef9a1f1b0651e7e514de31300e67ba8140d07 100644
+index 56c26025074cbcf218e3ec4d810662da93f8024e..d082e1fbc123d993986b0a9dafcb1144950c7d5f 100644
 --- a/index.js
 +++ b/index.js
-@@ -399,6 +399,10 @@ module.exports = class CachePolicy {
+@@ -400,6 +400,10 @@ module.exports = class CachePolicy {
              return this._evaluateRequestMissResult(req);
          }
  
@@ -13,16 +13,7 @@ index f01e9a16b4781dc24c8f43dc7a4c8e6d1e4ae5eb..6ebef9a1f1b0651e7e514de31300e67b
          if (!this._requestMatches(req, false)) {
              return this._evaluateRequestMissResult(req);
          }
-@@ -485,7 +489,7 @@ module.exports = class CachePolicy {
-         }
- 
-         // A Vary header field-value of "*" always fails to match
--        if (this._resHeaders.vary === '*') {
-+        if (this._resHeaders.vary && this._resHeaders.vary.split(',').some(field => field.trim() === '*')) {
-             return false;
-         }
- 
-@@ -612,7 +616,7 @@ module.exports = class CachePolicy {
+@@ -635,7 +639,7 @@ module.exports = class CachePolicy {
              return 0;
          }
  
@@ -31,7 +22,7 @@ index f01e9a16b4781dc24c8f43dc7a4c8e6d1e4ae5eb..6ebef9a1f1b0651e7e514de31300e67b
              return 0;
          }
  
-@@ -656,6 +660,22 @@ module.exports = class CachePolicy {
+@@ -679,6 +683,22 @@ module.exports = class CachePolicy {
          return defaultMinTtl;
      }
  
@@ -54,7 +45,7 @@ index f01e9a16b4781dc24c8f43dc7a4c8e6d1e4ae5eb..6ebef9a1f1b0651e7e514de31300e67b
      /**
       * Remaining time this cache entry may be useful for, in *milliseconds*.
       * You can use this as an expiration time for your cache storage.
-@@ -665,6 +685,9 @@ module.exports = class CachePolicy {
+@@ -688,6 +708,9 @@ module.exports = class CachePolicy {
       */
      timeToLive() {
          const age = this.maxAge() - this.age();
@@ -64,7 +55,7 @@ index f01e9a16b4781dc24c8f43dc7a4c8e6d1e4ae5eb..6ebef9a1f1b0651e7e514de31300e67b
          const staleIfErrorAge = age + toNumberOrZero(this._rescc['stale-if-error']);
          const staleWhileRevalidateAge = age + toNumberOrZero(this._rescc['stale-while-revalidate']);
          return Math.round(Math.max(0, age, staleIfErrorAge, staleWhileRevalidateAge) * 1000);
-@@ -683,7 +706,8 @@ module.exports = class CachePolicy {
+@@ -706,7 +729,8 @@ module.exports = class CachePolicy {
       * @returns {boolean} `true` if `stale-if-error` condition allows use of a stale response.
       */
      _useStaleIfError() {
@@ -74,7 +65,7 @@ index f01e9a16b4781dc24c8f43dc7a4c8e6d1e4ae5eb..6ebef9a1f1b0651e7e514de31300e67b
      }
  
      /** See `evaluateRequest()` for a more complete solution
-@@ -691,7 +715,7 @@ module.exports = class CachePolicy {
+@@ -714,7 +738,7 @@ module.exports = class CachePolicy {
       */
      useStaleWhileRevalidate() {
          const swr = toNumberOrZero(this._rescc['stale-while-revalidate']);
@@ -83,7 +74,7 @@ index f01e9a16b4781dc24c8f43dc7a4c8e6d1e4ae5eb..6ebef9a1f1b0651e7e514de31300e67b
      }
  
      /**
-@@ -832,7 +856,12 @@ module.exports = class CachePolicy {
+@@ -855,7 +879,12 @@ module.exports = class CachePolicy {
      revalidatedPolicy(request, response) {
          this._assertRequestHasHeaders(request);
  

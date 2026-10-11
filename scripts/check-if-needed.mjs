@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 
 import { classify } from "./ci-detect.mjs";
 import { gitBinary } from "./git-binary.mjs";
+import { verifiedVersionDiff } from "./version-diff.mjs";
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -120,7 +121,12 @@ function main() {
     return;
   }
 
-  const flags = classify(files);
+  const flags = classify(files, {
+    verifiedVersionOnly: verifiedVersionDiff(files, {
+      base: "origin/main",
+      cwd: REPO_ROOT,
+    }),
+  });
   const steps = checkPlan(flags);
   console.log(
     `check: ${checkReason(flags)} vs origin/main — ${steps

@@ -43,7 +43,7 @@ const VITEST_SHARED = /^vitest\.shared\.ts$/;
  *   versionOnly: boolean,
  * }}
  */
-export function classify(files) {
+export function classify(files, { verifiedVersionOnly } = {}) {
   const list = files.map((f) => f.trim()).filter(Boolean);
   const readme = list.some((f) => f === "README.md");
 
@@ -71,7 +71,8 @@ export function classify(files) {
   const eslintRoot = list.some((f) => ESLINT_ROOT.test(f));
   const examples = list.some((f) => EXAMPLES.test(f));
   const vitestShared = list.some((f) => VITEST_SHARED.test(f));
-  const versionOnly = list.every((f) => VERSION_ONLY.test(f));
+  const versionOnly =
+    verifiedVersionOnly ?? list.every((f) => VERSION_ONLY.test(f));
   const docsOnly =
     !versionOnly &&
     list.every((f) => DOCS_OR_META.test(f) && !PACKAGES.test(f));
@@ -168,5 +169,10 @@ if (invokedDirectly) {
   const files = process.stdin.isTTY
     ? parseArgs(process.argv)
     : await readStdin();
-  printOutputs(classify(files));
+  const { verifiedVersionDiff } = await import("./version-diff.mjs");
+  const verifiedVersionOnly = verifiedVersionDiff(files, {
+    base: process.env.ADAPTTABLE_DIFF_BASE,
+    head: process.env.ADAPTTABLE_DIFF_HEAD || "HEAD",
+  });
+  printOutputs(classify(files, { verifiedVersionOnly }));
 }

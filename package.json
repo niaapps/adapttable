@@ -35,7 +35,7 @@
     "react:matrix": "node scripts/react-matrix.mjs",
     "peer:floors": "node scripts/peer-floors.mjs",
     "changeset": "changeset",
-    "version-packages": "changeset version && pnpm install --lockfile-only && prettier --write \".changeset/*.json\" \"packages/*/*/CHANGELOG.md\" \"packages/*/*/package.json\"",
+    "version-packages": "node scripts/version-packages.mjs",
     "release": "turbo run build && changeset publish",
     "verify:release": "pnpm run format:check && pnpm run lint && pnpm run lint:root && pnpm run check:readmes && pnpm run check:docsurface && pnpm run check:parts && pnpm run check:api-contract && pnpm run check:package-split && pnpm run typecheck && pnpm run test:coverage && pnpm run build && pnpm run api:check && pnpm run publint && pnpm run smoke:dist && pnpm run budget && pnpm run consumer:harness && pnpm run migrate:rehearse && pnpm run peer:floors && pnpm run check:vue-peer-types && pnpm run check:vue-built-peers",
     "publint": "pnpm --filter \"./packages/*/*\" exec publint --strict",
@@ -117,7 +117,6 @@
     "prettier": "^3.9.6",
     "publint": "^0.3.24",
     "rimraf": "^6.1.3",
-    "sprintf-js": "1.0.3",
     "tsdown": "^0.22.14",
     "turbo": "^2.10.12",
     "typescript": "^6.0.3",
@@ -126,6 +125,7 @@
     "unrun": "^0.3.1",
     "vitest": "^4.1.11",
     "vue-eslint-parser": "^10.4.1",
-    "vue-tsc": "^3.3.12"
+    "vue-tsc": "^3.3.12",
+    "yaml": "^2.9.1"
   }
 }
