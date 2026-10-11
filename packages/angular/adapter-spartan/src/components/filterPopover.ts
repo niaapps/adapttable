@@ -144,6 +144,13 @@ export class AdaptFilterPopover {
   /** Brain retains its native portal and flips a low filter above its trigger. */
   protected readonly position = computed(() => {
     const edge = this.props().dir === "rtl" ? "start" : "end";
+    const document = this.anchor().nativeElement.ownerDocument;
+    const width = document.documentElement.clientWidth;
+    // CDK's RTL offsets must also leave room for a classic scrollbar.
+    const scrollbar =
+      width > 0
+        ? Math.max(0, (document.defaultView?.innerWidth ?? width) - width)
+        : 0;
     return this.positions
       .flexibleConnectedTo(this.anchor().nativeElement)
       .withPositions([
@@ -176,7 +183,7 @@ export class AdaptFilterPopover {
           offsetY: -4,
         },
       ])
-      .withViewportMargin(8)
+      .withViewportMargin(8 + scrollbar)
       .withFlexibleDimensions(true)
       .withPush(true);
   });

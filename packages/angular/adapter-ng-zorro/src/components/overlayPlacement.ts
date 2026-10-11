@@ -1,4 +1,5 @@
 /** NG-ZORRO portal ownership and scoped dismissal. Positioning belongs to the kit. */
+import { FlexibleConnectedPositionStrategy } from "@angular/cdk/overlay";
 import { DOCUMENT } from "@angular/common";
 import {
   afterEveryRender,
@@ -41,7 +42,20 @@ export function registerOverlayOrigin(
  */
 export function pushPopoverIntoViewport(popover: NzPopoverDirective): void {
   const overlay = popover.component?.overlay;
-  if (overlay) overlay.push = true;
+  if (overlay) {
+    // CDK's top-layer host excludes a classic scrollbar, while its RTL
+    // right offsets use the window width. Reserve that difference as well.
+    const width = document.documentElement.clientWidth;
+    const scrollbar = width > 0 ? Math.max(0, window.innerWidth - width) : 0;
+    const margin = 8 + scrollbar;
+    overlay.push = true;
+    overlay.viewportMargin = margin;
+    const strategy = overlay.overlayRef?.getConfig().positionStrategy;
+    if (strategy instanceof FlexibleConnectedPositionStrategy) {
+      strategy.withPush(true).withViewportMargin(margin);
+      overlay.overlayRef.updatePosition();
+    }
+  }
 }
 
 /** Whether a target belongs to a panel or one of its own child portals. @internal */

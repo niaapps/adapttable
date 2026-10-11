@@ -610,9 +610,6 @@ export const ColumnMenuChrome = /*#__PURE__*/ defineComponent(
         });
       const content = open.value
         ? [
-            h("div", part("column-menu-header", names), [
-              h("span", part("column-menu-title", names), labels.columns),
-            ]),
             slots.Input({
               attrs: {
                 ...part("column-menu-search", names),
@@ -715,6 +712,9 @@ export const ColumnMenuChrome = /*#__PURE__*/ defineComponent(
                 content: h(PanelContent, {
                   anchor: trigger.value,
                   scroll: true,
+                  header: h("div", part("column-menu-header", names), [
+                    h("span", part("column-menu-title", names), labels.columns),
+                  ]),
                   children: content,
                 }),
                 container,

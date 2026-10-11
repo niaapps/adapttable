@@ -14,6 +14,10 @@ export const PanelContent = defineComponent({
     modal: Boolean,
     scroll: Boolean,
     anchor: { type: Object as PropType<HTMLElement | null>, default: null },
+    header: {
+      type: [String, Number, Boolean, Array, Object] as PropType<VNodeChild>,
+      default: undefined,
+    },
     children: {
       type: [String, Number, Boolean, Array, Object] as PropType<VNodeChild>,
       default: undefined,
@@ -58,15 +62,31 @@ export const PanelContent = defineComponent({
         "div",
         {
           style: {
-            display: props.scroll ? "grid" : "flex",
+            display: "flex",
             gap: props.scroll ? "12px" : undefined,
             flexDirection: "column",
             maxHeight: height.value,
             minHeight: 0,
-            overflowY: props.scroll ? "auto" : undefined,
+            overflow: props.scroll ? "hidden" : undefined,
           },
         },
-        [props.children]
+        props.scroll
+          ? [
+              h("div", { style: { flex: "none" } }, [props.header]),
+              h(
+                "div",
+                {
+                  style: {
+                    display: "grid",
+                    gap: "12px",
+                    minHeight: 0,
+                    overflowY: "auto",
+                  },
+                },
+                [props.children]
+              ),
+            ]
+          : [props.children]
       );
   },
 });

@@ -9,8 +9,10 @@ import {
 } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
+import { By } from "@angular/platform-browser";
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzCardModule } from "ng-zorro-antd/card";
+import { NzPopoverDirective } from "ng-zorro-antd/popover";
 import { NzSelectModule } from "ng-zorro-antd/select";
 
 import { kitSelector } from "../testUtils";
@@ -19,6 +21,7 @@ import { AdaptFilterPopover } from "./components/filterPopover";
 import {
   AdaptOverlayOrigin,
   overlayContains,
+  pushPopoverIntoViewport,
   registerOverlayOrigin,
 } from "./components/overlayPlacement";
 
@@ -154,6 +157,18 @@ afterEach(() => {
 });
 
 describe("NG-ZORRO filter overlays", () => {
+  it("reserves classic scrollbar space when the native popover pushes into view", async () => {
+    vi.spyOn(document.documentElement, "clientWidth", "get").mockReturnValue(
+      window.innerWidth - 15
+    );
+    const { fixture } = await mount();
+    const directive = fixture.debugElement
+      .query(By.directive(NzPopoverDirective))
+      .injector.get(NzPopoverDirective);
+    pushPopoverIntoViewport(directive);
+    expect(directive.component?.overlay.push).toBe(true);
+    expect(directive.component?.overlay.viewportMargin).toBe(23);
+  });
   it("uses an anchored portalled popover without a mask and restores focus on Escape", async () => {
     const { fixture, element, trigger, settle } = await mount();
     const surface = part("filters-popover")!;

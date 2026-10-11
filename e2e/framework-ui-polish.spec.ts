@@ -46,6 +46,12 @@ for (const framework of ["react", "angular", "vue"]) {
         await page.goto(
           `${framework === "vue" ? "/vue" : ""}/${pathOf(kit)}/filtering/?locale=${variant.locale}`
         );
+        // Exercise the reserved scrollbar space used by Linux/Windows,
+        // including on macOS where native scrollbars normally overlay content.
+        await page.addStyleTag({
+          content:
+            "html { overflow-y: scroll; scrollbar-gutter: stable; } ::-webkit-scrollbar { width: 15px; height: 15px; }",
+        });
         const labels = getLabels(variant.locale);
         const trigger = page
           .getByRole("button", { name: labels.filters, exact: true })

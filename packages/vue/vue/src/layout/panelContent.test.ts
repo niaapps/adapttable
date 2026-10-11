@@ -10,6 +10,8 @@ afterEach(() => {
 function mountContent(props: {
   anchor?: HTMLElement | null;
   modal?: boolean;
+  scroll?: boolean;
+  header?: VNodeChild;
   children?: VNodeChild;
 }) {
   const options = shallowRef(props);
@@ -32,6 +34,21 @@ function mountContent(props: {
   };
 }
 describe("filter content viewport budget", () => {
+  it("keeps the heading outside the scrolling menu controls", () => {
+    const view = mountContent({
+      scroll: true,
+      header: h("h3", "Columns"),
+      children: h("button", "Rename column"),
+    });
+    const [header, body] = [...view.element.children] as HTMLElement[];
+    expect(header?.textContent).toBe("Columns");
+    expect(header?.style.flex).toBe("0 0 auto");
+    expect(body?.textContent).toBe("Rename column");
+    expect(body?.style.overflowY).toBe("auto");
+    expect(body?.style.minHeight).toBe("0px");
+    expect(view.element.style.overflow).toBe("hidden");
+    view.unmount();
+  });
   it("reserves card chrome, measures scrolling and resize, then releases its observer", async () => {
     let top = 180;
     let bottom = 216;

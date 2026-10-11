@@ -5,7 +5,7 @@ import {
 } from "@adapttable/angular/adapter";
 import { NgTemplateOutlet } from "@angular/common";
 import {
-  afterNextRender,
+  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -145,7 +145,8 @@ export class AdaptFilterPopover {
   }
 
   constructor() {
-    afterNextRender(() => {
+    afterRenderEffect(() => {
+      if (!this.props().open) return;
       pushPopoverIntoViewport(this.popover());
     });
     effect((onCleanup) => {
