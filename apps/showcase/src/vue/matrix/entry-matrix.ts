@@ -15,8 +15,9 @@ import { createApp, h } from "vue";
 
 import { resolveMatrixRoute } from "../../matrix/content";
 import { SHOWCASE_PRESENTATION } from "./data";
+import { loadVueShowcaseKit } from "./loadKit";
 import MatrixPage from "./MatrixPage.vue";
-import { SHOWCASE_KIT, type ShowcaseKit } from "./showcaseKit";
+import { SHOWCASE_KIT } from "./showcaseKit";
 
 document.documentElement.dataset.framework = "vue";
 
@@ -36,30 +37,7 @@ if (!route) {
   );
 }
 
-/** Only the requested kit and its stylesheets enter this page's runtime graph. */
-const loadKit = (key: string): Promise<{ kit: ShowcaseKit }> => {
-  switch (key) {
-    case "vue-unstyled":
-      return import("./kits/unstyled");
-    case "element-plus":
-      return import("./kits/elementPlus");
-    case "vuetify":
-      return import("./kits/vuetify");
-    case "naive-ui":
-      return import("./kits/naiveUi");
-    case "reka-ui":
-      return import("./kits/rekaUi");
-    case "shadcn-vue":
-      return import("./kits/shadcnVue");
-    case "nuxt-ui":
-      return import("./kits/nuxtUi");
-    case "quasar":
-      return import("./kits/quasar");
-    default:
-      throw new Error(`No Vue showcase kit for "${key}"`);
-  }
-};
-const { kit } = await loadKit(route.adapter.key);
+const { kit } = await loadVueShowcaseKit(route.adapter.key);
 
 const dark = (() => {
   try {

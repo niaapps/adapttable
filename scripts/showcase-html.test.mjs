@@ -57,7 +57,7 @@ describe("the generated showcase pages", () => {
     // derived count would agree with itself no matter what it produced.
     assert.equal(
       files.length,
-      8 * 22 + 9 * (1 + 21) + 8 * (1 + 21) + 8 + 2 + 16 + 7 + 5
+      8 * 22 + 9 * (1 + 21) + 8 * (1 + 21) + 8 + 2 + 2 + 16 + 7 + 5
     );
     assert.equal(new Set(files.map((file) => file.dir)).size, files.length);
   });
@@ -114,6 +114,9 @@ describe("the generated showcase pages", () => {
         /name="robots" content="noindex, follow"/
       );
       assert.ok(generated[0].html.includes(page.entry.slice(1)), page.dir);
+      assert.match(generated[0].html, /aria-label="Vue showcase navigation"/);
+      assert.match(generated[0].html, /vue-main\/\?kit=/);
+      assert.match(generated[0].html, /vue-all-options\/\?kit=/);
       assert.ok(
         generated[0].html.includes(siteUrl(demoRoute(page.path, "vue"))),
         page.dir
@@ -148,6 +151,9 @@ describe("the generated showcase pages", () => {
         page.dir
       );
       assert.ok(generated[0].html.includes(page.entry.slice(1)), page.dir);
+      assert.match(generated[0].html, /aria-label="Vue showcase navigation"/);
+      assert.match(generated[0].html, /vue-main\/\?kit=/);
+      assert.match(generated[0].html, /vue-all-options\/\?kit=/);
       assert.match(
         generated[0].html,
         /Preview of table controls, selection, search, pagination and presentation settings/
@@ -178,6 +184,9 @@ describe("the generated showcase pages", () => {
         page.dir
       );
       assert.ok(generated[0].html.includes(page.entry.slice(1)), page.dir);
+      assert.match(generated[0].html, /aria-label="Vue showcase navigation"/);
+      assert.match(generated[0].html, /vue-main\/\?kit=/);
+      assert.match(generated[0].html, /vue-all-options\/\?kit=/);
       assert.ok(generated[0].html.includes(page.notice), page.dir);
       assert.equal(
         VUE_KIT_PAGES.some((preview) => preview.path === page.path),
@@ -457,6 +466,13 @@ describe("the generated showcase pages", () => {
         assert.ok(main.includes(vuePage.description), file.dir);
         assert.ok(main.includes(vuePage.notice), file.dir);
         assert.doesNotMatch(main, /<pre><code>|npm install/);
+        continue;
+      }
+      if (file.dir === "vue-main" || file.dir === "vue-all-options") {
+        assert.match(file.html, /data-vue-mode="(?:live|lab)"/);
+        assert.match(file.html, /src="\.\.\/src\/vue\/demo\/entry-demo\.ts"/);
+        assert.match(main, /href="\/vue\/getting-started\/"/);
+        assert.ok(main.split(/\s+/).length > 60, file.dir);
         continue;
       }
       const mode = ANGULAR_MODES.get(file.dir);

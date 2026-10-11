@@ -13,6 +13,9 @@ const DEPLOYED = /^\/vue\/demo(?:\/|$)/.test(window.location.pathname);
 
 /** A Vue demo page, by its path under the Vue demo root. */
 export const vueHref = (page = ""): string => {
+  if (!page) return DEPLOYED ? "/vue/demo/" : "/vue-main/";
+  if (page === "all-options")
+    return DEPLOYED ? "/vue/demo/all-options/" : "/vue-all-options/";
   const root = DEPLOYED ? "/vue/demo/" : "/vue/";
   return page ? `${root}${page}/` : root;
 };

@@ -70,8 +70,8 @@ describe("framework navigation", () => {
       equivalent: true,
     });
     assert.deepEqual(frameworkDocsTarget("/react/filtering/", "vue"), {
-      href: "/vue/getting-started/?unavailable=filtering",
-      equivalent: false,
+      href: "/vue/filtering/",
+      equivalent: true,
     });
     assert.deepEqual(frameworkDocsTarget("/concepts/", "vue"), {
       href: "/concepts/",
@@ -308,8 +308,8 @@ it("preserves Vue kit paths, matching features and URL state across frameworks",
       "react",
       "/tailwind/filtering/?density=compact",
     ],
-    ["/angular-main/", "vue", "/vue/unstyled/"],
-    ["/react/demo/?kit=mui", "vue", "/vue/demo/vuetify/"],
+    ["/angular-main/", "vue", "/vue-main/"],
+    ["/react/demo/?kit=mui", "vue", "/vue/demo/?kit=vuetify"],
   ];
   for (const [path, framework, href] of cases) {
     assert.deepEqual(
@@ -324,6 +324,30 @@ it("preserves Vue kit paths, matching features and URL state across frameworks",
       SHOWCASE_ADAPTERS,
       featuresOf
     ),
-    { href: "/vue/unstyled/?unavailable=all-options", equivalent: false }
+    { href: "/vue-all-options/?kit=vue-unstyled", equivalent: true }
   );
+});
+
+it("clears table URL state across framework modes and feature destinations", () => {
+  for (const framework of ["react", "angular", "vue"]) {
+    for (const path of [
+      "/react/demo/?kit=mui",
+      "/react/demo/all-options/?kit=mui",
+      "/react/demo/mui/editing/?",
+    ]) {
+      const target = frameworkDemoTarget(
+        path +
+          "&locale=ar&density=compact&demo.search=alice&vue-lab.page=5&filter=status&grouping=on",
+        framework,
+        SHOWCASE_ADAPTERS,
+        featuresOf
+      );
+      const query = new URL(target.href, "https://adapttable.local")
+        .searchParams;
+      assert.equal(query.get("locale"), "ar");
+      assert.equal(query.get("density"), "compact");
+      for (const key of ["demo.search", "vue-lab.page", "filter", "grouping"])
+        assert.equal(query.has(key), false);
+    }
+  }
 });

@@ -99,7 +99,7 @@ describe("source-relative markdown links", () => {
     );
   });
 
-  it("routes experimental Vue links without treating them as React sources", () => {
+  it("routes published Vue links without treating them as React sources", () => {
     assert.equal(
       rewriteDocLinks(
         "[API](./api.md#data-sources) [Concepts](../concepts.md)",
@@ -113,7 +113,7 @@ describe("source-relative markdown links", () => {
     );
     assert.equal(
       rewriteDocLinks("[Filters](../filtering.md)", "vue/api.md"),
-      "[Filters](/vue/getting-started/?unavailable=filtering)"
+      "[Filters](/vue/filtering/)"
     );
     assert.deepEqual(
       sidebarSlugs()

@@ -114,21 +114,34 @@ function demoParts(url) {
     .filter(Boolean);
   if (parts[0] === "angular-main") parts.length = 0;
   if (parts[0] === "angular-all-options") parts[0] = "all-options";
+  if (parts[0] === "vue-main") parts.length = 0;
+  if (parts[0] === "vue-all-options") parts[0] = "all-options";
   return parts;
+}
+/** Only presentation preferences cross pages; table queries belong to one demo.
+ * @param {URL} url */
+function presentationQuery(url) {
+  const query = new URLSearchParams();
+  for (const key of ["locale", "dir", "density", "mobile", "theme"]) {
+    const value = url.searchParams.get(key);
+    if (value !== null) query.set(key, value);
+  }
+  return query;
 }
 /** @param {string} framework @param {boolean} lab @param {boolean} deployed */
 function modePath(framework, lab, deployed) {
   if (deployed) return `/${framework}/demo/${lab ? "all-options/" : ""}`;
   if (framework === "angular")
     return lab ? "/angular-all-options/" : "/angular-main/";
+  if (framework === "vue") return lab ? "/vue-all-options/" : "/vue-main/";
   return lab ? "/all-options/" : "/";
 }
 /** @template {{key: string, framework: string, built?: boolean, path?: string}} T
  * @param {URL} url @param {string} framework @param {readonly T[]} adapters
  * @param {boolean} lab @param {boolean} deployed */
 function demoModeTarget(url, framework, adapters, lab, deployed) {
-  const query = new URLSearchParams(url.search);
-  const selectedKit = query.get("kit");
+  const query = new URLSearchParams();
+  const selectedKit = url.searchParams.get("kit");
   if (selectedKit) {
     const kit = findKit(
       adapters,
@@ -139,25 +152,15 @@ function demoModeTarget(url, framework, adapters, lab, deployed) {
     if (!kit) query.set("kit-unavailable", selectedKit);
     else query.delete("kit-unavailable");
   }
-  let destination = modePath(framework, lab, deployed);
-  if (framework === "vue") {
-    const kit = findKit(
-      adapters,
-      framework,
-      query.get("kit") ?? defaultKit(framework)
-    );
-    if (!kit) return { href: "/vue/getting-started/", equivalent: false };
-    destination = `${deployed ? "/vue/demo/" : "/vue/"}${kit.path ?? kit.key}/`;
-    query.delete("kit");
-    if (lab) query.set("unavailable", "all-options");
-  }
+  for (const [key, value] of presentationQuery(url)) query.set(key, value);
+  const destination = modePath(framework, lab, deployed);
   return {
     href: destination + (query.size ? `?${query}` : ""),
     equivalent: !query.has("kit-unavailable") && !query.has("unavailable"),
   };
 }
 
-/** Preserve matching kit, feature and query state on local and published pages.
+/** Preserve matching kit, feature and presentation on local and published pages.
  * @param {string} path @param {string} framework
  * @template {{key: string, framework: string, built?: boolean, path?: string}} T
  * @param {readonly T[]} adapters
@@ -191,7 +194,7 @@ export function frameworkDemoTarget(path, framework, adapters, features) {
   const base = deployed ? `/${framework}/demo/${kitPath}/` : localBase;
   const suffix = feature ? feature + "/" : "";
   const equivalentKit = kit.key === counterpart;
-  const query = new URLSearchParams(url.search);
+  const query = presentationQuery(url);
   query.delete("unavailable");
   query.delete("kit-unavailable");
   if (!supported) query.set("unavailable", feature);

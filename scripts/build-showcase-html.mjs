@@ -41,6 +41,7 @@ import {
   pageDirOf,
   pagePathOf,
   pathOf,
+  SHOWCASE_ADAPTERS,
   snippetFor,
   VUE_KIT_LAB_PAGES,
   VUE_KIT_PAGES,
@@ -302,14 +303,9 @@ const linkList = (items) =>
     "        </ul>",
   ].join("\n");
 
-/**
- * Where "the live demo" points from a kit's page: React's shared live demo,
- * or the kit's own landing for a framework whose kits each have one.
- */
+/** The shared switcher is each framework's basic entry, with the kit selected. */
 const liveDemoRoute = (adapter) =>
-  adapter.framework === "react"
-    ? demoRoute()
-    : demoRoute(pathOf(adapter), adapter.framework);
+  `${demoRoute("", adapter.framework)}?kit=${encodeURIComponent(adapter.key)}`;
 
 /** The other kits on this kit's framework with a page for this feature. */
 const kitsWithFeature = (adapter, feature) =>
@@ -583,8 +579,49 @@ export const angularModePage = (lab = false) => {
 };
 
 /** A native Vue showcase surface. */
+export const vueModePage = (lab = false) => {
+  const dir = lab ? "vue-all-options" : "vue-main";
+  const title = lab
+    ? "Vue data table Feature Lab — AdaptTable"
+    : "Vue data table live demo — AdaptTable";
+  const description = lab
+    ? "Compose Vue table filters, cell editing, selection, grouping and row controls. Switch eight native UI kits, test RTL and explore interactive feature examples."
+    : "Explore a Vue data table with eight native UI kits: filters, sorting, editable cells, selection, saved views and CSV export, with responsive cards and RTL.";
+  const links = SHOWCASE_ADAPTERS.filter(
+    (adapter) => adapter.framework === "vue" && adapter.built !== false
+  )
+    .map(
+      (adapter) =>
+        `<a href="${upTo(dir)}vue/${pathOf(adapter)}/">${escapeHtml(adapter.label)} examples</a>`
+    )
+    .join(" ");
+  return {
+    dir,
+    html: htmlDocument(
+      head({
+        dir,
+        title,
+        description,
+        route: demoRoute(lab ? "all-options" : "", "vue"),
+      }),
+      `<div id="root" data-vue-mode="${lab ? "lab" : "live"}"><main class="at-fallback"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p><p>The same people dataset runs in every adapter. Use frontend data or a simulated server query, change density and language, and explore filters, editing and row controls. Each table uses its selected UI kit's components. Updates belong to the demo host.</p><nav aria-label="Vue adapters">${links}</nav><a href="/vue/getting-started/">Vue documentation</a></main></div>
+    <script type="module" src="../src/vue/demo/entry-demo.ts"></script>`
+    ),
+  };
+};
+
+/** A native Vue showcase surface. */
 export const nativeVuePage = (definition = VUE_NATIVE_BASELINE) => {
   const { dir, title, description, path, entry, notice } = definition;
+  const kitPath = path.split("/")[0];
+  const kitKey = kitPath === "unstyled" ? "vue-unstyled" : kitPath;
+  const navigation = `<nav class="vue-example-nav" aria-label="Vue showcase navigation">
+      <strong>AdaptTable · Vue</strong>
+      <a href="${upTo(dir)}vue-main/?kit=${kitKey}">Live demo</a>
+      <a href="${upTo(dir)}vue-all-options/?kit=${kitKey}">Feature Lab</a>
+      <a href="${upTo(dir)}vue/${kitPath}/">Adapter features</a>
+      <a href="${siteUrl("/vue/getting-started/")}">Docs</a>
+    </nav>`;
   return {
     dir,
     html: htmlDocument(
@@ -595,7 +632,17 @@ export const nativeVuePage = (definition = VUE_NATIVE_BASELINE) => {
         route: demoRoute(path, "vue"),
         indexable: false,
       }),
-      `<div id="root"><main class="at-fallback"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p><p>${escapeHtml(notice)}</p></main></div>
+      `<style>
+      .vue-example-nav { display:flex; flex-wrap:wrap; align-items:center; gap:8px; max-width:1280px; margin:0 auto; padding:12px 16px; box-sizing:border-box; font:14px/1.5 system-ui,sans-serif; border-bottom:1px solid #d1d5db; }
+      .vue-example-nav strong { margin-inline-end:auto; }
+      .vue-example-nav a { display:inline-flex; align-items:center; min-height:44px; padding:0 12px; color:#226b50; border-radius:6px; text-decoration:none; }
+      .vue-example-nav a:hover { background:#226b5015; }
+      .vue-example-nav a:focus-visible { outline:2px solid currentColor; outline-offset:2px; }
+      [data-theme="dark"] .vue-example-nav { color:#e5e7eb; border-color:#374151; }
+      [data-theme="dark"] .vue-example-nav a { color:#6ee7b7; }
+    </style>
+    ${navigation}
+    <div id="root"><main class="at-fallback"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p><p>${escapeHtml(notice)}</p></main></div>
     <footer class="vue-baseline"><a href="${upTo(dir)}third-party-notices.txt">Third-party notices</a></footer>
     <script type="module" src="${upTo(dir)}${entry.slice(1)}"></script>`
     ),
@@ -609,6 +656,8 @@ export const showcaseHtmlFiles = () => [
   ),
   angularModePage(),
   angularModePage(true),
+  vueModePage(),
+  vueModePage(true),
   ...matrixPages().map((page) => {
     const adapter = adapterByKey(page.adapter);
     if (!adapter) throw new Error(`unknown adapter: ${page.adapter}`);

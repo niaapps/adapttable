@@ -399,7 +399,7 @@ export const SHOWCASE_ADAPTERS = [
     landing: {
       title: "Angular Material Angular data table examples — AdaptTable",
       description:
-        "Explore the Angular Material adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. First public 0.1.0 release in preparation.",
+        "Explore the Angular Material adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. Native controls, responsive cards and RTL.",
     },
     landingIntro: [
       "{tagline}",
@@ -450,7 +450,7 @@ export const SHOWCASE_ADAPTERS = [
     landing: {
       title: "ng-bootstrap Angular data table examples — AdaptTable",
       description:
-        "Explore the ng-bootstrap adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. First public 0.1.0 release in preparation.",
+        "Explore the ng-bootstrap adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. Native controls, responsive cards and RTL.",
     },
     landingIntro: [
       "{tagline}",
@@ -501,7 +501,7 @@ export const SHOWCASE_ADAPTERS = [
     landing: {
       title: "Angular Aria Angular data table examples — AdaptTable",
       description:
-        "Explore the Angular Aria adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. First public 0.1.0 release in preparation.",
+        "Explore the Angular Aria adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. Native controls, responsive cards and RTL.",
     },
     landingIntro: [
       "{tagline}",
@@ -552,7 +552,7 @@ export const SHOWCASE_ADAPTERS = [
     landing: {
       title: "ngx-bootstrap Angular data table examples — AdaptTable",
       description:
-        "Explore the ngx-bootstrap adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. First public 0.1.0 release in preparation.",
+        "Explore the ngx-bootstrap adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. Native controls, responsive cards and RTL.",
     },
     landingIntro: [
       "{tagline}",
@@ -603,7 +603,7 @@ export const SHOWCASE_ADAPTERS = [
     landing: {
       title: "Angular CDK Angular data table examples — AdaptTable",
       description:
-        "Explore the Angular CDK adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. First public 0.1.0 release in preparation.",
+        "Explore the Angular CDK adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. Native controls, responsive cards and RTL.",
     },
     landingIntro: [
       "{tagline}",
@@ -654,7 +654,7 @@ export const SHOWCASE_ADAPTERS = [
     landing: {
       title: "Spartan Angular data table examples — AdaptTable",
       description:
-        "Explore the Spartan adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. First public 0.1.0 release in preparation.",
+        "Explore the Spartan adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. Native controls, responsive cards and RTL.",
     },
     landingIntro: [
       "{tagline}",
@@ -705,7 +705,7 @@ export const SHOWCASE_ADAPTERS = [
     landing: {
       title: "Taiga UI Angular data table examples — AdaptTable",
       description:
-        "Explore the Taiga UI adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. First public 0.1.0 release in preparation.",
+        "Explore the Taiga UI adapter for Angular: filtering, editing, grouping, pivot, virtualization and export. Native controls, responsive cards and RTL.",
     },
     landingIntro: [
       "{tagline}",
@@ -1752,11 +1752,11 @@ const rowKey = (row: Person) => row.id;
     heads: {
       angular: {
         description:
-          "A {kit} {framework} data table that becomes cards on phones — automatic below the mobile breakpoint, with the same columns and state and infinite scroll in place of the pager.",
+          "Responsive {kit} data tables with mobile cards, shared columns and filter state, and infinite scrolling below the mobile breakpoint.",
       },
       "ng-zorro": {
         description:
-          "A {kit} {framework} data table that becomes cards on phones — automatic below the mobile breakpoint, with the same columns and state and infinite scroll in place of the pager.",
+          "Responsive {kit} data tables with mobile cards, shared columns and filter state, and infinite scrolling below the mobile breakpoint.",
       },
     },
     intros: {

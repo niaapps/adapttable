@@ -49,6 +49,17 @@ describe("site addresses", () => {
       "vue/shadcn-vue.md",
       "vue/vuetify.md",
       "vue/features.md",
+      "vue/sorting.md",
+      "vue/pagination.md",
+      "vue/selection.md",
+      "vue/mobile-cards.md",
+      "vue/data-tiers.md",
+      "vue/filtering.md",
+      "vue/header-filters.md",
+      "vue/cell-editing.md",
+      "vue/row-grouping.md",
+      "vue/rows.md",
+      "vue/saved-views.md",
       "vue/api.md",
       "vue/assistant.md",
       "vue/summary-row.md",
@@ -62,10 +73,7 @@ describe("site addresses", () => {
       assert.equal(docsRoute(source), `/${source.replace(/\.md$/, "")}/`);
     }
     assert.equal(docsReferenceRoute("api", "vue"), "/vue/api/");
-    assert.equal(
-      docsReferenceRoute("filtering", "vue"),
-      "/vue/getting-started/?unavailable=filtering"
-    );
+    assert.equal(docsReferenceRoute("filtering", "vue"), "/vue/filtering/");
     assert.equal(docsReferenceRoute("concepts", "vue"), "/concepts/");
     assert.equal(
       switchDocsRoute("/vue/api/", "react", ["api.md", ...VUE_DOCS]),
@@ -76,7 +84,7 @@ describe("site addresses", () => {
         "filtering.md",
         ...VUE_DOCS,
       ]),
-      "/vue/getting-started/"
+      "/vue/filtering/"
     );
   });
 
