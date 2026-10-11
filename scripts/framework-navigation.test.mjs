@@ -58,23 +58,11 @@ for (const value of [
   });
 }
 describe("framework navigation", () => {
-  it("offers a docs-only experimental Vue surface without full demo parity", () => {
-    assert.equal(normalizeFramework("vue"), "react");
+  it("offers Vue throughout the site and preserves supported docs", () => {
+    assert.equal(normalizeFramework("vue"), "vue");
     assert.equal(selectedFramework("/concepts/", "vue"), "vue");
-    for (const path of [
-      "/angular/demo/",
-      "/angular/demo/all-options/",
-      "/angular/demo/ng-zorro/editing/",
-    ]) {
-      assert.deepEqual(
-        frameworkDemoTarget(path, "vue", adapters, features),
-        frameworkDemoTarget(path, "react", adapters, features)
-      );
-    }
     assert.ok(
-      DOCS_FRAMEWORKS.some(
-        ({ key, label }) => key === "vue" && label.includes("experimental")
-      )
+      DOCS_FRAMEWORKS.some(({ key, label }) => key === "vue" && label === "Vue")
     );
     assert.equal(selectedFramework("/vue/api/", "react"), "vue");
     assert.deepEqual(frameworkDocsTarget("/react/api/", "vue"), {
@@ -296,4 +284,46 @@ it("does not fabricate a React counterpart for an unregistered guide", () => {
       equivalent: true,
     });
   }
+});
+
+it("preserves Vue kit paths, matching features and URL state across frameworks", () => {
+  const cases = [
+    [
+      "/react/demo/mui/editing/?locale=ar",
+      "vue",
+      "/vue/demo/vuetify/editing/?locale=ar",
+    ],
+    [
+      "/angular/demo/unstyled/filtering/",
+      "vue",
+      "/vue/demo/unstyled/filtering/",
+    ],
+    [
+      "/vue/demo/vuetify/editing/",
+      "angular",
+      "/angular/demo/material/editing/",
+    ],
+    [
+      "/vue/unstyled/filtering/?density=compact",
+      "react",
+      "/tailwind/filtering/?density=compact",
+    ],
+    ["/angular-main/", "vue", "/vue/unstyled/"],
+    ["/react/demo/?kit=mui", "vue", "/vue/demo/vuetify/"],
+  ];
+  for (const [path, framework, href] of cases) {
+    assert.deepEqual(
+      frameworkDemoTarget(path, framework, SHOWCASE_ADAPTERS, featuresOf),
+      { href, equivalent: true }
+    );
+  }
+  assert.deepEqual(
+    frameworkDemoTarget(
+      "/all-options/?kit=tailwind",
+      "vue",
+      SHOWCASE_ADAPTERS,
+      featuresOf
+    ),
+    { href: "/vue/unstyled/?unavailable=all-options", equivalent: false }
+  );
 });

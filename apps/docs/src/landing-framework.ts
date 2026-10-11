@@ -15,8 +15,11 @@ const reactCopy = new WeakMap<HTMLElement, ChildNode[]>();
 function updateLandingFramework(framework: string) {
   framework = normalizeFramework(framework);
   if (select) select.value = framework;
+  document.documentElement.dataset.framework = framework;
   const icon = document.querySelector("[data-landing-icon]");
-  if (icon) icon.textContent = framework === "angular" ? "Ⓐ" : "⚛";
+  if (icon)
+    icon.textContent =
+      framework === "vue" ? "V" : framework === "angular" ? "Ⓐ" : "⚛";
   try {
     localStorage.setItem(FRAMEWORK_STORAGE_KEY, framework);
   } catch {
@@ -32,8 +35,13 @@ function updateLandingFramework(framework: string) {
     .forEach((element) => {
       if (!reactCopy.has(element))
         reactCopy.set(element, Array.from(element.childNodes));
-      if (framework === "angular")
-        element.textContent = element.dataset.angularCopy ?? "";
+      if (framework === "angular" || framework === "vue")
+        element.textContent =
+          framework === "vue"
+            ? (element.dataset.vueCopy ??
+              element.dataset.angularCopy?.replaceAll("Angular", "Vue") ??
+              "")
+            : (element.dataset.angularCopy ?? "");
       else element.replaceChildren(...reactCopy.get(element)!);
     });
   document.querySelectorAll<HTMLAnchorElement>("a[href]").forEach((link) => {
@@ -41,7 +49,7 @@ function updateLandingFramework(framework: string) {
     const url = new URL(link.dataset.frameworkHref);
     if (
       (url.origin !== location.origin && url.origin !== ORIGIN) ||
-      !/^\/(react|angular)\//.test(url.pathname)
+      !/^\/(react|angular|vue)\//.test(url.pathname)
     )
       return;
     if (link.closest("[data-framework-only]")) return;
@@ -56,9 +64,11 @@ function updateLandingFramework(framework: string) {
     link.href = target.href;
   });
   const install =
-    framework === "angular"
-      ? "npm install @adapttable/angular-unstyled @adapttable/angular"
-      : "npx @adapttable/cli init";
+    framework === "vue"
+      ? "npm install @adapttable/vue-unstyled @adapttable/vue"
+      : framework === "angular"
+        ? "npm install @adapttable/angular-unstyled @adapttable/angular"
+        : "npx @adapttable/cli init";
   document.querySelectorAll(".install code").forEach((code) => {
     code.textContent = install;
   });

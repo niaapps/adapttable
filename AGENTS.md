@@ -8,7 +8,7 @@ contributors alike; PRs are reviewed against them.
 `@adapttable/core` owns the engine — state, the filter model, operators, URL
 serialization, chips, mutations, registries, and the state machines behind
 every interaction. The framework bindings adapt them into hooks (`@adapttable/react`) or signals
-(`@adapttable/angular`) and render structure. Adapters own the look. Switching the kit in
+(`@adapttable/angular`) or refs (`@adapttable/vue`) and render structure. Adapters own the look. Switching the kit in
 the live demo must change how the whole table looks, including the Filters
 popover and drawer: an MUI table filters with MUI controls, a Mantine table
 with Mantine controls.
@@ -61,10 +61,12 @@ Unify the **model**, never the **pixels**. The standing pattern is
   native HTML and NG-ZORRO controls through that binding.
 - `packages/angular/ai-angular` adds optional agent, assistant and speech
   bindings over neutral `@adapttable/ai`.
-- `@adapttable/angular-unstyled`, `@adapttable/ng-zorro` and
-  `@adapttable/ai-angular` are prepared for their first public `0.1.0` release.
-  npm publication is a separate owner-controlled step; publishable manifests
-  and implemented support do not imply registry availability.
+- The Angular binding, all nine Angular adapters and `@adapttable/ai-angular`
+  are published on npm. Check the current manifest and registry version before
+  choosing a changeset bump; package versions are independent.
+
+- `packages/vue/vue` is the Vue binding. Its eight published adapters live
+  under `packages/vue/adapter-*` and supply native controls through the binding.
 
 ## Product decisions — settled, do not reopen
 

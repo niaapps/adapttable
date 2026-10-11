@@ -6,7 +6,7 @@
 
 React adapters cover Mantine, MUI, Chakra, Ant Design, Radix, Base UI, shadcn/ui
 and unstyled HTML. Angular offers nine native kits, including Material and
-NG-ZORRO. Experimental Vue support includes eight kits: Unstyled, Element Plus,
+NG-ZORRO. Vue support includes eight kits: Unstyled, Element Plus,
 Vuetify, Naive UI, Reka UI, shadcn-vue, Nuxt UI and Quasar.
 
 [![npm version](https://img.shields.io/npm/v/@adapttable/core.svg)](https://www.npmjs.com/package/@adapttable/core)
@@ -35,13 +35,13 @@ Vuetify, Naive UI, Reka UI, shadcn-vue, Nuxt UI and Quasar.
 releases are tested on Node 22.12 and Node 24. The Angular binding, native kit and
 AI binding accept Angular 20, 21 or 22; the NG-ZORRO kit requires Angular 22.
 All nine Angular kits and the optional AI binding are public npm packages.
-Experimental Vue packages require Vue 3.5 or newer; each kit's setup guide lists
+Vue packages require Vue 3.5 or newer; each kit's setup guide lists
 its peer versions, styles and providers.
 
 ## Features
 
 Every one of these works in **all eight React adapters**. Angular’s nine kits
-and the eight experimental Vue kits compose the neutral engine through their
+and the eight Vue kits compose the neutral engine through their
 own factories and controls. See the [Angular](https://adapttable.orwamahmoud.com/angular/features/)
 and [Vue](https://adapttable.orwamahmoud.com/vue/features/) guides for framework-specific APIs.
 
@@ -162,15 +162,15 @@ Optional behavior is imported from feature subpaths such as
 | `@adapttable/angular-aria`     | Angular Aria controls.                                                     |
 | `@adapttable/angular-cdk`      | Angular CDK controls.                                                      |
 | `@adapttable/ai-angular`       | Optional Angular agent, assistant and speech bindings.                     |
-| `@adapttable/vue`              | Experimental public Vue 3.5 binding.                                       |
-| `@adapttable/vue-unstyled`     | Experimental public native Vue controls.                                   |
-| `@adapttable/element-plus`     | Experimental Element Plus Vue controls.                                    |
-| `@adapttable/vuetify`          | Experimental Vuetify controls.                                             |
-| `@adapttable/naive-ui`         | Experimental Naive UI controls.                                            |
-| `@adapttable/reka-ui`          | Experimental Reka UI controls.                                             |
-| `@adapttable/shadcn-vue`       | Experimental shadcn-vue controls.                                          |
-| `@adapttable/nuxt-ui`          | Experimental Nuxt UI controls.                                             |
-| `@adapttable/quasar`           | Experimental Quasar controls.                                              |
+| `@adapttable/vue`              | Public Vue 3.5 binding.                                                    |
+| `@adapttable/vue-unstyled`     | Public native Vue controls.                                                |
+| `@adapttable/element-plus`     | Element Plus Vue controls.                                                 |
+| `@adapttable/vuetify`          | Vuetify controls.                                                          |
+| `@adapttable/naive-ui`         | Naive UI controls.                                                         |
+| `@adapttable/reka-ui`          | Reka UI controls.                                                          |
+| `@adapttable/shadcn-vue`       | shadcn-vue controls.                                                       |
+| `@adapttable/nuxt-ui`          | Nuxt UI controls.                                                          |
+| `@adapttable/quasar`           | Quasar controls.                                                           |
 | `@adapttable/ai-vue`           | Optional Vue agent, assistant and speech binding.                          |
 
 The CLI recognizes an Angular project when both `@angular/core` and
@@ -202,7 +202,7 @@ npx @adapttable/cli init
 pnpm add @adapttable/mantine
 ```
 
-For an existing Vue application, install the experimental native kit:
+For an existing Vue application, install the native kit:
 
 ```sh
 pnpm add @adapttable/vue-unstyled vue@^3.5.0
@@ -284,7 +284,7 @@ Start with the
 The roadmap is tracked in GitHub issues:
 
 - [Neutral core for framework bindings](https://github.com/orwa-mahmoud/adapttable/issues/419) — the table's behavior moves into `@adapttable/core`, so every framework binding drives the same engine.
-- [Vue binding](https://github.com/orwa-mahmoud/adapttable/issues/420) — experimental `0.1.0` with eight native kits and [Vue guides](https://adapttable.orwamahmoud.com/vue/getting-started/).
+- [Vue binding](https://github.com/orwa-mahmoud/adapttable/issues/420) — `0.1.0` with eight native kits and [Vue guides](https://adapttable.orwamahmoud.com/vue/getting-started/).
 - [Angular binding](https://github.com/orwa-mahmoud/adapttable/issues/421) — implemented with [Angular guides](https://adapttable.orwamahmoud.com/angular/getting-started/) and nine native kits.
 
 Each one lists its work items and what blocks what. Open items with nothing blocking them are [ready to start](https://github.com/orwa-mahmoud/adapttable/issues?q=is%3Aissue%20state%3Aopen%20-is%3Ablocked%20has%3Aparent-issue). What has shipped is in each published package's `CHANGELOG.md`.

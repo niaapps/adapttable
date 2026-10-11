@@ -6,7 +6,7 @@ components.
 
 ## Availability and versions
 
-This is an experimental public `0.1.0` package. Install `@adapttable/quasar`
+This is an public `0.1.0` package. Install `@adapttable/quasar`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 

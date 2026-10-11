@@ -1,6 +1,6 @@
 # AdaptTable — full documentation
 
-> AdaptTable v3 documentation: a framework-neutral data engine in @adapttable/core, headless React, Angular and experimental Vue bindings, and native table adapters. React kits include Mantine, MUI, Chakra UI, Ant Design, Radix Themes, Base UI, shadcn/ui and unstyled Tailwind. Angular kits include native unstyled, NG-ZORRO, Material, ng-bootstrap, ngx-bootstrap, Spartan, Taiga UI, Aria and CDK. Individually imported features include filtering, grouping, pivot tables, formulas, editing, virtualization and export. Responsive mobile cards, URL state, i18n/RTL and optional provider-neutral AI sessions. MIT licensed; applications own data and persistence.
+> AdaptTable v3 documentation: a framework-neutral data engine in @adapttable/core, headless React, Angular and Vue bindings, and native table adapters. React kits include Mantine, MUI, Chakra UI, Ant Design, Radix Themes, Base UI, shadcn/ui and unstyled Tailwind. Angular kits include native unstyled, NG-ZORRO, Material, ng-bootstrap, ngx-bootstrap, Spartan, Taiga UI, Aria and CDK. Individually imported features include filtering, grouping, pivot tables, formulas, editing, virtualization and export. Responsive mobile cards, URL state, i18n/RTL and optional provider-neutral AI sessions. MIT licensed; applications own data and persistence.
 
 Start with your framework's getting-started and the shared concepts for package ownership, then features for opt-in composition. The Angular binding, all nine native kits and @adapttable/ai-angular are available on npm. The Angular 0.5 binding changes canonical import paths; use its migration guide and compatible kit releases when upgrading. Vue has an experimental 0.1.0 public binding and eight kits — native Unstyled, Element Plus, Naive UI, Nuxt UI, Quasar, Reka UI, shadcn-vue and Vuetify — each covering the full feature set with its own controls, plus optional agents, assistant UI and speech through @adapttable/ai-vue. The Vue packages are published on npm. Use the v2-to-v3 migration guide when upgrading React; historical migration examples describe their named versions, not current import paths. This file is generated from the canonical guides; the linked index is at https://adapttable.orwamahmoud.com/llms.txt.
 
@@ -307,6 +307,10 @@ Full surface: [API reference](./api.md) ·
 
 ▶ **See it working:** [the live demo](https://adapttable.orwamahmoud.com/react/demo/) — one dataset, one feature set, re-rendered by every real adapter.
 
+The examples below use React. The same neutral engine powers the
+[Angular signal binding](angular/getting-started.md) and
+[Vue reactive binding](vue/getting-started.md), each with its own native UI kits.
+
 ## The `TableSource` contract
 
 Everything in AdaptTable revolves around one idea: a **`TableSource<T>`** —
@@ -486,12 +490,13 @@ const columns = [
 <DataTable data={people} columns={columns} rowKey={(row) => row.id} />;
 ```
 
-## The engine, and why it has no React in it
+## The framework-neutral engine
 
 Filtering, sorting, paging and grouping are decisions about data, not about
 the DOM. They live in `@adapttable/core` as a plain object with no
-framework in its import graph, and `@adapttable/react` is the binding that
-subscribes a component tree to one.
+framework in its import graph. `@adapttable/react` connects it to React hooks,
+`@adapttable/angular` to Angular signals, and `@adapttable/vue` to Vue refs
+and component lifecycles.
 
 ```ts
 import { createTableEngine } from "@adapttable/core";
@@ -20978,10 +20983,10 @@ DataModeProps`: the base carries every prop except the data mode, which is
   class joiner) and shadcn additionally ships `shadcnClassNames`, the
   preset map behind its default look.
 
-## Experimental Vue binding and kits
+## Vue binding and kits
 
 `@adapttable/vue`, `@adapttable/vue-unstyled` and the seven Vue UI kits below are
-public experimental `0.1.0` packages on npm, requiring Vue
+public `0.1.0` packages on npm, requiring Vue
 `^3.5.0` or a kit's newer floor. The
 [Vue getting-started guide](./vue/getting-started.md) and
 [Vue API reference](./vue/api.md) describe the source, rendering, lifecycle
@@ -21300,7 +21305,7 @@ for data scope and how the shell aligns footer columns with its body.
 
 ## Optional Vue assistant contracts
 
-`@adapttable/ai-vue` is the optional experimental Vue 3.5 binding to neutral
+`@adapttable/ai-vue` is the optional Vue 3.5 binding to neutral
 AI stores. `tableAgent(options: MaybeRefOrGetter<TableAgentOptions>)` returns a
 `StaticTableFeature`; `TableAgentBridge` and `TableAgentColumnPatch` describe
 host notifications and column patches. `TABLE_AGENT_STATE` is the typed feature
@@ -24251,14 +24256,15 @@ From your Angular application root (the folder containing `angular.json` and
 `package.json`), run:
 
 ```sh
-npx @adapttable/cli@3.1.0 init
+npx @adapttable/cli@3.2.0 init
 ```
 
-The published CLI version shown above recognizes an Angular project when
-**both** `angular.json` and an `@angular/core` dependency are present. It detects
-NG-ZORRO from `ng-zorro-antd` in your dependencies; otherwise it chooses the
-unstyled Angular kit. Install NG-ZORRO before running the command if that is
-the kit you want. There is no `--kit` option.
+The CLI recognizes an Angular project when **both** `angular.json` and an
+`@angular/core` dependency are present. It selects the first installed kit in
+this order: Angular Material, ng-bootstrap, Spartan, Taiga UI, NG-ZORRO,
+Angular Aria, ngx-bootstrap, then Angular CDK. Install your preferred UI kit
+before running the command. It chooses Angular unstyled when no kit signal
+is present. There is no `--kit` option.
 
 It writes a standalone `PeopleTable` to `src/app/peopleTable.ts` and prints the
 package installation command. Run that printed command, then import
@@ -24267,28 +24273,10 @@ The CLI does not mount the component or run installation for you. Existing
 scaffold files are skipped; use `init --force` only when you intend to overwrite
 them. The CLI's version does not need to match the table packages.
 
-The upcoming CLI release also detects the seven new Angular kits. To use this
-release-preparation source, build the CLI from this repository and invoke its
-entry from your Angular application root:
-
-```sh
-# From the AdaptTable repository:
-pnpm --filter @adapttable/cli build
-
-# From your Angular application (replace the path with your checkout):
-node /path/to/adapttable/packages/shared/cli/dist/cli.js init
-```
-
-The source CLI selects the first installed kit in this order: Angular Material,
-ng-bootstrap, Spartan, Taiga UI, NG-ZORRO, Angular Aria, ngx-bootstrap, then
-Angular CDK. It falls back to Angular unstyled when no kit signal is present.
-It still requires both Angular project markers above and has no `--kit` flag.
-
-It prints the registry command for missing dependencies and the chosen kit's
-stylesheet, provider and asset setup instructions. The seven new adapters'
-registry installation still requires their public `0.1.0` publication to
-complete. This added detection is source preparation for an upcoming CLI
-release; it is not a claim about the published `3.1.0` command above.
+The CLI prints the registry command for missing dependencies and the chosen
+kit's stylesheet, provider and asset setup instructions. All nine Angular kits
+are published on npm; follow the selected kit's setup guide for its native
+providers and stylesheets.
 
 ## Data and callbacks
 
@@ -24996,9 +24984,9 @@ the documented feature factories rather than this internal compatibility helper.
 
 ## Release verification
 
-The source includes behavior, conformance, SSR, and native-control contract
-fixtures. Full integration compilation, coverage, and browser acceptance are
-required before release. npm publication is a separate release step.
+The adapter is published on npm. The source includes behavior, conformance,
+SSR and native-control contract fixtures, with integration compilation,
+coverage and browser acceptance checks.
 
 See the [package README](https://github.com/orwa-mahmoud/adapttable/tree/main/packages/angular/adapter-taiga-ui)
 for the full entry inventory and application setup.
@@ -25325,11 +25313,9 @@ interactions; the binding owns table navigation and screen-reader messages.
 
 ## Verification and release status
 
-The source includes Angular TestBed directive fixtures and the shared adapter
-behavior suite. The release must pass the integrated Angular compiler,
-coverage, package build and real-browser keyboard/overlay checks before it is
-called release-ready. A workspace manifest or showcase route is not evidence
-of npm publication.
+The adapter is published on npm. The source includes Angular TestBed directive
+fixtures and the shared adapter behavior suite, with integrated Angular compiler,
+coverage, package build and real-browser keyboard and overlay checks.
 
 See the [package README](https://github.com/orwa-mahmoud/adapttable/tree/main/packages/angular/adapter-angular-aria)
 for usage, feature entries, styling hooks and the precise primitive mapping.
@@ -30978,8 +30964,7 @@ draft; the reader still chooses Send. Neither function chooses a model provider
 or creates a backend connection by itself.
 
 The AI Angular binding, unstyled Angular kit and NG-ZORRO kit are public npm
-packages. The seven additional Angular adapters are prepared for their first
-public `0.1.0` release; registry installation requires publication to complete.
+packages. All nine Angular adapters are published on npm.
 See [getting started](./getting-started.md) for installation guidance.
 See [Agent capabilities](./agent-capabilities.md) for attaching a live session
 to a mounted table.
@@ -31829,7 +31814,7 @@ See [Data tiers](./data-tiers.md), [SSR](./ssr-rsc.md) and the
 
 # Get started with Vue tables
 
-The experimental Vue integration provides reactive data sources, a headless
+The Vue integration provides reactive data sources, a headless
 table controller and adapters for Vue Unstyled, Element Plus, Vuetify, Naive UI,
 Reka UI, shadcn-vue, Nuxt UI and Quasar. They share AdaptTable's framework-neutral
 engine, with Vue-native refs, renderers, effect scopes and component lifecycles.
@@ -31837,7 +31822,7 @@ Each adapter supplies its own controls; the binding owns the table model.
 
 ## Availability and scope
 
-The Vue binding, Unstyled adapter and all seven styled adapters are experimental
+The Vue binding, Unstyled adapter and all seven styled adapters are public
 public `0.1.0` packages. Install the native kit in your Vue application:
 
 ```sh
@@ -32181,7 +32166,7 @@ checkboxes, selects, popovers, drawers and message boxes.
 
 ## Availability and versions
 
-This is an experimental public `0.1.0` package. Install `@adapttable/element-plus`
+This is an public `0.1.0` package. Install `@adapttable/element-plus`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32280,7 +32265,7 @@ Naive UI supplies the visible controls and their styling.
 
 ## Availability and versions
 
-This is an experimental public `0.1.0` package. Install `@adapttable/naive-ui`
+This is an public `0.1.0` package. Install `@adapttable/naive-ui`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32365,7 +32350,7 @@ the buttons, inputs, selects, checkboxes, popovers, drawers and menus.
 
 ## Availability and versions
 
-This is an experimental public `0.1.0` package. Install `@adapttable/nuxt-ui`
+This is an public `0.1.0` package. Install `@adapttable/nuxt-ui`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32467,7 +32452,7 @@ components.
 
 ## Availability and versions
 
-This is an experimental public `0.1.0` package. Install `@adapttable/quasar`
+This is an public `0.1.0` package. Install `@adapttable/quasar`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32561,7 +32546,7 @@ menu primitives.
 
 ## Availability and versions
 
-This is an experimental public `0.1.0` package. Install `@adapttable/reka-ui`
+This is an public `0.1.0` package. Install `@adapttable/reka-ui`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32639,7 +32624,7 @@ shadcn-vue controls built on Reka UI.
 
 ## Availability and versions
 
-This is an experimental public `0.1.0` package. Install `@adapttable/shadcn-vue`
+This is an public `0.1.0` package. Install `@adapttable/shadcn-vue`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32715,7 +32700,7 @@ supplies the buttons, fields, selects, checkboxes, menus and dialogs.
 
 ## Availability and versions
 
-This is an experimental public `0.1.0` package. Install `@adapttable/vuetify`
+This is an public `0.1.0` package. Install `@adapttable/vuetify`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -32798,11 +32783,11 @@ README lists every feature entry point and its Vuetify control.
 
 # Compose Vue table features
 
-The experimental Vue adapters share the `@adapttable/vue` table model. Add
+The Vue adapters share the `@adapttable/vue` table model. Add
 optional behavior through the chosen kit's feature factories: the adapter
 contributes its own controls while the binding owns state, validation, row
 projection and lifecycle. The binding, Unstyled kit and seven styled adapters
-are public experimental `0.1.0` packages on npm. See [getting started](./getting-started.md)
+are public `0.1.0` packages on npm. See [getting started](./getting-started.md)
 for installation and UI-kit providers.
 
 ## Choose an entry point
@@ -33887,9 +33872,9 @@ passed. They use fictional in-browser data and host-owned writes.
 
 ---
 
-# Experimental Vue API reference
+# Vue API reference
 
-This reference describes the experimental `0.1.0` public packages.
+This reference describes the `0.1.0` public packages.
 They require Vue `^3.5.0` and are published on npm. See
 [getting started](./getting-started.md) for scope, installation and a first
 native table. Identically named APIs in the React and Angular references do
@@ -33984,7 +33969,7 @@ importing the binding root never installs controls, optional features or AI.
 `@adapttable/element-plus`, `@adapttable/vuetify`, `@adapttable/naive-ui`,
 `@adapttable/reka-ui`, `@adapttable/shadcn-vue`, `@adapttable/nuxt-ui` and
 `@adapttable/quasar` export their own `DataTable` and 41 canonical feature
-factories through focused entries. All are experimental `0.1.0` packages on npm.
+factories through focused entries. All are `0.1.0` packages on npm.
 Their controls consume the shared Vue model and Chrome contracts; they do not
 import another framework binding or replace the table engine.
 
@@ -34494,7 +34479,7 @@ Additional class hooks land on their corresponding functional elements:
 - Affordances and announcements: `searchIcon`, `exportSpinner`,
   `gridAnnouncer`, `rowReorderAnnouncer`, `tableStatusAnnouncer`.
 
-The experimental Vue targets `row-action`, `grid-focus-announcer` and `status`
+The Vue targets `row-action`, `grid-focus-announcer` and `status`
 are corrected to the canonical `action-button`, `grid-announcer` and
 `table-status-announcer` targets. Update selectors that used those old part
 names. The existing `rowAction` class hook remains an alias for `actionButton`,
@@ -34773,7 +34758,7 @@ may have been replaced or deactivated. Render these controls through the kit's
 
 ## Optional Vue assistant contracts
 
-`@adapttable/ai-vue` is the optional experimental Vue 3.5 binding to neutral
+`@adapttable/ai-vue` is the optional Vue 3.5 binding to neutral
 AI stores. `tableAgent(options: MaybeRefOrGetter<TableAgentOptions>)` returns a
 `StaticTableFeature`; `TableAgentBridge` and `TableAgentColumnPatch` describe
 host notifications and column patches. `TABLE_AGENT_STATE` is the typed feature
@@ -34829,7 +34814,7 @@ complete signatures are retained in the assistant API report.
 
 # Vue assistant and approvals
 
-The Vue packages are experimental. `@adapttable/ai-vue`
+The Vue packages are published on npm. `@adapttable/ai-vue`
 connects neutral AI stores to Vue 3.5. `@adapttable/vue/adapter` provides
 structural Chrome and required control slots. Every Vue kit — Unstyled,
 Element Plus, Vuetify, Naive UI, Reka UI, shadcn-vue, Nuxt UI and Quasar —
@@ -35053,7 +35038,7 @@ pnpm add @adapttable/ai-vue @adapttable/vue-unstyled vue@^3.5.0
 ```
 
 Add `@adapttable/vue` or `@adapttable/ai` directly when importing their APIs in
-application code. These packages are experimental. The CLI currently scaffolds
+application code. The CLI currently scaffolds
 React and Angular, so Vue integration uses explicit application setup.
 
 The [native assistant showcase](/vue/demo/unstyled/assistant/) mounts the actual
@@ -35261,7 +35246,7 @@ binding's `/adapter` entry; ordinary native tables use the `summaryRow`,
 Add `columnMenu()` from the chosen Vue kit's `/column-menu` entry to the table's
 `features` list. It is available in Unstyled, Element Plus, Vuetify, Naive UI,
 Reka UI, shadcn-vue, Nuxt UI and Quasar; use the same kit for the table and feature.
-These packages are experimental. The menu provides column search, visibility, pinning,
+The menu provides column search, visibility, pinning,
 reordering, sorting, sizing, and reset. Rename controls appear for columns
 that declare `renameable: true` when the table provides its rename channel.
 
@@ -35416,7 +35401,7 @@ column layout, labels and action callbacks.
 
 # Vue navigation, find and status
 
-The Vue binding and Unstyled adapter expose optional cell navigation, column selection, find and status controls. The packages are experimental.
+The Vue binding and Unstyled adapter expose optional cell navigation, column selection, find and status controls. The packages are published on npm.
 
 ```vue
 <script setup lang="ts">
@@ -35581,7 +35566,7 @@ for the same `extendFeature` and `slotRender` pattern.
 
 # Vue actions and exports
 
-The Vue binding, Unstyled kit and seven styled adapters are experimental
+The Vue binding, Unstyled kit and seven styled adapters are public
 `0.1.0` packages on npm. Install your chosen kit using
 [Get started with Vue](./getting-started.md) before using these examples.
 The action factories are opt-in: `bulkActions`, `commandPalette`, `contextMenu`,
@@ -35862,7 +35847,7 @@ shown in the [editing guide](./features.md#editing-and-host-persistence).
 
 # Vue specialized data views
 
-These packages are experimental and published on npm.
+These packages are published on npm.
 
 Every Vue adapter provides kit-owned grouping configuration and row-reordering
 controls, plus the shared virtualization feature. Unstyled, Reka UI and shadcn-vue

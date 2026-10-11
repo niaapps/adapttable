@@ -1,6 +1,6 @@
 # Vue actions and exports
 
-The Vue binding, Unstyled kit and seven styled adapters are experimental
+The Vue binding, Unstyled kit and seven styled adapters are public
 `0.1.0` packages on npm. Install your chosen kit using
 [Get started with Vue](./getting-started.md) before using these examples.
 The action factories are opt-in: `bulkActions`, `commandPalette`, `contextMenu`,

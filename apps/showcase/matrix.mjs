@@ -748,7 +748,7 @@ export const SHOWCASE_ADAPTERS = [
     pkg: "@adapttable/vue-unstyled",
     peer: "vue",
     install:
-      "# Runs once the Vue packages are published to npm\npnpm add @adapttable/vue-unstyled @adapttable/vue @adapttable/core",
+      "pnpm add @adapttable/vue-unstyled @adapttable/vue @adapttable/core",
     provider: "",
     tagline:
       "Native elements and no opinions — every style is yours, addressed by part name.",
@@ -776,7 +776,7 @@ export const SHOWCASE_ADAPTERS = [
     pkg: "@adapttable/element-plus",
     peer: "element-plus",
     install:
-      "# Runs once the Vue packages are published to npm\npnpm add @adapttable/element-plus @adapttable/vue @adapttable/core element-plus",
+      "pnpm add @adapttable/element-plus @adapttable/vue @adapttable/core element-plus",
     provider: "",
     tagline: "An Element Plus data table, in Element Plus's own controls.",
     surface:
@@ -793,7 +793,7 @@ export const SHOWCASE_ADAPTERS = [
     pkg: "@adapttable/vuetify",
     peer: "vuetify",
     install:
-      "# Runs once the Vue packages are published to npm\npnpm add @adapttable/vuetify @adapttable/vue @adapttable/core vuetify",
+      "pnpm add @adapttable/vuetify @adapttable/vue @adapttable/core vuetify",
     provider: "VApp",
     tagline: "A Material Design data table, drawn by Vuetify's own components.",
     surface:
@@ -810,7 +810,7 @@ export const SHOWCASE_ADAPTERS = [
     pkg: "@adapttable/naive-ui",
     peer: "naive-ui",
     install:
-      "# Runs once the Vue packages are published to npm\npnpm add @adapttable/naive-ui @adapttable/vue @adapttable/core naive-ui",
+      "pnpm add @adapttable/naive-ui @adapttable/vue @adapttable/core naive-ui",
     provider: "",
     tagline: "A Naive UI data table, drawn with Naive UI's own components.",
     surface:
@@ -827,7 +827,7 @@ export const SHOWCASE_ADAPTERS = [
     pkg: "@adapttable/reka-ui",
     peer: "reka-ui",
     install:
-      "# Runs once the Vue packages are published to npm\npnpm add @adapttable/reka-ui @adapttable/vue @adapttable/core reka-ui",
+      "pnpm add @adapttable/reka-ui @adapttable/vue @adapttable/core reka-ui",
     provider: "",
     tagline:
       "A Reka UI data table — accessible primitives in a compact, neutral theme.",
@@ -845,7 +845,7 @@ export const SHOWCASE_ADAPTERS = [
     pkg: "@adapttable/shadcn-vue",
     peer: "reka-ui",
     install:
-      "# Runs once the Vue packages are published to npm\npnpm add @adapttable/shadcn-vue @adapttable/vue @adapttable/core reka-ui",
+      "pnpm add @adapttable/shadcn-vue @adapttable/vue @adapttable/core reka-ui",
     provider: "",
     tagline: "A shadcn-vue data table, styled by the tokens you already own.",
     surface:
@@ -862,7 +862,7 @@ export const SHOWCASE_ADAPTERS = [
     pkg: "@adapttable/nuxt-ui",
     peer: "@nuxt/ui",
     install:
-      "# Runs once the Vue packages are published to npm\npnpm add @adapttable/nuxt-ui @adapttable/vue @adapttable/core @nuxt/ui",
+      "pnpm add @adapttable/nuxt-ui @adapttable/vue @adapttable/core @nuxt/ui",
     provider: "UApp",
     tagline: "A Nuxt UI data table, built from Nuxt UI components.",
     surface:
@@ -879,7 +879,7 @@ export const SHOWCASE_ADAPTERS = [
     pkg: "@adapttable/quasar",
     peer: "quasar",
     install:
-      "# Runs once the Vue packages are published to npm\npnpm add @adapttable/quasar @adapttable/vue @adapttable/core quasar@2.34.0",
+      "pnpm add @adapttable/quasar @adapttable/vue @adapttable/core quasar@2.34.0",
     provider: "",
     tagline: "A Quasar data table, in Quasar's own components.",
     surface:
@@ -4323,7 +4323,7 @@ export const VUE_NATIVE_BASELINE = Object.freeze({
   description:
     "Explore native Vue table search, sorting, pagination, selection and responsive cards.",
   notice:
-    "This development preview is not a published package or a complete feature-parity release.",
+    "A focused native-control example. Explore the full Vue kit and feature demos from the showcase.",
   entry: "/src/vue/entry-native.ts",
 });
 
@@ -4577,8 +4577,7 @@ export const VUE_KIT_LAB_PAGES = Object.freeze([
     title: "shadcn-vue filter panel lab — Vue — AdaptTable",
     description:
       "Exercise shadcn-vue filter fields, nested filter groups, focus and controlled state with the real adapter controls.",
-    notice:
-      "Experimental feature lab for browser checks. The Vue packages are not yet published to npm.",
+    notice: "Interactive feature lab for the published Vue packages.",
     entry: "/src/vue/kits/entry-shadcn-filter-panel.ts",
   },
   {
@@ -4588,8 +4587,7 @@ export const VUE_KIT_LAB_PAGES = Object.freeze([
     title: "shadcn-vue table features lab — Vue — AdaptTable",
     description:
       "Exercise shadcn-vue grouping, pivot configuration, row moves and Saved Views with the real adapter controls.",
-    notice:
-      "Experimental feature lab for browser checks. The Vue packages are not yet published to npm.",
+    notice: "Interactive feature lab for the published Vue packages.",
     entry: "/src/vue/kits/entry-shadcn-feature-parity.ts",
   },
   {
@@ -4599,8 +4597,7 @@ export const VUE_KIT_LAB_PAGES = Object.freeze([
     title: "shadcn-vue action surfaces lab — Vue — AdaptTable",
     description:
       "Exercise shadcn-vue command and context menus, side panels and assistant controls with the real adapter.",
-    notice:
-      "Experimental feature lab for browser checks. The Vue packages are not yet published to npm.",
+    notice: "Interactive feature lab for the published Vue packages.",
     entry: "/src/vue/kits/entry-shadcn-action-surfaces.ts",
   },
   {
@@ -4610,8 +4607,7 @@ export const VUE_KIT_LAB_PAGES = Object.freeze([
     title: "Nuxt UI workspace lab — Vue — AdaptTable",
     description:
       "Exercise Nuxt UI command and context menus, Saved Views, controlled side panels and host-owned row moves.",
-    notice:
-      "Experimental feature lab for browser checks. The Vue packages are not yet published to npm.",
+    notice: "Interactive feature lab for the published Vue packages.",
     entry: "/src/vue/kits/entry-nuxt-workspace.ts",
   },
   {
@@ -4621,8 +4617,7 @@ export const VUE_KIT_LAB_PAGES = Object.freeze([
     title: "Naive UI filter panel lab — Vue — AdaptTable",
     description:
       "Exercise Naive UI filter fields, header filters, nested selects, the filter drawer and controlled state with the real adapter controls.",
-    notice:
-      "Experimental feature lab for browser checks. The Vue packages are not yet published to npm.",
+    notice: "Interactive feature lab for the published Vue packages.",
     entry: "/src/vue/kits/entry-naive-filter-panel.ts",
   },
 ]);

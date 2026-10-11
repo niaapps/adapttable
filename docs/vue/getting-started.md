@@ -1,6 +1,6 @@
 # Get started with Vue tables
 
-The experimental Vue integration provides reactive data sources, a headless
+The Vue integration provides reactive data sources, a headless
 table controller and adapters for Vue Unstyled, Element Plus, Vuetify, Naive UI,
 Reka UI, shadcn-vue, Nuxt UI and Quasar. They share AdaptTable's framework-neutral
 engine, with Vue-native refs, renderers, effect scopes and component lifecycles.
@@ -8,7 +8,7 @@ Each adapter supplies its own controls; the binding owns the table model.
 
 ## Availability and scope
 
-The Vue binding, Unstyled adapter and all seven styled adapters are experimental
+The Vue binding, Unstyled adapter and all seven styled adapters are public
 public `0.1.0` packages. Install the native kit in your Vue application:
 
 ```sh

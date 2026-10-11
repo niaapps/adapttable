@@ -12,25 +12,31 @@ type Entry = StarlightRouteData["sidebar"][number];
 /** Filter the published sidebar before rendering, retaining shared contracts. */
 export const onRequest = defineRouteMiddleware((context) => {
   if (/^\/v\d+\//.test(context.url.pathname)) return;
+  // Shared guides need the complete inventory: the client selects the remembered
+  // framework after loading this static page.
+  if (!/^\/(react|angular|vue)\//.test(context.url.pathname)) return;
   const framework = selectedFramework(context.url.pathname);
+  const seen = new Set<string>();
   const transform = (items: Entry[]): Entry[] =>
     items.flatMap((item): Entry[] => {
       if (item.type === "group") {
-        if (item.label === "Angular" || item.label === "Vue (experimental)")
-          return [];
+        if (item.label === "Angular" || item.label === "Vue")
+          return item.label.toLowerCase() === framework
+            ? transform(item.entries)
+            : [];
         const entries = transform(item.entries);
         return entries.length ? [{ ...item, entries }] : [];
       }
       const target = frameworkDocsTarget(item.href, framework);
-      return target.equivalent
-        ? [
-            {
-              ...item,
-              href: target.href,
-              isCurrent: target.href === context.url.pathname,
-            },
-          ]
-        : [];
+      if (!target.equivalent || seen.has(target.href)) return [];
+      seen.add(target.href);
+      return [
+        {
+          ...item,
+          href: target.href,
+          isCurrent: target.href === context.url.pathname,
+        },
+      ];
     });
   const route = context.locals.starlightRoute;
   route.sidebar = transform(route.sidebar);

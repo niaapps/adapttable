@@ -119,9 +119,9 @@ the documented feature factories rather than this internal compatibility helper.
 
 ## Release verification
 
-The source includes behavior, conformance, SSR, and native-control contract
-fixtures. Full integration compilation, coverage, and browser acceptance are
-required before release. npm publication is a separate release step.
+The adapter is published on npm. The source includes behavior, conformance,
+SSR and native-control contract fixtures, with integration compilation,
+coverage and browser acceptance checks.
 
 See the [package README](https://github.com/orwa-mahmoud/adapttable/tree/main/packages/angular/adapter-taiga-ui)
 for the full entry inventory and application setup.

@@ -1,6 +1,6 @@
 # Vue specialized data views
 
-These packages are experimental and published on npm.
+These packages are published on npm.
 
 Every Vue adapter provides kit-owned grouping configuration and row-reordering
 controls, plus the shared virtualization feature. Unstyled, Reka UI and shadcn-vue

@@ -2,6 +2,10 @@
 
 ▶ **See it working:** [the live demo](https://adapttable.orwamahmoud.com/react/demo/) — one dataset, one feature set, re-rendered by every real adapter.
 
+The examples below use React. The same neutral engine powers the
+[Angular signal binding](angular/getting-started.md) and
+[Vue reactive binding](vue/getting-started.md), each with its own native UI kits.
+
 ## The `TableSource` contract
 
 Everything in AdaptTable revolves around one idea: a **`TableSource<T>`** —
@@ -181,12 +185,13 @@ const columns = [
 <DataTable data={people} columns={columns} rowKey={(row) => row.id} />;
 ```
 
-## The engine, and why it has no React in it
+## The framework-neutral engine
 
 Filtering, sorting, paging and grouping are decisions about data, not about
 the DOM. They live in `@adapttable/core` as a plain object with no
-framework in its import graph, and `@adapttable/react` is the binding that
-subscribes a component tree to one.
+framework in its import graph. `@adapttable/react` connects it to React hooks,
+`@adapttable/angular` to Angular signals, and `@adapttable/vue` to Vue refs
+and component lifecycles.
 
 ```ts
 import { createTableEngine } from "@adapttable/core";

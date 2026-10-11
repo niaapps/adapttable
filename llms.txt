@@ -4,7 +4,7 @@
 
 ## Version and integration boundaries
 
-This index describes the v3 documentation. Check the installed package version before applying examples; use the migration guides for v1/v2. React hooks come from `@adapttable/react` or a documented adapter re-export, not from core. Angular injection functions and renderer types come from `@adapttable/angular`. Individual features use kit subpaths; React's `standardFeatures()` and Angular's `standardPreset()` compose their documented common sets. Enabling props from v2 alone do not activate v3 features. Check registry availability for Angular kits and `@adapttable/ai-angular` before installing. Vue has an experimental `0.1.0` public binding and eight kits — native Unstyled, Element Plus, Naive UI, Nuxt UI, Quasar, Reka UI, shadcn-vue and Vuetify — each covering the full feature set with its own controls, plus optional agents, assistant UI and speech through `@adapttable/ai-vue`. The Vue packages are published on npm.
+This index describes the v3 documentation. Check the installed package version before applying examples; use the migration guides for v1/v2. React hooks come from `@adapttable/react` or a documented adapter re-export, not from core. Angular injection functions and renderer types come from `@adapttable/angular`. Individual features use kit subpaths; React's `standardFeatures()` and Angular's `standardPreset()` compose their documented common sets. Enabling props from v2 alone do not activate v3 features. Check registry availability for Angular kits and `@adapttable/ai-angular` before installing. Vue has an `0.1.0` public binding and eight kits — native Unstyled, Element Plus, Naive UI, Nuxt UI, Quasar, Reka UI, shadcn-vue and Vuetify — each covering the full feature set with its own controls, plus optional agents, assistant UI and speech through `@adapttable/ai-vue`. The Vue packages are published on npm.
 
 Use AdaptTable when you want TanStack-Table-style headless freedom but batteries-included for your specific UI kit — with URL state, RTL, a real filter UX, virtualization, and mobile layouts that do not break responsively.
 
@@ -38,7 +38,7 @@ Angular packages:
 - [@adapttable/ng-zorro](https://github.com/orwa-mahmoud/adapttable/tree/main/packages/angular/adapter-ng-zorro): Angular 22 and NG-ZORRO 22.1.1 kit; the host loads the NG-ZORRO stylesheet.
 - [@adapttable/ai-angular](https://github.com/orwa-mahmoud/adapttable/tree/main/packages/angular/ai-angular): Optional Angular AI binding, with `tableAgent`, `injectTableAssistant` and `injectSpeechInput`; protocol helpers stay in `@adapttable/ai`.
 
-Experimental Vue packages:
+Vue packages:
 
 - [Vue assistant and approvals](https://adapttable.orwamahmoud.com/vue/assistant/): optional agents, conversations, native approval controls and speech.
 
@@ -212,9 +212,9 @@ const {
 - [Angular accessibility](https://adapttable.orwamahmoud.com/angular/accessibility/): focus, labels, grid navigation and announcements
 - [Angular realtime data](https://adapttable.orwamahmoud.com/angular/realtime/): host-owned signal updates, row patch provenance and changed-cell feedback
 
-## Experimental Vue docs
+## Vue docs
 
-- [Get started with Vue](https://adapttable.orwamahmoud.com/vue/getting-started/): experimental release availability, Vue 3.5 peers, native first table, reactive sources, controlled state and SSR boundaries
+- [Get started with Vue](https://adapttable.orwamahmoud.com/vue/getting-started/): package availability, Vue 3.5 peers, native first table, reactive sources, controlled state and SSR boundaries
 - [Element Plus Vue table](https://adapttable.orwamahmoud.com/vue/element-plus/): Element Plus controls and card surfaces, setup, peers and kit components
 - [Naive UI Vue table](https://adapttable.orwamahmoud.com/vue/naive-ui/): Naive UI controls over semantic table primitives, setup, peers, renderers and kit components
 - [Nuxt UI Vue table](https://adapttable.orwamahmoud.com/vue/nuxt-ui/): Nuxt UI components and Tailwind theming, Vue and Nuxt setup, peers and kit components
@@ -224,7 +224,7 @@ const {
 - [Vuetify Vue table](https://adapttable.orwamahmoud.com/vue/vuetify/): Vuetify controls, plugin setup, peers and kit components
 - [Vue feature composition](https://adapttable.orwamahmoud.com/vue/features/): native import map, filter and editing contracts, grouped/tree/detail rows, layout and row features, required UI slots and URL/Saved Views boundaries
 - [Vue summaries and footers](https://adapttable.orwamahmoud.com/vue/summary-row/): source/page/grouped summary scope, per-column renderers, mobile cards, custom tableFooter content, and shared footer Chrome
-- [Experimental Vue API reference](https://adapttable.orwamahmoud.com/vue/api/): implemented source, renderer, native table, structural Chrome, lifecycle and custom-feature contracts
+- [Vue API reference](https://adapttable.orwamahmoud.com/vue/api/): implemented source, renderer, native table, structural Chrome, lifecycle and custom-feature contracts
 - [Vue column menu](https://adapttable.orwamahmoud.com/vue/column-menu/): native visibility, pinning, reordering, rename and host-controlled column layout
 - [Vue navigation, find and status](https://adapttable.orwamahmoud.com/vue/navigation/): optional keyboard grid, column selection, host-owned clipboard and fill, find URL state, localized statistics and native slots
 - [Vue actions and export](https://adapttable.orwamahmoud.com/vue/actions/): native bulk actions, palette, context menu, side panel, history and host-controlled export

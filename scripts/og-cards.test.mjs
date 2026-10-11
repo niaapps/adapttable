@@ -9,14 +9,15 @@ import { ogCardMetadata, ogCardSvg, wrapCardTitle } from "./og-cards.mjs";
 import { VUE_DOCS } from "./vue-docs.mjs";
 
 describe("social card metadata", () => {
-  it("labels every Vue guide as experimental without a React kit claim", () => {
+  it("labels every Vue guide with its published framework and native kits", () => {
     const cards = ogCardMetadata().filter((card) => card.framework === "vue");
     assert.deepEqual(
       cards.map((card) => `${card.slug}.md`).sort(),
       [...VUE_DOCS].sort()
     );
     for (const card of cards) {
-      assert.match(card.footer, /Experimental Vue/);
+      assert.match(card.footer, /Vue reactive tables/);
+      assert.doesNotMatch(card.footer, /experimental/i);
       assert.doesNotMatch(card.footer, /React|every UI kit/);
       assert.ok(wrapCardTitle(card.title).length <= 3);
     }

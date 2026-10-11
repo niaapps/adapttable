@@ -1,6 +1,6 @@
 # Vue assistant and approvals
 
-The Vue packages are experimental. `@adapttable/ai-vue`
+The Vue packages are published on npm. `@adapttable/ai-vue`
 connects neutral AI stores to Vue 3.5. `@adapttable/vue/adapter` provides
 structural Chrome and required control slots. Every Vue kit — Unstyled,
 Element Plus, Vuetify, Naive UI, Reka UI, shadcn-vue, Nuxt UI and Quasar —
@@ -224,7 +224,7 @@ pnpm add @adapttable/ai-vue @adapttable/vue-unstyled vue@^3.5.0
 ```
 
 Add `@adapttable/vue` or `@adapttable/ai` directly when importing their APIs in
-application code. These packages are experimental. The CLI currently scaffolds
+application code. The CLI currently scaffolds
 React and Angular, so Vue integration uses explicit application setup.
 
 The [native assistant showcase](/vue/demo/unstyled/assistant/) mounts the actual

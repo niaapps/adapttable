@@ -33,3 +33,22 @@
   border-radius: 0.5rem;
   background: var(--sl-color-accent-low);
 }
+
+:root[data-framework="angular"] {
+  --sl-color-accent-low: #42171f;
+  --sl-color-accent: #d52347;
+  --sl-color-accent-high: #ffd5df;
+}
+:root[data-framework="vue"] {
+  --sl-color-accent-low: #103b2e;
+  --sl-color-accent: #16845d;
+  --sl-color-accent-high: #bcebd7;
+}
+:root[data-theme="light"][data-framework="angular"] {
+  --sl-color-accent-low: #fff0f3;
+  --sl-color-accent-high: #a61736;
+}
+:root[data-theme="light"][data-framework="vue"] {
+  --sl-color-accent-low: #edf9f2;
+  --sl-color-accent-high: #126442;
+}

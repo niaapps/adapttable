@@ -3,6 +3,12 @@
  * pages from the showcase's `vue/` folder; the composed site serves the same
  * pages under `/vue/demo/`. Both spell a kit's page the same below that root.
  */
+import {
+  featuresOf,
+  SHOWCASE_ADAPTERS,
+} from "../../../../../apps/showcase/matrix.mjs";
+import { frameworkDemoTarget } from "../../../../../scripts/framework-navigation.mjs";
+
 const DEPLOYED = /^\/vue\/demo(?:\/|$)/.test(window.location.pathname);
 
 /** A Vue demo page, by its path under the Vue demo root. */
@@ -17,6 +23,10 @@ export const demoFileHref = (file: string): string =>
 
 /** Another framework's live demo. */
 export const frameworkDemoHref = (framework: "react" | "angular"): string => {
-  if (DEPLOYED) return `/${framework}/demo/`;
-  return framework === "react" ? "/" : "/angular-main/";
+  return frameworkDemoTarget(
+    window.location.pathname + window.location.search,
+    framework,
+    SHOWCASE_ADAPTERS,
+    featuresOf
+  ).href;
 };

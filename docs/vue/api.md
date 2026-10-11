@@ -1,6 +1,6 @@
-# Experimental Vue API reference
+# Vue API reference
 
-This reference describes the experimental `0.1.0` public packages.
+This reference describes the `0.1.0` public packages.
 They require Vue `^3.5.0` and are published on npm. See
 [getting started](./getting-started.md) for scope, installation and a first
 native table. Identically named APIs in the React and Angular references do
@@ -95,7 +95,7 @@ importing the binding root never installs controls, optional features or AI.
 `@adapttable/element-plus`, `@adapttable/vuetify`, `@adapttable/naive-ui`,
 `@adapttable/reka-ui`, `@adapttable/shadcn-vue`, `@adapttable/nuxt-ui` and
 `@adapttable/quasar` export their own `DataTable` and 41 canonical feature
-factories through focused entries. All are experimental `0.1.0` packages on npm.
+factories through focused entries. All are `0.1.0` packages on npm.
 Their controls consume the shared Vue model and Chrome contracts; they do not
 import another framework binding or replace the table engine.
 
@@ -605,7 +605,7 @@ Additional class hooks land on their corresponding functional elements:
 - Affordances and announcements: `searchIcon`, `exportSpinner`,
   `gridAnnouncer`, `rowReorderAnnouncer`, `tableStatusAnnouncer`.
 
-The experimental Vue targets `row-action`, `grid-focus-announcer` and `status`
+The Vue targets `row-action`, `grid-focus-announcer` and `status`
 are corrected to the canonical `action-button`, `grid-announcer` and
 `table-status-announcer` targets. Update selectors that used those old part
 names. The existing `rowAction` class hook remains an alias for `actionButton`,
@@ -884,7 +884,7 @@ may have been replaced or deactivated. Render these controls through the kit's
 
 ## Optional Vue assistant contracts
 
-`@adapttable/ai-vue` is the optional experimental Vue 3.5 binding to neutral
+`@adapttable/ai-vue` is the optional Vue 3.5 binding to neutral
 AI stores. `tableAgent(options: MaybeRefOrGetter<TableAgentOptions>)` returns a
 `StaticTableFeature`; `TableAgentBridge` and `TableAgentColumnPatch` describe
 host notifications and column patches. `TABLE_AGENT_STATE` is the typed feature

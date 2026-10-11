@@ -166,3 +166,20 @@
 :root[data-framework="angular"] {
   scrollbar-gutter: stable;
 }
+
+:root[data-framework="angular"] {
+  --brand: oklch(0.55 0.2 18);
+  --brand-soft: oklch(0.96 0.025 18);
+}
+:root[data-framework="vue"] {
+  --brand: oklch(0.48 0.13 160);
+  --brand-soft: oklch(0.96 0.025 160);
+}
+:root[data-framework="angular"][data-theme="dark"] {
+  --brand: oklch(0.75 0.15 18);
+  --brand-soft: oklch(0.3 0.06 18);
+}
+:root[data-framework="vue"][data-theme="dark"] {
+  --brand: oklch(0.75 0.13 160);
+  --brand-soft: oklch(0.3 0.045 160);
+}

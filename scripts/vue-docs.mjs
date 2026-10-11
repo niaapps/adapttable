@@ -1,4 +1,4 @@
-/** Implemented experimental Vue guides; no advanced-feature parity is implied. */
+/** Canonical Vue guides published in the documentation and LLM index. */
 export const VUE_DOCS = Object.freeze([
   "vue/getting-started.md",
   "vue/element-plus.md",

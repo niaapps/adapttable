@@ -7,13 +7,7 @@
  * from `bodies/`, and the kit's accent from the adapter's own token. The
  * chrome is the page's own; everything under the seam is the kit.
  */
-import {
-  type Component,
-  computed,
-  onScopeDispose,
-  shallowRef,
-  watch,
-} from "vue";
+import { type Component, onScopeDispose, shallowRef, watch } from "vue";
 
 import { FRAMEWORK_STORAGE_KEY } from "../../../../../scripts/framework-navigation.mjs";
 import {
@@ -22,7 +16,6 @@ import {
   fillTemplate,
   headFor,
   introFor,
-  kitAccent,
   LANDING,
   landingIntro,
   type MatrixFeature,
@@ -137,7 +130,6 @@ const unavailable = new URLSearchParams(window.location.search).get(
 const fill = (text: string): string =>
   fillTemplate(text, adapter, props.route.framework);
 const head = (current: MatrixFeature) => headFor(current, adapter);
-const accent = computed(() => kitAccent(adapter, dark.value));
 const features = featuresOf(adapter);
 const otherKits = otherKitsOf(adapter);
 
@@ -227,7 +219,7 @@ function copy(which: "code" | "install", text: string): void {
       :class="{ 'mx-ng--unstyled': adapter.key === 'vue-unstyled' }"
       :data-vue-kit="adapter.key"
       :data-adapttable-kit="adapter.key"
-      :style="{ '--kit': accent, '--c': accent }"
+      :style="{ '--kit': 'var(--brand)', '--c': 'var(--brand)' }"
     >
       <header class="mx-hero" :class="{ 'mx-hero--solo': feature }">
         <div class="mx-hero__body">
