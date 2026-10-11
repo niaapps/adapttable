@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/ng-bootstrap",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "AdaptTable Angular tables with ng-bootstrap overlays and isolated Bootstrap controls.",
   "keywords": [
     "angular",

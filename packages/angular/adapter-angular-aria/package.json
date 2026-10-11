@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/angular-aria",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Angular Aria accessible composite controls and adapter-owned styling for AdaptTable",
   "keywords": [
     "angular",

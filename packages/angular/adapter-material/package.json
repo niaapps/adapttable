@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/angular-material",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "AdaptTable's Angular DataTable rendered with Angular Material components.",
   "keywords": [
     "angular",

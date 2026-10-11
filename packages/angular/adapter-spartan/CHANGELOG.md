@@ -1,5 +1,16 @@
 # @adapttable/spartan
 
+## 0.2.1
+
+### Patch Changes
+
+- 00df62b: Restore focus to the invoking toolbar button after Escape in Safari. Keep Spartan's native full-viewport popover hosts aligned with CDK coordinates across scrollbar gutters and viewport resizing. Constrain Taiga column menus on short viewports and use the native JavaScript positioner to avoid CSS anchor placement escaping the viewport in RTL.
+- 2098049: Keep Angular selection, row-reorder and expand columns compact in wide tables and both reading directions. Preserve native control targets and give unused width to data columns instead of auxiliary controls.
+  
+  Give NG-ZORRO, CDK and Taiga UI column menus aligned rows, readable column names and native control targets.
+  
+  Keep Vuetify's filter trigger accessible name stable when its native menu adds an owned dialog to the accessibility tree.
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/angular-cdk",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "AdaptTable Angular table with CDK accessibility and overlay primitives and adapter-owned neutral controls.",
   "keywords": [
     "angular",
