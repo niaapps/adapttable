@@ -1,5 +1,16 @@
 # @adapttable/ngx-bootstrap
 
+## 0.2.1
+
+### Patch Changes
+
+- 00df62b: Constrain native Bootstrap and NG-ZORRO column menus to the available room beside their triggers and keep the complete menu scrollable on short viewports. Keep NG-ZORRO's native filter popover host aligned with CDK viewport coordinates across scrollbar gutters and viewport resizing.
+- 2098049: Keep Angular selection, row-reorder and expand columns compact in wide tables and both reading directions. Preserve native control targets and give unused width to data columns instead of auxiliary controls.
+  
+  Give NG-ZORRO, CDK and Taiga UI column menus aligned rows, readable column names and native control targets.
+  
+  Keep Vuetify's filter trigger accessible name stable when its native menu adds an owned dialog to the accessibility tree.
+
 ## 0.2.0
 
 ### Minor Changes

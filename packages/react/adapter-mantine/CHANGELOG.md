@@ -1,5 +1,11 @@
 # @adapttable/mantine
 
+## 3.3.4
+
+### Patch Changes
+
+- 00df62b: Keep the column menu within the space available beside its trigger and make the complete menu scrollable on short viewports. Restore the invoking button on Escape in browsers that do not focus buttons on pointer clicks.
+
 ## 3.3.3
 
 ### Patch Changes

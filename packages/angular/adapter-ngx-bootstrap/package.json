@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/ngx-bootstrap",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "AdaptTable Angular tables with ngx-bootstrap controls and isolated Bootstrap styles.",
   "keywords": [
     "angular",

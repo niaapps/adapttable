@@ -1,5 +1,11 @@
 # @adapttable/chakra
 
+## 3.3.4
+
+### Patch Changes
+
+- 00df62b: Keep Ant Design, Chakra, Base UI and Radix filter and column popovers within the room available beside their triggers. Name MUI filter dialogs for assistive technology.
+
 ## 3.3.3
 
 ### Patch Changes
