@@ -2,10 +2,12 @@
 
 # AdaptTable
 
-### A headless data table for React and Angular, with controls from your UI kit.
+### A headless data table for React, Angular and Vue, with controls from your UI kit.
 
 React adapters cover Mantine, MUI, Chakra, Ant Design, Radix, Base UI, shadcn/ui
-and unstyled HTML. Angular offers native HTML and NG-ZORRO kits.
+and unstyled HTML. Angular offers nine native kits, including Material and
+NG-ZORRO. Experimental Vue support includes eight kits: Unstyled, Element Plus,
+Vuetify, Naive UI, Reka UI, shadcn-vue, Nuxt UI and Quasar.
 
 [![npm version](https://img.shields.io/npm/v/@adapttable/core.svg)](https://www.npmjs.com/package/@adapttable/core)
 [![downloads](https://img.shields.io/npm/dm/@adapttable/core.svg)](https://www.npmjs.com/package/@adapttable/core)
@@ -13,7 +15,7 @@ and unstyled HTML. Angular offers native HTML and NG-ZORRO kits.
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6.svg)](./tsconfig.base.json)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
-**[🌐 Website](https://adapttable.orwamahmoud.com/)** · **[🚀 Live demo](https://adapttable.orwamahmoud.com/react/demo/)** · **[📖 React docs](https://adapttable.orwamahmoud.com/react/getting-started/)** · **[Angular docs](https://adapttable.orwamahmoud.com/angular/getting-started/)** · **[📦 npm](https://www.npmjs.com/org/adapttable)** · **[Compare](https://adapttable.orwamahmoud.com/react/comparison/)**
+**[🌐 Website](https://adapttable.orwamahmoud.com/)** · **[🚀 Live demo](https://adapttable.orwamahmoud.com/react/demo/)** · **[📖 React docs](https://adapttable.orwamahmoud.com/react/getting-started/)** · **[Angular docs](https://adapttable.orwamahmoud.com/angular/getting-started/)** · **[Vue docs](https://adapttable.orwamahmoud.com/vue/getting-started/)** · **[📦 npm](https://www.npmjs.com/org/adapttable)** · **[Compare](https://adapttable.orwamahmoud.com/react/comparison/)**
 
 **Easy by default, infinitely customizable.** [Automatic mobile card layout](https://adapttable.orwamahmoud.com/react/mobile/) — the table becomes a card list on phones by itself, no second layout to build. One unified data source for both client-side and server-side data, URL-synced shareable state, optional virtualization, infinite-scroll & paging (auto by device), a real filter UX, **column management** (reorder · pin · resize · show/hide), **inline cell editing**, **interactive row grouping** with header drag-and-drop and per-group aggregate choices, **CSV export**, first-class **i18n + RTL**, and seamless **dark mode** — out of the box.
 
@@ -32,12 +34,16 @@ and unstyled HTML. Angular offers native HTML and NG-ZORRO kits.
 **Runtime support:** Node.js 22.12.0 or newer and React 18 or 19. Packed
 releases are tested on Node 22.12 and Node 24. The Angular binding, native kit and
 AI binding accept Angular 20, 21 or 22; the NG-ZORRO kit requires Angular 22.
-Both Angular kits and the optional AI binding are public npm packages.
+All nine Angular kits and the optional AI binding are public npm packages.
+Experimental Vue packages require Vue 3.5 or newer; each kit's setup guide lists
+its peer versions, styles and providers.
 
 ## Features
 
-Every one of these works in **all eight React adapters**. Angular’s native and
-NG-ZORRO kits compose the same neutral features through Angular factories.
+Every one of these works in **all eight React adapters**. Angular’s nine kits
+and the eight experimental Vue kits compose the neutral engine through their
+own factories and controls. See the [Angular](https://adapttable.orwamahmoud.com/angular/features/)
+and [Vue](https://adapttable.orwamahmoud.com/vue/features/) guides for framework-specific APIs.
 
 |             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -148,21 +154,36 @@ Optional behavior is imported from feature subpaths such as
 | `@adapttable/angular`          | The Angular binding: signals, templates and structural Chrome.             |
 | `@adapttable/angular-unstyled` | Native Angular table controls with responsive table and card layouts.      |
 | `@adapttable/ng-zorro`         | NG-ZORRO Angular table controls and overlays.                              |
+| `@adapttable/angular-material` | Angular Material controls.                                                 |
+| `@adapttable/ng-bootstrap`     | ng-bootstrap controls.                                                     |
+| `@adapttable/ngx-bootstrap`    | ngx-bootstrap controls.                                                    |
+| `@adapttable/spartan`          | Spartan controls.                                                          |
+| `@adapttable/taiga-ui`         | Taiga UI controls.                                                         |
+| `@adapttable/angular-aria`     | Angular Aria controls.                                                     |
+| `@adapttable/angular-cdk`      | Angular CDK controls.                                                      |
 | `@adapttable/ai-angular`       | Optional Angular agent, assistant and speech bindings.                     |
 | `@adapttable/vue`              | Experimental public Vue 3.5 binding.                                       |
 | `@adapttable/vue-unstyled`     | Experimental public native Vue controls.                                   |
+| `@adapttable/element-plus`     | Experimental Element Plus Vue controls.                                    |
+| `@adapttable/vuetify`          | Experimental Vuetify controls.                                             |
+| `@adapttable/naive-ui`         | Experimental Naive UI controls.                                            |
+| `@adapttable/reka-ui`          | Experimental Reka UI controls.                                             |
+| `@adapttable/shadcn-vue`       | Experimental shadcn-vue controls.                                          |
+| `@adapttable/nuxt-ui`          | Experimental Nuxt UI controls.                                             |
+| `@adapttable/quasar`           | Experimental Quasar controls.                                              |
 | `@adapttable/ai-vue`           | Optional Vue agent, assistant and speech binding.                          |
 
 The CLI recognizes an Angular project when both `@angular/core` and
 `angular.json` are present, then scaffolds the native or NG-ZORRO table.
-Both Angular kits and the optional AI binding are public npm packages; see the
-[Angular setup guide](https://adapttable.orwamahmoud.com/angular/getting-started/).
+See the [Angular setup guide](https://adapttable.orwamahmoud.com/angular/getting-started/)
+for all nine kits. Vue uses explicit installation and application setup through
+the [Vue setup guide](https://adapttable.orwamahmoud.com/vue/getting-started/).
 
 ## AI, without a provider lock-in
 
 AI support is optional. `@adapttable/ai` exposes the enabled table as a
 provider-neutral capability contract; connect it to your own backend and model.
-Add `@adapttable/ai-react` or the `@adapttable/ai-angular` binding,
+Add `@adapttable/ai-react`, `@adapttable/ai-angular` or `@adapttable/ai-vue`,
 plus that framework’s kit `/assistant` widget, when you want the
 ready conversation UI, or build a custom interface on the same contract.
 Only enabled, permitted capabilities are offered to the agent. Commands run
@@ -174,12 +195,23 @@ not prerequisites for using the executor with your own agent.
 ## Install
 
 ```bash
-# Pick your adapter — the CLI can auto-detect and do this for you:
+# React or Angular — the CLI detects the framework and helps choose a kit:
 npx @adapttable/cli init
 
-# …or install manually:
+# Or install a React adapter manually:
 pnpm add @adapttable/mantine
 ```
+
+For an existing Vue application, install the experimental native kit:
+
+```sh
+pnpm add @adapttable/vue-unstyled vue@^3.5.0
+```
+
+It installs the matching binding and core automatically. The
+[Vue getting-started guide](https://adapttable.orwamahmoud.com/vue/getting-started/)
+includes a first table and installation commands for all eight kits. The CLI
+currently scaffolds React and Angular; Vue setup is manual.
 
 **Try it first, no install:** [open a live starter in StackBlitz](https://stackblitz.com/github/orwa-mahmoud/adapttable/tree/main/starters/mantine) (Mantine) — or [any other kit](https://adapttable.orwamahmoud.com/react/getting-started/#try-it-in-stackblitz).
 
@@ -217,7 +249,7 @@ Row/card stagger on mount is **opt-in**, dependency-free (no GSAP required), and
 
 Hosted at **[adapttable.orwamahmoud.com](https://adapttable.orwamahmoud.com/)** — every feature has its own page with a complete copy-paste example and a full options table.
 
-- [Getting started](https://adapttable.orwamahmoud.com/react/getting-started/) · [Concepts](https://adapttable.orwamahmoud.com/concepts/) · [Data tiers](https://adapttable.orwamahmoud.com/data-tiers/)
+- Getting started: [React](https://adapttable.orwamahmoud.com/react/getting-started/) · [Angular](https://adapttable.orwamahmoud.com/angular/getting-started/) · [Vue](https://adapttable.orwamahmoud.com/vue/getting-started/) · [Concepts](https://adapttable.orwamahmoud.com/concepts/) · [Data tiers](https://adapttable.orwamahmoud.com/data-tiers/)
 - Features: [Columns](https://adapttable.orwamahmoud.com/react/columns/) · [Sorting](https://adapttable.orwamahmoud.com/react/sorting/) · [Filtering](https://adapttable.orwamahmoud.com/react/filtering/) · [AND/OR filter tree](https://adapttable.orwamahmoud.com/react/filter-tree/) · [Pagination](https://adapttable.orwamahmoud.com/react/pagination/) · [Selection](https://adapttable.orwamahmoud.com/react/selection/) · [Row expansion](https://adapttable.orwamahmoud.com/react/row-expansion/) · [Inline cell editing](https://adapttable.orwamahmoud.com/react/cell-editing/) · [Row reordering](https://adapttable.orwamahmoud.com/react/row-reordering/) · [Row pinning](https://adapttable.orwamahmoud.com/react/row-pinning/) · [Pinned summary rows](https://adapttable.orwamahmoud.com/react/pinned-summary-rows/) · [Row and column spanning](https://adapttable.orwamahmoud.com/react/row-spanning/) · [Full-width and separator rows](https://adapttable.orwamahmoud.com/react/full-width-rows/) · [Row styling and heights](https://adapttable.orwamahmoud.com/react/row-styling/) · [Row grouping](https://adapttable.orwamahmoud.com/react/row-grouping/) · [Column management](https://adapttable.orwamahmoud.com/react/column-management/) · [Sparkline columns](https://adapttable.orwamahmoud.com/react/sparkline/) · [Saved views](https://adapttable.orwamahmoud.com/react/saved-views/) · [Virtualization](https://adapttable.orwamahmoud.com/react/virtualization/)
 - [URL state](https://adapttable.orwamahmoud.com/react/url-state/) · [Customization](https://adapttable.orwamahmoud.com/react/customization/) · [i18n & RTL](https://adapttable.orwamahmoud.com/react/i18n-rtl/) · [Accessibility](https://adapttable.orwamahmoud.com/react/accessibility/) · [Realtime](https://adapttable.orwamahmoud.com/react/realtime/)
 - [API reference](https://adapttable.orwamahmoud.com/react/api/) · [Comparison](https://adapttable.orwamahmoud.com/react/comparison/) · [Limitations](https://adapttable.orwamahmoud.com/limitations/) · [Versioning & stability](https://adapttable.orwamahmoud.com/versioning/) · [FAQ](https://adapttable.orwamahmoud.com/faq/)
@@ -252,8 +284,8 @@ Start with the
 The roadmap is tracked in GitHub issues:
 
 - [Neutral core for framework bindings](https://github.com/orwa-mahmoud/adapttable/issues/419) — the table's behavior moves into `@adapttable/core`, so every framework binding drives the same engine.
-- [Vue binding](https://github.com/orwa-mahmoud/adapttable/issues/420)
-- [Angular binding](https://github.com/orwa-mahmoud/adapttable/issues/421) — implemented with [Angular guides](https://adapttable.orwamahmoud.com/angular/getting-started/) and native/NG-ZORRO kits.
+- [Vue binding](https://github.com/orwa-mahmoud/adapttable/issues/420) — experimental `0.1.0` with eight native kits and [Vue guides](https://adapttable.orwamahmoud.com/vue/getting-started/).
+- [Angular binding](https://github.com/orwa-mahmoud/adapttable/issues/421) — implemented with [Angular guides](https://adapttable.orwamahmoud.com/angular/getting-started/) and nine native kits.
 
 Each one lists its work items and what blocks what. Open items with nothing blocking them are [ready to start](https://github.com/orwa-mahmoud/adapttable/issues?q=is%3Aissue%20state%3Aopen%20-is%3Ablocked%20has%3Aparent-issue). What has shipped is in each published package's `CHANGELOG.md`.
 
@@ -270,17 +302,3 @@ PRs welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md). This is a friendly, well-
 <div align="center">
 <sub>Keywords: react data table, headless table, server-side pagination, url state, infinite scroll table, mantine table, mui datagrid alternative, chakra table, ant design table, antd table, tailwind table, shadcn table, rtl table, arabic table, typescript, dark mode.</sub>
 </div>
-
-### Additional Angular kits
-
-Seven additional adapters are prepared for their first public `0.1.0` release:
-[Angular Material](docs/angular/material.md) (`@adapttable/angular-material`),
-[ng-bootstrap](docs/angular/ng-bootstrap.md) (`@adapttable/ng-bootstrap`),
-[Spartan](docs/angular/spartan.md) (`@adapttable/spartan`) and
-[Taiga UI](docs/angular/taiga-ui.md) (`@adapttable/taiga-ui`),
-[Angular Aria](docs/angular/aria.md) (`@adapttable/angular-aria`) and
-[ngx-bootstrap](docs/angular/ngx-bootstrap.md) (`@adapttable/ngx-bootstrap`) and
-[Angular CDK](docs/angular/angular-cdk.md) (`@adapttable/angular-cdk`). Their local showcase
-pages use the actual kit controls. Use built workspace packages and follow each
-kit's peer, theme and asset setup. Registry installation requires the public
-release to have completed; the setup guides include the release install commands.

@@ -158,8 +158,11 @@ cancels the edit and restores the activation button's focus.
 
 ## Compatibility
 
-This package targets Vue 3.5 and Naive UI 2.45.3. The package is prepared for an
-initial 0.1.0 release. Registry publication is a separate release step.
+This experimental `0.1.0` package requires Vue `^3.5.0` and Naive UI `^2.45.3`.
+
+```sh
+pnpm add @adapttable/naive-ui naive-ui@^2.45.3 vue@^3.5.0
+```
 
 ## Native control refs
 

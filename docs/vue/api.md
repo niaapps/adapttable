@@ -2,13 +2,13 @@
 
 This reference describes the experimental `0.1.0` public packages.
 They require Vue `^3.5.0` and are published on npm. See
-[getting started](./getting-started.md) for scope, workspace setup and a first
+[getting started](./getting-started.md) for scope, installation and a first
 native table. Identically named APIs in the React and Angular references do
 not define Vue signatures.
 
 ## Updating preview imports
 
-The unpublished Vue entry layout follows the React binding's public roles.
+The Vue entry layout follows the React binding's public roles.
 Move ordinary binding factories from focused paths such as `/density`,
 `/editing` and `/column-menu` to `/features`; move their Chrome, slot props,
 model keys and adapter helpers to `/adapter`. Table, column, source,

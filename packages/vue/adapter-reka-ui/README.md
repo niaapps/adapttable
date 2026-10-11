@@ -6,8 +6,11 @@ A Vue data table with accessible Reka UI controls and a compact, neutral theme.
 AdaptTable owns the data models and interactions; the host owns the data. Reka
 provides real selection, choices, popovers, dialogs and menu primitives.
 
-This package is being prepared for its first release. Repository availability
-does not imply npm publication.
+This is an experimental public `0.1.0` package.
+
+```sh
+pnpm add @adapttable/reka-ui reka-ui@^2.11.0 vue@^3.5.0
+```
 
 ## Features
 

@@ -1,8 +1,8 @@
 # AdaptTable — full documentation
 
-> AdaptTable v3 documentation: a framework-neutral data engine in @adapttable/core, headless React and Angular bindings, and native table adapters. React kits include Mantine, MUI, Chakra UI, Ant Design, Radix Themes, Base UI, shadcn/ui and unstyled Tailwind. Angular kits include native unstyled, NG-ZORRO, Material, ng-bootstrap, ngx-bootstrap, Spartan, Taiga UI, Aria and CDK. Individually imported features include filtering, grouping, pivot tables, formulas, editing, virtualization and export. Responsive mobile cards, URL state, i18n/RTL and optional provider-neutral AI sessions. MIT licensed; applications own data and persistence.
+> AdaptTable v3 documentation: a framework-neutral data engine in @adapttable/core, headless React, Angular and experimental Vue bindings, and native table adapters. React kits include Mantine, MUI, Chakra UI, Ant Design, Radix Themes, Base UI, shadcn/ui and unstyled Tailwind. Angular kits include native unstyled, NG-ZORRO, Material, ng-bootstrap, ngx-bootstrap, Spartan, Taiga UI, Aria and CDK. Individually imported features include filtering, grouping, pivot tables, formulas, editing, virtualization and export. Responsive mobile cards, URL state, i18n/RTL and optional provider-neutral AI sessions. MIT licensed; applications own data and persistence.
 
-Start with your framework's getting-started and the shared concepts for package ownership, then features for opt-in composition. The Angular binding, all nine native kits and @adapttable/ai-angular are available on npm. The upcoming Angular 0.5 binding changes canonical import paths; use its migration guide and compatible kit releases when upgrading. Vue has an experimental 0.1.0 public binding and eight kits — native Unstyled, Element Plus, Naive UI, Nuxt UI, Quasar, Reka UI, shadcn-vue and Vuetify — each covering the full feature set with its own controls, plus optional agents, assistant UI and speech through @adapttable/ai-vue. The Vue packages are published on npm. Use the v2-to-v3 migration guide when upgrading React; historical migration examples describe their named versions, not current import paths. This file is generated from the canonical guides; the linked index is at https://adapttable.orwamahmoud.com/llms.txt.
+Start with your framework's getting-started and the shared concepts for package ownership, then features for opt-in composition. The Angular binding, all nine native kits and @adapttable/ai-angular are available on npm. The Angular 0.5 binding changes canonical import paths; use its migration guide and compatible kit releases when upgrading. Vue has an experimental 0.1.0 public binding and eight kits — native Unstyled, Element Plus, Naive UI, Nuxt UI, Quasar, Reka UI, shadcn-vue and Vuetify — each covering the full feature set with its own controls, plus optional agents, assistant UI and speech through @adapttable/ai-vue. The Vue packages are published on npm. Use the v2-to-v3 migration guide when upgrading React; historical migration examples describe their named versions, not current import paths. This file is generated from the canonical guides; the linked index is at https://adapttable.orwamahmoud.com/llms.txt.
 
 
 ---
@@ -31837,19 +31837,20 @@ Each adapter supplies its own controls; the binding owns the table model.
 
 ## Availability and scope
 
-The Vue binding, Unstyled adapter and all seven styled adapters are public
-packages prepared for an experimental `0.1.0` release. They have not been
-published to npm. These examples require a checkout or an application linked to
-the built workspace packages; the available source and preview routes do not
-establish npm availability or a completed browser-validation gate.
-
-The binding requires Vue `^3.5.0`; adapters can require a newer Vue patch through
-their UI-kit peers. The workspace build requires Node `>=22.12.0` and pnpm. From
-the repository root, build the binding, native kit and their workspace dependencies:
+The Vue binding, Unstyled adapter and all seven styled adapters are experimental
+public `0.1.0` packages. Install the native kit in your Vue application:
 
 ```sh
-pnpm --filter @adapttable/vue-unstyled... build
+pnpm add @adapttable/vue-unstyled vue@^3.5.0
 ```
+
+The adapter installs the matching binding and core automatically. Add
+`@adapttable/vue` directly if your application imports its composables or types.
+No repository checkout or workspace build is needed.
+
+Use Node.js `>=22.12.0`. The binding requires Vue `^3.5.0`; adapters can require
+a newer Vue patch through their UI-kit peers. Choose a styled kit below for its
+installation command, required styles and application providers.
 
 The native table includes search, sorting and multi-sort, paged or infinite
 loading, row selection, responsive mobile cards, grouped column headings,
@@ -31897,10 +31898,20 @@ create a second query, selection or editing engine.
 | `@adapttable/nuxt-ui`      | Use Nuxt UI's module in Nuxt, or its official Vite and Vue plugins in a plain Vue app; load theme CSS and provide `UApp`.                          |
 | `@adapttable/quasar`       | Register Quasar and load Quasar CSS plus the adapter's `/styles.css`; configure Quasar's locale and RTL support.                                   |
 
-Each package README contains its exact peer versions and complete host setup.
-For example, build a styled adapter and its workspace dependencies with
-`pnpm --filter @adapttable/shadcn-vue... build`. A workspace build is preparation
-for linked development, not an npm installation command.
+Install your chosen adapter and its UI-kit peers, then follow its setup guide:
+
+| Kit          | Install in your Vue application                                     | Setup                             |
+| ------------ | ------------------------------------------------------------------- | --------------------------------- |
+| Element Plus | `pnpm add @adapttable/element-plus element-plus@^2.14.7 vue@^3.5.0` | [Element Plus](./element-plus.md) |
+| Vuetify      | `pnpm add @adapttable/vuetify vuetify@^4.2.4 vue@^3.5.0`            | [Vuetify](./vuetify.md)           |
+| Naive UI     | `pnpm add @adapttable/naive-ui naive-ui@^2.45.3 vue@^3.5.0`         | [Naive UI](./naive-ui.md)         |
+| Reka UI      | `pnpm add @adapttable/reka-ui reka-ui@^2.11.0 vue@^3.5.0`           | [Reka UI](./reka-ui.md)           |
+| shadcn-vue   | `pnpm add @adapttable/shadcn-vue reka-ui@^2.11.0 vue@^3.5.0`        | [shadcn-vue](./shadcn-vue.md)     |
+| Nuxt UI      | `pnpm add @adapttable/nuxt-ui @nuxt/ui@^4.11.3 vue@^3.5.18`         | [Nuxt UI](./nuxt-ui.md)           |
+| Quasar       | `pnpm add @adapttable/quasar quasar@2.34.0 vue@^3.5.0`              | [Quasar](./quasar.md)             |
+
+Each package README also contains its peer versions and complete host setup.
+Use a Vue version compatible with every UI kit in your application.
 
 A component's SSR support does not replace the UI kit's application pipeline.
 Element Plus needs request-local ID/z-index providers and its teleport handling;
@@ -32124,9 +32135,14 @@ the [Vue API reference](./api.md) for component and adapter contracts, and the
 
 ## Optional AI binding
 
-The public `@adapttable/ai-vue` package is published alongside
-the Vue binding and native kit when your application needs an agent, conversation
-or speech input. It requires Vue `^3.5.0`.
+Add `@adapttable/ai-vue` when your application needs an agent, conversation
+or speech input:
+
+```sh
+pnpm add @adapttable/ai-vue
+```
+
+It requires Vue `^3.5.0`.
 The base table and assistant UI entries remain usable without AI. See
 [assistant and approvals](./assistant.md). The CLI currently scaffolds React and
 Angular projects; these Vue examples use explicit application setup.
@@ -32151,8 +32167,8 @@ The workspace supports English and Arabic, responsive cards, a dark appearance,
 keyboard controls and a pause/resume flow. All data is fictional and all writes
 stay in the browser. Authored orders use this tab’s session storage; named views
 use browser storage when available and survive a later visit. Restore sample data resets the order desk;
-the dispatch plan is rebuilt from the restored Ready orders. Reloading and retry restore authored changes and selections from this tab’s session storage. Presentation, table queries and pivot choices remain shareable in the URL. The package availability notice still
-applies: showcase source is not a published-package or feature-parity claim.
+the dispatch plan is rebuilt from the restored Ready orders. Reloading and retry restore authored changes and selections from this tab’s session storage. Presentation, table queries and pivot choices remain shareable in the URL. See the [feature guide](./features.md) for the supported APIs and composition
+boundaries.
 
 ---
 
@@ -32165,9 +32181,9 @@ checkboxes, selects, popovers, drawers and message boxes.
 
 ## Availability and versions
 
-The package is prepared for its first experimental `0.1.0` release and is not
-yet published to npm. Until it is, link the built workspace packages as
-described in [Get started with Vue](./getting-started.md).
+This is an experimental public `0.1.0` package. Install `@adapttable/element-plus`
+and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
+then complete the application setup below.
 
 Peers: Vue `^3.5.0` and Element Plus `^2.14.7`. Node.js 22.12.0 or newer.
 
@@ -32264,9 +32280,9 @@ Naive UI supplies the visible controls and their styling.
 
 ## Availability and versions
 
-The package is prepared for its first experimental `0.1.0` release and is not
-yet published to npm. Until it is, link the built workspace packages as
-described in [Get started with Vue](./getting-started.md).
+This is an experimental public `0.1.0` package. Install `@adapttable/naive-ui`
+and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
+then complete the application setup below.
 
 Peers: Vue `^3.5.0` and Naive UI `^2.45.3`. Node.js 22.12.0 or newer.
 
@@ -32349,9 +32365,9 @@ the buttons, inputs, selects, checkboxes, popovers, drawers and menus.
 
 ## Availability and versions
 
-The package is prepared for its first experimental `0.1.0` release and is not
-yet published to npm. Until it is, link the built workspace packages as
-described in [Get started with Vue](./getting-started.md).
+This is an experimental public `0.1.0` package. Install `@adapttable/nuxt-ui`
+and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
+then complete the application setup below.
 
 Peers: Vue `^3.5.18` and Nuxt UI `^4.11.3`. Nuxt UI 4 is MIT-licensed; the kit
 uses the public `@nuxt/ui` package and needs no Pro license or Nuxt server
@@ -32451,9 +32467,9 @@ components.
 
 ## Availability and versions
 
-The package is prepared for its first experimental `0.1.0` release and is not
-yet published to npm. Until it is, link the built workspace packages as
-described in [Get started with Vue](./getting-started.md).
+This is an experimental public `0.1.0` package. Install `@adapttable/quasar`
+and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
+then complete the application setup below.
 
 Peers: Vue `^3.5.0` and Quasar `2.34.0`. Node.js 22.12.0 or newer.
 
@@ -32545,9 +32561,9 @@ menu primitives.
 
 ## Availability and versions
 
-The package is prepared for its first experimental `0.1.0` release and is not
-yet published to npm. Until it is, link the built workspace packages as
-described in [Get started with Vue](./getting-started.md).
+This is an experimental public `0.1.0` package. Install `@adapttable/reka-ui`
+and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
+then complete the application setup below.
 
 Peers: Vue `^3.5.0` and Reka UI `^2.11.0`. Node.js 22.12.0 or newer.
 
@@ -32623,9 +32639,9 @@ shadcn-vue controls built on Reka UI.
 
 ## Availability and versions
 
-The package is prepared for its first experimental `0.1.0` release and is not
-yet published to npm. Until it is, link the built workspace packages as
-described in [Get started with Vue](./getting-started.md).
+This is an experimental public `0.1.0` package. Install `@adapttable/shadcn-vue`
+and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
+then complete the application setup below.
 
 Peers: Vue `^3.5.0` and Reka UI `^2.11.0`. Node.js 22.12.0 or newer.
 
@@ -32699,9 +32715,9 @@ supplies the buttons, fields, selects, checkboxes, menus and dialogs.
 
 ## Availability and versions
 
-The package is prepared for its first experimental `0.1.0` release and is not
-yet published to npm. Until it is, link the built workspace packages as
-described in [Get started with Vue](./getting-started.md).
+This is an experimental public `0.1.0` package. Install `@adapttable/vuetify`
+and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
+then complete the application setup below.
 
 Peers: Vue `^3.5.0` and Vuetify `^4.2.4`. Node.js 22.12.0 or newer.
 
@@ -32787,7 +32803,7 @@ optional behavior through the chosen kit's feature factories: the adapter
 contributes its own controls while the binding owns state, validation, row
 projection and lifecycle. The binding, Unstyled kit and seven styled adapters
 are public experimental `0.1.0` packages on npm. See [getting started](./getting-started.md)
-for workspace setup and UI-kit providers.
+for installation and UI-kit providers.
 
 ## Choose an entry point
 
@@ -33875,13 +33891,13 @@ passed. They use fictional in-browser data and host-owned writes.
 
 This reference describes the experimental `0.1.0` public packages.
 They require Vue `^3.5.0` and are published on npm. See
-[getting started](./getting-started.md) for scope, workspace setup and a first
+[getting started](./getting-started.md) for scope, installation and a first
 native table. Identically named APIs in the React and Angular references do
 not define Vue signatures.
 
 ## Updating preview imports
 
-The unpublished Vue entry layout follows the React binding's public roles.
+The Vue entry layout follows the React binding's public roles.
 Move ordinary binding factories from focused paths such as `/density`,
 `/editing` and `/column-menu` to `/features`; move their Chrome, slot props,
 model keys and adapter helpers to `/adapter`. Table, column, source,
@@ -35027,13 +35043,18 @@ Transports, browser tool registration, microphone resources, and language
 storage remain inactive during SSR. Each request gets its own stores. KeepAlive
 suspends resources and reconnects them with current options on activation.
 
-## Workspace setup and live example
+## Installation and live example
 
-Build the optional package with `pnpm --filter @adapttable/ai-vue... build`, then
-link the built Vue binding, native kit and AI package into your application. All
-three are public packages prepared for their first experimental `0.1.0` release;
-verify registry availability before using an install command. The CLI currently
-scaffolds React and Angular, so Vue integration uses explicit application setup.
+Install the optional AI binding alongside your chosen Vue kit. For the native
+example:
+
+```sh
+pnpm add @adapttable/ai-vue @adapttable/vue-unstyled vue@^3.5.0
+```
+
+Add `@adapttable/vue` or `@adapttable/ai` directly when importing their APIs in
+application code. These packages are experimental. The CLI currently scaffolds
+React and Angular, so Vue integration uses explicit application setup.
 
 The [native assistant showcase](/vue/demo/unstyled/assistant/) mounts the actual
 Vue native table and assistant. Its local transport can select rows, sort names,
@@ -35561,8 +35582,8 @@ for the same `extendFeature` and `slotRender` pattern.
 # Vue actions and exports
 
 The Vue binding, Unstyled kit and seven styled adapters are experimental
-`0.1.0` packages on npm. These examples require a checkout or an application
-linked to their built workspace packages.
+`0.1.0` packages on npm. Install your chosen kit using
+[Get started with Vue](./getting-started.md) before using these examples.
 The action factories are opt-in: `bulkActions`, `commandPalette`, `contextMenu`,
 `sidePanel`, `undoRedoButtons`, `exportCsv` and `print` are available through each
 adapter's focused entries. Dedicated `exportPdf` and `exportXlsx` factories are

@@ -6,9 +6,9 @@ components.
 
 ## Availability and versions
 
-The package is prepared for its first experimental `0.1.0` release and is not
-yet published to npm. Until it is, link the built workspace packages as
-described in [Get started with Vue](./getting-started.md).
+This is an experimental public `0.1.0` package. Install `@adapttable/quasar`
+and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
+then complete the application setup below.
 
 Peers: Vue `^3.5.0` and Quasar `2.34.0`. Node.js 22.12.0 or newer.
 
