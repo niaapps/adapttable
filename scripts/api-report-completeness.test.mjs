@@ -41,6 +41,7 @@ function fixture(t) {
     mkdirSync(directory, { recursive: true });
   for (const file of [
     "api-reports.mjs",
+    "api-union-order.mjs",
     "api-entrypoints.mjs",
     "api-report-diagnostics.mjs",
     "api-report-references.mjs",

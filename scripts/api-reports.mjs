@@ -47,6 +47,7 @@ import {
   shouldRetainEntryDeclarations,
 } from "./api-report-retention.mjs";
 import { selectApiReports } from "./api-report-selection.mjs";
+import { canonicalLiteralUnions } from "./api-union-order.mjs";
 import { entryValueGraph } from "./api-value-graph.mjs";
 import {
   classifyForgottenExport,
@@ -337,7 +338,8 @@ function extractOne({ dir, report, entry, isMainEntry }) {
   for (const { symbol, reason } of missingTargets) {
     reportReferenceFindings.push(`${report}: ${symbol} (${reason})`);
   }
-  const same = fresh === committed;
+  const same =
+    canonicalLiteralUnions(fresh) === canonicalLiteralUnions(committed);
   if (!LOCAL && !same) {
     console.error(
       `✗ ${report} is out of date — run \`pnpm api:reports\` and commit the diff.`
