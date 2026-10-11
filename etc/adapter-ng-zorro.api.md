@@ -217,7 +217,9 @@ export class AdaptColumnMenu extends AdaptColumnMenuModel {
         zIndex: string;
     };
     // (undocumented)
-    protected readonly panelStyle: Readonly<Record<string, string>>;
+    protected readonly panelStyle: Signal<    {
+    "max-block-size": string;
+    }>;
     // (undocumented)
     protected readonly popover: MenuPopover;
     // (undocumented)

@@ -10,17 +10,20 @@ import {
   AdaptColumnMenuRowModel,
   AdaptIcon,
   AdaptLiveRegion,
+  injectPopoverSpace,
 } from "@adapttable/angular/adapter";
 import {
+  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
+  computed,
+  type ElementRef,
   signal,
   viewChild,
 } from "@angular/core";
 import {
   BsDropdownDirective,
   BsDropdownMenuDirective,
-  BsDropdownToggleDirective,
 } from "ngx-bootstrap/dropdown";
 
 import { injectBootstrapOverlayContainer } from "./bootstrapOverlay";
@@ -260,7 +263,6 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
     AdaptColumnMenuEdgeRow,
     BsDropdownDirective,
     BsDropdownMenuDirective,
-    BsDropdownToggleDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -269,6 +271,8 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
       #root
       #menu="bs-dropdown"
       dropdown
+      [dropup]="preferredAbove()"
+      [isOpen]="menuOpen()"
       [isAnimated]="false"
       [container]="overlayContainer()"
       [autoClose]="true"
@@ -280,7 +284,9 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
       <button
         class="btn btn-outline-secondary btn-sm"
         #trigger
-        dropdownToggle
+        (pointerdown)="prepare()"
+        (keydown)="prepare()"
+        (click)="toggleMenu()"
         type="button"
         data-adapttable-part="column-menu-button"
         aria-haspopup="true"
@@ -306,7 +312,7 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
             data-ngx-bootstrap-part="column-menu-panel"
             [attr.aria-label]="p.labels.columns"
             [attr.dir]="p.dir ?? null"
-            [style]="panelStyle"
+            [style]="panelStyle()"
           >
             <div data-ngx-bootstrap-part="column-menu-header">
               <span data-ngx-bootstrap-part="column-menu-title">{{
@@ -403,15 +409,80 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
 export class AdaptColumnMenu extends AdaptColumnMenuModel {
   protected readonly overlayContainer = injectBootstrapOverlayContainer();
 
-  protected readonly panelStyle = {
-    "max-height": "min(70vh, 32rem)",
+  protected readonly menuOpen = signal(false);
+  private readonly opener = viewChild<ElementRef<HTMLElement>>("trigger");
+  private readonly room = injectPopoverSpace({
+    origin: () => this.opener()?.nativeElement,
+    open: () => this.menuOpen(),
+    reserve: 16,
+    allowAbove: () => {
+      const anchor = this.opener()?.nativeElement;
+      const view = anchor?.ownerDocument.defaultView;
+      return (
+        !!anchor &&
+        !!view &&
+        view.innerHeight - anchor.getBoundingClientRect().bottom < 240
+      );
+    },
+  });
+  protected readonly preferredAbove = signal(false);
+  private readonly preparedHeight = signal(360);
+  protected toggleMenu(): void {
+    this.prepare();
+    this.menuOpen.update((open) => !open);
+  }
+  protected prepare(): void {
+    const anchor = this.opener()?.nativeElement;
+    const view = anchor?.ownerDocument.defaultView;
+    if (!anchor || !view) return;
+    const bounds = anchor.getBoundingClientRect();
+    const below = Math.max(0, view.innerHeight - bounds.bottom - 16);
+    const above = Math.max(0, bounds.top - 16);
+    const up = below < 240 && above > below;
+    this.preferredAbove.set(up);
+    this.preparedHeight.set(Math.min(560, up ? above : below));
+  }
+  protected readonly panelStyle = computed(() => ({
+    "max-height": `${Math.min(this.preparedHeight(), this.room())}px`,
     "overflow-y": "auto",
+    "box-sizing": "border-box",
     border: "0",
     padding: "0.75rem",
-  };
+  }));
 
-  protected readonly menuOpen = signal(false);
-
+  constructor() {
+    super();
+    afterRenderEffect((cleanup) => {
+      if (!this.menuOpen()) return;
+      const document = this.opener()?.nativeElement.ownerDocument;
+      if (!document) return;
+      const keydown = (event: KeyboardEvent) => {
+        if (
+          event.key !== "Escape" ||
+          event.defaultPrevented ||
+          event.isComposing
+        )
+          return;
+        this.dropdown()?.hide();
+        this.opener()?.nativeElement.focus();
+      };
+      const outside = (event: MouseEvent) => {
+        const target = event.target;
+        if (
+          target instanceof Node &&
+          (this.opener()?.nativeElement.contains(target) ||
+            this.panel()?.nativeElement?.contains(target))
+        )
+          return;
+        this.menuOpen.set(false);
+      };
+      document.addEventListener("click", outside);
+      cleanup(() => document.removeEventListener("click", outside));
+      document.addEventListener("keydown", keydown);
+      cleanup(() => document.removeEventListener("keydown", keydown));
+    });
+  }
+  private readonly panel = viewChild<ElementRef<HTMLElement>>("panel");
   private readonly dropdown = viewChild(BsDropdownDirective);
 
   protected readonly popover = {

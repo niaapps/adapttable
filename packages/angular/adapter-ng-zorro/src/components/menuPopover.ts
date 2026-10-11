@@ -29,12 +29,31 @@ export function menuPopover(
   injector: Injector
 ): MenuPopover {
   const open = signal(false);
+  let restoreFocus = false;
   const close = (): void => {
     open.set(false);
   };
   effect(
     (onCleanup) => {
-      if (!open()) return;
+      if (!open()) {
+        if (restoreFocus) queueMicrotask(() => elements.trigger()?.focus());
+        restoreFocus = false;
+        return;
+      }
+      const recordEscape = (event: KeyboardEvent): void => {
+        if (!event.isComposing) restoreFocus = event.key === "Escape";
+      };
+      const pointerdown = () => {
+        restoreFocus = false;
+      };
+      document.addEventListener("pointerdown", pointerdown, true);
+      onCleanup(() =>
+        document.removeEventListener("pointerdown", pointerdown, true)
+      );
+      document.addEventListener("keydown", recordEscape, true);
+      onCleanup(() =>
+        document.removeEventListener("keydown", recordEscape, true)
+      );
       const root = elements.root();
       const panel = elements.panel();
       const onDown = (event: MouseEvent): void => {
@@ -46,7 +65,12 @@ export function menuPopover(
         close();
       };
       const onKey = (event: KeyboardEvent): void => {
-        if (event.key !== "Escape" || overlayEscapeHandled(event)) return;
+        if (
+          event.key !== "Escape" ||
+          event.isComposing ||
+          (overlayEscapeHandled(event) && event.target !== document.body)
+        )
+          return;
         event.stopPropagation();
         close();
         elements.trigger()?.focus();

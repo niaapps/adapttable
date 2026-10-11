@@ -457,9 +457,17 @@ export function ColumnMenu<TRow>({
   const [opened, setOpened] = useState(false);
   const [query, setQuery] = useState("");
   const rows = filterColumnMenuRows(columnMenuRows(allColumns, layout), query);
-  useEscapeClose(opened, () => setOpened(false), {
-    ignoreWithin: '[data-adapttable-part="column-rename-input"]',
-  });
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  useEscapeClose(
+    opened,
+    () => {
+      setOpened(false);
+      triggerRef.current?.focus();
+    },
+    {
+      ignoreWithin: '[data-adapttable-part="column-rename-input"]',
+    }
+  );
   // A Popover, not a Menu: the panel holds checkboxes, drag handles and
   // buttons, so `role="menu"` semantics (menuitem children) would be a lie.
   return (
@@ -470,7 +478,7 @@ export function ColumnMenu<TRow>({
       }}
       position="bottom-end"
       withinPortal
-      returnFocus
+      returnFocus={false}
       // One owner for Escape. Mantine's own dismiss fires as soon as focus
       // is inside the dropdown, which is exactly where the rename editor
       // puts it — so a cancelled edit took the whole menu down with it.
@@ -478,20 +486,34 @@ export function ColumnMenu<TRow>({
       // alone when something inside has already handled it.
       closeOnEscape={false}
       zIndex={10050}
-      middlewares={{ flip: false, shift: { padding: 8 } }}
+      middlewares={{
+        flip: false,
+        shift: { padding: 8 },
+        size: {
+          padding: 8,
+          apply: ({ availableHeight, elements }) => {
+            elements.floating.style.maxHeight = `${Math.max(0, availableHeight)}px`;
+          },
+        },
+      }}
     >
       <Popover.Target>
         <Button
           variant="default"
           size="sm"
           aria-expanded={opened}
+          ref={triggerRef}
           data-adapttable-part="column-menu-button"
           onClick={() => setOpened((value) => !value)}
         >
           {labels.columns}
         </Button>
       </Popover.Target>
-      <Popover.Dropdown dir={dir} aria-label={labels.columns}>
+      <Popover.Dropdown
+        dir={dir}
+        aria-label={labels.columns}
+        style={{ overflowY: "auto" }}
+      >
         <Box
           p={4}
           miw={250}

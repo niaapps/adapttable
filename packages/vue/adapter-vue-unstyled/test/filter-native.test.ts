@@ -471,12 +471,12 @@ describe("native filter surface and extra control branches", () => {
       );
       window.dispatchEvent(new Event("resize"));
       await tick();
-      expect(surface.style.top).toBe("572px");
-      expect(surface.style.left).toBe("100px");
+      expect(surface.style.top).toBe("576px");
+      expect(surface.style.left).toBe("8px");
       expect(document.activeElement).toBe(surface);
       direction.value = "rtl";
       await tick();
-      expect(surface.style.left).toBe("8px");
+      expect(surface.style.left).toBe("100px");
       anchor.dispatchEvent(new Event("pointerdown", { bubbles: true }));
       surface.dispatchEvent(new Event("pointerdown", { bubbles: true }));
       expect(close).not.toHaveBeenCalled();

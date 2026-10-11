@@ -103,3 +103,13 @@
     min-block-size: 1.5rem;
   }
 }
+
+/* Supply Tailwind's border baseline inside the adapter without resetting the host. */
+@layer base {
+  :where(.adapttable-shadcn-vue, [data-slot$="-content"]),
+  :where(.adapttable-shadcn-vue, [data-slot$="-content"]) *,
+  :where(.adapttable-shadcn-vue, [data-slot$="-content"]) ::before,
+  :where(.adapttable-shadcn-vue, [data-slot$="-content"]) ::after {
+    border-color: var(--border, #e4e4e7);
+  }
+}

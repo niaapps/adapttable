@@ -771,6 +771,14 @@ describe("filter card viewport space", () => {
       await openFilters();
       const panel = part("filters-popover")!;
       expect(panel).not.toBeNull();
+      Object.defineProperty(panel, "scrollHeight", { value: 600 });
+      vi.spyOn(panel, "getBoundingClientRect").mockImplementation(() =>
+        DOMRect.fromRect({
+          width: 340,
+          height: Math.min(600, Number.parseFloat(panel.style.maxHeight)),
+        })
+      );
+      window.dispatchEvent(new Event("resize"));
       expect(panel.style.maxHeight).toBe("560px");
       top = window.innerHeight - 332;
       window.dispatchEvent(new Event("scroll"));

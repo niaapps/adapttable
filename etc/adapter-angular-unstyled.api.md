@@ -217,7 +217,13 @@ export class AdaptColumnHeaderRename {
 // @public
 export class AdaptColumnMenu extends AdaptColumnMenuModel {
     // (undocumented)
-    protected readonly panelStyle: Readonly<Record<string, string>>;
+    protected readonly panelStyle: {
+        "inline-size": string;
+        padding: string;
+        display: string;
+        gap: string;
+        "box-sizing": string;
+    };
     // (undocumented)
     protected readonly popover: MenuPopover;
     // (undocumented)
@@ -444,8 +450,6 @@ export class AdaptFilterDrawer {
 // @internal
 export class AdaptFilterPopover {
     constructor();
-    // (undocumented)
-    protected readonly availableHeight: Signal<number>;
     readonly props: InputSignal<FilterOverlaySlotProps<TemplateRef<unknown>>>;
     // (undocumented)
     protected readonly zIndex = 10050;

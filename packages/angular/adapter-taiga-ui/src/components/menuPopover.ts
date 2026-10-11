@@ -41,6 +41,7 @@ export function menuPopover(
   injector: Injector
 ): MenuPopover {
   const open = signal(false);
+  let restoreFocus = false;
   const close = (): void => {
     open.set(false);
   };
@@ -48,12 +49,28 @@ export function menuPopover(
   // Taiga owns active-zone-aware dismissal. Keep focus restoration local to
   // the invoking menu instead of closing a parent when a child portal opens.
   effect(
-    () => {
-      if (open()) return;
-      const active =
-        typeof document === "undefined" ? null : document.activeElement;
-      if (active && elements.panel()?.contains(active))
-        elements.trigger()?.focus();
+    (cleanup) => {
+      if (!open()) {
+        if (restoreFocus) queueMicrotask(() => elements.trigger()?.focus());
+        restoreFocus = false;
+        return;
+      }
+      const document = elements.trigger()?.ownerDocument;
+      if (!document) return;
+      const recordEscape = (event: KeyboardEvent): void => {
+        if (!event.isComposing) restoreFocus = event.key === "Escape";
+      };
+      const pointerdown = () => {
+        restoreFocus = false;
+      };
+      document.addEventListener("pointerdown", pointerdown, true);
+      cleanup(() =>
+        document.removeEventListener("pointerdown", pointerdown, true)
+      );
+      document.addEventListener("keydown", recordEscape, true);
+      cleanup(() =>
+        document.removeEventListener("keydown", recordEscape, true)
+      );
     },
     { injector }
   );

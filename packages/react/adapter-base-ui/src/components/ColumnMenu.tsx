@@ -411,7 +411,7 @@ export function ColumnMenu<TRow>({
             dir={dir}
             style={{
               minWidth: "min(260px, calc(100vw - 48px))",
-              maxHeight: "min(70vh, 480px)",
+              maxHeight: "min(var(--available-height), 70vh, 480px)",
               overflowY: "auto",
             }}
           >

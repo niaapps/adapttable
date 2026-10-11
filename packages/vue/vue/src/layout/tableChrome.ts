@@ -445,6 +445,12 @@ export function DesktopTableChrome<TRow>(props: {
                     class: classNames.selectionHeader,
                     rowspan: model.headerPlan?.length,
                     "data-adapttable-part": "selection-header",
+                    style: {
+                      width: "1%",
+                      minWidth: "44px",
+                      whiteSpace: "nowrap",
+                      textAlign: "center",
+                    },
                   },
                   [selection(model.headerCheckboxAttrs, true)]
                 )
@@ -493,6 +499,12 @@ export function DesktopTableChrome<TRow>(props: {
                     scope: "col",
                     class: classNames.selectionHeader,
                     "data-adapttable-part": "selection-header",
+                    style: {
+                      width: "1%",
+                      minWidth: "44px",
+                      whiteSpace: "nowrap",
+                      textAlign: "center",
+                    },
                   },
                   [selection(model.headerCheckboxAttrs, true)]
                 )
@@ -552,6 +564,12 @@ export function DesktopTableChrome<TRow>(props: {
               {
                 class: classNames.selectionCell,
                 "data-adapttable-part": "selection-cell",
+                style: {
+                  width: "1%",
+                  minWidth: "44px",
+                  whiteSpace: "nowrap",
+                  textAlign: "center",
+                },
               },
               [row.checkboxAttrs ? selection(row.checkboxAttrs, false) : null]
             )

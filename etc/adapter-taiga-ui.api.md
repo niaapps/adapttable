@@ -254,7 +254,9 @@ export class AdaptColumnHeaderRename {
 // @public
 export class AdaptColumnMenu extends AdaptColumnMenuModel {
     // (undocumented)
-    protected readonly panelStyle: Readonly<Record<string, string>>;
+    protected readonly panelStyle: Signal<    {
+    "max-block-size": string;
+    }>;
     // (undocumented)
     protected readonly popover: MenuPopover;
     // (undocumented)

@@ -28,6 +28,8 @@ import {
 import { Button, Divider, Flex, Input, Popover, Select, theme } from "antd";
 import { type ComponentRef, useEffect, useRef, useState } from "react";
 
+import { usePopoverHeight } from "./usePopoverHeight";
+
 /** Menu labels plus the actions-column display name. */
 type MenuLabels = ColumnMenuLabels & { actions: string; reorderRow: string };
 
@@ -504,6 +506,7 @@ export function ColumnMenu<TRow>({
   const [query, setQuery] = useState("");
   const rows = filterColumnMenuRows(columnMenuRows(allColumns, layout), query);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const height = usePopoverHeight(open, () => triggerRef.current, 0);
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -536,7 +539,8 @@ export function ColumnMenu<TRow>({
         minInlineSize: 0,
         padding: 8,
         minWidth: "min(260px, calc(100vw - 48px))",
-        maxHeight: "min(70vh, 480px)",
+        maxHeight: height,
+        boxSizing: "border-box",
         overflowY: "auto",
       }}
     >
@@ -630,7 +634,7 @@ export function ColumnMenu<TRow>({
       open={open}
       onOpenChange={setOpen}
       placement={dir === "rtl" ? "bottomLeft" : "bottomRight"}
-      autoAdjustOverflow={{ adjustX: 1, adjustY: 0 }}
+      autoAdjustOverflow={{ adjustX: 1, adjustY: 1 }}
       content={content}
       styles={{ content: { padding: 0 } }}
     >

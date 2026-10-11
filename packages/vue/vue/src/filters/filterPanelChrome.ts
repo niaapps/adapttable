@@ -8,6 +8,9 @@ import {
 } from "@adapttable/core";
 import type { FilterTreeBuilderProps } from "@adapttable/core/binding";
 import { h, type VNodeChild } from "vue";
+
+import { PanelContent } from "../layout/panelContent";
+
 export interface FilterTriggerProps {
   readonly label: string;
   readonly count: number;
@@ -102,6 +105,7 @@ export function FilterPanelChrome<TRow>(props: {
     {
       "data-adapttable-part": "filters-form",
       class: props.classNames?.filtersForm,
+      style: { display: "grid", gap: "16px" },
       dir: model.dir,
     },
     model.defs.map((def) =>
@@ -115,63 +119,80 @@ export function FilterPanelChrome<TRow>(props: {
       ])
     )
   );
-  const children = h("div", null, [
-    h(
-      "header",
-      {
-        "data-adapttable-part": "filters-header",
-        class: props.classNames?.filtersHeader,
-      },
-      [
-        h(
-          "h3",
-          {
-            "data-adapttable-part": "filters-title",
-            class: props.classNames?.filtersTitle,
+  const children = h(PanelContent, {
+    anchor: model.anchor,
+    modal: model.mode === "drawer",
+    children: [
+      h(
+        "header",
+        {
+          "data-adapttable-part": "filters-header",
+          class: props.classNames?.filtersHeader,
+          style: { flex: "none" },
+        },
+        [
+          h(
+            "h3",
+            {
+              "data-adapttable-part": "filters-title",
+              class: props.classNames?.filtersTitle,
+              style: { margin: 0 },
+            },
+            model.labels.filters
+          ),
+          model.mode === "drawer"
+            ? controls.Button({
+                label: model.labels.cancel,
+                part: "filters-close",
+                onClick: () => model.close("done"),
+              })
+            : null,
+        ]
+      ),
+      h(
+        "div",
+        {
+          "data-adapttable-part": "filters-body",
+          class: props.classNames?.filtersBody,
+          style: {
+            minHeight: 0,
+            overflowY: "auto",
+            overscrollBehavior: "contain",
           },
-          model.labels.filters
-        ),
-        model.mode === "drawer"
-          ? controls.Button({
-              label: model.labels.cancel,
-              part: "filters-close",
-              onClick: () => model.close("done"),
-            })
-          : null,
-      ]
-    ),
-    h(
-      "div",
-      {
-        "data-adapttable-part": "filters-body",
-        class: props.classNames?.filtersBody,
-      },
-      [fields, model.tree ? controls.Tree?.(model.tree) : null]
-    ),
-    h(
-      "footer",
-      {
-        "data-adapttable-part": "filters-footer",
-        class: [
-          props.classNames?.filtersActions,
-          props.classNames?.filtersFooter,
-        ],
-      },
-      [
-        controls.Button({
-          label: model.labels.clearAll,
-          part: "filters-clear",
-          disabled: model.count === 0,
-          onClick: model.clear,
-        }),
-        controls.Button({
-          label: model.labels.filtersDone,
-          part: "filters-done",
-          onClick: () => model.close("done"),
-        }),
-      ]
-    ),
-  ]);
+        },
+        [fields, model.tree ? controls.Tree?.(model.tree) : null]
+      ),
+      h(
+        "footer",
+        {
+          "data-adapttable-part": "filters-footer",
+          style: {
+            flex: "none",
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "8px",
+          },
+          class: [
+            props.classNames?.filtersActions,
+            props.classNames?.filtersFooter,
+          ],
+        },
+        [
+          controls.Button({
+            label: model.labels.clearAll,
+            part: "filters-clear",
+            disabled: model.count === 0,
+            onClick: model.clear,
+          }),
+          controls.Button({
+            label: model.labels.filtersDone,
+            part: "filters-done",
+            onClick: () => model.close("done"),
+          }),
+        ]
+      ),
+    ],
+  });
   const surface = model.mode === "drawer" ? controls.Drawer : controls.Popover;
   return h(
     "div",

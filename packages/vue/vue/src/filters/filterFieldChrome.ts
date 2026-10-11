@@ -312,6 +312,7 @@ export function FilterFieldChrome(props: {
       {
         key: control.key,
         class: props.classNames?.filterControl,
+        style: { display: "grid", minWidth: 0 },
       },
       [node]
     );
@@ -334,6 +335,13 @@ export function FilterFieldChrome(props: {
       "data-adapttable-part": "filter-field",
       class: [props.className, props.classNames?.filterField],
       "aria-busy": model.loading || undefined,
+      style: {
+        display: "grid",
+        gridTemplateColumns: model.checkboxGroupAttrs
+          ? "minmax(0, 1fr)"
+          : "repeat(2, minmax(0, 1fr))",
+        gap: "8px",
+      },
     },
     [
       h(
@@ -342,6 +350,7 @@ export function FilterFieldChrome(props: {
           id: model.id,
           class: props.classNames?.filterLabel,
           "data-adapttable-part": "filter-label",
+          style: { gridColumn: "1 / -1" },
         },
         model.label
       ),
@@ -351,6 +360,11 @@ export function FilterFieldChrome(props: {
             {
               ...model.checkboxGroupAttrs,
               class: props.classNames?.filterCheckboxGroup,
+              style: {
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: "8px",
+              },
             },
             checkboxFields
           )

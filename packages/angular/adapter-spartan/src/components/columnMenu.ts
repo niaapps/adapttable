@@ -11,7 +11,13 @@ import {
   AdaptIcon,
   AdaptLiveRegion,
 } from "@adapttable/angular/adapter";
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import {
+  afterRenderEffect,
+  ChangeDetectionStrategy,
+  Component,
+  type ElementRef,
+  viewChild,
+} from "@angular/core";
 import {
   BrnCollapsible,
   BrnCollapsibleContent,
@@ -299,6 +305,7 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
       brnPopover
       [adaptHlmPopoverLabel]="p.labels.columns"
       [state]="popover.open() ? 'open' : 'closed'"
+      (closed)="restoreTrigger()"
       (stateChanged)="popover.setOpen($event === 'open')"
       data-spartan-part="column-menu"
       style="position: relative"
@@ -306,6 +313,7 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
       <button
         adaptHlmButton
         #trigger
+        (pointerdown)="trigger.focus()"
         brnPopoverTrigger
         type="button"
         data-adapttable-part="column-menu-button"
@@ -418,6 +426,34 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
   `,
 })
 export class AdaptColumnMenu extends AdaptColumnMenuModel {
+  private readonly opener =
+    viewChild.required<ElementRef<HTMLElement>>("trigger");
+  private escapePending = false;
+  constructor() {
+    super();
+    afterRenderEffect((cleanup) => {
+      if (!this.popover.open()) return;
+      const document = this.opener().nativeElement.ownerDocument;
+      const keydown = (event: KeyboardEvent) => {
+        if (
+          event.key !== "Escape" ||
+          event.isComposing ||
+          (event.target instanceof Element &&
+            event.target.closest(
+              '[data-adapttable-part="column-rename-input"]'
+            ))
+        )
+          return;
+        this.escapePending = true;
+      };
+      document.addEventListener("keydown", keydown, true);
+      cleanup(() => document.removeEventListener("keydown", keydown, true));
+    });
+  }
+  protected restoreTrigger(): void {
+    if (this.escapePending) this.opener().nativeElement.focus();
+    this.escapePending = false;
+  }
   protected readonly panelStyle = MENU_PANEL_STYLE;
 
   protected readonly popover = menuPopover();
