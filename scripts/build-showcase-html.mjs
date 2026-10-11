@@ -561,8 +561,8 @@ export const angularModePage = (lab = false) => {
     ? "Angular Feature Lab — AdaptTable"
     : "Angular live demo — AdaptTable";
   const description = lab
-    ? "Compose real Angular table features, change adapters and explore every feature."
-    : "One dataset and one feature set, rendered by real Angular adapters.";
+    ? "Compose Angular data table filters, cell editing, selection, grouping and row controls. Switch nine native UI kits and test responsive cards, RTL and saved views."
+    : "Explore an Angular data table with nine native UI kits: filters, sorting, editable cells, selection, saved views and CSV export, with responsive cards and RTL.";
   return {
     dir,
     html: htmlDocument(
@@ -572,7 +572,7 @@ export const angularModePage = (lab = false) => {
         description,
         route: demoRoute(lab ? "all-options" : "", "angular"),
       }),
-      `<div id="root" data-angular-mode="${lab ? "lab" : "live"}"><main class="at-fallback"><h1>${title}</h1><p>${description}</p><a href="/angular/getting-started/">Angular documentation</a></main></div>
+      `<div id="root" data-angular-mode="${lab ? "lab" : "live"}"><main class="at-fallback"><h1>${title}</h1><p>${description}</p><p>The same people dataset runs in every adapter. Use frontend data or a simulated server query, change density and language, and explore filters, editing and row controls. Each table uses its selected UI kit's components. Updates belong to the demo host.</p><a href="/angular/getting-started/">Angular documentation</a></main></div>
     <script type="module" src="../src/angular/entry-demo.ts"></script>`
     ),
   };
