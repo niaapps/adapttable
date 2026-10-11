@@ -2,9 +2,8 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { describe, it } from "node:test";
 
-// Resolve through ESLint so a missing pnpm patch fails this test.
-const rootRequire = createRequire(new URL("../package.json", import.meta.url));
-const require = createRequire(rootRequire.resolve("eslint/package.json"));
+// Explicit dev fixtures keep the patch contract independent of ESLint's dependencies.
+const require = createRequire(new URL("../package.json", import.meta.url));
 const braces = require("braces");
 
 describe("the installed braces patch", () => {
