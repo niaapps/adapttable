@@ -7,7 +7,7 @@ menu primitives.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/reka-ui`
+This is a public `0.1.0` package. Install `@adapttable/reka-ui`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 

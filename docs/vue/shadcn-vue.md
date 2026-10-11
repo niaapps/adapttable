@@ -7,7 +7,7 @@ shadcn-vue controls built on Reka UI.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/shadcn-vue`
+This is a public `0.1.0` package. Install `@adapttable/shadcn-vue`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 

@@ -6,7 +6,7 @@ the buttons, inputs, selects, checkboxes, popovers, drawers and menus.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/nuxt-ui`
+This is a public `0.1.0` package. Install `@adapttable/nuxt-ui`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 

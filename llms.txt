@@ -4,7 +4,7 @@
 
 ## Version and integration boundaries
 
-This index describes the v3 documentation. Check the installed package version before applying examples; use the migration guides for v1/v2. React hooks come from `@adapttable/react` or a documented adapter re-export, not from core. Angular injection functions and renderer types come from `@adapttable/angular`. Individual features use kit subpaths; React's `standardFeatures()` and Angular's `standardPreset()` compose their documented common sets. Enabling props from v2 alone do not activate v3 features. Check registry availability for Angular kits and `@adapttable/ai-angular` before installing. Vue has an `0.1.0` public binding and eight kits — native Unstyled, Element Plus, Naive UI, Nuxt UI, Quasar, Reka UI, shadcn-vue and Vuetify — each covering the full feature set with its own controls, plus optional agents, assistant UI and speech through `@adapttable/ai-vue`. The Vue packages are published on npm.
+This index describes the v3 documentation. Check the installed package version before applying examples; use the migration guides for v1/v2. React hooks come from `@adapttable/react` or a documented adapter re-export, not from core. Angular injection functions and renderer types come from `@adapttable/angular`. Individual features use kit subpaths; React's `standardFeatures()` and Angular's `standardPreset()` compose their documented common sets. Enabling props from v2 alone do not activate v3 features. The Angular binding, all nine kits and `@adapttable/ai-angular` are published on npm. Vue has a published public binding and eight kits — native Unstyled, Element Plus, Naive UI, Nuxt UI, Quasar, Reka UI, shadcn-vue and Vuetify — each covering the full feature set with its own controls, plus optional agents, assistant UI and speech through `@adapttable/ai-vue`. The Vue packages are published on npm.
 
 Use AdaptTable when you want TanStack-Table-style headless freedom but batteries-included for your specific UI kit — with URL state, RTL, a real filter UX, virtualization, and mobile layouts that do not break responsively.
 
@@ -213,6 +213,19 @@ const {
 - [Angular realtime data](https://adapttable.orwamahmoud.com/angular/realtime/): host-owned signal updates, row patch provenance and changed-cell feedback
 
 ## Vue docs
+
+- [Vue table sorting and search](https://adapttable.orwamahmoud.com/vue/sorting/): Sort Vue table columns, compose multi-sort and search reactive data with shared query state and native controls.
+- [Vue table pagination and infinite loading](https://adapttable.orwamahmoud.com/vue/pagination/): Page Vue tables or use infinite loading with reactive sources, synchronized query state and native page controls.
+- [Vue table row selection and bulk actions](https://adapttable.orwamahmoud.com/vue/selection/): Control selected Vue row IDs, retain stable row identity and compose native bulk actions without transferring ownership of data.
+- [Responsive Vue tables and mobile cards](https://adapttable.orwamahmoud.com/vue/mobile-cards/): Render responsive Vue table cards with native controls, shared columns, editing, selection and RTL across eight adapters.
+- [Vue reactive data sources and data tiers](https://adapttable.orwamahmoud.com/vue/data-tiers/): Choose Vue frontend or server data sources, reactive refs and headless controllers with host-owned fetching and query state.
+
+- [Vue table filtering](https://adapttable.orwamahmoud.com/vue/filtering/): Compose native Vue filters with popovers, drawers, checklists and nested AND/OR groups across all eight AdaptTable adapters.
+- [Vue table header filters](https://adapttable.orwamahmoud.com/vue/header-filters/): Add compact inline Vue table filters, typed operators and synchronized filter state using each adapter’s native controls.
+- [Vue cell, row and batch editing](https://adapttable.orwamahmoud.com/vue/cell-editing/): Edit Vue table cells and rows with validation, host-owned persistence, conflict handling and undo history across native adapters.
+- [Vue row grouping and tree data](https://adapttable.orwamahmoud.com/vue/row-grouping/): Group Vue table rows, compute group aggregates and render tree data and expandable details with native adapter controls.
+- [Vue column layout and row controls](https://adapttable.orwamahmoud.com/vue/rows/): Configure Vue table columns, pinning, resizing, selection, row actions and host-owned reordering with AdaptTable features.
+- [Vue saved views and table preferences](https://adapttable.orwamahmoud.com/vue/saved-views/): Save Vue table views, share URL state and configure density and fullscreen controls with native AdaptTable adapters.
 
 - [Get started with Vue](https://adapttable.orwamahmoud.com/vue/getting-started/): package availability, Vue 3.5 peers, native first table, reactive sources, controlled state and SSR boundaries
 - [Element Plus Vue table](https://adapttable.orwamahmoud.com/vue/element-plus/): Element Plus controls and card surfaces, setup, peers and kit components

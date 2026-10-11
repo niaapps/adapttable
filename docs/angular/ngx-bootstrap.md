@@ -121,4 +121,4 @@ The package includes native overlay/control fixtures, the feature-conformance
 suite, server-rendering and hydration tests, and CSS isolation/license checks.
 Final acceptance requires the integrated Angular compiler, tests and browser
 checks for mobile, RTL, keyboard focus, portal placement and kit switching.
-Release preparation is not a claim that those gates have passed.
+These checks also cover the documented upstream event-replay limitation.

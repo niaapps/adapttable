@@ -6,7 +6,7 @@ Naive UI supplies the visible controls and their styling.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/naive-ui`
+This is a public `0.1.0` package. Install `@adapttable/naive-ui`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 

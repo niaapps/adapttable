@@ -148,6 +148,32 @@ export const sidebar = [
         ],
       },
       { label: "Vue feature composition", slug: "vue/features" },
+      { label: "Vue table sorting and search", slug: "vue/sorting" },
+      {
+        label: "Vue table pagination and infinite loading",
+        slug: "vue/pagination",
+      },
+      {
+        label: "Vue table row selection and bulk actions",
+        slug: "vue/selection",
+      },
+      {
+        label: "Responsive Vue tables and mobile cards",
+        slug: "vue/mobile-cards",
+      },
+      {
+        label: "Vue reactive data sources and data tiers",
+        slug: "vue/data-tiers",
+      },
+      { label: "Vue table filtering", slug: "vue/filtering" },
+      { label: "Vue table header filters", slug: "vue/header-filters" },
+      { label: "Vue cell, row and batch editing", slug: "vue/cell-editing" },
+      { label: "Vue row grouping and tree data", slug: "vue/row-grouping" },
+      { label: "Vue column layout and row controls", slug: "vue/rows" },
+      {
+        label: "Vue saved views and table preferences",
+        slug: "vue/saved-views",
+      },
       { label: "Vue actions and exports", slug: "vue/actions" },
       { label: "Vue column menu", slug: "vue/column-menu" },
       { label: "Vue navigation, find and status", slug: "vue/navigation" },

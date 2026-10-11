@@ -37,6 +37,17 @@ const target = join(here, "src/content/docs");
  * `docs/` to each other.
  */
 export const TITLES = {
+  "vue/sorting.md": "Vue table sorting and search",
+  "vue/pagination.md": "Vue table pagination and infinite loading",
+  "vue/selection.md": "Vue table row selection and bulk actions",
+  "vue/mobile-cards.md": "Responsive Vue tables and mobile cards",
+  "vue/data-tiers.md": "Vue reactive data sources and data tiers",
+  "vue/filtering.md": "Vue table filtering",
+  "vue/header-filters.md": "Vue table header filters",
+  "vue/cell-editing.md": "Vue cell, row and batch editing",
+  "vue/row-grouping.md": "Vue row grouping and tree data",
+  "vue/rows.md": "Vue column layout and row controls",
+  "vue/saved-views.md": "Vue saved views and table preferences",
   "angular/migrating-to-0-5.md": "Migrate Angular table imports to 0.5",
   "vue/actions.md": "Vue actions and exports",
   "vue/column-menu.md": "Vue column menu",
@@ -189,6 +200,28 @@ export const TITLES = {
 // emits from `description`. Keyword-rich and unique per page so search and
 // answer engines have something better than a generic site default.
 export const DESCRIPTIONS = {
+  "vue/sorting.md":
+    "Sort Vue table columns, compose multi-sort and search reactive data with shared query state and native controls.",
+  "vue/pagination.md":
+    "Page Vue tables or use infinite loading with reactive sources, synchronized query state and native page controls.",
+  "vue/selection.md":
+    "Control selected Vue row IDs, retain stable row identity and compose native bulk actions without transferring ownership of data.",
+  "vue/mobile-cards.md":
+    "Render responsive Vue table cards with native controls, shared columns, editing, selection and RTL across eight adapters.",
+  "vue/data-tiers.md":
+    "Choose Vue frontend or server data sources, reactive refs and headless controllers with host-owned fetching and query state.",
+  "vue/filtering.md":
+    "Compose native Vue filters with popovers, drawers, checklists and nested AND/OR groups across all eight AdaptTable adapters.",
+  "vue/header-filters.md":
+    "Add compact inline Vue table filters, typed operators and synchronized filter state using each adapter’s native controls.",
+  "vue/cell-editing.md":
+    "Edit Vue table cells and rows with validation, host-owned persistence, conflict handling and undo history across native adapters.",
+  "vue/row-grouping.md":
+    "Group Vue table rows, compute group aggregates and render tree data and expandable details with native adapter controls.",
+  "vue/rows.md":
+    "Configure Vue table columns, pinning, resizing, selection, row actions and host-owned reordering with AdaptTable features.",
+  "vue/saved-views.md":
+    "Save Vue table views, share URL state and configure density and fullscreen controls with native AdaptTable adapters.",
   "angular/migrating-to-0-5.md":
     "Move Angular table imports to their 0.5 root, features and adapter entries. Preserve native kit controls and upgrade independently versioned packages.",
   "vue/actions.md":

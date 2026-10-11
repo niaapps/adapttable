@@ -6,7 +6,7 @@ supplies the buttons, fields, selects, checkboxes, menus and dialogs.
 
 ## Availability and versions
 
-This is an public `0.1.0` package. Install `@adapttable/vuetify`
+This is a public `0.1.0` package. Install `@adapttable/vuetify`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
