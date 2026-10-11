@@ -1,4 +1,15 @@
 /* Structural alignment stays in the kit; interactive controls remain NG-ZORRO. */
+:is(
+  [data-adapttable-part="selection-header"],
+  [data-adapttable-part="selection-cell"],
+  [data-adapttable-part="expand-header"],
+  [data-adapttable-part="expand-cell"],
+  [data-adapttable-part="reorder-header"],
+  [data-adapttable-part="reorder-cell"]
+) {
+  padding-inline: 8px;
+  text-align: center;
+}
 .adapt-header-controls {
   display: flex;
   align-items: center;

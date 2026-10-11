@@ -119,7 +119,7 @@
   inline-size: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  table-layout: fixed;
+  table-layout: auto;
 }
 .adapt-aria :is(th, td) {
   text-align: start;
@@ -297,4 +297,10 @@
    gutter on the actual pane, where its percentage uses those native bounds. */
 .cdk-overlay-pane.adapt-aria-filter-overlay {
   max-width: calc(100% - 16px);
+}
+
+/* Names fill the row; icon controls retain their native dimensions. */
+.adapt-aria [data-adapttable-part="column-menu-label"] {
+  flex: 1;
+  min-inline-size: 56px;
 }

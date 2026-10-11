@@ -40,6 +40,7 @@ import { MENU_PANEL_STYLE, menuPopover } from "./menuPopover";
   selector: "adapt-column-menu-row",
   imports: [A11yModule, AdaptAttrs, AdaptIcon, AdaptLiveRegion],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: "./columnMenu.css",
   host: { style: "display: contents" },
   template: `
     @let r = row();
@@ -214,6 +215,7 @@ export class AdaptColumnMenuRow extends AdaptColumnMenuRowModel {}
   selector: "adapt-column-menu-edge-row",
   imports: [A11yModule, AdaptIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: "./columnMenu.css",
   host: { style: "display: contents" },
   template: `
     @let hidden = layout().isHidden(columnKey());
@@ -274,6 +276,7 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
     AdaptColumnMenuEdgeRow,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: "./columnMenu.css",
   template: `
     @let p = props();
     <div

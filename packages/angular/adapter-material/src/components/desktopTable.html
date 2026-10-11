@@ -10,6 +10,11 @@
           @if (v.rowDetail) {
             <th
               data-adapttable-part="expand-header"
+              style="
+                inline-size: 1%;
+                min-inline-size: 56px;
+                white-space: nowrap;
+              "
               scope="col"
               [attr.rowspan]="band > 1 ? band : null"
               [attr.aria-label]="v.table.labels().expandRow"
@@ -18,6 +23,11 @@
           @if (v.reorder) {
             <th
               data-adapttable-part="reorder-header"
+              style="
+                inline-size: 1%;
+                min-inline-size: 56px;
+                white-space: nowrap;
+              "
               scope="col"
               [attr.rowspan]="band > 1 ? band : null"
               [attr.aria-label]="v.table.labels().reorderRow"
@@ -26,6 +36,11 @@
           @if (v.selection; as selection) {
             <th
               data-adapttable-part="selection-header"
+              style="
+                inline-size: 1%;
+                min-inline-size: 56px;
+                white-space: nowrap;
+              "
               scope="col"
               [attr.rowspan]="band > 1 ? band : null"
             >
@@ -293,7 +308,14 @@
                 "
               >
                 @if (v.rowDetail) {
-                  <td data-adapttable-part="expand-cell">
+                  <td
+                    data-adapttable-part="expand-cell"
+                    style="
+                      inline-size: 1%;
+                      min-inline-size: 56px;
+                      white-space: nowrap;
+                    "
+                  >
                     @if (!summary) {
                       <ng-container
                         [adaptSlot]="expandToggleSlot"
@@ -304,7 +326,14 @@
                   </td>
                 }
                 @if (v.reorder; as reorder) {
-                  <td data-adapttable-part="reorder-cell">
+                  <td
+                    data-adapttable-part="reorder-cell"
+                    style="
+                      inline-size: 1%;
+                      min-inline-size: 56px;
+                      white-space: nowrap;
+                    "
+                  >
                     @if (!summary) {
                       <ng-container
                         [adaptSlot]="reorderHandleSlot"
@@ -317,7 +346,14 @@
                   </td>
                 }
                 @if (v.selection; as selection) {
-                  <td data-adapttable-part="selection-cell">
+                  <td
+                    data-adapttable-part="selection-cell"
+                    style="
+                      inline-size: 1%;
+                      min-inline-size: 56px;
+                      white-space: nowrap;
+                    "
+                  >
                     @if (!summary) {
                       <adapt-selection-checkbox
                         part="checkbox"

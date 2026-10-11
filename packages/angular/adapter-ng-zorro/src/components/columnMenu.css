@@ -1,0 +1,48 @@
+/* Native kit controls keep their appearance; rows reserve space for names. */
+fieldset {
+  display: grid;
+  inline-size: min(360px, calc(100vw - 64px));
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+[data-adapttable-part="column-menu-bulk"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+[data-adapttable-part="column-menu-item"] {
+  display: grid;
+  grid-template-columns: 44px 44px minmax(56px, 1fr) 44px 44px;
+  align-items: center;
+  gap: 6px;
+  padding-block: 4px;
+}
+[data-adapttable-part="column-menu-item"] > span {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+[data-adapttable-part="column-menu-item"] > button {
+  min-inline-size: 44px;
+  min-block-size: 44px;
+  padding-inline: 0;
+}
+[data-adapttable-part="column-menu-item"]:is([data-actions], [data-reorder]) {
+  grid-template-columns: 44px minmax(56px, 1fr) 44px;
+}
+[data-adapttable-part="column-menu-submenu"] {
+  grid-column: 1 / -1;
+  min-inline-size: 0;
+}
+[data-adapttable-part="column-menu-submenu"] :is(button, label) {
+  margin-block: 3px;
+}
+[data-adapttable-part="column-menu-choice"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(100px, 1fr);
+  gap: 8px;
+  align-items: center;
+}
