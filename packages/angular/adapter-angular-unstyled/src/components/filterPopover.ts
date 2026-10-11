@@ -3,16 +3,12 @@
  * backdrop, closes on an outside click or Escape, and hands focus back to
  * the button on Escape.
  */
-import {
-  type FilterOverlaySlotProps,
-  injectPopoverSpace,
-} from "@adapttable/angular/adapter";
+import { type FilterOverlaySlotProps } from "@adapttable/angular/adapter";
 import { NgTemplateOutlet } from "@angular/common";
 import {
   afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
-  computed,
   effect,
   type ElementRef,
   input,
@@ -48,7 +44,6 @@ import { OVERLAY_Z, placeOverlayBelowTrigger } from "./overlayPlacement";
       @if (p.open) {
         <div
           #card
-          [style.max-height.px]="availableHeight()"
           style="box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; width: 340px; max-width: calc(100vw - 32px)"
           data-adapttable-part="filters-popover"
           [attr.dir]="p.dir ?? 'ltr'"
@@ -59,7 +54,7 @@ import { OVERLAY_Z, placeOverlayBelowTrigger } from "./overlayPlacement";
           [style.max-width]="'calc(100vw - 16px)'"
           [style.overflow-y]="'hidden'"
         >
-          <header data-adapttable-part="filters-header">
+          <header data-adapttable-part="filters-header" style="flex: none">
             <h3 data-adapttable-part="filters-title">
               {{ p.labels.filters
               }}{{
@@ -82,9 +77,14 @@ import { OVERLAY_Z, placeOverlayBelowTrigger } from "./overlayPlacement";
             <ng-container [ngTemplateOutlet]="p.filters" />
           </div>
           <footer
-            style="flex: none; display: flex; justify-content: flex-end; padding-block-start: 12px"
+            data-adapttable-part="filters-footer"
+            style="flex: none; display: flex; justify-content: flex-end"
           >
-            <button type="button" (click)="p.onClose()">
+            <button
+              type="button"
+              data-adapttable-part="filters-done"
+              (click)="p.onClose()"
+            >
               {{ p.labels.filtersDone }}
             </button>
           </footer>
@@ -101,22 +101,6 @@ export class AdaptFilterPopover {
   protected readonly zIndex = OVERLAY_Z;
   private readonly anchor =
     viewChild.required<ElementRef<HTMLElement>>("anchor");
-  private readonly viewportSpace = injectPopoverSpace({
-    origin: () => this.anchor()?.nativeElement,
-    open: () => this.props().open,
-    reserve: 16,
-    allowAbove: () => {
-      const origin = this.anchor()?.nativeElement;
-      const viewport = origin?.ownerDocument.defaultView;
-      return (
-        viewport != null &&
-        viewport.innerHeight - origin.getBoundingClientRect().bottom - 16 < 160
-      );
-    },
-  });
-  protected readonly availableHeight = computed(() =>
-    Math.min(560, this.viewportSpace())
-  );
   private readonly card = viewChild<ElementRef<HTMLElement>>("card");
 
   constructor() {
@@ -150,7 +134,6 @@ export class AdaptFilterPopover {
       const card = this.card()?.nativeElement;
       const { open, dir } = this.props();
       if (!open || !card) return;
-      this.availableHeight();
       const place = (): void => {
         placeOverlayBelowTrigger(
           card,
@@ -159,9 +142,13 @@ export class AdaptFilterPopover {
         );
       };
       place();
+      const observer = new ResizeObserver(place);
+      observer.observe(card);
+      observer.observe(this.anchor().nativeElement);
       window.addEventListener("resize", place);
       window.addEventListener("scroll", place, true);
       onCleanup(() => {
+        observer.disconnect();
         window.removeEventListener("resize", place);
         window.removeEventListener("scroll", place, true);
       });

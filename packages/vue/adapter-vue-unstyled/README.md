@@ -4,9 +4,15 @@ Requires Node.js **22.12.0 or newer**; packed releases are tested on Node 22.12 
 
 Native HTML controls for the AdaptTable Vue binding. The table ships no theme;
 style semantic elements with `classNames` or `data-adapttable-part` selectors.
-This public package is experimental, prepared for `0.1.0`, and has not been
-published to npm. It requires Vue `^3.5.0`; use the built workspace packages
-until publication.
+This is a public `0.1.0` package requiring Vue `^3.5.0`.
+
+```sh
+pnpm add @adapttable/vue-unstyled vue@^3.5.0
+```
+
+The adapter installs its matching binding and core automatically. Follow the
+[Vue getting-started guide](https://adapttable.orwamahmoud.com/vue/getting-started/)
+for your first table.
 
 ## Native overlay stylesheet
 
@@ -224,8 +230,8 @@ client render has the same shape, and controls activate after mount. Importing
 or server-rendering the native package does not require browser globals.
 Provide equivalent server/client rows, controlled state and URL input to hydrate.
 
-This experimental native slice does not yet provide the complete React/Angular
-feature catalog or styled Vue kits.
+Seven styled Vue kits share the same feature model and supply their own controls.
+See the Vue guides for each kit's setup and peer requirements.
 
 Read [getting started](https://adapttable.orwamahmoud.com/vue/getting-started/),
 [feature composition](https://adapttable.orwamahmoud.com/vue/features/) and the

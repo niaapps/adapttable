@@ -5,8 +5,8 @@
 />
 <main
   class="shell angular-demo"
-  [style.--kit]="accent()"
-  [style.--c]="accent()"
+  [style.--kit]="'var(--brand)'"
+  [style.--c]="'var(--brand)'"
   [class.angular-no-motion]="!motion || reducedMotion()"
 >
   <section class="sec">
@@ -79,9 +79,8 @@
       }
     </div>
     <p class="hint">
-      Alongside Unstyled and NG-ZORRO, seven adapters are being prepared for
-      their first public 0.1.0 releases. Their registry install commands require
-      npm publication to complete. See each kit's setup guide in the docs.
+      All nine Angular kits are published on npm. Choose a kit to explore its
+      native controls, then follow its setup guide in the docs.
     </p>
     <div class="controls angular-options">
       <fieldset class="angular-choice">

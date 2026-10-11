@@ -16,6 +16,7 @@ import {
 } from "vue";
 
 import { useClassNames } from "../classNamesContext";
+import { placeNativeOverlay } from "../overlayPlacement";
 import NativeFilterDialog from "./NativeFilterDialog.vue";
 
 function focusInitialControl(root: HTMLElement): void {
@@ -155,20 +156,13 @@ export const NativeFilterSurface = defineComponent(
             position.value = {};
             return;
           }
-          const bounds = props.anchor?.getBoundingClientRect();
-          if (!bounds) return;
-          const rect = element.getBoundingClientRect();
-          const gap = 8;
-          const left =
-            props.dir === "rtl" ? bounds.right - rect.width : bounds.left;
-          const below = bounds.bottom + gap;
-          const top =
-            below + rect.height <= window.innerHeight - gap
-              ? below
-              : Math.max(gap, bounds.top - rect.height - gap);
+          if (!props.anchor) return;
+          placeNativeOverlay(element, props.anchor, props.dir);
           position.value = {
-            left: `${Math.max(gap, Math.min(left, window.innerWidth - rect.width - gap))}px`,
-            top: `${top}px`,
+            left: element.style.left,
+            top: element.style.top,
+            maxHeight: element.style.maxHeight,
+            maxWidth: element.style.maxWidth,
           };
         };
         const dialog =
@@ -317,7 +311,8 @@ export const NativeFilterSurface = defineComponent(
             position: "fixed",
             maxInlineSize: "calc(100vw - 16px)",
             maxBlockSize: "calc(100dvh - 16px)",
-            overflow: "auto",
+            overflow: "hidden",
+            padding: 0,
             margin: 0,
             inset: "auto",
             inlineSize: "22rem",
@@ -330,9 +325,16 @@ export const NativeFilterSurface = defineComponent(
       );
     return () =>
       props.open && mounted.value
-        ? h(Teleport, { to: props.container ?? "body" }, [
-            props.modal ? modalSurface() : popoverSurface(),
-          ])
+        ? h(
+            Teleport,
+            {
+              to:
+                props.container ??
+                props.anchor?.closest('[data-adapttable-part="root"]') ??
+                "body",
+            },
+            [props.modal ? modalSurface() : popoverSurface()]
+          )
         : null;
   },
   {

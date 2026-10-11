@@ -215,23 +215,31 @@ export class AdaptColumnHeaderRename {
 
 // @public
 export class AdaptColumnMenu extends AdaptColumnMenuModel {
+    constructor();
     // (undocumented)
     protected readonly menuOpen: WritableSignal<boolean>;
     // (undocumented)
     protected readonly overlayContainer: Signal<string | undefined>;
     // (undocumented)
-    protected readonly panelStyle: {
-        "max-height": string;
-        "overflow-y": string;
-        border: string;
-        padding: string;
-    };
+    protected readonly panelStyle: Signal<    {
+    "max-height": string;
+    "overflow-y": string;
+    "box-sizing": string;
+    border: string;
+    padding: string;
+    }>;
     // (undocumented)
     protected readonly popover: {
         open: Signal<boolean>;
         toggle: () => void;
         close: () => void;
     };
+    // (undocumented)
+    protected readonly preferredAbove: WritableSignal<boolean>;
+    // (undocumented)
+    protected prepare(): void;
+    // (undocumented)
+    protected toggleMenu(): void;
     // (undocumented)
     static ɵcmp: i0.ɵɵComponentDeclaration<AdaptColumnMenu, "adapt-column-menu", never, {}, {}, never, never, true, never>;
     // (undocumented)

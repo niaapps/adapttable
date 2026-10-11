@@ -129,10 +129,31 @@ export class AdaptFilterPopover {
       if (!open) return;
       const document = this.anchor().nativeElement.ownerDocument;
       const keydown = (event: KeyboardEvent): void => {
-        if (event.key === "Escape") this.restoreFocus = true;
+        if (
+          event.key === "Escape" &&
+          !event.defaultPrevented &&
+          !event.isComposing
+        ) {
+          this.restoreFocus = true;
+          overlay.close();
+        }
       };
-      document.addEventListener("keydown", keydown, true);
-      cleanup(() => document.removeEventListener("keydown", keydown, true));
+      const recordEscape = (event: KeyboardEvent): void => {
+        if (!event.isComposing) this.restoreFocus = event.key === "Escape";
+      };
+      const pointerdown = () => {
+        this.restoreFocus = false;
+      };
+      document.addEventListener("pointerdown", pointerdown, true);
+      cleanup(() =>
+        document.removeEventListener("pointerdown", pointerdown, true)
+      );
+      document.addEventListener("keydown", recordEscape, true);
+      cleanup(() =>
+        document.removeEventListener("keydown", recordEscape, true)
+      );
+      document.addEventListener("keydown", keydown);
+      cleanup(() => document.removeEventListener("keydown", keydown));
     });
   }
 
@@ -146,8 +167,10 @@ export class AdaptFilterPopover {
 
   protected closed(): void {
     if (this.props().open) this.props().onClose();
-    if (this.restoreFocus)
-      this.anchor().nativeElement.querySelector("button")?.focus();
+    if (this.restoreFocus) {
+      const anchor = this.anchor().nativeElement;
+      queueMicrotask(() => anchor.querySelector("button")?.focus());
+    }
     this.restoreFocus = false;
   }
 }

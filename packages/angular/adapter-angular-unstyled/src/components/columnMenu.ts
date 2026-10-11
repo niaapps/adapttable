@@ -42,6 +42,7 @@ import { MENU_PANEL_STYLE, menuPopover } from "./menuPopover";
     @let p = props();
     <div
       data-adapttable-part="column-menu-item"
+      style="display: grid; grid-template-columns: 20px 36px minmax(0, 1fr) 36px 36px; align-items: center; gap: 8px; padding: 4px 0"
       [attr.data-hidden]="r.hidden ? '' : null"
       [attr.data-pinned]="r.pinned ?? null"
       [style.cursor]="r.canMove ? 'grab' : 'default'"
@@ -67,6 +68,7 @@ import { MENU_PANEL_STYLE, menuPopover } from "./menuPopover";
       <button
         type="button"
         data-adapttable-part="column-menu-visibility"
+        style="width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center"
         [attr.data-active]="r.hidden ? null : ''"
         [attr.aria-pressed]="!r.hidden"
         [attr.aria-label]="
@@ -79,12 +81,14 @@ import { MENU_PANEL_STYLE, menuPopover } from "./menuPopover";
       </button>
       <span
         data-adapttable-part="column-menu-label"
+        style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
         [attr.data-hidden]="r.hidden ? '' : null"
         >{{ r.name }}</span
       >
       <button
         type="button"
         data-adapttable-part="column-menu-pin"
+        style="width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center"
         [attr.data-active]="r.pinned !== undefined ? '' : null"
         [attr.aria-pressed]="r.pinned !== undefined"
         [attr.aria-label]="pinLabel(r, p) + ': ' + r.name"
@@ -96,6 +100,7 @@ import { MENU_PANEL_STYLE, menuPopover } from "./menuPopover";
       <button
         type="button"
         data-adapttable-part="column-menu-more"
+        style="width: 36px; height: 36px; padding: 0"
         [attr.aria-expanded]="open()"
         [attr.aria-label]="p.labels.columnActions + ': ' + r.name"
         (click)="open.set(!open())"
@@ -103,7 +108,10 @@ import { MENU_PANEL_STYLE, menuPopover } from "./menuPopover";
         ⋯
       </button>
       @if (open()) {
-        <div data-adapttable-part="column-menu-submenu">
+        <div
+          data-adapttable-part="column-menu-submenu"
+          style="grid-column: 1 / -1; display: grid; gap: 8px; padding-block: 8px"
+        >
           @for (item of actions(); track item.id) {
             @if (asChoice(item); as choice) {
               <label data-adapttable-part="column-menu-choice">
@@ -197,6 +205,7 @@ export class AdaptColumnMenuRow extends AdaptColumnMenuRowModel {}
     @let pinned = layout().state.pinned[columnKey()] !== undefined;
     <div
       data-adapttable-part="column-menu-item"
+      style="display: grid; grid-template-columns: 36px minmax(0, 1fr) 36px; align-items: center; gap: 8px; padding: 4px 0"
       [attr.data-actions]="side() === 'end' ? '' : null"
       [attr.data-reorder]="side() === 'start' ? '' : null"
       [attr.data-hidden]="hidden ? '' : null"
@@ -205,6 +214,7 @@ export class AdaptColumnMenuRow extends AdaptColumnMenuRowModel {}
       <button
         type="button"
         data-adapttable-part="column-menu-visibility"
+        style="width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center"
         [attr.data-active]="hidden ? null : ''"
         [attr.aria-pressed]="!hidden"
         [attr.aria-label]="(hidden ? showLabel() : hideLabel()) + ': ' + name()"
@@ -214,12 +224,14 @@ export class AdaptColumnMenuRow extends AdaptColumnMenuRowModel {}
       </button>
       <span
         data-adapttable-part="column-menu-label"
+        style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
         [attr.data-hidden]="hidden ? '' : null"
         >{{ name() }}</span
       >
       <button
         type="button"
         data-adapttable-part="column-menu-pin"
+        style="width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center"
         [attr.data-active]="pinned ? '' : null"
         [attr.aria-pressed]="pinned"
         [attr.aria-label]="(pinned ? unpinLabel() : pinLabel()) + ': ' + name()"
@@ -277,7 +289,10 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
             [value]="query()"
             (input)="query.set($any($event.target).value)"
           />
-          <div data-adapttable-part="column-menu-bulk">
+          <div
+            data-adapttable-part="column-menu-bulk"
+            style="display: flex; flex-wrap: wrap; gap: 8px"
+          >
             <button
               type="button"
               data-adapttable-part="column-menu-bulk-button"
@@ -330,27 +345,38 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
               [unpinLabel]="p.labels.unpin"
             />
           }
-          <button
-            type="button"
-            data-adapttable-part="column-menu-auto-size"
-            (click)="p.onAutoSize()"
+          <div
+            style="display: flex; flex-wrap: wrap; gap: 8px; padding-block-start: 8px"
           >
-            {{ p.labels.autoSizeColumns }}
-          </button>
-          <button
-            type="button"
-            data-adapttable-part="column-menu-reset"
-            (click)="p.layout.reset()"
-          >
-            {{ p.labels.resetColumns }}
-          </button>
+            <button
+              type="button"
+              data-adapttable-part="column-menu-auto-size"
+              (click)="p.onAutoSize()"
+            >
+              {{ p.labels.autoSizeColumns }}
+            </button>
+            <button
+              type="button"
+              data-adapttable-part="column-menu-reset"
+              (click)="p.layout.reset()"
+            >
+              {{ p.labels.resetColumns }}
+            </button>
+          </div>
         </fieldset>
       }
     </div>
   `,
 })
 export class AdaptColumnMenu extends AdaptColumnMenuModel {
-  protected readonly panelStyle = MENU_PANEL_STYLE;
+  protected readonly panelStyle = {
+    ...MENU_PANEL_STYLE,
+    "inline-size": "360px",
+    padding: "16px",
+    display: "grid",
+    gap: "12px",
+    "box-sizing": "border-box",
+  };
 
   private readonly root = viewChild<ElementRef<HTMLElement>>("root");
 

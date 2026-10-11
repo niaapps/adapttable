@@ -5,15 +5,18 @@ import {
   AdaptColumnMenuRowModel,
   AdaptIcon,
   AdaptLiveRegion,
+  injectPopoverSpace,
 } from "@adapttable/angular/adapter";
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   type ElementRef,
   inject,
   Injector,
   viewChild,
 } from "@angular/core";
+import { TUI_ANCHOR_SUPPORT } from "@taiga-ui/core";
 
 import { TAIGA_CONTROLS } from "../taigaControls";
 import { MENU_PANEL_STYLE, menuPopover } from "./menuPopover";
@@ -277,6 +280,7 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
  */
 @Component({
   selector: "adapt-column-menu",
+  providers: [{ provide: TUI_ANCHOR_SUPPORT, useValue: false }],
   imports: [...TAIGA_CONTROLS, AdaptColumnMenuRow, AdaptColumnMenuEdgeRow],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -297,6 +301,7 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
         size="s"
         appearance="secondary"
         #trigger
+        (pointerdown)="trigger.focus()"
         #tuiDropdownHost
         type="button"
         data-adapttable-part="column-menu-button"
@@ -314,7 +319,7 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
             data-taiga-part="column-menu-panel"
             [attr.aria-label]="p.labels.columns"
             [attr.dir]="p.dir ?? null"
-            [style]="panelStyle"
+            [style]="panelStyle()"
           >
             <div data-taiga-part="column-menu-header">
               <span data-taiga-part="column-menu-title">{{
@@ -420,7 +425,16 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
   `,
 })
 export class AdaptColumnMenu extends AdaptColumnMenuModel {
-  protected readonly panelStyle = MENU_PANEL_STYLE;
+  private readonly room = injectPopoverSpace({
+    origin: () => this.trigger()?.nativeElement,
+    open: () => this.popover.open(),
+    reserve: 32,
+    allowAbove: () => true,
+  });
+  protected readonly panelStyle = computed(() => ({
+    ...MENU_PANEL_STYLE,
+    "max-block-size": `${Math.max(0, Math.min(560, this.room()) - 32)}px`,
+  }));
 
   private readonly root = viewChild<ElementRef<HTMLElement>>("root");
 

@@ -1,6 +1,6 @@
 # Vue assistant and approvals
 
-The Vue packages are experimental. `@adapttable/ai-vue`
+The Vue packages are published on npm. `@adapttable/ai-vue`
 connects neutral AI stores to Vue 3.5. `@adapttable/vue/adapter` provides
 structural Chrome and required control slots. Every Vue kit — Unstyled,
 Element Plus, Vuetify, Naive UI, Reka UI, shadcn-vue, Nuxt UI and Quasar —
@@ -214,13 +214,18 @@ Transports, browser tool registration, microphone resources, and language
 storage remain inactive during SSR. Each request gets its own stores. KeepAlive
 suspends resources and reconnects them with current options on activation.
 
-## Workspace setup and live example
+## Installation and live example
 
-Build the optional package with `pnpm --filter @adapttable/ai-vue... build`, then
-link the built Vue binding, native kit and AI package into your application. All
-three are public packages prepared for their first experimental `0.1.0` release;
-verify registry availability before using an install command. The CLI currently
-scaffolds React and Angular, so Vue integration uses explicit application setup.
+Install the optional AI binding alongside your chosen Vue kit. For the native
+example:
+
+```sh
+pnpm add @adapttable/ai-vue @adapttable/vue-unstyled vue@^3.5.0
+```
+
+Add `@adapttable/vue` or `@adapttable/ai` directly when importing their APIs in
+application code. The CLI currently scaffolds
+React and Angular, so Vue integration uses explicit application setup.
 
 The [native assistant showcase](/vue/demo/unstyled/assistant/) mounts the actual
 Vue native table and assistant. Its local transport can select rows, sort names,

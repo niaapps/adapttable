@@ -4069,10 +4069,10 @@ DataModeProps`: the base carries every prop except the data mode, which is
   class joiner) and shadcn additionally ships `shadcnClassNames`, the
   preset map behind its default look.
 
-## Experimental Vue binding and kits
+## Vue binding and kits
 
 `@adapttable/vue`, `@adapttable/vue-unstyled` and the seven Vue UI kits below are
-public experimental `0.1.0` packages on npm, requiring Vue
+public `0.1.0` packages on npm, requiring Vue
 `^3.5.0` or a kit's newer floor. The
 [Vue getting-started guide](./vue/getting-started.md) and
 [Vue API reference](./vue/api.md) describe the source, rendering, lifecycle
@@ -4391,7 +4391,7 @@ for data scope and how the shell aligns footer columns with its body.
 
 ## Optional Vue assistant contracts
 
-`@adapttable/ai-vue` is the optional experimental Vue 3.5 binding to neutral
+`@adapttable/ai-vue` is the optional Vue 3.5 binding to neutral
 AI stores. `tableAgent(options: MaybeRefOrGetter<TableAgentOptions>)` returns a
 `StaticTableFeature`; `TableAgentBridge` and `TableAgentColumnPatch` describe
 host notifications and column patches. `TABLE_AGENT_STATE` is the typed feature

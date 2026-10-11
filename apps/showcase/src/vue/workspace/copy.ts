@@ -69,7 +69,7 @@ export const workspaceCopy = {
     eyebrow: "Vue Unstyled / interactive workspace",
     title: "A calmer way to work with data.",
     lead: "Review orders, plan a dispatch, and understand revenue. Real tables, connected interactions, and a little room to breathe.",
-    notice: "Fictional data, local changes. Vue packages are experimental.",
+    notice: "Fictional data, local changes. Vue packages are published on npm.",
     orders: "Order desk",
     dispatch: "Dispatch plan",
     revenue: "Revenue review",

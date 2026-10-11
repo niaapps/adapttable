@@ -18,6 +18,7 @@ import {
   onMounted,
   type PropType,
   shallowRef,
+  watch,
   withDirectives,
 } from "vue";
 
@@ -74,6 +75,18 @@ export const ElementFilterSurface = defineComponent(
       event.stopPropagation();
       close("escape");
     };
+    // Escape also dismisses while focus is still on the external trigger,
+    // before the native enter transition has moved it into the card.
+    watch(
+      () => active.value && props.open,
+      (open, _previous, cleanup) => {
+        const document = props.anchor?.ownerDocument;
+        if (!open || !document) return;
+        document.addEventListener("keydown", keydown);
+        cleanup(() => document.removeEventListener("keydown", keydown));
+      },
+      { immediate: true }
+    );
     // A closed native combobox must not swallow the containing overlay's Escape.
     // Open comboboxes keep the event so their own menu closes first.
     const captureKeydown = (event: KeyboardEvent) => {

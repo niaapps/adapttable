@@ -132,7 +132,7 @@ const angularSources = new Set(ANGULAR_DOCS);
 
 export const sidebar = [
   {
-    label: "Vue (experimental)",
+    label: "Vue",
     items: [
       { label: "Get started with Vue", slug: "vue/getting-started" },
       {

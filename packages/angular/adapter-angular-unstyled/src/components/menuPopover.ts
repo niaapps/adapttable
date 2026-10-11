@@ -84,9 +84,13 @@ export function menuPopover(
         placeOverlayBelowTrigger(panel, trigger, dir);
       };
       place();
+      const observer = new ResizeObserver(place);
+      observer.observe(panel);
+      observer.observe(trigger);
       window.addEventListener("resize", place);
       window.addEventListener("scroll", place, true);
       onCleanup(() => {
+        observer.disconnect();
         window.removeEventListener("resize", place);
         window.removeEventListener("scroll", place, true);
       });

@@ -2,6 +2,8 @@ import type { Direction, TableLabels } from "@adapttable/react/adapter";
 import { Button, Flex, Popover } from "antd";
 import { type ReactNode, useEffect, useRef } from "react";
 
+import { usePopoverHeight } from "./usePopoverHeight";
+
 /** Props for {@link FilterPopover}. */
 export interface FilterPopoverProps {
   /** Whether the overlay is showing. */
@@ -43,6 +45,7 @@ export function FilterPopover({
   children,
 }: Readonly<FilterPopoverProps>) {
   const anchorRef = useRef<HTMLSpanElement>(null);
+  const height = usePopoverHeight(open, () => anchorRef.current);
 
   useEffect(() => {
     if (!open) return;
@@ -89,7 +92,8 @@ export function FilterPopover({
         maxWidth: "min(380px, calc(100vw - 80px))",
         // The form grows while open; a card taller than the window paints its
         // lower fields off-screen, so it stops at the viewport edge instead.
-        maxHeight: "min(70vh, 560px)",
+        maxHeight: height,
+        boxSizing: "border-box",
         overflowY: "auto",
       }}
     >
@@ -118,7 +122,7 @@ export function FilterPopover({
       // off and a 4px offset match the other kits' gap under the button.
       placement={dir === "rtl" ? "bottomRight" : "bottomLeft"}
       arrow={false}
-      autoAdjustOverflow={{ adjustX: 1, adjustY: 0 }}
+      autoAdjustOverflow={{ adjustX: 1, adjustY: 1 }}
       // No `align` of our own: antd computes one from the placement, and an
       // override REPLACES it wholesale — including the overflow handling
       // that keeps the panel inside the window. A four-pixel offset is not

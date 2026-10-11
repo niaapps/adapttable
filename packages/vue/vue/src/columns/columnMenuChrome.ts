@@ -14,6 +14,7 @@ import {
 } from "vue";
 
 import { type Attrs, elementRef } from "../attrs";
+import { PanelContent } from "../layout/panelContent";
 import { isManagedOverlayPanel, type OverlayPanelSlot } from "../overlayPanel";
 import type {
   ColumnHeaderRenameSlotProps,
@@ -301,6 +302,14 @@ const ColumnMenuRowChrome = /*#__PURE__*/ defineComponent(
         {
           ...part("column-menu-item", names),
           ...row.rowAttrs,
+          style: {
+            display: "grid",
+            gridTemplateColumns: row.edge
+              ? "auto minmax(0, 1fr) auto"
+              : "auto auto minmax(0, 1fr) auto auto",
+            alignItems: "center",
+            gap: "8px",
+          },
           "data-hidden": row.hidden || undefined,
           "data-pinned": row.pinned,
           "data-actions": row.edge === "actions" ? "" : undefined,
@@ -336,6 +345,12 @@ const ColumnMenuRowChrome = /*#__PURE__*/ defineComponent(
             "span",
             {
               ...part("column-menu-label", names),
+              style: {
+                minWidth: 0,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              },
               "data-hidden": row.hidden || undefined,
             },
             row.name
@@ -374,7 +389,11 @@ const ColumnMenuRowChrome = /*#__PURE__*/ defineComponent(
           open.value
             ? h(
                 "div",
-                { ...part("column-menu-submenu", names), ref: submenuRef },
+                {
+                  ...part("column-menu-submenu", names),
+                  ref: submenuRef,
+                  style: { gridColumn: "1 / -1", display: "grid", gap: "8px" },
+                },
                 [
                   ...actions.map((item) =>
                     "kind" in item
@@ -591,9 +610,6 @@ export const ColumnMenuChrome = /*#__PURE__*/ defineComponent(
         });
       const content = open.value
         ? [
-            h("div", part("column-menu-header", names), [
-              h("span", part("column-menu-title", names), labels.columns),
-            ]),
             slots.Input({
               attrs: {
                 ...part("column-menu-search", names),
@@ -604,23 +620,30 @@ export const ColumnMenuChrome = /*#__PURE__*/ defineComponent(
               value: model.query.value,
               onChange: model.setQuery,
             }),
-            h("div", part("column-menu-bulk", names), [
-              button(
-                "column-menu-bulk-button",
-                labels.showAllColumns,
-                model.showAll
-              ),
-              button(
-                "column-menu-bulk-button",
-                labels.hideAllColumns,
-                model.hideAll
-              ),
-              button(
-                "column-menu-bulk-button",
-                labels.unpinAllColumns,
-                model.unpinAll
-              ),
-            ]),
+            h(
+              "div",
+              {
+                ...part("column-menu-bulk", names),
+                style: { display: "flex", flexWrap: "wrap", gap: "8px" },
+              },
+              [
+                button(
+                  "column-menu-bulk-button",
+                  labels.showAllColumns,
+                  model.showAll
+                ),
+                button(
+                  "column-menu-bulk-button",
+                  labels.hideAllColumns,
+                  model.hideAll
+                ),
+                button(
+                  "column-menu-bulk-button",
+                  labels.unpinAllColumns,
+                  model.unpinAll
+                ),
+              ]
+            ),
             ...model.rows.value.map(row),
             model.edgeRows.value.length
               ? h("hr", part("column-menu-separator", names))
@@ -686,7 +709,14 @@ export const ColumnMenuChrome = /*#__PURE__*/ defineComponent(
                         overflow: "auto",
                       },
                 },
-                content,
+                content: h(PanelContent, {
+                  anchor: trigger.value,
+                  scroll: true,
+                  header: h("div", part("column-menu-header", names), [
+                    h("span", part("column-menu-title", names), labels.columns),
+                  ]),
+                  children: content,
+                }),
                 container,
                 anchor: trigger.value,
                 open: open.value,

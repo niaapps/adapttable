@@ -118,6 +118,53 @@ describe("the unstyled Angular Columns menu", () => {
     ).toBeNull();
   });
 
+  it("budgets an upward native dropdown before opening on a short viewport", async () => {
+    const { part, open } = await mount();
+    const button = part<HTMLButtonElement>("column-menu-button")!;
+    vi.spyOn(window, "innerHeight", "get").mockReturnValue(480);
+    vi.spyOn(button, "getBoundingClientRect").mockReturnValue({
+      top: 320,
+      bottom: 352,
+    } as DOMRect);
+    await open();
+    expect(part("column-menu-panel")?.style.maxHeight).toBe("304px");
+    vi.restoreAllMocks();
+  });
+
+  it("respects consumed and composing Escapes and dismisses from outside the panel", async () => {
+    const { part, open, settle } = await mount();
+    await open();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true })
+    );
+    const consumed = new KeyboardEvent("keydown", {
+      key: "Escape",
+      bubbles: true,
+      cancelable: true,
+    });
+    consumed.preventDefault();
+    document.dispatchEvent(consumed);
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Escape",
+        bubbles: true,
+        isComposing: true,
+      })
+    );
+    await settle();
+    expect(part("column-menu-panel")).not.toBeNull();
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Escape",
+        bubbles: true,
+        cancelable: true,
+      })
+    );
+    await settle();
+    expect(part("column-menu-panel")).toBeNull();
+    expect(document.activeElement).toBe(part("column-menu-button"));
+  });
+
   it("opens a panel listing every column, and closes on Escape", async () => {
     const { part, parts, open, settle } = await mount();
     const button = part<HTMLButtonElement>("column-menu-button");

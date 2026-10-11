@@ -6,6 +6,7 @@ import {
 import { OverlayPositionBuilder } from "@angular/cdk/overlay";
 import { NgTemplateOutlet } from "@angular/common";
 import {
+  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -35,6 +36,7 @@ import { HlmPopoverLabel } from "../helm/popover";
     @let p = props();
     <span
       #anchor
+      (pointerdown)="focusTrigger()"
       style="display: inline-flex"
       [sideOffset]="4"
       brnPopover
@@ -45,6 +47,7 @@ import { HlmPopoverLabel } from "../helm/popover";
       [hasBackdrop]="false"
       [align]="p.dir === 'rtl' ? 'start' : 'end'"
       scrollStrategy="reposition"
+      (closed)="restoreTrigger()"
       (stateChanged)="$event === 'closed' && p.onClose()"
     >
       @if (p.children; as trigger) {
@@ -97,6 +100,26 @@ import { HlmPopoverLabel } from "../helm/popover";
   `,
 })
 export class AdaptFilterPopover {
+  private escapePending = false;
+  constructor() {
+    afterRenderEffect((cleanup) => {
+      if (!this.props().open) return;
+      const document = this.anchor().nativeElement.ownerDocument;
+      const keydown = (event: KeyboardEvent) => {
+        if (event.key === "Escape" && !event.isComposing)
+          this.escapePending = true;
+      };
+      document.addEventListener("keydown", keydown, true);
+      cleanup(() => document.removeEventListener("keydown", keydown, true));
+    });
+  }
+  protected restoreTrigger(): void {
+    if (this.escapePending) this.focusTrigger();
+    this.escapePending = false;
+  }
+  protected focusTrigger(): void {
+    this.anchor()?.nativeElement.querySelector("button")?.focus();
+  }
   private readonly positions = inject(OverlayPositionBuilder);
   private readonly anchor =
     viewChild.required<ElementRef<HTMLElement>>("anchor");
@@ -121,6 +144,13 @@ export class AdaptFilterPopover {
   /** Brain retains its native portal and flips a low filter above its trigger. */
   protected readonly position = computed(() => {
     const edge = this.props().dir === "rtl" ? "start" : "end";
+    const document = this.anchor().nativeElement.ownerDocument;
+    const width = document.documentElement.clientWidth;
+    // CDK's RTL offsets must also leave room for a classic scrollbar.
+    const scrollbar =
+      width > 0
+        ? Math.max(0, (document.defaultView?.innerWidth ?? width) - width)
+        : 0;
     return this.positions
       .flexibleConnectedTo(this.anchor().nativeElement)
       .withPositions([
@@ -153,7 +183,7 @@ export class AdaptFilterPopover {
           offsetY: -4,
         },
       ])
-      .withViewportMargin(8)
+      .withViewportMargin(8 + scrollbar)
       .withFlexibleDimensions(true)
       .withPush(true);
   });

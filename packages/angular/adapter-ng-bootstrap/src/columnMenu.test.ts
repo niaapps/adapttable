@@ -122,6 +122,20 @@ describe("the unstyled Angular Columns menu", () => {
     ).toBeNull();
   });
 
+  it("budgets an upward native dropdown before opening on a short viewport", async () => {
+    const { part, open } = await mount();
+    const button = part<HTMLButtonElement>("column-menu-button")!;
+    vi.spyOn(window, "innerHeight", "get").mockReturnValue(480);
+    vi.spyOn(button, "getBoundingClientRect").mockReturnValue({
+      top: 320,
+      bottom: 352,
+    } as DOMRect);
+    button.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+    await open();
+    expect(part("column-menu-panel")?.style.maxHeight).toBe("304px");
+    vi.restoreAllMocks();
+  });
+
   it("opens a panel listing every column, and closes on Escape", async () => {
     const { part, parts, open, settle } = await mount();
     const button = part<HTMLButtonElement>("column-menu-button");

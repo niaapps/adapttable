@@ -1,8 +1,8 @@
 # Vue actions and exports
 
-The Vue binding, Unstyled kit and seven styled adapters are experimental
-`0.1.0` packages on npm. These examples require a checkout or an application
-linked to their built workspace packages.
+The Vue binding, Unstyled kit and seven styled adapters are public
+`0.1.0` packages on npm. Install your chosen kit using
+[Get started with Vue](./getting-started.md) before using these examples.
 The action factories are opt-in: `bulkActions`, `commandPalette`, `contextMenu`,
 `sidePanel`, `undoRedoButtons`, `exportCsv` and `print` are available through each
 adapter's focused entries. Dedicated `exportPdf` and `exportXlsx` factories are

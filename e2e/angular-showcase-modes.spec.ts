@@ -368,6 +368,7 @@ for (const kit of ANGULAR_KITS) {
       await expect(framework.locator("option")).toHaveText([
         "React",
         "Angular",
+        "Vue",
       ]);
       await framework.focus();
       await expect(framework).toBeFocused();

@@ -10,10 +10,12 @@ import {
   AdaptColumnMenuRowModel,
   AdaptIcon,
   AdaptLiveRegion,
+  injectPopoverSpace,
 } from "@adapttable/angular/adapter";
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   inject,
   Injector,
@@ -282,7 +284,11 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
         [nzPopoverVisible]="popover.open()"
         [nzPopoverBackdrop]="false"
         [nzPopoverContent]="content"
-        [nzPopoverPlacement]="p.dir === 'rtl' ? 'bottomLeft' : 'bottomRight'"
+        [nzPopoverPlacement]="
+          p.dir === 'rtl'
+            ? ['bottomLeft', 'topLeft']
+            : ['bottomRight', 'topRight']
+        "
         [nzPopoverOverlayStyle]="overlayStyle"
         type="button"
         data-adapttable-part="column-menu-button"
@@ -300,7 +306,7 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
             #panel
             [attr.aria-label]="p.labels.columns"
             [dir]="p.dir ?? 'ltr'"
-            [style]="panelStyle"
+            [style]="panelStyle()"
           >
             <div>
               <span>{{ p.labels.columns }}</span>
@@ -383,7 +389,24 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
   `,
 })
 export class AdaptColumnMenu extends AdaptColumnMenuModel {
-  protected readonly panelStyle = MENU_PANEL_STYLE;
+  private readonly room = injectPopoverSpace({
+    origin: () => this.trigger()?.nativeElement,
+    open: () => this.popover.open(),
+    reserve: 16,
+    allowAbove: () => {
+      const anchor = this.trigger()?.nativeElement;
+      const view = anchor?.ownerDocument.defaultView;
+      return (
+        !!anchor &&
+        !!view &&
+        view.innerHeight - anchor.getBoundingClientRect().bottom < 240
+      );
+    },
+  });
+  protected readonly panelStyle = computed(() => ({
+    ...MENU_PANEL_STYLE,
+    "max-block-size": `${Math.max(0, Math.min(560, this.room()) - 32)}px`,
+  }));
 
   protected readonly overlayStyle = { zIndex: String(OVERLAY_Z) };
 

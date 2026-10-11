@@ -171,14 +171,15 @@ From your Angular application root (the folder containing `angular.json` and
 `package.json`), run:
 
 ```sh
-npx @adapttable/cli@3.1.0 init
+npx @adapttable/cli@3.2.0 init
 ```
 
-The published CLI version shown above recognizes an Angular project when
-**both** `angular.json` and an `@angular/core` dependency are present. It detects
-NG-ZORRO from `ng-zorro-antd` in your dependencies; otherwise it chooses the
-unstyled Angular kit. Install NG-ZORRO before running the command if that is
-the kit you want. There is no `--kit` option.
+The CLI recognizes an Angular project when **both** `angular.json` and an
+`@angular/core` dependency are present. It selects the first installed kit in
+this order: Angular Material, ng-bootstrap, Spartan, Taiga UI, NG-ZORRO,
+Angular Aria, ngx-bootstrap, then Angular CDK. Install your preferred UI kit
+before running the command. It chooses Angular unstyled when no kit signal
+is present. There is no `--kit` option.
 
 It writes a standalone `PeopleTable` to `src/app/peopleTable.ts` and prints the
 package installation command. Run that printed command, then import
@@ -187,28 +188,10 @@ The CLI does not mount the component or run installation for you. Existing
 scaffold files are skipped; use `init --force` only when you intend to overwrite
 them. The CLI's version does not need to match the table packages.
 
-The upcoming CLI release also detects the seven new Angular kits. To use this
-release-preparation source, build the CLI from this repository and invoke its
-entry from your Angular application root:
-
-```sh
-# From the AdaptTable repository:
-pnpm --filter @adapttable/cli build
-
-# From your Angular application (replace the path with your checkout):
-node /path/to/adapttable/packages/shared/cli/dist/cli.js init
-```
-
-The source CLI selects the first installed kit in this order: Angular Material,
-ng-bootstrap, Spartan, Taiga UI, NG-ZORRO, Angular Aria, ngx-bootstrap, then
-Angular CDK. It falls back to Angular unstyled when no kit signal is present.
-It still requires both Angular project markers above and has no `--kit` flag.
-
-It prints the registry command for missing dependencies and the chosen kit's
-stylesheet, provider and asset setup instructions. The seven new adapters'
-registry installation still requires their public `0.1.0` publication to
-complete. This added detection is source preparation for an upcoming CLI
-release; it is not a claim about the published `3.1.0` command above.
+The CLI prints the registry command for missing dependencies and the chosen
+kit's stylesheet, provider and asset setup instructions. All nine Angular kits
+are published on npm; follow the selected kit's setup guide for its native
+providers and stylesheets.
 
 ## Data and callbacks
 

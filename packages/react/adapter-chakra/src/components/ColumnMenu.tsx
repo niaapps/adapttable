@@ -453,7 +453,7 @@ export function ColumnMenu<TRow>({
             minW="260px"
             w="auto"
             dir={dir}
-            maxH="min(70vh, 480px)"
+            maxH="min(var(--available-height), 70vh, 480px)"
             overflowY="auto"
           >
             <Popover.Body px={2} py={2}>

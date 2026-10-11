@@ -109,11 +109,12 @@ export const ElementColumnMenuPanel = defineComponent(
     // The virtual reference leaves the trigger outside ElPopover's event tree.
     // It remains the keyboard owner until the native enter handoff finishes.
     watch(
-      [active, () => props.control.anchor],
+      [active, () => props.control.anchor, () => props.control.open],
       ([enabled, anchor], _previous, cleanup) => {
-        if (!enabled || !anchor) return;
-        anchor.addEventListener("keydown", keydown);
-        cleanup(() => anchor.removeEventListener("keydown", keydown));
+        if (!enabled || !anchor || !props.control.open) return;
+        const document = anchor.ownerDocument;
+        document.addEventListener("keydown", keydown);
+        cleanup(() => document.removeEventListener("keydown", keydown));
       },
       { immediate: true }
     );

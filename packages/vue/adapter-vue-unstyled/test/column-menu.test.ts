@@ -128,6 +128,17 @@ function dispatchAttribute(
   handler(event);
 }
 describe("native column manager", () => {
+  it("renders visible SVG strokes for compact grip and action icons", async () => {
+    const f = fixture();
+    await clickControl(f.root, part("column-menu-button"));
+    const icons = row(f.root, "Name").querySelectorAll("svg");
+    expect(icons).toHaveLength(4);
+    for (const icon of icons) {
+      expect(icon.getAttribute("stroke-linecap")).toBe("round");
+      expect(Number(icon.getAttribute("stroke-width"))).toBeGreaterThan(1);
+      expect(icon.querySelector("path")?.getAttribute("d")).toBeTruthy();
+    }
+  });
   it("fills both binding channels without changing the public factory identity", () => {
     const feature = columnMenu();
     expect(feature.id).toBe("column-menu");
@@ -593,26 +604,27 @@ describe("native column manager", () => {
   it("clamps the inline native surface at both viewport edges and releases resize listeners", async () => {
     let left = -50;
     let width = 200;
-    const original = HTMLElement.prototype.getBoundingClientRect;
     vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(
       function (this: HTMLElement) {
         if (this.getAttribute("data-adapttable-part") !== "column-menu-panel")
-          return original.call(this);
+          return new DOMRect(left, 180, 80, 36);
         return new DOMRect(left, 40, width, 200);
       }
     );
     const f = fixture();
     await clickControl(f.root, part("column-menu-button"));
     const panel = findControl<HTMLElement>(f.root, part("column-menu-panel"));
-    expect(panel.style.transform).toBe("translateX(58px)");
+    expect(panel.style.left).toBe("8px");
     left = window.innerWidth - 100;
     window.dispatchEvent(new Event("resize"));
-    expect(panel.style.transform).toBe("translateX(-108px)");
+    expect(panel.style.left).toBe(`${String(window.innerWidth - 220)}px`);
     left = 20;
     width = 100;
     window.dispatchEvent(new Event("scroll"));
     expect(panel.style.transform).toBe("");
-    expect(panel.style.maxHeight).toBe(`${String(window.innerHeight - 48)}px`);
+    expect(panel.style.maxHeight).toBe(
+      `${String(Math.min(560, window.innerHeight - 228))}px`
+    );
     await clickControl(f.root, part("column-menu-button"));
     left = -100;
     window.dispatchEvent(new Event("resize"));
@@ -642,9 +654,11 @@ describe("native column manager", () => {
       expect(observe).toHaveBeenCalledWith(panel);
       left = -50;
       resize?.([], {} as ResizeObserver);
-      expect(panel.style.transform).toBe("translateX(58px)");
+      expect(panel.style.left).toBe("8px");
       await clickControl(f.root, part("column-menu-button"));
-      expect(disconnect).toHaveBeenCalledOnce();
+      // Both the native positioning observer and the shared content budget
+      // observer must release their registrations when the menu closes.
+      expect(disconnect).toHaveBeenCalledTimes(2);
     } finally {
       vi.unstubAllGlobals();
       vi.restoreAllMocks();

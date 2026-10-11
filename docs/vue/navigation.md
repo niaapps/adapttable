@@ -1,6 +1,6 @@
 # Vue navigation, find and status
 
-The Vue binding and Unstyled adapter expose optional cell navigation, column selection, find and status controls. The packages are experimental.
+The Vue binding and Unstyled adapter expose optional cell navigation, column selection, find and status controls. The packages are published on npm.
 
 ```vue
 <script setup lang="ts">

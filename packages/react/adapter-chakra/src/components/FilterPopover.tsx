@@ -113,7 +113,7 @@ export function FilterPopover({
             maxW="90vw"
             // Stops at the viewport edge: the form grows while open, and a
             // card taller than the window paints its lower fields off-screen.
-            maxH="min(70vh, 560px)"
+            maxH="min(var(--available-height), 70vh, 560px)"
             overflowY="auto"
             dir={dir}
             zIndex="popover"

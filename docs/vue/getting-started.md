@@ -1,6 +1,6 @@
 # Get started with Vue tables
 
-The experimental Vue integration provides reactive data sources, a headless
+The Vue integration provides reactive data sources, a headless
 table controller and adapters for Vue Unstyled, Element Plus, Vuetify, Naive UI,
 Reka UI, shadcn-vue, Nuxt UI and Quasar. They share AdaptTable's framework-neutral
 engine, with Vue-native refs, renderers, effect scopes and component lifecycles.
@@ -9,18 +9,19 @@ Each adapter supplies its own controls; the binding owns the table model.
 ## Availability and scope
 
 The Vue binding, Unstyled adapter and all seven styled adapters are public
-packages prepared for an experimental `0.1.0` release. They have not been
-published to npm. These examples require a checkout or an application linked to
-the built workspace packages; the available source and preview routes do not
-establish npm availability or a completed browser-validation gate.
-
-The binding requires Vue `^3.5.0`; adapters can require a newer Vue patch through
-their UI-kit peers. The workspace build requires Node `>=22.12.0` and pnpm. From
-the repository root, build the binding, native kit and their workspace dependencies:
+public `0.1.0` packages. Install the native kit in your Vue application:
 
 ```sh
-pnpm --filter @adapttable/vue-unstyled... build
+pnpm add @adapttable/vue-unstyled vue@^3.5.0
 ```
+
+The adapter installs the matching binding and core automatically. Add
+`@adapttable/vue` directly if your application imports its composables or types.
+No repository checkout or workspace build is needed.
+
+Use Node.js `>=22.12.0`. The binding requires Vue `^3.5.0`; adapters can require
+a newer Vue patch through their UI-kit peers. Choose a styled kit below for its
+installation command, required styles and application providers.
 
 The native table includes search, sorting and multi-sort, paged or infinite
 loading, row selection, responsive mobile cards, grouped column headings,
@@ -68,10 +69,20 @@ create a second query, selection or editing engine.
 | `@adapttable/nuxt-ui`      | Use Nuxt UI's module in Nuxt, or its official Vite and Vue plugins in a plain Vue app; load theme CSS and provide `UApp`.                          |
 | `@adapttable/quasar`       | Register Quasar and load Quasar CSS plus the adapter's `/styles.css`; configure Quasar's locale and RTL support.                                   |
 
-Each package README contains its exact peer versions and complete host setup.
-For example, build a styled adapter and its workspace dependencies with
-`pnpm --filter @adapttable/shadcn-vue... build`. A workspace build is preparation
-for linked development, not an npm installation command.
+Install your chosen adapter and its UI-kit peers, then follow its setup guide:
+
+| Kit          | Install in your Vue application                                     | Setup                             |
+| ------------ | ------------------------------------------------------------------- | --------------------------------- |
+| Element Plus | `pnpm add @adapttable/element-plus element-plus@^2.14.7 vue@^3.5.0` | [Element Plus](./element-plus.md) |
+| Vuetify      | `pnpm add @adapttable/vuetify vuetify@^4.2.4 vue@^3.5.0`            | [Vuetify](./vuetify.md)           |
+| Naive UI     | `pnpm add @adapttable/naive-ui naive-ui@^2.45.3 vue@^3.5.0`         | [Naive UI](./naive-ui.md)         |
+| Reka UI      | `pnpm add @adapttable/reka-ui reka-ui@^2.11.0 vue@^3.5.0`           | [Reka UI](./reka-ui.md)           |
+| shadcn-vue   | `pnpm add @adapttable/shadcn-vue reka-ui@^2.11.0 vue@^3.5.0`        | [shadcn-vue](./shadcn-vue.md)     |
+| Nuxt UI      | `pnpm add @adapttable/nuxt-ui @nuxt/ui@^4.11.3 vue@^3.5.18`         | [Nuxt UI](./nuxt-ui.md)           |
+| Quasar       | `pnpm add @adapttable/quasar quasar@2.34.0 vue@^3.5.0`              | [Quasar](./quasar.md)             |
+
+Each package README also contains its peer versions and complete host setup.
+Use a Vue version compatible with every UI kit in your application.
 
 A component's SSR support does not replace the UI kit's application pipeline.
 Element Plus needs request-local ID/z-index providers and its teleport handling;
@@ -295,9 +306,14 @@ the [Vue API reference](./api.md) for component and adapter contracts, and the
 
 ## Optional AI binding
 
-The public `@adapttable/ai-vue` package is published alongside
-the Vue binding and native kit when your application needs an agent, conversation
-or speech input. It requires Vue `^3.5.0`.
+Add `@adapttable/ai-vue` when your application needs an agent, conversation
+or speech input:
+
+```sh
+pnpm add @adapttable/ai-vue
+```
+
+It requires Vue `^3.5.0`.
 The base table and assistant UI entries remain usable without AI. See
 [assistant and approvals](./assistant.md). The CLI currently scaffolds React and
 Angular projects; these Vue examples use explicit application setup.
@@ -322,5 +338,5 @@ The workspace supports English and Arabic, responsive cards, a dark appearance,
 keyboard controls and a pause/resume flow. All data is fictional and all writes
 stay in the browser. Authored orders use this tab’s session storage; named views
 use browser storage when available and survive a later visit. Restore sample data resets the order desk;
-the dispatch plan is rebuilt from the restored Ready orders. Reloading and retry restore authored changes and selections from this tab’s session storage. Presentation, table queries and pivot choices remain shareable in the URL. The package availability notice still
-applies: showcase source is not a published-package or feature-parity claim.
+the dispatch plan is rebuilt from the restored Ready orders. Reloading and retry restore authored changes and selections from this tab’s session storage. Presentation, table queries and pivot choices remain shareable in the URL. See the [feature guide](./features.md) for the supported APIs and composition
+boundaries.

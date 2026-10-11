@@ -8,6 +8,19 @@ const DOCS_URL = "http://localhost:4323";
 const SWITCH = "[data-framework-select]:visible";
 test.use({ baseURL: DOCS_URL });
 
+async function openNavigation(
+  page: import("@playwright/test").Page
+): Promise<void> {
+  const menu = page.getByRole("button", { name: "Menu", exact: true });
+  if (
+    (await menu.isVisible()) &&
+    (await page
+      .locator("starlight-menu-button")
+      .getAttribute("aria-expanded")) !== "true"
+  )
+    await menu.click();
+}
+
 test("an unavailable counterpart explains the Angular destination", async ({
   page,
 }) => {
@@ -43,8 +56,17 @@ test("shared guides remember the framework across navigation and reload", async 
     await expect(page.locator(SWITCH).first()).toHaveValue(framework);
     await page.reload();
     await expect(page.locator(SWITCH).first()).toHaveValue(framework);
+    await openNavigation(page);
+    if (framework === "vue") {
+      await expect(
+        page.locator('#starlight__sidebar a[href="/vue/column-menu/"]')
+      ).toBeVisible();
+      await expect(
+        page.locator('#starlight__sidebar a[href="/vue/element-plus/"]')
+      ).toBeVisible();
+    }
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Headless engine, React and Angular bindings"
+      "Headless engine — React, Angular and Vue"
     );
     await expect(
       page
@@ -59,9 +81,11 @@ test("Angular sidebar and header remain in Angular after changing topics", async
   page,
 }) => {
   await page.goto("/angular/sparkline/");
+  await openNavigation(page);
   await expect(
     page.locator('#starlight__sidebar a[href^="/react/"]')
   ).toHaveCount(0);
+  await openNavigation(page);
   await expect(
     page.getByRole("link", { name: "Live demo", exact: true }).first()
   ).toHaveAttribute("href", "/angular/demo/unstyled/");
@@ -181,14 +205,14 @@ test("malformed landing and documentation options stay on the site", async ({
   ).toBe("react");
 });
 
-test("experimental Vue docs expose only implemented counterparts", async ({
+test("Vue docs expose all published guides and supported counterparts", async ({
   page,
 }) => {
   await page.goto("/react/api/");
   await page.locator(SWITCH).first().selectOption("vue");
   await expect(page).toHaveURL(`${DOCS_URL}/vue/api/`);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Experimental Vue table API reference"
+    "Vue table API reference"
   );
   await expect(page.locator("main .sl-markdown-content")).toContainText(
     "public packages"
@@ -201,12 +225,34 @@ test("experimental Vue docs expose only implemented counterparts", async ({
       '#starlight__sidebar a[href^="/react/"], #starlight__sidebar a[href^="/angular/"]'
     )
   ).toHaveCount(0);
+  for (const slug of [
+    "element-plus",
+    "naive-ui",
+    "nuxt-ui",
+    "quasar",
+    "reka-ui",
+    "shadcn-vue",
+    "vuetify",
+    "features",
+    "assistant",
+    "summary-row",
+    "column-menu",
+    "navigation",
+    "actions",
+    "specialized",
+  ]) {
+    await expect(
+      page.locator(`#starlight__sidebar a[href="/vue/${slug}/"]`)
+    ).toHaveCount(1);
+  }
   await expect(
     page.locator('#starlight__sidebar a[href="/vue/api/"]')
   ).toHaveCount(1);
+  await openNavigation(page);
   await expect(
     page.getByRole("link", { name: "Live demo", exact: true }).first()
   ).toHaveAttribute("href", "/vue/demo/unstyled/");
+  await openNavigation(page);
   await page
     .locator('#starlight__sidebar a[href="/vue/getting-started/"]')
     .click();

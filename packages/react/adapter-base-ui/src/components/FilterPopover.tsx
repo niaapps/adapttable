@@ -83,7 +83,7 @@ export function FilterPopover({
             style={{
               width: 380,
               maxWidth: "90vw",
-              maxHeight: "min(70vh, 560px)",
+              maxHeight: "min(var(--available-height), 70vh, 560px)",
               overflowY: "auto",
             }}
           >

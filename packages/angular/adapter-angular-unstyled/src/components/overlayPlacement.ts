@@ -37,7 +37,9 @@ export function placeOverlayBelowTrigger(
     viewportHeight - triggerRect.bottom - 4 - VIEWPORT_GUTTER
   );
   const above = Math.max(0, triggerRect.top - 4 - VIEWPORT_GUTTER);
-  const placeBelow = below >= desiredHeight || below >= above;
+  // Keep a useful scrollable card beside its trigger rather than moving a
+  // tall form above it when there is already enough room below to use it.
+  const placeBelow = below >= Math.min(desiredHeight, 240) || below >= above;
   overlay.style.maxHeight = `${String(Math.min(560, placeBelow ? below : above))}px`;
   const height = overlay.getBoundingClientRect().height || 0;
   const proposedTop = placeBelow

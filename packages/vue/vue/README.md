@@ -4,8 +4,14 @@ Requires Node.js **22.12.0 or newer**; packed releases are tested on Node 22.12 
 
 Headless Vue 3.5 composables over the framework-neutral AdaptTable engine.
 Vue owns reactivity and lifecycle; adapters supply every visible control.
-This public package is experimental, prepared for `0.1.0`, and has not been
-published to npm. Use the built workspace packages until publication.
+This is a public `0.1.0` package.
+
+```sh
+pnpm add @adapttable/vue vue@^3.5.0
+```
+
+For a ready table with native controls, install `@adapttable/vue-unstyled` and
+follow the [Vue getting-started guide](https://adapttable.orwamahmoud.com/vue/getting-started/).
 
 ## Features
 
@@ -26,8 +32,7 @@ published to npm. Use the built workspace packages until publication.
 
 The binding provides models and structural Chrome. A feature that needs UI
 requires adapter controls; use the native factories from
-`@adapttable/vue-unstyled` with its `DataTable`. This experimental slice does
-not imply complete React/Angular feature parity. The native `standardFeatures()`
+`@adapttable/vue-unstyled` with its `DataTable`. The native `standardFeatures()`
 preset is available from `@adapttable/vue-unstyled/preset`.
 
 ## Sources and rendering
@@ -125,7 +130,7 @@ examples, required slots and state-persistence boundaries.
 AI runtime. The separately opt-in `@adapttable/ai-vue` package connects agents,
 conversations and speech to Vue scopes. See the
 [assistant guide](https://adapttable.orwamahmoud.com/vue/assistant/) for approvals,
-controlled updates and lifecycle behavior. These public packages are experimental.
+controlled updates and lifecycle behavior. These public packages are published on npm.
 
 ## Popup control slot ownership
 

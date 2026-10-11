@@ -43,7 +43,7 @@ export const TITLES = {
   "vue/navigation.md": "Vue navigation, find and status",
   "vue/specialized.md": "Vue specialized data views",
   "vue/summary-row.md": "Vue summaries and footers",
-  "vue/getting-started.md": "Get started with experimental Vue tables",
+  "vue/getting-started.md": "Get started with Vue tables",
   "vue/element-plus.md": "Element Plus Vue tables",
   "vue/naive-ui.md": "Naive UI Vue tables",
   "vue/nuxt-ui.md": "Nuxt UI Vue tables",
@@ -51,7 +51,7 @@ export const TITLES = {
   "vue/reka-ui.md": "Reka UI Vue tables",
   "vue/shadcn-vue.md": "shadcn-vue tables",
   "vue/vuetify.md": "Vuetify Vue tables",
-  "vue/api.md": "Experimental Vue table API reference",
+  "vue/api.md": "Vue table API reference",
   "vue/assistant.md": "Vue assistant and approvals",
   "vue/features.md": "Vue filters, editing and feature composition",
   "angular/angular-cdk.md": "Angular CDK tables",
@@ -112,7 +112,7 @@ export const TITLES = {
   "angular/accessibility.md": "Accessible Angular tables and grids",
   "angular/realtime.md": "Angular realtime table updates",
   "getting-started.md": "Get started — a React table for your UI kit",
-  "concepts.md": "Headless engine, React and Angular bindings",
+  "concepts.md": "Headless engine — React, Angular and Vue",
   "features.md": "React table features — composable plugins",
   "columns.md": "React table columns — ColumnDef & custom cells",
   "column-groups.md": "React table column groups — collapsible headers",
@@ -204,7 +204,7 @@ export const DESCRIPTIONS = {
   "vue/assistant.md":
     "Connect Vue agents and conversations with native controls, explicit approval and host-controlled state.",
   "vue/getting-started.md":
-    "Build an experimental Vue table with native controls, reactive sources, optional features, controlled state and SSR lifecycle rules.",
+    "Build an Vue table with native controls, reactive sources, optional features, controlled state and SSR lifecycle rules.",
   "vue/element-plus.md":
     "Build Vue tables with Element Plus controls and card surfaces, host-owned data and composable features.",
   "vue/naive-ui.md":
@@ -222,7 +222,7 @@ export const DESCRIPTIONS = {
   "vue/features.md":
     "Compose native Vue filters, cell and batch editing, grouped and tree rows, row presentation and view controls with host-owned data and scoped state.",
   "vue/api.md":
-    "Reference for the implemented Vue 3.5 sources, renderers, native table, structural Chrome, scoped features and model channels. Experimental workspace API.",
+    "Reference for the implemented Vue 3.5 sources, renderers, native table, structural Chrome, scoped features and model channels. Public Vue API.",
   "angular/angular-cdk.md":
     "Use the Angular CDK table adapter with CDK overlays, focus handling, native controls and composable features.",
   "angular/aria.md":
@@ -340,7 +340,7 @@ export const DESCRIPTIONS = {
   "getting-started.md":
     "Install AdaptTable for Mantine, MUI, Chakra, Ant, Radix, Base UI or shadcn — one CLI command, or a StackBlitz starter with no install.",
   "concepts.md":
-    "Understand AdaptTable's neutral core, React and Angular bindings, TableSource contract and native UI adapters. Keep data and persistence in your application.",
+    "AdaptTable's neutral engine, React, Angular and Vue bindings, TableSource contract and native UI kits. Your application owns data and persistence.",
   "features.md":
     "Add React table features individually or use a preset. Compose filters, editing, grouping and custom plugins without importing unused feature implementations.",
   "columns.md":
@@ -406,7 +406,7 @@ export const DESCRIPTIONS = {
   "realtime.md":
     "Update React table rows from WebSocket or SSE events with useRowPatchStream or applyRowPatches, preserving filtering, sorting, grouping and aggregates.",
   "api.md":
-    "AdaptTable API reference for the neutral engine, React and Angular bindings, native kits, filters, sources, optional features and provider-neutral AI.",
+    "AdaptTable API reference for the neutral engine, React, Angular and Vue bindings, native kits, filters, sources, optional features and provider-neutral AI.",
   "faq.md":
     "AdaptTable FAQ: free MIT alternative to MUI X DataGrid and ag-Grid, URL state, RTL/Arabic, client+server data, bundle size, and when to stay on TanStack.",
   "limitations.md":

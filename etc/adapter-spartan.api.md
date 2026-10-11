@@ -222,10 +222,13 @@ export class AdaptColumnHeaderRename {
 
 // @public
 export class AdaptColumnMenu extends AdaptColumnMenuModel {
+    constructor();
     // (undocumented)
     protected readonly panelStyle: Readonly<Record<string, string>>;
     // (undocumented)
     protected readonly popover: MenuPopover;
+    // (undocumented)
+    protected restoreTrigger(): void;
     // (undocumented)
     static ɵcmp: i0.ɵɵComponentDeclaration<AdaptColumnMenu, "adapt-column-menu", never, {}, {}, never, never, true, never>;
     // (undocumented)
@@ -452,11 +455,16 @@ export class AdaptFilterDrawer {
 
 // @internal
 export class AdaptFilterPopover {
+    constructor();
     // (undocumented)
     protected readonly availableHeight: Signal<number>;
+    // (undocumented)
+    protected focusTrigger(): void;
     protected readonly position: Signal<FlexibleConnectedPositionStrategy>;
     // (undocumented)
     readonly props: InputSignal<FilterOverlaySlotProps<TemplateRef<unknown>>>;
+    // (undocumented)
+    protected restoreTrigger(): void;
     // (undocumented)
     static ɵcmp: i0.ɵɵComponentDeclaration<AdaptFilterPopover, "adapt-filter-popover", never, {
         "props": {

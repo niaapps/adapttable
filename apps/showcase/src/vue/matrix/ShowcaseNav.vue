@@ -167,6 +167,12 @@ onScopeDispose(() => {
       <ShowcaseWordmark :href="SITE_HOME" />
       <nav class="nav__links" aria-label="Demo pages">
         <a
+          :href="vueHref(kitPath)"
+          :class="{ 'is-on': active === kitPath }"
+          :aria-current="active === kitPath ? 'page' : undefined"
+          >Live demo</a
+        >
+        <a
           :href="vueHref(`${kitPath}/ai`)"
           :class="{ 'is-on': active.endsWith('/ai') }"
           :aria-current="active.endsWith('/ai') ? 'page' : undefined"

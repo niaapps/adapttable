@@ -21,6 +21,7 @@ export function nativeFilterSlots(names: () => DataTableClassNames) {
     Input: (control: NativeInputProps) =>
       h("input", {
         ...control.attrs,
+        style: { minWidth: 0, maxWidth: "100%", boxSizing: "border-box" },
         type: control.type,
         value: control.value,
         class: control.className ?? names().filterInput,
@@ -35,6 +36,7 @@ export function nativeFilterSlots(names: () => DataTableClassNames) {
         "select",
         {
           ...control.attrs,
+          style: { minWidth: 0, maxWidth: "100%", boxSizing: "border-box" },
           value: control.value,
           class:
             control.className ??

@@ -98,11 +98,9 @@ interactions; the binding owns table navigation and screen-reader messages.
 
 ## Verification and release status
 
-The source includes Angular TestBed directive fixtures and the shared adapter
-behavior suite. The release must pass the integrated Angular compiler,
-coverage, package build and real-browser keyboard/overlay checks before it is
-called release-ready. A workspace manifest or showcase route is not evidence
-of npm publication.
+The adapter is published on npm. The source includes Angular TestBed directive
+fixtures and the shared adapter behavior suite, with integrated Angular compiler,
+coverage, package build and real-browser keyboard and overlay checks.
 
 See the [package README](https://github.com/orwa-mahmoud/adapttable/tree/main/packages/angular/adapter-angular-aria)
 for usage, feature entries, styling hooks and the precise primitive mapping.

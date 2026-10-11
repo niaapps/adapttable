@@ -429,7 +429,7 @@ export function ColumnMenu<TRow>({
         // viewport and clips its own labels.
         minWidth="260px"
         dir={dir}
-        maxHeight="min(70vh, 480px)"
+        maxHeight="min(70vh, 480px, calc(var(--radix-popper-available-height) - 8px))"
         style={{ overflowY: "auto", zIndex: 10050 }}
         // Radix dismisses on a capture-phase document listener, so it sees
         // Escape before the rename editor can mark it handled — one key

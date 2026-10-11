@@ -4,19 +4,17 @@ import { ANGULAR_DOCS } from "./angular-docs.mjs";
 import { docsRoute, SHARED_DOCS } from "./site.mjs";
 import { VUE_DOCS } from "./vue-docs.mjs";
 
-/** Full site/demo choices; experimental bindings may have a docs-only surface. */
+/** Published framework choices for documentation, landing pages and demos. */
 export const SITE_FRAMEWORKS = Object.freeze([
   { key: "react", label: "React", icon: "⚛" },
   { key: "angular", label: "Angular", icon: "Ⓐ" },
+  { key: "vue", label: "Vue", icon: "V" },
 ]);
-export const DOCS_FRAMEWORKS = Object.freeze([
-  ...SITE_FRAMEWORKS,
-  { key: "vue", label: "Vue (experimental)", icon: "V" },
-]);
+export const DOCS_FRAMEWORKS = SITE_FRAMEWORKS;
 export const FRAMEWORK_STORAGE_KEY = "adapttable-framework";
 /** @param {string | null} value */
 export function normalizeFramework(value) {
-  return value === "angular" ? "angular" : "react";
+  return value === "angular" || value === "vue" ? value : "react";
 }
 const angular = new Set(ANGULAR_DOCS.map((page) => page.replace(/\.md$/, "")));
 const vue = new Set(VUE_DOCS.map((page) => page.replace(/\.md$/, "")));
@@ -33,16 +31,14 @@ const react = new Set(
 /** @param {string} path @param {string | null} [preferred] */
 export function selectedFramework(path, preferred = null) {
   const explicit = /^\/(react|angular|vue)(?:\/|$)/.exec(path)?.[1];
-  return (
-    explicit ?? (preferred === "vue" ? "vue" : normalizeFramework(preferred))
-  );
+  return explicit ?? normalizeFramework(preferred);
 }
 
 /** A destination includes an explicit explanation when no equivalent exists.
  * @param {string} path @param {string} framework
  */
 export function frameworkDocsTarget(path, framework) {
-  framework = framework === "vue" ? "vue" : normalizeFramework(framework);
+  framework = normalizeFramework(framework);
   const slug = path
     .replace(/^\/v\d+\//, "/")
     .replace(/^\/(react|angular|vue)\//, "/")
@@ -65,26 +61,43 @@ export function frameworkDocsTarget(path, framework) {
 
 /** @type {Readonly<Record<string, Readonly<Record<string, string>>>>} */
 const KIT_COUNTERPARTS = {
+  vue: {
+    tailwind: "vue-unstyled",
+    unstyled: "vue-unstyled",
+    mui: "vuetify",
+    material: "vuetify",
+    shadcn: "shadcn-vue",
+    spartan: "shadcn-vue",
+    radix: "reka-ui",
+  },
   angular: {
     antd: "ng-zorro",
     mui: "material",
     shadcn: "spartan",
     tailwind: "unstyled",
+    "vue-unstyled": "unstyled",
+    vuetify: "material",
+    "shadcn-vue": "spartan",
   },
   react: {
     "ng-zorro": "antd",
     material: "mui",
     spartan: "shadcn",
     unstyled: "tailwind",
+    "vue-unstyled": "tailwind",
+    vuetify: "mui",
+    "shadcn-vue": "shadcn",
   },
 };
 /** @param {string} framework */
-const defaultKit = (framework) =>
-  framework === "angular" ? "unstyled" : "tailwind";
+const defaultKit = (framework) => {
+  if (framework === "vue") return "vue-unstyled";
+  return framework === "angular" ? "unstyled" : "tailwind";
+};
 /** @param {string} key @param {string} framework */
 const matchingKey = (key, framework) =>
   KIT_COUNTERPARTS[framework]?.[key] ?? key;
-/** @template {{key: string, framework: string, built?: boolean}} T
+/** @template {{key: string, framework: string, built?: boolean, path?: string}} T
  * @param {readonly T[]} adapters @param {string} framework @param {string} key */
 const findKit = (adapters, framework, key) =>
   adapters.find(
@@ -95,7 +108,8 @@ const findKit = (adapters, framework, key) =>
 /** @param {URL} url */
 function demoParts(url) {
   const parts = url.pathname
-    .replace(/^\/(react|angular)\/demo\/?/, "")
+    .replace(/^\/(react|angular|vue)\/demo\/?/, "")
+    .replace(/^\/vue\//, "")
     .split("/")
     .filter(Boolean);
   if (parts[0] === "angular-main") parts.length = 0;
@@ -109,7 +123,7 @@ function modePath(framework, lab, deployed) {
     return lab ? "/angular-all-options/" : "/angular-main/";
   return lab ? "/all-options/" : "/";
 }
-/** @template {{key: string, framework: string, built?: boolean}} T
+/** @template {{key: string, framework: string, built?: boolean, path?: string}} T
  * @param {URL} url @param {string} framework @param {readonly T[]} adapters
  * @param {boolean} lab @param {boolean} deployed */
 function demoModeTarget(url, framework, adapters, lab, deployed) {
@@ -125,23 +139,34 @@ function demoModeTarget(url, framework, adapters, lab, deployed) {
     if (!kit) query.set("kit-unavailable", selectedKit);
     else query.delete("kit-unavailable");
   }
-  const destination = modePath(framework, lab, deployed);
+  let destination = modePath(framework, lab, deployed);
+  if (framework === "vue") {
+    const kit = findKit(
+      adapters,
+      framework,
+      query.get("kit") ?? defaultKit(framework)
+    );
+    if (!kit) return { href: "/vue/getting-started/", equivalent: false };
+    destination = `${deployed ? "/vue/demo/" : "/vue/"}${kit.path ?? kit.key}/`;
+    query.delete("kit");
+    if (lab) query.set("unavailable", "all-options");
+  }
   return {
     href: destination + (query.size ? `?${query}` : ""),
-    equivalent: !query.has("kit-unavailable"),
+    equivalent: !query.has("kit-unavailable") && !query.has("unavailable"),
   };
 }
 
 /** Preserve matching kit, feature and query state on local and published pages.
  * @param {string} path @param {string} framework
- * @template {{key: string, framework: string, built?: boolean}} T
+ * @template {{key: string, framework: string, built?: boolean, path?: string}} T
  * @param {readonly T[]} adapters
  * @param {(adapter: T) => readonly {slug: string}[]} features
  */
 export function frameworkDemoTarget(path, framework, adapters, features) {
   framework = normalizeFramework(framework);
   const url = new URL(path, "https://adapttable.local");
-  const deployed = /^\/(react|angular)\/demo(?:\/|$)/.test(url.pathname);
+  const deployed = /^\/(react|angular|vue)\/demo(?:\/|$)/.test(url.pathname);
   const parts = demoParts(url);
   if (parts.length === 0 || parts[0] === "all-options")
     return demoModeTarget(
@@ -161,7 +186,9 @@ export function frameworkDemoTarget(path, framework, adapters, features) {
   const feature = parts[1];
   const supported =
     !feature || features(kit).some((item) => item.slug === feature);
-  const base = deployed ? `/${framework}/demo/${kit.key}/` : `/${kit.key}/`;
+  const kitPath = kit.path ?? kit.key;
+  const localBase = framework === "vue" ? `/vue/${kitPath}/` : `/${kitPath}/`;
+  const base = deployed ? `/${framework}/demo/${kitPath}/` : localBase;
   const suffix = feature ? feature + "/" : "";
   const equivalentKit = kit.key === counterpart;
   const query = new URLSearchParams(url.search);

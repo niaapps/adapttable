@@ -281,3 +281,11 @@
   padding-inline: 0;
   list-style: none;
 }
+
+:is(.adapttable-quasar-filter-popover, .adapttable-quasar-filter-drawer)
+  [data-adapttable-part="filters-title"] {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 600;
+}

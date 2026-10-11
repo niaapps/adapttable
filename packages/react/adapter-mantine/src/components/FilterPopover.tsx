@@ -57,7 +57,14 @@ export function FilterPopover({
       onClose();
     };
     const onEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (
+        event.key === "Escape" &&
+        !event.defaultPrevented &&
+        !event.isComposing
+      ) {
+        onClose();
+        anchorRef.current?.querySelector("button")?.focus();
+      }
     };
     document.addEventListener("mousedown", onOutsidePress);
     document.addEventListener("touchstart", onOutsidePress);
@@ -77,7 +84,7 @@ export function FilterPopover({
           if (!nextOpen) onClose();
         }}
         closeOnClickOutside={false}
-        returnFocus
+        returnFocus={false}
         position={dir === "rtl" ? "bottom-start" : "bottom-end"}
         middlewares={{
           // Both axes. Without the main one a panel wider than the space

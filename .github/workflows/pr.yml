@@ -334,8 +334,9 @@ jobs:
     needs: [detect, build]
     if: needs.detect.outputs.skipAll != 'true' && needs.detect.outputs.runUnit == 'true'
     runs-on: ubuntu-latest
-    # Angular adapters run sequentially; retain enough time to report every kit.
-    timeout-minutes: ${{ matrix.name == 'angular' && 45 || 15 }}
+    # Framework adapters run sequentially. Vue's full uncached lane takes
+    # over 15 minutes, including dependency builds and cache uploads.
+    timeout-minutes: ${{ matrix.name == 'angular' && 45 || matrix.name == 'vue' && 20 || 15 }}
     strategy:
       fail-fast: false
       matrix:

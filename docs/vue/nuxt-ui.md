@@ -6,9 +6,9 @@ the buttons, inputs, selects, checkboxes, popovers, drawers and menus.
 
 ## Availability and versions
 
-The package is prepared for its first experimental `0.1.0` release and is not
-yet published to npm. Until it is, link the built workspace packages as
-described in [Get started with Vue](./getting-started.md).
+This is an public `0.1.0` package. Install `@adapttable/nuxt-ui`
+and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
+then complete the application setup below.
 
 Peers: Vue `^3.5.18` and Nuxt UI `^4.11.3`. Nuxt UI 4 is MIT-licensed; the kit
 uses the public `@nuxt/ui` package and needs no Pro license or Nuxt server

@@ -13,7 +13,7 @@ const current = selectedFramework(Astro.url.pathname);
 
 <style>
   .framework-picker { display: inline-flex; align-items: center; gap: .25rem; white-space: nowrap; color: var(--sl-color-gray-1); font-size: var(--sl-text-sm); }
-  .framework-picker select { max-width: 7rem; font: inherit; color: inherit; background: transparent; border: 0; border-radius: .3rem; padding: .4rem .2rem; cursor: pointer; }
+  .framework-picker select { height: 2rem; min-height: 2rem; box-sizing: border-box; max-width: 7rem; font: inherit; color: inherit; background: transparent; border: 0; border-radius: .3rem; padding: .4rem .2rem; cursor: pointer; }
   .framework-picker select:focus-visible { outline: 2px solid var(--sl-color-text-accent); outline-offset: 2px; }
   .framework-picker option { color: var(--sl-color-text); background: var(--sl-color-bg); }
 </style>

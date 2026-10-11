@@ -10,10 +10,13 @@ import {
   AdaptColumnMenuRowModel,
   AdaptIcon,
   AdaptLiveRegion,
+  injectPopoverSpace,
 } from "@adapttable/angular/adapter";
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
+  type ElementRef,
   signal,
   viewChild,
 } from "@angular/core";
@@ -266,6 +269,10 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
     <div
       #root
       ngbDropdown
+      [placement]="
+        (preferredAbove() ? 'top-' : 'bottom-') +
+        (p.dir === 'rtl' ? 'start' : 'end')
+      "
       autoClose="outside"
       (openChange)="menuOpen.set($event)"
       data-ng-bootstrap-part="column-menu"
@@ -274,6 +281,8 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
       <button
         class="btn btn-outline-secondary btn-sm"
         #trigger
+        (pointerdown)="prepare()"
+        (keydown)="prepare()"
         ngbDropdownToggle
         type="button"
         data-adapttable-part="column-menu-button"
@@ -291,7 +300,7 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
             data-ng-bootstrap-part="column-menu-panel"
             [attr.aria-label]="p.labels.columns"
             [attr.dir]="p.dir ?? null"
-            [style]="panelStyle"
+            [style]="panelStyle()"
           >
             <div data-ng-bootstrap-part="column-menu-header">
               <span data-ng-bootstrap-part="column-menu-title">{{
@@ -386,14 +395,42 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
   `,
 })
 export class AdaptColumnMenu extends AdaptColumnMenuModel {
-  protected readonly panelStyle = {
-    "max-height": "min(70vh, 32rem)",
+  protected readonly menuOpen = signal(false);
+  private readonly opener = viewChild<ElementRef<HTMLElement>>("trigger");
+  private readonly room = injectPopoverSpace({
+    origin: () => this.opener()?.nativeElement,
+    open: () => this.menuOpen(),
+    reserve: 16,
+    allowAbove: () => {
+      const anchor = this.opener()?.nativeElement;
+      const view = anchor?.ownerDocument.defaultView;
+      return (
+        !!anchor &&
+        !!view &&
+        view.innerHeight - anchor.getBoundingClientRect().bottom < 240
+      );
+    },
+  });
+  protected readonly preferredAbove = signal(false);
+  private readonly preparedHeight = signal(360);
+  protected prepare(): void {
+    const anchor = this.opener()?.nativeElement;
+    const view = anchor?.ownerDocument.defaultView;
+    if (!anchor || !view) return;
+    const bounds = anchor.getBoundingClientRect();
+    const below = Math.max(0, view.innerHeight - bounds.bottom - 16);
+    const above = Math.max(0, bounds.top - 16);
+    const up = below < 240 && above > below;
+    this.preferredAbove.set(up);
+    this.preparedHeight.set(Math.min(560, up ? above : below));
+  }
+  protected readonly panelStyle = computed(() => ({
+    "max-height": `${Math.min(this.preparedHeight(), this.room())}px`,
     "overflow-y": "auto",
+    "box-sizing": "border-box",
     border: "0",
     padding: "0.75rem",
-  };
-
-  protected readonly menuOpen = signal(false);
+  }));
 
   private readonly dropdown = viewChild(NgbDropdown);
 

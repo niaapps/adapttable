@@ -95,6 +95,8 @@ export function FilterPopover({
       style={{ zIndex: 10050 }}
     >
       <Paper
+        role="dialog"
+        aria-label={labels.filters}
         ref={paperRef}
         elevation={8}
         dir={dir}

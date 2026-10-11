@@ -267,13 +267,11 @@ describe("the generated showcase pages", () => {
     assert.ok(pages.some((page) => page.dir === "vue/unstyled"));
   });
 
-  it("states on every Vue install line that publication comes first", () => {
+  it("provides registry install commands for every published Vue kit", () => {
     for (const kit of builtAdapters("vue")) {
       const { html } = landingPage(kit);
-      assert.ok(
-        html.includes("# Runs once the Vue packages are published to npm"),
-        kit.key
-      );
+      assert.ok(html.includes(`pnpm add ${kit.pkg}`), kit.key);
+      assert.ok(!html.includes("once the Vue packages are published"), kit.key);
     }
   });
 
