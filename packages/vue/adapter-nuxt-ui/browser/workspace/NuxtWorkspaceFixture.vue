@@ -30,7 +30,7 @@ const events = shallowRef<readonly string[]>([]);
 const record = (event: string) => {
   events.value = [...events.value, event];
 };
-const mobile = shallowRef(false);
+const mobile = shallowRef<boolean | undefined>();
 const dir = shallowRef<"ltr" | "rtl">("ltr");
 const shown = shallowRef(true);
 const openPanel = shallowRef<string | null>("first");
@@ -166,6 +166,9 @@ const features = [
 
 <style scoped>
 .nuxt-workspace-fixture {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  inline-size: 100%;
   max-width: 72rem;
   margin: auto;
   padding: 1rem;
