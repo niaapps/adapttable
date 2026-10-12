@@ -42,7 +42,11 @@
 .adapt-aria :is(button, summary, [role="combobox"], [role="option"]) {
   cursor: pointer;
 }
-.adapt-aria :is(button:hover, [role="option"]:hover) {
+.adapt-aria
+  :is(
+    button:not([data-adapttable-part="filters-backdrop"]):hover,
+    [role="option"]:hover
+  ) {
   background: var(--adapt-aria-muted);
 }
 .adapt-aria :is(button:disabled, [aria-disabled="true"]) {

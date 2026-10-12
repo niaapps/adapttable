@@ -30,7 +30,7 @@ adapt-showcase-matrix-page *::after {
   --ng-accent: var(--kit);
   --ng-wash: var(--kit-wash);
   color: var(--ink);
-  font-size: var(--fs-small);
+  font-size: 14px;
 }
 
 /* Long package identifiers need their own line on narrow phones. */
@@ -111,7 +111,8 @@ adapt-showcase-matrix-page *::after {
   min-height: 32px;
 }
 
-.mx-ng--unstyled button:hover:not(:disabled) {
+.mx-ng--unstyled
+  button:not([data-adapttable-part="filters-backdrop"]):hover:not(:disabled) {
   background: var(--ng-raised);
 }
 
