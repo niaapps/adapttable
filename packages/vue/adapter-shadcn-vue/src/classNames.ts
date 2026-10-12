@@ -24,7 +24,8 @@ export const shadcnClassNames: DataTableClassNames = {
   selectionCell: "w-12 bg-inherit px-3 align-middle",
   selectionCheckbox: "align-middle",
   columnGroup: "h-11 border-b border-border px-3 text-start font-medium",
-  cards: "grid min-w-0 gap-3 sm:grid-cols-2",
+  cards:
+    "grid min-w-0 gap-3 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]",
   card: "min-w-0 gap-3 border-border p-4",
   cardFields: "m-0 grid gap-3",
   cardRow:
@@ -37,7 +38,8 @@ export const shadcnClassNames: DataTableClassNames = {
   pager: "flex flex-wrap items-center gap-2",
   pageNumber:
     "aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground dark:aria-[current=page]:bg-primary",
-  loadingCards: "grid gap-3 sm:grid-cols-2",
+  loadingCards:
+    "grid gap-3 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]",
   loadingCard: "gap-4 border-border p-4",
   loadingTable: "w-full border-collapse",
   loadingHeaderCell: "p-3",
