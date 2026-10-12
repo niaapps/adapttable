@@ -21,12 +21,22 @@ export function vuetifyGroupingSlots(
         {
           ...toVueAttrs(attrs),
           tag: "section",
-          class: names.value.groupingPanel,
+          class: [
+            "adapttable-vuetify-grouping-layout",
+            names.value.groupingPanel,
+          ],
           variant: "outlined",
           "aria-label": label,
           "data-mobile": mobile ? "" : undefined,
         },
-        () => children
+        () => [
+          h(
+            "span",
+            { class: "adapttable-vuetify-grouping-layout-label" },
+            label
+          ),
+          children,
+        ]
       ),
     DropZone: ({ label, empty, active, dragging, dropProps, ...attrs }) =>
       h(
@@ -38,6 +48,7 @@ export function vuetifyGroupingSlots(
           class: names.value.groupingDropZone,
           variant: "outlined",
           "aria-label": label,
+          "data-empty": empty ? "" : undefined,
           "data-active": active ? "" : undefined,
           "data-dragging": dragging ? "" : undefined,
         },
@@ -104,8 +115,8 @@ export function vuetifyGroupingSlots(
         () => label
       ),
     AggregationItem: ({ label, readOnly, readOnlyLabel, children, ...attrs }) =>
-      h(VChip, { ...attrs, class: names.value.groupingAggregationItem }, () => [
-        h("strong", label),
+      h("span", { ...attrs, class: names.value.groupingAggregationItem }, [
+        h("span", label),
         readOnly ? h("small", readOnlyLabel) : children,
       ]),
     AggregationRemove: ({ label, onRemove, ...attrs }) =>

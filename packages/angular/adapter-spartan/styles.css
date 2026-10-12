@@ -122,12 +122,23 @@
     :is(
       [data-adapttable-part="toolbar"],
       [data-adapttable-part="toolbar-extras"],
-      [data-adapttable-part="pagination"],
+      [data-adapttable-part="footer"],
       [data-spartan-part="filters-header"],
       [data-spartan-part="filters-footer"]
     ) {
     @apply flex flex-wrap items-center gap-2;
     padding-block: 0.5rem;
+  }
+
+  [data-adapttable-kit="spartan"] [data-adapttable-part="footer"] {
+    padding-inline: 0.75rem;
+  }
+  [data-adapttable-kit="spartan"] [data-adapttable-part="footer"] > label,
+  [data-adapttable-kit="spartan"] [data-spartan-part="pager"] {
+    @apply inline-flex flex-wrap items-center gap-2;
+  }
+  [data-adapttable-kit="spartan"] [data-spartan-part="pager"] {
+    margin-inline-start: auto;
   }
 
   [data-adapttable-kit="spartan"] [data-adapttable-part="search-field"] {
@@ -256,8 +267,21 @@
     max-inline-size: 100%;
     min-inline-size: 0;
   }
-  [data-adapttable-kit="spartan"] [data-adapttable-part="filter-chips"] {
-    @apply flex flex-wrap gap-2 py-2;
+  [data-adapttable-kit="spartan"] [data-adapttable-part="chips"] {
+    @apply flex flex-wrap items-center gap-2 py-2;
+    margin: 0;
+    padding-inline: 0;
+    list-style: none;
+  }
+  [data-adapttable-kit="spartan"] [data-adapttable-part="chip"] {
+    @apply inline-flex items-center gap-1;
+    border: 1px solid var(--at-spartan-border);
+    border-radius: var(--at-spartan-radius);
+    padding-inline-start: 0.5rem;
+  }
+  [data-adapttable-kit="spartan"] [data-adapttable-part="chip-remove"] {
+    min-block-size: 1.75rem;
+    padding: 0.125rem 0.375rem;
   }
 
   .at-spartan-surface {

@@ -43,7 +43,8 @@ export function grouping<TRow>(
                     NIcon,
                     { "aria-hidden": true },
                     { default: () => (expanded ? "−" : "+") }
-                  )
+                  ),
+              { text: expanded !== undefined }
             ),
           Checkbox: naiveCheckbox,
         },

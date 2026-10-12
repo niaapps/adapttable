@@ -20,8 +20,12 @@ const controls: EditableCellChromeSlots<TRow> = {
     rekaButton(
       {
         title: control.title,
-        "aria-label": control.title,
-        class: [control.className, names.value.editCellActivate],
+        "aria-description": control.title,
+        class: [
+          "at-reka-edit-value",
+          control.className,
+          names.value.editCellActivate,
+        ],
         ref: control.activateRef,
         "data-adapttable-part": "edit-cell-activate",
         "data-save-status": control.saveStatus,
@@ -64,3 +68,20 @@ Render.props = [] as string[];
 <template>
   <Render />
 </template>
+
+<style>
+.at-reka-button.at-reka-edit-value {
+  justify-content: start;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: inherit;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: text;
+}
+</style>

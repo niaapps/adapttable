@@ -35,12 +35,24 @@ export function naiveGroupingControls(
         {
           ...toVueAttrs(attrs),
           size: "small",
-          class: names.value.groupingPanel,
+          class: [
+            "adapttable-naive-ui-grouping-layout",
+            names.value.groupingPanel,
+          ],
           role: "group",
           "aria-label": label,
           "data-mobile": mobile ? "" : undefined,
         },
-        { default: () => children }
+        {
+          default: () => [
+            h(
+              "span",
+              { class: "adapttable-naive-ui-grouping-layout-label" },
+              label
+            ),
+            children,
+          ],
+        }
       ),
     DropZone: ({ label, empty, active, dragging, dropProps, ...attrs }) =>
       h(
@@ -53,7 +65,6 @@ export function naiveGroupingControls(
           "data-empty": empty ? "" : undefined,
           "data-active": active ? "" : undefined,
           "data-dragging": dragging ? "" : undefined,
-          style: { minInlineSize: empty ? "8em" : ".6em" },
         },
         { default: () => (empty ? label : "") }
       ),
@@ -102,7 +113,10 @@ export function naiveGroupingControls(
     Select: ({ label, value, options, onChange, disabled, ...attrs }) =>
       naiveSelect({
         value,
-        options,
+        options:
+          value === ""
+            ? [{ value: "", label, disabled: true }, ...options]
+            : options,
         onChange,
         attrs: {
           ...attrs,

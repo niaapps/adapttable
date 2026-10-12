@@ -15,8 +15,10 @@ export const ElementFilterChips = defineComponent(
         ...props,
         classNames: names.value,
         slots: {
-          Remove: ({ attrs }) => elementButton(attrs, "×"),
-          Clear: ({ attrs, label }) => elementButton(attrs, label),
+          Remove: ({ attrs }) =>
+            elementButton({ ...attrs, text: true, size: "small" }, "×"),
+          Clear: ({ attrs, label }) =>
+            elementButton({ ...attrs, text: true, size: "small" }, label),
         },
       });
   },

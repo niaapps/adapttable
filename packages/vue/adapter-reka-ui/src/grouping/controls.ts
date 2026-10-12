@@ -16,11 +16,22 @@ export function rekaGroupingControls(
         "section",
         {
           ...toVueAttrs(attrs),
-          class: ["at-reka-grouping", names.value.groupingPanel],
+          class: [
+            "at-reka-grouping",
+            "adapttable-reka-ui-grouping-layout",
+            names.value.groupingPanel,
+          ],
           "aria-label": label,
           "data-mobile": mobile ? "" : undefined,
         },
-        [children]
+        [
+          h(
+            "span",
+            { class: "adapttable-reka-ui-grouping-layout-label" },
+            label
+          ),
+          children,
+        ]
       ),
     DropZone: ({ label, empty, active, dragging, dropProps, ...attrs }) =>
       h(
@@ -31,6 +42,7 @@ export function rekaGroupingControls(
           ...toVueAttrs({ ...dropProps }),
           "aria-label": label,
           class: ["at-reka-group-drop", names.value.groupingDropZone],
+          "data-empty": empty ? "" : undefined,
           "data-active": active ? "" : undefined,
           "data-dragging": dragging ? "" : undefined,
         },

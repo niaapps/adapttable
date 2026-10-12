@@ -113,3 +113,149 @@
     border-color: var(--border, #e4e4e7);
   }
 }
+
+/* An omitted mobile label leaves the value the full card width. */
+.adapttable-shadcn-vue
+  [data-adapttable-part="card-row"]:has(
+    > [data-adapttable-part="card-label"]:empty
+  ) {
+  display: block;
+}
+.adapttable-shadcn-vue [data-adapttable-part="card-label"]:empty {
+  display: none;
+}
+.adapttable-shadcn-vue
+  [data-adapttable-part="card-row"]:has(
+    > [data-adapttable-part="card-label"]:empty
+  )
+  > [data-adapttable-part="card-value"] {
+  margin: 0;
+  text-align: start;
+  font-size: 1.05em;
+  font-weight: 600;
+}
+
+.adapttable-shadcn-vue-grouping-layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  min-inline-size: 0;
+}
+.adapttable-shadcn-vue-grouping-layout-label,
+.adapttable-shadcn-vue-grouping-layout
+  [data-adapttable-part="grouping-aggregations"]::before {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted-foreground, #71717a);
+  margin-inline-end: 0.5rem;
+}
+.adapttable-shadcn-vue-grouping-layout [data-adapttable-part="grouping-add"] {
+  flex: 0 1 15rem;
+  inline-size: 15rem;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.adapttable-shadcn-vue-grouping-layout
+  [data-adapttable-part="grouping-aggregations"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  flex-basis: 100%;
+  min-inline-size: 0;
+  margin: 0.25rem 0 0;
+  padding: 0.75rem 0 0;
+  border: 0;
+  border-block-start: 1px solid var(--border, #e4e4e7);
+}
+.adapttable-shadcn-vue-grouping-layout
+  [data-adapttable-part="grouping-aggregations"]::before {
+  content: attr(aria-label);
+}
+.adapttable-shadcn-vue-grouping-layout [data-adapttable-aggregation],
+.adapttable-shadcn-vue-grouping-layout
+  [data-adapttable-part="grouping-aggregation-item"] {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  margin: 0;
+}
+.adapttable-shadcn-vue-grouping-layout
+  [data-adapttable-part="grouping-aggregation-operation"] {
+  flex: 0 1 8rem;
+  inline-size: 8rem;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.adapttable-shadcn-vue-grouping-layout
+  [data-adapttable-part="grouping-aggregation-add"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+}
+.adapttable-shadcn-vue-grouping-layout
+  [data-adapttable-part="grouping-aggregation-add"]
+  legend {
+  float: inline-start;
+  padding: 0;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground, #71717a);
+}
+.adapttable-shadcn-vue-grouping-layout
+  [data-adapttable-part="grouping-aggregation-add"]
+  label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin: 0;
+}
+.adapttable-shadcn-vue-grouping-layout
+  [data-adapttable-part="grouping-chip-remove"],
+.adapttable-shadcn-vue-grouping-layout
+  [data-adapttable-part="grouping-aggregation-remove"] {
+  min-inline-size: 2rem;
+  min-block-size: 2rem;
+}
+.adapttable-shadcn-vue-grouping-layout
+  [data-adapttable-part="grouping-drop-zone"]:not([data-empty]):not(
+    [data-dragging]
+  ):not([data-active]) {
+  opacity: 0;
+}
+
+.adapttable-shadcn-vue [data-adapttable-part="group-card"] > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.adapttable-shadcn-vue
+  [data-adapttable-part="group-card"]
+  [data-adapttable-part="group-aggregate"] {
+  margin-inline-start: 0.375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.adapttable-shadcn-vue
+  [data-adapttable-part="group-row"]
+  [data-adapttable-part="group-label"] {
+  margin-inline-start: 0.5rem;
+  font-weight: 600;
+}
+.adapttable-shadcn-vue
+  [data-adapttable-part="group-row"]
+  [data-adapttable-part="group-count"] {
+  margin-inline-start: 0.375rem;
+  font-size: 0.875em;
+}

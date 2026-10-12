@@ -18,13 +18,18 @@ export function elementGroupingControls(
         {
           attrs: {
             ...toVueAttrs(attrs),
-            class: names.value.groupingPanel,
+            class: ["adapttable-element-grouping", names.value.groupingPanel],
             role: "group",
             "aria-label": label,
             "data-mobile": mobile ? "" : undefined,
           },
         },
-        { default: () => children }
+        {
+          default: () => [
+            h("span", { class: "adapttable-element-grouping-label" }, label),
+            children,
+          ],
+        }
       ),
     DropZone: ({ label, empty, active, dragging, dropProps, ...attrs }) =>
       h(
@@ -37,10 +42,6 @@ export function elementGroupingControls(
           "data-empty": empty ? "" : undefined,
           "data-active": active ? "" : undefined,
           "data-dragging": dragging ? "" : undefined,
-          style: {
-            display: "inline-block",
-            minInlineSize: empty ? "8em" : "0.6em",
-          },
         },
         empty ? label : ""
       ),
@@ -68,6 +69,8 @@ export function elementGroupingControls(
                 ...toVueAttrs({ ...dragProps }),
                 ...toVueAttrs({ ...keyboardProps }),
                 type: "button",
+                text: true,
+                size: "small",
                 class: names.value.groupingChipHandle,
                 "data-adapttable-part": "grouping-chip-handle",
               },
@@ -76,6 +79,8 @@ export function elementGroupingControls(
             elementButton(
               {
                 type: "button",
+                text: true,
+                size: "small",
                 class: names.value.groupingChipRemove,
                 "aria-label": removeLabel,
                 "data-adapttable-part": "grouping-chip-remove",
@@ -127,6 +132,8 @@ export function elementGroupingControls(
         {
           ...attrs,
           type: "button",
+          text: true,
+          size: "small",
           class: names.value.groupingAggregationRemove,
           "aria-label": label,
           onClick: onRemove,

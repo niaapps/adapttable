@@ -24,7 +24,7 @@ const controls: EditableCellChromeSlots<TRow> = {
     naiveButton(
       {
         title: control.title,
-        "aria-label": control.title,
+        "aria-description": control.title,
         class: [control.className, names.value.editCellActivate],
         ref: elementRef(control.activateRef),
         "data-adapttable-part": "edit-cell-activate",

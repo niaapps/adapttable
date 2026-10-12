@@ -51,6 +51,8 @@ export function useNaiveTableStyle() {
     "--adapttable-naive-header": theme.value.tableHeaderColor,
     "--adapttable-naive-hover": theme.value.hoverColor,
     "--adapttable-naive-selected": theme.value.primaryColorHover,
+    "--adapttable-naive-primary": theme.value.primaryColor,
+    "--adapttable-naive-error": theme.value.errorColor,
     "--adapttable-naive-radius": theme.value.borderRadius,
   }));
 }

@@ -12,12 +12,22 @@ export function nativeGroupingControls(
         "div",
         {
           ...toVueAttrs(attrs),
-          class: names.value.groupingPanel,
+          class: [
+            "adapttable-vue-unstyled-grouping-layout",
+            names.value.groupingPanel,
+          ],
           role: "group",
           "aria-label": label,
           "data-mobile": mobile ? "" : undefined,
         },
-        [children]
+        [
+          h(
+            "span",
+            { class: "adapttable-vue-unstyled-grouping-layout-label" },
+            label
+          ),
+          children,
+        ]
       ),
     DropZone: ({ label, empty, active, dragging, dropProps, ...attrs }) =>
       h(
@@ -30,10 +40,6 @@ export function nativeGroupingControls(
           "data-empty": empty ? "" : undefined,
           "data-active": active ? "" : undefined,
           "data-dragging": dragging ? "" : undefined,
-          style: {
-            display: "inline-block",
-            minInlineSize: empty ? "8em" : "0.6em",
-          },
         },
         empty ? label : ""
       ),
