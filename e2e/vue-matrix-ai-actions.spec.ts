@@ -76,13 +76,30 @@ for (const kit of builtAdapters("vue")) {
       await expect(rows).toHaveCount(1);
       await expect(rows.first()).toContainText("Katherine Johnson");
       await send(page, "show everyone");
-      await expect(rows).toHaveCount(3);
+      await expect(rows).toHaveCount(5);
+      if (width === 390) {
+        await part(page, "assistant-close").click();
+        const more = page.getByRole("button", {
+          name: "Load more",
+          exact: true,
+        });
+        await more.click();
+        await expect(rows).toHaveCount(10);
+        await more.click();
+        await expect(rows).toHaveCount(15);
+        await expect(more).toHaveCount(0);
+        await part(page, "assistant-launcher").click();
+      } else {
+        await expect(page.locator(".ai-demo")).toContainText(
+          "Showing 1–5 of 15"
+        );
+      }
       await send(page, "wait");
       const stop = part(page, "assistant-stop");
       await expect(stop).toBeVisible();
       await stop.click();
       await expect(stop).toHaveCount(0);
-      await expect(rows).toHaveCount(3);
+      await expect(rows).toHaveCount(width === 390 ? 15 : 5);
       await expect(page.locator("[data-demo-log]")).toHaveText(
         "No host writes yet"
       );
