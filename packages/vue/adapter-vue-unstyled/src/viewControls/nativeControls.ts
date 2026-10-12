@@ -7,6 +7,7 @@ import {
 } from "@adapttable/vue/adapter";
 import { h, mergeProps, type VNode } from "vue";
 
+import { NativeColumnMenuPanel } from "../columns/NativeColumnMenuPanel";
 import type { DataTableClassNames } from "../types";
 
 /** The binding's attrs include the actual semantic target and focus refs. */
@@ -57,7 +58,7 @@ export const nativeSavedViewsMenuSlots: SavedViewsMenuSlots = {
         },
       })
     ),
-  Panel: ({ attrs, content }) => h("div", attrs, [content]),
+  Panel: (control) => h(NativeColumnMenuPanel, { control }),
 };
 
 /** All management controls come from the binding's ordered neutral contract. */

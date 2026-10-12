@@ -6,7 +6,7 @@ import {
   type RowActionsLayout,
 } from "@adapttable/vue/adapter";
 import { QMenu } from "quasar";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 import QuasarButton from "../controls/QuasarButton.vue";
 
@@ -18,6 +18,27 @@ const props = defineProps<{
   classNames: DataTableClassNames;
 }>();
 const open = ref(false);
+const menu = ref<InstanceType<typeof QMenu> | null>(null);
+const updatePosition = () => menu.value?.updatePosition();
+watch(
+  open,
+  (expanded, _previous, cleanup) => {
+    if (!expanded) return;
+    const element: unknown = menu.value?.$el;
+    const view =
+      typeof Node !== "undefined" && element instanceof Node
+        ? element.ownerDocument?.defaultView
+        : null;
+    if (!view) return;
+    view.addEventListener("scroll", updatePosition, true);
+    view.addEventListener("resize", updatePosition);
+    cleanup(() => {
+      view.removeEventListener("scroll", updatePosition, true);
+      view.removeEventListener("resize", updatePosition);
+    });
+  },
+  { flush: "post" }
+);
 function actionAttrs(action: RowActionControl<TRow>) {
   return mergeVueAttrs(action.attrs, {
     class: [props.classNames.actionButton, props.classNames.rowAction],
@@ -42,9 +63,11 @@ function actionAttrs(action: RowActionControl<TRow>) {
   >
     <span aria-hidden="true">⋮</span>
     <QMenu
+      ref="menu"
       v-model="open"
       :class="classNames.rowActionsMenu"
       data-adapttable-part="row-actions-menu"
+      @show="updatePosition"
     >
       <div class="adapttable-quasar-row-actions-menu">
         <QuasarButton
