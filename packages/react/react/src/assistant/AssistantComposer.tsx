@@ -132,7 +132,10 @@ export function AssistantComposer({
       {/* The input takes the room that is left. Without `minWidth: 0` a
           textarea's intrinsic width wins the flex negotiation and pushes Send
           off the end of a 400px window. */}
-      <span style={{ flex: "1 1 auto", minWidth: 0, display: "flex" }}>
+      <span
+        data-adapttable-part="assistant-input-container"
+        style={{ flex: "1 1 auto", minWidth: 0, display: "flex" }}
+      >
         <Composer
           label={labels?.assistantPlaceholder ?? "Ask about this table…"}
           placeholder={
