@@ -38,81 +38,96 @@ export function AssistantComposer(props: AssistantComposerProps) {
   const send = () => {
     if (usable && !busy && assistant.draft.trim()) onSend();
   };
-  return h("div", { "data-adapttable-part": "assistant-composer" }, [
-    h(
-      "span",
-      {
-        "data-adapttable-part": "assistant-voice-status",
-        role: "status",
-        "aria-live": "polite",
+  return h(
+    "div",
+    {
+      "data-adapttable-part": "assistant-composer",
+      style: {
+        display: "flex",
+        alignItems: "flex-end",
+        gap: "0.35em",
+        flexShrink: 0,
+        minWidth: 0,
       },
-      listening ? copy.assistantVoiceListening : ""
-    ),
-    assistant.suggestions.length
-      ? slots.Menu({
-          label: copy.assistantExamples,
-          part: "assistant-examples-menu",
-          disabled: !usable || busy,
-          maxHeight: "min(22em, 50vh)",
-          items: assistant.suggestions.map((item) => ({
-            ...item,
-            part: "assistant-examples-item",
-          })),
-          onSelect: (id) => {
-            void assistant.runSuggestion(id);
-          },
-        })
-      : null,
-    slots.Composer({
-      label: composer.answering
-        ? copy.assistantAnswerLabel
-        : copy.assistantPlaceholder,
-      placeholder: composer.answering
-        ? copy.assistantAnswerPlaceholder
-        : copy.assistantPlaceholder,
-      part: "assistant-input",
-      value: assistant.draft,
-      disabled: !usable,
-      onChange: assistant.setDraft,
-      onKeyDown: (event) => {
-        if (event.key !== "Enter" || event.shiftKey || event.isComposing)
-          return;
-        event.preventDefault();
-        send();
-      },
-    }),
-    speech?.available && speech.languages.length > 1
-      ? slots.LanguageChip({
-          label: copy.assistantVoiceLanguage,
-          value: speech.state.language,
-          options: speech.languages.map((value) => ({ value, label: value })),
-          part: "assistant-voice-language",
-          disabled: listening,
-          onChange: speech.setLanguage,
-        })
-      : null,
-    speechButton(props, usable),
-    busy
-      ? slots.Button({
-          label: copy.assistantStop,
-          part: "assistant-stop",
-          onClick: assistant.stop,
-        })
-      : slots.Button({
+    },
+    [
+      h(
+        "span",
+        {
+          "data-adapttable-part": "assistant-voice-status",
+          role: "status",
+          "aria-live": "polite",
+        },
+        listening ? copy.assistantVoiceListening : ""
+      ),
+      assistant.suggestions.length
+        ? slots.Menu({
+            label: copy.assistantExamples,
+            part: "assistant-examples-menu",
+            disabled: !usable || busy,
+            maxHeight: "min(22em, 50vh)",
+            items: assistant.suggestions.map((item) => ({
+              ...item,
+              part: "assistant-examples-item",
+            })),
+            onSelect: (id) => {
+              void assistant.runSuggestion(id);
+            },
+          })
+        : null,
+      h("span", { style: { display: "flex", flex: "1 1 auto", minWidth: 0 } }, [
+        slots.Composer({
           label: composer.answering
-            ? copy.assistantAnswerSend
-            : copy.assistantSend,
-          part: "assistant-send",
-          disabled: !usable || !assistant.draft.trim(),
-          onClick: send,
+            ? copy.assistantAnswerLabel
+            : copy.assistantPlaceholder,
+          placeholder: composer.answering
+            ? copy.assistantAnswerPlaceholder
+            : copy.assistantPlaceholder,
+          part: "assistant-input",
+          value: assistant.draft,
+          disabled: !usable,
+          onChange: assistant.setDraft,
+          onKeyDown: (event) => {
+            if (event.key !== "Enter" || event.shiftKey || event.isComposing)
+              return;
+            event.preventDefault();
+            send();
+          },
         }),
-    speech?.state.error
-      ? h(
-          "p",
-          { "data-adapttable-part": "assistant-voice-error", role: "alert" },
-          speech.state.error
-        )
-      : null,
-  ]);
+      ]),
+      speech?.available && speech.languages.length > 1
+        ? slots.LanguageChip({
+            label: copy.assistantVoiceLanguage,
+            value: speech.state.language,
+            options: speech.languages.map((value) => ({ value, label: value })),
+            part: "assistant-voice-language",
+            disabled: listening,
+            onChange: speech.setLanguage,
+          })
+        : null,
+      speechButton(props, usable),
+      busy
+        ? slots.Button({
+            label: copy.assistantStop,
+            part: "assistant-stop",
+            onClick: assistant.stop,
+          })
+        : slots.Button({
+            label: composer.answering
+              ? copy.assistantAnswerSend
+              : copy.assistantSend,
+            part: "assistant-send",
+            disabled: !usable || !assistant.draft.trim(),
+            onClick: send,
+          }),
+      speech?.state.error
+        ? h(
+            "p",
+            { "data-adapttable-part": "assistant-voice-error", role: "alert" },
+            speech.state.error
+          )
+        : null,
+    ]
+  );
 }
 AssistantComposer.props = ["assistant", "speech", "labels", "slots", "onSend"];

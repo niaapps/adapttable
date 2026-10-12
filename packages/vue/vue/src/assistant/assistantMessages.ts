@@ -475,6 +475,13 @@ export const AssistantMessage = /*#__PURE__*/ defineComponent(
         {
           "data-adapttable-part": "assistant-message",
           "data-role": message.role,
+          style: {
+            display: "grid",
+            gridTemplateColumns: "auto minmax(0, 1fr)",
+            gap: "0.5em",
+            alignItems: "start",
+            minWidth: 0,
+          },
           "aria-busy": message.streaming ?? undefined,
         },
         [

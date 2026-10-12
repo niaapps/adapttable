@@ -195,28 +195,44 @@ function launcher(
 }
 function header(props: TableAssistantChromeProps, state: ChromeState) {
   const copy = resolveLabels(props.labels);
-  return h("header", { "data-adapttable-part": "assistant-header" }, [
-    speakerMark(props.avatars?.assistant, "assistant", "assistant-mark"),
-    h(
-      "span",
-      { "data-adapttable-part": "assistant-title" },
-      copy.assistantTitle
-    ),
-    props.slots.Badge({
-      label: copy.assistantConnection(props.assistant.status),
-      part: "assistant-connection",
-      tone: assistantBadgeTone(props.assistant.status),
-    }),
-    props.onSettings
-      ? button(
-          props,
-          copy.assistantSettings,
-          "assistant-settings",
-          props.onSettings
-        )
-      : null,
-    button(props, copy.assistantClose, "assistant-close", state.close),
-  ]);
+  return h(
+    "header",
+    {
+      "data-adapttable-part": "assistant-header",
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: "0.5em",
+        flexShrink: 0,
+        minHeight: "3.5em",
+      },
+    },
+    [
+      speakerMark(props.avatars?.assistant, "assistant", "assistant-mark"),
+      h(
+        "span",
+        {
+          "data-adapttable-part": "assistant-title",
+          style: { minWidth: 0, flex: "1 1 auto", overflowWrap: "anywhere" },
+        },
+        copy.assistantTitle
+      ),
+      props.slots.Badge({
+        label: copy.assistantConnection(props.assistant.status),
+        part: "assistant-connection",
+        tone: assistantBadgeTone(props.assistant.status),
+      }),
+      props.onSettings
+        ? button(
+            props,
+            copy.assistantSettings,
+            "assistant-settings",
+            props.onSettings
+          )
+        : null,
+      button(props, copy.assistantClose, "assistant-close", state.close),
+    ]
+  );
 }
 function questionAdmission(
   props: TableAssistantChromeProps,
@@ -289,30 +305,43 @@ function messages(props: TableAssistantChromeProps, state: ChromeState) {
     (assistant.busy ?? assistantIsBusy(assistant.status)) &&
     !assistantQuestion(assistant.messages) &&
     !props.approval;
-  return h("ul", { "data-adapttable-part": "assistant-messages" }, [
-    ...rows,
-    working
-      ? h("li", { "data-adapttable-part": "assistant-working" }, [
-          h("span", {
-            "data-adapttable-part": "assistant-working-dot",
-            "aria-hidden": "true",
-            style: {
-              display: "inline-block",
-              inlineSize: "0.5em",
-              blockSize: "0.5em",
-              borderRadius: "50%",
-              background: "currentColor",
-              marginInlineEnd: "0.5em",
-            },
-          }),
-          h(
-            "span",
-            { "data-adapttable-part": "assistant-working-text" },
-            assistantWorkingText(assistant.progress, copy)
-          ),
-        ])
-      : null,
-  ]);
+  return h(
+    "ul",
+    {
+      "data-adapttable-part": "assistant-messages",
+      style: {
+        listStyle: "none",
+        margin: 0,
+        padding: 0,
+        display: "grid",
+        gap: "1em",
+      },
+    },
+    [
+      ...rows,
+      working
+        ? h("li", { "data-adapttable-part": "assistant-working" }, [
+            h("span", {
+              "data-adapttable-part": "assistant-working-dot",
+              "aria-hidden": "true",
+              style: {
+                display: "inline-block",
+                inlineSize: "0.5em",
+                blockSize: "0.5em",
+                borderRadius: "50%",
+                background: "currentColor",
+                marginInlineEnd: "0.5em",
+              },
+            }),
+            h(
+              "span",
+              { "data-adapttable-part": "assistant-working-text" },
+              assistantWorkingText(assistant.progress, copy)
+            ),
+          ])
+        : null,
+    ]
+  );
 }
 function allowances(props: TableAssistantChromeProps) {
   const assistant = props.assistant;
