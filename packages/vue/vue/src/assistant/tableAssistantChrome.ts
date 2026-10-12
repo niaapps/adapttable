@@ -116,11 +116,12 @@ function review(
 const ApprovalModalContent = defineComponent(
   (props: { children: VNodeChild; onClose: () => void }) => {
     const root = shallowRef<HTMLElement | null>(null);
-    const previous =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
+    let previous: HTMLElement | null = null;
     onMounted(() => {
+      previous =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
       void nextTick(() => {
         const target = root.value?.querySelector<HTMLElement>(
           'button:not(:disabled), [tabindex="0"]'

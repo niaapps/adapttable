@@ -2,12 +2,14 @@ import type { AgentApprovalPending } from "@adapttable/core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createApp,
+  createSSRApp,
   defineComponent,
   h,
   KeepAlive,
   nextTick,
   shallowRef,
 } from "vue";
+import { renderToString } from "vue/server-renderer";
 
 import { testSlots } from "../../test/assistant-fixtures";
 import {
@@ -300,6 +302,25 @@ describe("assistant semantic surfaces", () => {
     host.props.value = { ...host.props.value, approval: null };
     await settle();
     expect(document.activeElement).toBe(input);
+  });
+  it("renders modal approval content on the server without accessing browser focus", async () => {
+    const host = mount();
+    await settle();
+    const approval = { ...pending(), presentation: "modal" as const };
+    const props = { ...host.props.value, approval };
+    vi.stubGlobal("document", undefined);
+    try {
+      const html = await renderToString(
+        createSSRApp({ render: () => h(TableAssistantChrome, props) })
+      );
+      expect(html).toContain(
+        'data-adapttable-part="assistant-approval-modal-content"'
+      );
+      expect(html).toContain("Name 1");
+      expect(approval.reject).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
   it("groups receipts as an accessible list and separates one action undo from turn undo", async () => {
     const undo = vi.fn();
