@@ -75,26 +75,33 @@ export function AssistantComposer(props: AssistantComposerProps) {
             },
           })
         : null,
-      h("span", { style: { display: "flex", flex: "1 1 auto", minWidth: 0 } }, [
-        slots.Composer({
-          label: composer.answering
-            ? copy.assistantAnswerLabel
-            : copy.assistantPlaceholder,
-          placeholder: composer.answering
-            ? copy.assistantAnswerPlaceholder
-            : copy.assistantPlaceholder,
-          part: "assistant-input",
-          value: assistant.draft,
-          disabled: !usable,
-          onChange: assistant.setDraft,
-          onKeyDown: (event) => {
-            if (event.key !== "Enter" || event.shiftKey || event.isComposing)
-              return;
-            event.preventDefault();
-            send();
-          },
-        }),
-      ]),
+      h(
+        "span",
+        {
+          "data-adapttable-part": "assistant-input-container",
+          style: { display: "flex", flexGrow: 1, flexShrink: 1, minWidth: 0 },
+        },
+        [
+          slots.Composer({
+            label: composer.answering
+              ? copy.assistantAnswerLabel
+              : copy.assistantPlaceholder,
+            placeholder: composer.answering
+              ? copy.assistantAnswerPlaceholder
+              : copy.assistantPlaceholder,
+            part: "assistant-input",
+            value: assistant.draft,
+            disabled: !usable,
+            onChange: assistant.setDraft,
+            onKeyDown: (event) => {
+              if (event.key !== "Enter" || event.shiftKey || event.isComposing)
+                return;
+              event.preventDefault();
+              send();
+            },
+          }),
+        ]
+      ),
       speech?.available && speech.languages.length > 1
         ? slots.LanguageChip({
             label: copy.assistantVoiceLanguage,
