@@ -25,6 +25,11 @@ import {
   SITE_HOME,
   snippetFor,
 } from "../../matrix/content";
+import {
+  readShowcaseTheme as readStoredTheme,
+  storeShowcaseTheme as storeTheme,
+  updateShowcaseThemeUrl,
+} from "../../matrix/theme";
 import AccessibilityBody from "./bodies/AccessibilityBody.vue";
 import AggregationBody from "./bodies/AggregationBody.vue";
 import AiBody from "./bodies/AiBody.vue";
@@ -77,27 +82,6 @@ const FEATURE_BODIES: Readonly<Record<string, Component>> = {
   "nested-tables": NestedTablesBody,
   rows: RowsBody,
   "column-groups": ColumnGroupsBody,
-};
-
-/** Where every showcase page keeps the reader's theme between pages. */
-const THEME_KEY = "adapttable-demo-theme";
-
-const readStoredTheme = (): boolean => {
-  try {
-    return window.localStorage.getItem(THEME_KEY) === "dark";
-  } catch {
-    // Storage can be unavailable (private mode): the page opens light.
-    return false;
-  }
-};
-
-const storeTheme = (dark: boolean): void => {
-  try {
-    window.localStorage.setItem(THEME_KEY, dark ? "dark" : "light");
-  } catch {
-    // Storage can be unavailable (private mode): the theme simply does not
-    // persist across pages then.
-  }
 };
 
 /**
@@ -177,6 +161,11 @@ watch(
   { immediate: true }
 );
 
+function toggleDark(): void {
+  dark.value = !dark.value;
+  updateShowcaseThemeUrl(dark.value);
+}
+
 let copyTimer: number | undefined;
 onScopeDispose(() => window.clearTimeout(copyTimer));
 
@@ -207,7 +196,7 @@ function copy(which: "code" | "install", text: string): void {
     :active="active"
     :kit="adapter"
     :dark="dark"
-    @toggle-dark="dark = !dark"
+    @toggle-dark="toggleDark"
   />
 
   <main>

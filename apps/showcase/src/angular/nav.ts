@@ -21,6 +21,7 @@ import {
   kitAccent,
   SHOWCASE_ADAPTERS,
 } from "../matrix/content";
+import { updateShowcaseThemeUrl } from "../matrix/theme";
 import { navigationMenuShift } from "../navGeometry";
 import { createNavMenuInteraction } from "../navMenuInteraction";
 import { SHOWCASE_DARK } from "./showcaseKit";
@@ -157,6 +158,11 @@ export class AdaptShowcaseNav {
   accent(adapter: (typeof this.adapters)[number]): string {
     return kitAccent(adapter, this.dark());
   }
+  toggleTheme(): void {
+    this.dark.set(!this.dark());
+    updateShowcaseThemeUrl(this.dark());
+  }
+
   switchPage(event: Event): void {
     if (!(event.target instanceof HTMLSelectElement)) return;
     const selected = event.target.value;
