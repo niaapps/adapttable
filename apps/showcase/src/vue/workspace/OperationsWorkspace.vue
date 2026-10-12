@@ -125,106 +125,54 @@ const keyboard = computed(
     :lang="locale"
   >
     <a class="workspace-skip" href="#workspace-content">{{ text.nav }}</a>
-    <header class="workspace-nav">
-      <div class="workspace-shell workspace-nav__inner">
-        <a
-          class="workspace-brand"
-          href="../"
-          aria-label="AdaptTable Vue Unstyled"
-          ><svg
-            width="26"
-            height="26"
-            viewBox="0 0 26 26"
-            fill="none"
-            aria-hidden="true"
+    <div class="workspace-shell workspace-nav__inner">
+      <div class="workspace-preferences">
+        <div class="workspace-preference">
+          <span>{{ text.language }}</span>
+          <div
+            class="workspace-choice"
+            role="group"
+            :aria-label="text.language"
           >
-            <rect
-              x="1"
-              y="1"
-              width="24"
-              height="24"
-              rx="7"
-              fill="currentColor"
-            />
-            <path
-              d="M7 8h12M7 13h12M7 18h7M11 7v12"
-              stroke="var(--ws-surface)"
-              stroke-width="1.7"
-              stroke-linecap="round"
-            /></svg
-          >{{ text.brand }}<span>Vue</span></a
-        >
-        <div class="workspace-preferences">
-          <div class="workspace-preference">
-            <span>{{ text.language }}</span>
-            <div
-              class="workspace-choice"
-              role="group"
-              :aria-label="text.language"
+            <button
+              type="button"
+              lang="en"
+              :aria-pressed="locale === 'en'"
+              @click="locale = 'en'"
             >
-              <button
-                type="button"
-                lang="en"
-                :aria-pressed="locale === 'en'"
-                @click="locale = 'en'"
-              >
-                English
-              </button>
-              <button
-                type="button"
-                lang="ar"
-                :aria-pressed="locale === 'ar'"
-                @click="locale = 'ar'"
-              >
-                العربية
-              </button>
-            </div>
+              English
+            </button>
+            <button
+              type="button"
+              lang="ar"
+              :aria-pressed="locale === 'ar'"
+              @click="locale = 'ar'"
+            >
+              العربية
+            </button>
           </div>
-          <div class="workspace-preference">
-            <span>{{ text.layout }}</span>
-            <div
-              class="workspace-choice"
-              role="group"
-              :aria-label="text.layout"
+        </div>
+        <div class="workspace-preference">
+          <span>{{ text.layout }}</span>
+          <div class="workspace-choice" role="group" :aria-label="text.layout">
+            <button
+              type="button"
+              :aria-pressed="layout === 'auto'"
+              @click="layout = 'auto'"
             >
-              <button
-                type="button"
-                :aria-pressed="layout === 'auto'"
-                @click="layout = 'auto'"
-              >
-                {{ text.auto }}
-              </button>
-              <button
-                type="button"
-                :aria-pressed="layout === 'cards'"
-                @click="layout = 'cards'"
-              >
-                {{ text.cards }}
-              </button>
-            </div>
+              {{ text.auto }}
+            </button>
+            <button
+              type="button"
+              :aria-pressed="layout === 'cards'"
+              @click="layout = 'cards'"
+            >
+              {{ text.cards }}
+            </button>
           </div>
-          <button
-            class="workspace-theme"
-            type="button"
-            :aria-label="text.theme"
-            :aria-pressed="dark"
-            @click="dark = !dark"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="19"
-              height="19"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.6"
-              aria-hidden="true"
-            >
-              <path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z" />
-            </svg>
-          </button>
         </div>
       </div>
-    </header>
+    </div>
     <main id="workspace-content" class="workspace-shell" tabindex="-1">
       <section class="workspace-hero">
         <div>

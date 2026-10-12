@@ -22,14 +22,24 @@ const props = defineProps<{
   /** The kit whose pages these are. */
   kit: ShowcaseAdapter;
   dark: boolean;
+  beforeNavigate?: () => boolean;
 }>();
 const emit = defineEmits<{ toggleDark: [] }>();
 
 const adapters = adaptersOf("vue").filter((adapter) => adapter.built);
 const features = featuresOf(props.kit);
 const kitPath = pathOf(props.kit);
-const demoHref = (lab = false) =>
-  `${vueHref(lab ? "all-options" : "")}?kit=${encodeURIComponent(props.kit.key)}`;
+const demoHref = (lab = false) => {
+  const url = new URL(
+    vueHref(lab ? "all-options" : ""),
+    window.location.origin
+  );
+  url.searchParams.set("kit", props.kit.key);
+  return url.pathname + url.search;
+};
+const unavailableKit = new URLSearchParams(window.location.search).get(
+  "kit-unavailable"
+);
 const docs = docsUrl("getting-started", "vue");
 const repo = "https://github.com/orwa-mahmoud/adapttable";
 const open = shallowRef(false);
@@ -138,19 +148,50 @@ function switchPage(event: Event): void {
     ...features.map((feature) => vueHref(`${kitPath}/${feature.slug}`)),
   ];
   const destination = destinations.find((href) => href === selected);
-  if (destination) window.location.assign(destination);
+  if (destination) {
+    if (props.beforeNavigate?.() === false) {
+      event.target.value =
+        destinations.find(
+          (href) =>
+            new URL(href, window.location.origin).pathname ===
+            window.location.pathname
+        ) ?? "";
+      return;
+    }
+    window.location.assign(destination);
+  }
 }
 
 function switchFramework(event: Event): void {
   if (!(event.target instanceof HTMLSelectElement)) return;
   const framework = event.target.value;
   if (framework !== "react" && framework !== "angular") return;
+  if (props.beforeNavigate?.() === false) {
+    event.target.value = "vue";
+    return;
+  }
   try {
     localStorage.setItem(FRAMEWORK_STORAGE_KEY, framework);
   } catch {
     // Storage is optional: the destination still opens.
   }
   window.location.assign(frameworkDemoHref(framework));
+}
+
+function guardLink(event: MouseEvent): void {
+  const link =
+    event.target instanceof Element ? event.target.closest("a") : null;
+  if (
+    !link ||
+    link.target === "_blank" ||
+    event.button !== 0 ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.shiftKey ||
+    event.altKey
+  )
+    return;
+  if (props.beforeNavigate?.() === false) event.preventDefault();
 }
 
 onMounted(() => {
@@ -167,7 +208,7 @@ onScopeDispose(() => {
 </script>
 
 <template>
-  <header ref="root" class="nav">
+  <header ref="root" class="nav" @click.capture="guardLink">
     <div class="nav__inner shell">
       <ShowcaseWordmark :href="SITE_HOME" />
       <nav class="nav__links" aria-label="Demo pages">
@@ -189,15 +230,21 @@ onScopeDispose(() => {
           :aria-current="active.endsWith('/ai') ? 'page' : undefined"
           >AI demo</a
         >
-        <a :href="vueHref('unstyled/workspace')">Order workspace</a>
+        <a
+          :href="vueHref('unstyled/workspace')"
+          :class="{ 'is-on': active === 'unstyled/workspace' }"
+          :aria-current="active === 'unstyled/workspace' ? 'page' : undefined"
+          >Order workspace</a
+        >
         <div class="nav__group">
           <button
             type="button"
             class="nav__trigger"
             :class="{
               'is-on':
-                !['demo', 'all-options'].includes(active) &&
-                !active.endsWith('/ai'),
+                !['demo', 'all-options', 'unstyled/workspace'].includes(
+                  active
+                ) && !active.endsWith('/ai'),
             }"
             aria-controls="vue-adapter-menu"
             aria-haspopup="menu"
@@ -262,7 +309,10 @@ onScopeDispose(() => {
             >
               Feature Lab
             </option>
-            <option :value="vueHref('unstyled/workspace')">
+            <option
+              :value="vueHref('unstyled/workspace')"
+              :selected="active === 'unstyled/workspace'"
+            >
               Order workspace
             </option>
           </optgroup>
@@ -361,5 +411,10 @@ onScopeDispose(() => {
         </a>
       </div>
     </div>
+    <p v-if="unavailableKit" class="shell" role="status">
+      {{ unavailableKit }} has no matching Vue kit. This example uses
+      {{ kit.label }}
+      and retains the feature where available.
+    </p>
   </header>
 </template>

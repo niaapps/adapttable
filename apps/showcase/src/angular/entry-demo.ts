@@ -9,7 +9,6 @@ import {
 import { bootstrapApplication } from "@angular/platform-browser";
 
 import { refreshShowcasePresentation } from "./data";
-import { AdaptShowcaseDemoPage, SHOWCASE_LAB } from "./demoPage";
 import {
   canReplaceDemo,
   captureDemoState,
@@ -83,7 +82,11 @@ const render = createLatestDemoTask(async (isCurrent) => {
     const url = new URL(window.location.href);
     const signature = demoOptionSignature(url.href);
     // Keep the mounted app usable while the next kit's own bundle arrives.
-    const { kit } = await loadKit(url.searchParams.get("kit") ?? "unstyled");
+    const [{ kit }, { AdaptShowcaseDemoPage, SHOWCASE_LAB }] =
+      await Promise.all([
+        loadKit(url.searchParams.get("kit") ?? "unstyled"),
+        import("./demoPage"),
+      ]);
     if (!isCurrent()) return;
     if (demoOptionSignature(window.location.href) !== signature) {
       void render();

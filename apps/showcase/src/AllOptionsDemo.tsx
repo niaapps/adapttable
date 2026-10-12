@@ -33,11 +33,15 @@ import {
 import {
   AdvancedFiltersProvider,
   type DataMode,
-  type Density,
   type Failure,
   type FiltersUi,
 } from "./Demo";
 import { DemoFilterSetProvider } from "./demoFilters";
+import {
+  initialDemoDensity,
+  initialDemoLocale,
+  useDemoPreference,
+} from "./demoPresentation";
 import {
   ADAPTERS,
   Control,
@@ -407,8 +411,11 @@ export function AllOptionsDemo({ dark }: Readonly<{ dark: boolean }>) {
   const [filterSet, setFilterSet] = useState<"live" | "kitchen">("live");
   const [advancedFilters, setAdvancedFilters] = useState(false);
   const [mode, setMode] = useState<DataMode>("frontend");
-  const [locale, setLocale] = useState<Locale>("en");
-  const [density, setDensity] = useState<Density>("comfortable");
+  const [locale, setLocale] = useDemoPreference("locale", initialDemoLocale);
+  const [density, setDensity] = useDemoPreference(
+    "density",
+    initialDemoDensity
+  );
   const [filtersUi, setFiltersUi] = useState<FiltersUi>("popover");
   const [motion, setMotion] = useState<OnOff>("on");
   const [structure, setStructure] = useState<Structure>("flat");
@@ -642,7 +649,12 @@ export function AllOptionsDemo({ dark }: Readonly<{ dark: boolean }>) {
         ))}
       </div>
 
-      <KitSwitcher adapter={adapter} dark={dark} onChange={setAdapter} />
+      <KitSwitcher
+        adapter={adapter}
+        dark={dark}
+        onChange={setAdapter}
+        urlSync
+      />
 
       <div
         className="lab-toolbar"

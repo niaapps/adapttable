@@ -337,5 +337,16 @@ export const TABLE_PRESENTATION = {
   lang: SHOWCASE_PRESENTATION.locale,
 } as const;
 
+/** Keep shared locale objects current before a same-document demo remount. */
+export function refreshShowcasePresentation(): void {
+  Object.assign(SHOWCASE_PRESENTATION, readShowcasePresentation());
+  FILTER_DEFS.splice(0, FILTER_DEFS.length, ...localizedFilterDefs());
+  Object.assign(TABLE_PRESENTATION, {
+    dir: SHOWCASE_PRESENTATION.dir,
+    labels: SHOWCASE_PRESENTATION.labels,
+    lang: SHOWCASE_PRESENTATION.locale,
+  });
+}
+
 /** How many rows the scale page windows. */
 export const SCALE_ROWS = 40_000;

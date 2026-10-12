@@ -252,9 +252,11 @@ export function KitSwitcher({
           onClick={() => {
             if (urlSync) {
               const url = new URL(window.location.href);
+              url.searchParams.delete("kit-unavailable");
               if (a.key === "mantine") url.searchParams.delete("kit");
               else url.searchParams.set("kit", a.key);
-              window.history.replaceState(null, "", url);
+              window.history.replaceState(window.history.state, "", url);
+              window.dispatchEvent(new Event("showcase-preferences-change"));
             }
             startTransition(() => onChange(a.key));
           }}

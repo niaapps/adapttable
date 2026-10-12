@@ -442,7 +442,7 @@ test("Arabic mobile cards keep details, summaries, controls and the viewport con
   await page.keyboard.press("Escape");
   await expect(orders.locator(part("filters-button"))).toBeFocused();
   await page
-    .getByRole("button", { name: "المظهر الداكن", exact: true })
+    .getByRole("button", { name: "Toggle dark mode", exact: true })
     .click();
   await expect(page.locator("body")).toHaveAttribute(
     "data-workspace-theme",
@@ -920,7 +920,7 @@ test("retry after authored work preserves orders, selection, pivot and appearanc
     .poll(() => new URL(page.url()).search)
     .toContain("workspace-pivot");
   await page
-    .getByRole("button", { name: "Dark appearance", exact: true })
+    .getByRole("button", { name: "Toggle dark mode", exact: true })
     .click();
   let failures = 2;
   await page.route("**/assets/DispatchPlan-*.js", async (request) => {
@@ -1062,7 +1062,7 @@ test("presentation history and copied deep links restore actual views without lo
   await page.locator('[data-workspace-view="revenue"]').click();
   await choosePreference(page, "التخطيط", "بطاقات");
   await page
-    .getByRole("button", { name: "المظهر الداكن", exact: true })
+    .getByRole("button", { name: "Toggle dark mode", exact: true })
     .click();
   const chosen = new URL(page.url());
   expect(
@@ -1139,7 +1139,7 @@ test("a theme preference survives a fresh link and Back restores the first expli
 }) => {
   await visit(page, "?theme=light");
   await page
-    .getByRole("button", { name: "Dark appearance", exact: true })
+    .getByRole("button", { name: "Toggle dark mode", exact: true })
     .click();
   await page.goBack();
   await expect(page.locator("body")).toHaveAttribute(
@@ -1825,7 +1825,7 @@ test("interaction during a delayed Orders load retires automatic defaults and hi
   await seen;
   await expect(page.locator(".workspace-loading")).toBeVisible();
   await page
-    .getByRole("button", { name: "Dark appearance", exact: true })
+    .getByRole("button", { name: "Toggle dark mode", exact: true })
     .click();
   release?.();
   await expect(row(table(page), "ORD-1042")).toBeVisible();

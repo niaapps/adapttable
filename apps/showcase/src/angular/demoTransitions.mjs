@@ -38,6 +38,7 @@ export const DEMO_OPTION_KEYS = Object.freeze([
   "cell-flash",
   "row-mutations",
   "row-reorder",
+  "row-actions",
   "pinned-summary",
   "cell-span",
   "extra-rows",
@@ -60,7 +61,7 @@ export function demoOptionSignature(href) {
   ]);
 }
 
-/** Store host-owned data separately from replaceable Angular kit providers. */
+/** Store host-owned data separately from replaceable kit providers. */
 export function createDemoSession() {
   /** @type {Map<string, unknown>} */
   const values = new Map();
@@ -123,13 +124,12 @@ export function captureDemoState() {
 export function registerDemoRenderer(next) {
   render = next;
 }
-/** Recreate only the Angular app, preserving this document and host rows.
+/** Recreate only the demo app, preserving this document and host rows.
  * The action (for example changing a saved view) runs only after draft safety.
  * @param {() => void} [action]
  */
 export function refreshDemo(action) {
-  if (!render)
-    throw new Error("The Angular demo transition renderer is not ready");
+  if (!render) throw new Error("The demo transition renderer is not ready");
   if (!canReplaceDemo()) return false;
   captureDemoState();
   if (action) action();

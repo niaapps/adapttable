@@ -964,6 +964,7 @@ export class AdaptShowcaseDemoPage {
     const value = controlValue(target);
     const url = new URL(location.href);
     url.searchParams.set(key, value);
+    if (key === "kit") url.searchParams.delete("kit-unavailable");
     url.searchParams.delete("recipe");
     this.normalizeOptionChange(url, key, value);
     if (key === "dataset" || key === "mode")

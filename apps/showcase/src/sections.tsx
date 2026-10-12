@@ -11,6 +11,7 @@ import {
 import {
   FRAMEWORK_STORAGE_KEY,
   frameworkDemoTarget,
+  showcasePageHref,
   SITE_FRAMEWORKS,
 } from "../../../scripts/framework-navigation.mjs";
 import { cssVars } from "./cssVars";
@@ -499,8 +500,30 @@ export function AppNav({
   dark: boolean;
   onToggleDark: () => void;
 }>) {
-  const href = (path: string) =>
-    path === "" ? `${root}/` : `${root}/${path}/`;
+  const [location, setLocation] = useState(() => window.location.href);
+  useEffect(() => {
+    const update = () => setLocation(window.location.href);
+    window.addEventListener("showcase-preferences-change", update);
+    window.addEventListener("popstate", update);
+    return () => {
+      window.removeEventListener("showcase-preferences-change", update);
+      window.removeEventListener("popstate", update);
+    };
+  }, []);
+  const selectedKit = new URL(location).searchParams.get("kit");
+  const kit =
+    adapterByKey(active.split("/")[0]) ??
+    (selectedKit ? adapterByKey(selectedKit) : undefined) ??
+    currentAdapter(active);
+  const href = (path: string) => {
+    let destination = path === "" ? `${root}/` : `${root}/${path}/`;
+    if (
+      (path === "" || path === "all-options") &&
+      (selectedKit || adapterByKey(active.split("/")[0]))
+    )
+      destination += `?kit=${encodeURIComponent(kit.key)}`;
+    return showcasePageHref(destination, location);
+  };
 
   useEffect(() => {
     try {
@@ -513,7 +536,6 @@ export function AppNav({
     typeof window === "undefined"
       ? null
       : new URLSearchParams(window.location.search).get("kit-unavailable");
-  const kit = currentAdapter(active);
   const groups = buildGroups(href, dark);
   const topPages: readonly NavPage[] = [
     { key: "demo", label: "Live demo", href: href("") },

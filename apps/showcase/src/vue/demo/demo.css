@@ -40,9 +40,10 @@
 .vue-demo .controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1rem 1.25rem;
   padding: 1rem;
   margin-block: 1rem;
+  border-radius: 12px;
 }
 .vue-demo__toggle {
   display: inline-flex;
@@ -52,8 +53,6 @@
 }
 .vue-demo__toggle input {
   accent-color: var(--brand);
-  inline-size: 18px;
-  block-size: 18px;
 }
 .vue-demo .mx-demo__body {
   padding: 0;

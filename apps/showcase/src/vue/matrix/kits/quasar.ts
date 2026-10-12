@@ -1,5 +1,4 @@
 /** The real Quasar kit used by every Vue page that boots it. */
-import "quasar/dist/quasar.rtl.css";
 import "@adapttable/quasar/styles.css";
 
 import { agentApproval, TableAssistant } from "@adapttable/quasar/assistant";
@@ -32,12 +31,16 @@ import { statusBar } from "@adapttable/quasar/status-bar";
 import { tree } from "@adapttable/quasar/tree";
 import { virtualize } from "@adapttable/quasar/virtualize";
 import { Dark, QBadge, QBtn, QSelect, Quasar } from "quasar";
+import quasarStyles from "quasar/dist/quasar.rtl.css?inline";
 import ar from "quasar/lang/ar";
 import en from "quasar/lang/en-US";
 import { h } from "vue";
 
+import { registerKitStyles } from "../kitStyles";
 import type { ShowcaseKit } from "../showcaseKit";
 import DataTable from "./tables/QuasarDataTable.vue";
+
+registerKitStyles("quasar", quasarStyles);
 
 const BADGE_COLOR = {
   success: "positive",

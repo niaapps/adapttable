@@ -4,12 +4,6 @@
 />
 
 <main>
-  @if (unavailableKit) {
-    <p class="shell" role="status">
-      {{ unavailableKit }} has no matching Angular kit. This example uses
-      {{ adapter().label }} and retains the feature where available.
-    </p>
-  }
   @if (unavailable) {
     <p class="shell" role="status">
       This feature is not available in this Angular kit. Explore the supported

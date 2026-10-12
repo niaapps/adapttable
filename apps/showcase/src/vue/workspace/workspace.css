@@ -40,19 +40,19 @@ body.vue-workspace-page[data-workspace-theme="dark"] {
   --ws-warning-bg: #483c23;
   --ws-shadow: 0 14px 40px #0003;
 }
-.vue-workspace-page *,
-.vue-workspace-page *::before,
-.vue-workspace-page *::after {
+.vue-workspace *,
+.vue-workspace *::before,
+.vue-workspace *::after {
   box-sizing: border-box;
 }
-.vue-workspace-page :is(button, input, select, textarea) {
+.vue-workspace :is(button, input, select, textarea) {
   font: inherit;
   color: inherit;
 }
-.vue-workspace-page button,
-.vue-workspace-page select,
-.vue-workspace-page input:not([type="checkbox"], [type="radio"]),
-.vue-workspace-page textarea {
+.vue-workspace button,
+.vue-workspace select,
+.vue-workspace input:not([type="checkbox"], [type="radio"]),
+.vue-workspace textarea {
   border: 1px solid var(--ws-line);
   border-radius: 7px;
   background: var(--ws-surface);
@@ -60,37 +60,37 @@ body.vue-workspace-page[data-workspace-theme="dark"] {
   padding: 7px 11px;
   max-inline-size: 100%;
 }
-.vue-workspace-page :is(button, select, summary) {
+.vue-workspace :is(button, select, summary) {
   cursor: pointer;
 }
-.vue-workspace-page button {
+.vue-workspace button {
   font-weight: 560;
 }
-.vue-workspace-page button:hover:not(:disabled) {
+.vue-workspace button:hover:not(:disabled) {
   background: var(--ws-raised);
   border-color: var(--ws-accent);
 }
-.vue-workspace-page button:disabled {
+.vue-workspace button:disabled {
   opacity: 0.45;
   cursor: default;
 }
-.vue-workspace-page input:is([type="checkbox"], [type="radio"]) {
+.vue-workspace input:is([type="checkbox"], [type="radio"]) {
   accent-color: var(--ws-accent);
   inline-size: 16px;
   block-size: 16px;
 }
-.vue-workspace-page :focus-visible {
+.vue-workspace :focus-visible {
   outline: 3px solid var(--ws-accent);
   outline-offset: 3px;
 }
-.vue-workspace-page a {
+.vue-workspace a {
   color: var(--ws-accent);
   text-underline-offset: 4px;
 }
-.vue-workspace-page :is(h1, h2, h3, p) {
+.vue-workspace :is(h1, h2, h3, p) {
   margin-block-start: 0;
 }
-.vue-workspace-page [hidden] {
+.vue-workspace [hidden] {
   display: none;
 }
 .vue-workspace {
@@ -119,7 +119,7 @@ body.vue-workspace-page[data-workspace-theme="dark"] {
   display: flex;
   min-block-size: 82px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 24px;
 }
 .workspace-brand {

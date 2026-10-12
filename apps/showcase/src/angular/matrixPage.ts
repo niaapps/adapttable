@@ -126,9 +126,6 @@ export class AdaptShowcaseMatrixPage {
   readonly copied = signal<"code" | "install" | null>(null);
 
   readonly siteHome = SITE_HOME;
-  readonly unavailableKit = new URLSearchParams(window.location.search).get(
-    "kit-unavailable"
-  );
   readonly unavailable = new URLSearchParams(window.location.search).get(
     "unavailable"
   );

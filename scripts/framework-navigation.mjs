@@ -126,8 +126,22 @@ function presentationQuery(url) {
     const value = url.searchParams.get(key);
     if (value !== null) query.set(key, value);
   }
+  const language = url.searchParams.get("lang");
+  if (!query.has("locale") && language !== null) query.set("locale", language);
   return query;
 }
+/** Start a different demo with its own query, retaining only display preferences.
+ * Destination parameters take precedence; table state and feature switches never leak.
+ * @param {string} destination @param {string} current
+ */
+export function showcasePageHref(destination, current) {
+  const source = new URL(current, "https://adapttable.local");
+  const target = new URL(destination, source);
+  for (const [key, value] of presentationQuery(source))
+    if (!target.searchParams.has(key)) target.searchParams.set(key, value);
+  return target.pathname + target.search + target.hash;
+}
+
 /** @param {string} framework @param {boolean} lab @param {boolean} deployed */
 function modePath(framework, lab, deployed) {
   if (deployed) return `/${framework}/demo/${lab ? "all-options/" : ""}`;

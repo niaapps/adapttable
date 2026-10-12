@@ -1,8 +1,12 @@
 import { startTransition, Suspense, useState } from "react";
 
 import { cssVars } from "./cssVars";
-import type { Locale } from "./data";
-import { type DataMode, type Density, type FiltersUi } from "./Demo";
+import { type DataMode, type FiltersUi } from "./Demo";
+import {
+  initialDemoDensity,
+  initialDemoLocale,
+  useDemoPreference,
+} from "./demoPresentation";
 import {
   ADAPTERS,
   Control,
@@ -32,8 +36,11 @@ function groupedByUrl(): "on" | "off" {
 export function LiveDemo({ dark }: Readonly<{ dark: boolean }>) {
   const [adapter, setAdapter] = useState(readKitFromUrl);
   const [mode, setMode] = useState<DataMode>("frontend");
-  const [locale, setLocale] = useState<Locale>("en");
-  const [density, setDensity] = useState<Density>("comfortable");
+  const [locale, setLocale] = useDemoPreference("locale", initialDemoLocale);
+  const [density, setDensity] = useDemoPreference(
+    "density",
+    initialDemoDensity
+  );
   const [filtersUi, setFiltersUi] = useState<FiltersUi>("popover");
   const [motion, setMotion] = useState<"on" | "off">("on");
   const [grouping, setGrouping] = useState<"on" | "off">(groupedByUrl);

@@ -1,4 +1,4 @@
-<header class="nav">
+<header class="nav" (click)="guardLink($event)">
   <div class="nav__inner shell">
     <adapt-showcase-wordmark [href]="href('')" />
     <nav class="nav__links" aria-label="Demo pages">
@@ -196,4 +196,10 @@
       </a>
     </div>
   </div>
+  @if (unavailableKit) {
+    <p class="shell" role="status">
+      {{ unavailableKit }} has no matching Angular kit. This example uses
+      {{ kit() }} and retains the feature where available.
+    </p>
+  }
 </header>

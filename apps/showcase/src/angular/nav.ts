@@ -12,6 +12,7 @@ import {
 import {
   FRAMEWORK_STORAGE_KEY,
   frameworkDemoTarget,
+  showcasePageHref,
   SITE_FRAMEWORKS,
 } from "../../../../scripts/framework-navigation.mjs";
 import {
@@ -112,6 +113,9 @@ export class AdaptShowcaseNav {
     }
     if (event.key === "Tab") this.escape();
   }
+  readonly unavailableKit = new URLSearchParams(window.location.search).get(
+    "kit-unavailable"
+  );
   readonly frameworks = SITE_FRAMEWORKS;
   readonly adapters = SHOWCASE_ADAPTERS.filter(
     (adapter) => adapter.framework === "angular" && adapter.built !== false
@@ -119,13 +123,19 @@ export class AdaptShowcaseNav {
   readonly docs = docsUrl("getting-started", "angular");
   readonly repo = "https://github.com/orwa-mahmoud/adapttable";
   readonly deployed = /^\/angular\/demo(?:\/|$)/.test(window.location.pathname);
-  href(page: string): string {
+  private path(page: string): string {
     if (this.deployed) return `/angular/demo/${page ? page + "/" : ""}`;
     if (!page) return "/angular-main/";
     return page === "all-options" ? "/angular-all-options/" : `/${page}/`;
   }
+  href(page: string): string {
+    return showcasePageHref(this.path(page), window.location.href);
+  }
   demoHref(page: string): string {
-    return `${this.href(page)}?kit=${encodeURIComponent(this.kit())}`;
+    return showcasePageHref(
+      `${this.path(page)}?kit=${encodeURIComponent(this.kit())}`,
+      window.location.href
+    );
   }
   features() {
     const adapter = this.adapters.find((item) => item.key === this.kit());
@@ -147,8 +157,33 @@ export class AdaptShowcaseNav {
       ),
     ];
     const destination = destinations.find((href) => href === selected);
-    if (destination && this.beforeNavigate()())
+    if (destination) {
+      if (!this.beforeNavigate()()) {
+        event.target.value =
+          destinations.find(
+            (href) =>
+              new URL(href, window.location.origin).pathname ===
+              window.location.pathname
+          ) ?? "";
+        return;
+      }
       window.location.assign(destination);
+    }
+  }
+  guardLink(event: MouseEvent): void {
+    const link =
+      event.target instanceof Element ? event.target.closest("a") : null;
+    if (
+      !link ||
+      link.target === "_blank" ||
+      event.button !== 0 ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.altKey
+    )
+      return;
+    if (!this.beforeNavigate()()) event.preventDefault();
   }
   switchFramework(event: Event): void {
     if (!(event.target instanceof HTMLSelectElement)) return;
