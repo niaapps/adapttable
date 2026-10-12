@@ -198,6 +198,9 @@ export class AdaptShowcaseDemoPage {
       : option("dataset", "people");
   readonly large = this.dataset === "large";
   readonly canWrite = !this.server && !this.large;
+  /** Preserve requested options while temporarily disabling unsupported features. */
+  readonly availableEnabled = (key: string, fallback = false): boolean =>
+    enabled(key, fallback) && !this.reason(key);
   readonly density = signal<TableDensity>(
     option("density", "comfortable") === "compact" ? "compact" : "comfortable"
   );
@@ -207,9 +210,9 @@ export class AdaptShowcaseDemoPage {
     this.large || option("pagination", "paged") === "infinite"
       ? "infinite"
       : "paged";
-  readonly mobile = enabled("mobile");
-  readonly selectable = enabled("selection", this.lab);
-  readonly searchable = enabled("search", true);
+  readonly mobile = this.availableEnabled("mobile");
+  readonly selectable = this.availableEnabled("selection", this.lab);
+  readonly searchable = this.availableEnabled("search", true);
   readonly requestedStructure = initialStructure(this.server, this.urlKey);
   readonly structure =
     this.large && this.requestedStructure !== "nested"
@@ -222,7 +225,9 @@ export class AdaptShowcaseDemoPage {
     urlKey: this.urlKey,
     defaultColumnLayout: {
       hidden:
-        this.grouping || enabled("cell-span") || enabled("column-groups")
+        this.grouping ||
+        this.availableEnabled("cell-span") ||
+        this.availableEnabled("column-groups")
           ? ["email"]
           : ["email", "team"],
     },
@@ -238,9 +243,9 @@ export class AdaptShowcaseDemoPage {
     );
   }
   readonly reducedMotion = injectPrefersReducedMotion();
-  readonly motion = enabled("motion", true);
+  readonly motion = this.availableEnabled("motion", true);
   readonly highlight = injectHighlight(
-    enabled("highlight") || enabled("cell-flash")
+    this.availableEnabled("highlight") || this.availableEnabled("cell-flash")
   );
   readonly rows = signal<readonly Person[]>(
     (() => {
@@ -248,7 +253,7 @@ export class AdaptShowcaseDemoPage {
         `rows:${this.dataset}`,
         () => seedRows(this.dataset, this.large)
       );
-      return enabled("cell-span")
+      return this.availableEnabled("cell-span")
         ? [...rows].sort((a, b) => a.team.localeCompare(b.team))
         : rows;
     })()
@@ -259,7 +264,7 @@ export class AdaptShowcaseDemoPage {
     const columns = peopleColumns({ editable: this.editing }).map((column) => ({
       ...column,
       minWidth: typeof column.width === "number" ? column.width : undefined,
-      ...(enabled("cell-flash") && flash ? { cell: flash } : {}),
+      ...(this.availableEnabled("cell-flash") && flash ? { cell: flash } : {}),
     }));
     columns.splice(1, 0, {
       key: "email",
@@ -270,7 +275,7 @@ export class AdaptShowcaseDemoPage {
     });
     return [
       ...columns,
-      ...(enabled("formula")
+      ...(this.availableEnabled("formula")
         ? buildFormulaColumns<Person>([
             {
               key: "tag",
@@ -279,7 +284,7 @@ export class AdaptShowcaseDemoPage {
             },
           ]).columns
         : []),
-      ...(enabled("sparkline")
+      ...(this.availableEnabled("sparkline")
         ? [
             sparklineColumn<Person>({
               key: "trend",
@@ -292,7 +297,7 @@ export class AdaptShowcaseDemoPage {
             }),
           ]
         : []),
-      ...(enabled("editors")
+      ...(this.availableEnabled("editors")
         ? [
             {
               key: "remote",
@@ -322,7 +327,7 @@ export class AdaptShowcaseDemoPage {
   readonly columns = computed<readonly ColumnInput<Person>[]>(() => {
     const columns = this.leafColumns();
     let result: readonly ColumnInput<Person>[] = columns;
-    if (enabled("column-groups")) {
+    if (this.availableEnabled("column-groups")) {
       const byKey = new Map(columns.map((column) => [column.key, column]));
       const replace = (column: ColumnInput<Person>): ColumnInput<Person> => {
         let replacement: ColumnInput<Person>;
@@ -456,17 +461,19 @@ export class AdaptShowcaseDemoPage {
         ]
       : []),
     ...(this.editing ? [this.kit.editHistory()] : []),
-    ...(this.editing && enabled("undo-redo", !this.lab)
+    ...(this.editing && this.availableEnabled("undo-redo", !this.lab)
       ? [this.kit.undoRedoButtons()]
       : []),
-    ...(enabled("columns", true)
+    ...(this.availableEnabled("columns", true)
       ? [this.kit.columnMenu(), this.kit.resizableColumns()]
       : []),
-    ...(enabled("navigation", this.lab) || this.editing
+    ...(this.availableEnabled("navigation", this.lab) || this.editing
       ? [this.kit.cellNavigation()]
       : []),
-    ...(enabled("export", this.lab) ? [this.kit.exportCsv()] : []),
-    ...(enabled("views", this.lab)
+    ...(this.availableEnabled("export", this.lab)
+      ? [this.kit.exportCsv()]
+      : []),
+    ...(this.availableEnabled("views", this.lab)
       ? [
           this.kit.savedViews({
             storageKey: this.storageKey,
@@ -474,12 +481,14 @@ export class AdaptShowcaseDemoPage {
           }),
         ]
       : []),
-    ...(enabled("row-pinning") &&
+    ...(this.availableEnabled("row-pinning") &&
     !this.server &&
     !["grouped", "tree"].includes(this.structure)
       ? [this.kit.rowPinning()]
       : []),
-    ...(enabled("column-groups") ? [this.kit.collapsibleColumnGroups()] : []),
+    ...(this.availableEnabled("column-groups")
+      ? [this.kit.collapsibleColumnGroups()]
+      : []),
     ...(this.structure === "tree"
       ? [
           this.kit.tree<Person>({
@@ -496,18 +505,20 @@ export class AdaptShowcaseDemoPage {
           })),
         ]
       : []),
-    ...(enabled("virtualize") || this.large ? [this.kit.virtualize()] : []),
-    ...(enabled("chrome")
+    ...(this.availableEnabled("virtualize") || this.large
+      ? [this.kit.virtualize()]
+      : []),
+    ...(this.availableEnabled("chrome")
       ? [this.kit.densityChooser(), this.kit.fullscreen()]
       : []),
-    ...(enabled("status-bar") ? [this.kit.statusBar()] : []),
-    ...(enabled("context-menu") ? [this.kit.contextMenu()] : []),
-    ...(enabled("palette") ? [this.kit.commandPalette()] : []),
-    this.kit.print(() => window.print(), enabled("print")),
-    ...(enabled("column-selection") && this.editing
+    ...(this.availableEnabled("status-bar") ? [this.kit.statusBar()] : []),
+    ...(this.availableEnabled("context-menu") ? [this.kit.contextMenu()] : []),
+    ...(this.availableEnabled("palette") ? [this.kit.commandPalette()] : []),
+    this.kit.print(() => window.print(), this.availableEnabled("print")),
+    ...(this.availableEnabled("column-selection") && this.editing
       ? [this.kit.columnSelectionCheckbox()]
       : []),
-    ...(enabled("row-mutations") && this.canWrite
+    ...(this.availableEnabled("row-mutations") && this.canWrite
       ? [
           this.kit.rowActions<Person>([], {
             layout: "menu",
@@ -522,7 +533,7 @@ export class AdaptShowcaseDemoPage {
           }),
         ]
       : []),
-    ...(enabled("row-reorder") && this.canWrite
+    ...(this.availableEnabled("row-reorder") && this.canWrite
       ? [
           this.kit.rowReorder<Person>(
             (from, to, row) => {
@@ -569,7 +580,7 @@ export class AdaptShowcaseDemoPage {
           ),
         ]
       : []),
-    ...(enabled("cell-span") && !this.server
+    ...(this.availableEnabled("cell-span") && !this.server
       ? [
           this.kit.cellSpan<Person>(
             ({ column, sectionRows, sectionRowIndex }) => {
@@ -590,7 +601,7 @@ export class AdaptShowcaseDemoPage {
           ),
         ]
       : []),
-    ...(enabled("extra-rows") && !this.server && this.rows()[0]
+    ...(this.availableEnabled("extra-rows") && !this.server && this.rows()[0]
       ? [
           this.kit.extraRows([
             {
@@ -603,15 +614,17 @@ export class AdaptShowcaseDemoPage {
           ]),
         ]
       : []),
-    ...(enabled("row-style") || enabled("highlight")
+    ...(this.availableEnabled("row-style") || this.availableEnabled("highlight")
       ? [
           this.kit.rowAppearance<Person>({
             rowClassName: (row) =>
-              enabled("highlight") && this.highlight.isRowHighlighted(row.id)
+              this.availableEnabled("highlight") &&
+              this.highlight.isRowHighlighted(row.id)
                 ? "angular-highlight"
                 : undefined,
             rowStyle: (row) =>
-              enabled("row-style") && row.id === peopleRows()[0]?.id
+              this.availableEnabled("row-style") &&
+              row.id === peopleRows()[0]?.id
                 ? {
                     backgroundColor:
                       "light-dark(oklch(0.93 0.08 95), oklch(0.38 0.07 85))",
@@ -627,7 +640,7 @@ export class AdaptShowcaseDemoPage {
   readonly panelTemplate = viewChild<TemplateRef<unknown>>("pivotPanel");
   readonly viewsTemplate = viewChild<TemplateRef<unknown>>("viewsPanel");
   readonly panelFeatures = computed<readonly AdaptTableFeature[]>(() =>
-    enabled("side-panel") && !this.server && !this.large
+    this.availableEnabled("side-panel") && !this.server && !this.large
       ? [
           this.kit.sidePanel({
             open: this.panelOpen(),
@@ -652,7 +665,7 @@ export class AdaptShowcaseDemoPage {
       : []
   );
   readonly pinnedFeatures = computed<readonly AdaptTableFeature[]>(() =>
-    enabled("pinned-summary")
+    this.availableEnabled("pinned-summary")
       ? [
           this.kit.pinnedSummaryRows<Person>({
             bottom: [
@@ -683,7 +696,7 @@ export class AdaptShowcaseDemoPage {
   });
   readonly pivoted = computed(
     () =>
-      enabled("side-panel") &&
+      this.availableEnabled("side-panel") &&
       !this.server &&
       !this.large &&
       isPivotReady(this.pivotState.config())
@@ -776,7 +789,7 @@ export class AdaptShowcaseDemoPage {
     this.highlight.flashRow(row.id);
     this.log.set(`Added ${row.name}`);
   }
-  readonly summary = enabled("summary")
+  readonly summary = this.availableEnabled("summary")
     ? aggregate<Person>({ budget: "sum" }, { columns: peopleColumns() })
     : undefined;
   readonly option = option;
@@ -854,7 +867,7 @@ export class AdaptShowcaseDemoPage {
     if (
       ["highlight", "cell-flash"].includes(key) &&
       !this.editing &&
-      !enabled("row-mutations")
+      !this.availableEnabled("row-mutations")
     )
       return "Turn on editing or row mutations first.";
     if (key === "cell-flash" && (!this.motion || this.reducedMotion()))
@@ -966,7 +979,7 @@ export class AdaptShowcaseDemoPage {
     url.searchParams.set(key, value);
     if (key === "kit") url.searchParams.delete("kit-unavailable");
     url.searchParams.delete("recipe");
-    this.normalizeOptionChange(url, key, value);
+    this.normalizePresentationChange(url, key, value);
     if (key === "dataset" || key === "mode")
       url.searchParams.delete(`${this.urlKey}.page`);
     // The entry replaces the provider scope in this document. Host rows stay
@@ -981,43 +994,10 @@ export class AdaptShowcaseDemoPage {
     if (key === "locale") url.searchParams.delete("dir");
     if (key === "grouping") {
       url.searchParams.set("structure", value === "on" ? "grouped" : "flat");
-      if (value === "on") url.searchParams.set("row-pinning", "off");
     }
     if (key === "editing")
       url.searchParams.set("editing-mode", value === "on" ? "cell" : "off");
   }
-  private normalizeOptionChange(url: URL, key: string, value: string): void {
-    this.normalizePresentationChange(url, key, value);
-    if (key === "structure" && ["grouped", "tree"].includes(value))
-      url.searchParams.set("row-pinning", "off");
-    if (key === "dataset" && value === "large") {
-      url.searchParams.set("editing-mode", "off");
-      url.searchParams.set("row-mutations", "off");
-      url.searchParams.set("row-reorder", "off");
-      if (url.searchParams.get("structure") !== "nested")
-        url.searchParams.set("structure", "flat");
-    }
-
-    if (key === "mode" && value === "server") {
-      url.searchParams.set("grouping", "off");
-      url.searchParams.set("editing", "off");
-      url.searchParams.set("editing-mode", "off");
-      url.searchParams.set("structure", "flat");
-      for (const option of [
-        "row-mutations",
-        "row-reorder",
-        "row-pinning",
-        "cell-span",
-        "extra-rows",
-        "row-style",
-        "side-panel",
-      ])
-        url.searchParams.set(option, "off");
-      if (url.searchParams.get("dataset") === "large")
-        url.searchParams.set("dataset", "people");
-    }
-  }
-
   private checkedControl(key: string): boolean {
     if (key === "grouping") return this.grouping;
     if (key === "editing") return this.editing;

@@ -40,10 +40,16 @@
 .vue-demo .controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem 1.25rem;
-  padding: 1rem;
+  gap: 0.75rem 1rem;
+  padding: 0.875rem 1rem;
   margin-block: 1rem;
   border-radius: 12px;
+}
+.vue-demo .angular-options-switches {
+  flex: 1 1 100%;
+  gap: 1rem;
+  padding-inline-start: 0;
+  border-inline-start: 0;
 }
 .vue-demo__toggle {
   display: inline-flex;

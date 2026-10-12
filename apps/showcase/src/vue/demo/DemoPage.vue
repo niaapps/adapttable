@@ -110,8 +110,11 @@ function applyOptions(): void {
   const url = new URL(window.location.href);
   for (const [key, value] of Object.entries(pending.value))
     url.searchParams.set(key, value);
-  if (Object.keys(pending.value).length) navigateDemo(url);
-  else close();
+  if (Object.keys(pending.value).length) {
+    if (!canReplaceDemo()) return;
+    close();
+    navigateDemo(url);
+  } else close();
 }
 function stageOption(event: Event): void {
   const input = event.target;
@@ -155,6 +158,8 @@ function reset(): void {
     window.location.origin
   );
   url.searchParams.set("kit", props.adapter.key);
+  if (!canReplaceDemo()) return;
+  close();
   navigateDemo(url);
 }
 </script>
@@ -240,22 +245,26 @@ function reset(): void {
           <option value="header">Header</option>
         </select></label
       >
-      <label
-        v-for="toggle in toggles.slice(0, 3)"
-        :key="toggle.key"
-        class="vue-demo__toggle"
-        ><input
-          type="checkbox"
-          :name="toggle.key"
-          :data-demo-control="toggle.key"
-          :checked="current(toggle.key, toggle.initial ? 'on' : 'off') === 'on'"
-          :disabled="
-            current('mode', 'frontend') === 'server' &&
-            ['grouping', 'editing'].includes(toggle.key)
-          "
-          @change="change"
-        />{{ toggle.label }}</label
-      >
+      <div class="angular-options-switches">
+        <label
+          v-for="toggle in toggles.slice(0, 3)"
+          :key="toggle.key"
+          class="vue-demo__toggle"
+          ><input
+            type="checkbox"
+            :name="toggle.key"
+            :data-demo-control="toggle.key"
+            :checked="
+              current(toggle.key, toggle.initial ? 'on' : 'off') === 'on'
+            "
+            :disabled="
+              current('mode', 'frontend') === 'server' &&
+              ['grouping', 'editing'].includes(toggle.key)
+            "
+            @change="change"
+          />{{ toggle.label }}</label
+        >
+      </div>
     </section>
     <div v-if="lab" class="vue-demo__options">
       <div>
@@ -265,7 +274,13 @@ function reset(): void {
           specialized views.
         </p>
       </div>
-      <button ref="trigger" type="button" class="nav__docs" @click="open">
+      <button
+        ref="trigger"
+        type="button"
+        class="nav__docs"
+        data-demo-control="lab-options"
+        @click="open"
+      >
         Configure options
       </button>
     </div>
