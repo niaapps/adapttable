@@ -16,7 +16,7 @@ for (const kit of ANGULAR_KITS) {
         .nth(1);
 
     async function open(page: Page, query = "") {
-      await page.goto(`${PAGE}${query}`);
+      await page.goto(`${PAGE}${query}`, { waitUntil: "domcontentloaded" });
       await expect(page.locator(".ai-demo")).toBeVisible();
       await expect(part(page, "assistant-launcher")).toBeVisible();
       await expect(part(page, "assistant-surface")).toHaveCount(0);
@@ -81,7 +81,8 @@ for (const kit of ANGULAR_KITS) {
       await page
         .getByRole("button", { name: "Show everyone", exact: true })
         .click();
-      await expect(tableRows(page)).toHaveCount(3);
+      await expect(tableRows(page)).toHaveCount(5);
+      await expect(page.locator(".ai-demo")).toContainText("Showing 1–5 of 15");
     });
 
     test("an approval changes the host's data only after the reader approves", async ({
@@ -223,7 +224,7 @@ for (const kit of ANGULAR_KITS) {
           path: testInfo.outputPath("native-chat-phone.png"),
           animations: "disabled",
         });
-        await expect(part(page, "card")).toHaveCount(3);
+        await expect(part(page, "card")).toHaveCount(5);
         await ask(page, "Choose a person");
         await part(page, "assistant-question-option")
           .filter({ hasText: "Grace Hopper" })

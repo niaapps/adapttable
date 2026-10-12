@@ -8,6 +8,7 @@
  * boot the same file without either knowing the other's mount point.
  */
 import "../styles.css";
+import "../assistantShowcase.css";
 
 import { provideZonelessChangeDetection } from "@angular/core";
 import { bootstrapApplication } from "@angular/platform-browser";

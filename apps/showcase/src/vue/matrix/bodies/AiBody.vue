@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /** A deterministic local agent over the real Vue table and the selected kit UI. */
-import "../../../angular/aiBody.css";
+import "../../../assistantShowcase.css";
 
 import {
   type AgentContextInputs,
@@ -13,20 +13,13 @@ import { tableAgent, useTableAssistant } from "@adapttable/ai-vue";
 import type { AgentApprovalPending, ColumnDef } from "@adapttable/vue";
 import { computed, shallowRef } from "vue";
 
+import {
+  AGENT_FILTERS,
+  AGENT_PEOPLE as INITIAL,
+  type AgentPerson,
+} from "../../../aiPeople";
 import { SHOWCASE_PRESENTATION, TABLE_PRESENTATION } from "../data";
 import { useShowcaseKit } from "../showcaseKit";
-
-interface AgentPerson {
-  id: string;
-  name: string;
-  salary: number;
-}
-
-const INITIAL: readonly AgentPerson[] = [
-  { id: "ada", name: "Ada Lovelace", salary: 120 },
-  { id: "grace", name: "Grace Hopper", salary: 140 },
-  { id: "katherine", name: "Katherine Johnson", salary: 130 },
-];
 
 const SUGGESTIONS: readonly AssistantSuggestion[] = [
   {
@@ -64,6 +57,9 @@ const columns: readonly ColumnDef<AgentPerson>[] = [
     editable: true,
     editor: "number",
   },
+  { key: "team", header: "Team", sortable: true },
+  { key: "status", header: "Status", sortable: true },
+  { key: "started", header: "Started", sortable: true },
 ];
 const session = shallowRef<AgentSession>();
 const pending = shallowRef<AgentApprovalPending | null>(null);
@@ -84,7 +80,10 @@ async function plan(
     const answer = await ask?.({
       id: `person-${String(++turn)}`,
       question: "Which person should I show?",
-      options: INITIAL.map((row) => ({ id: row.id, label: row.name })),
+      options: INITIAL.slice(0, 3).map((row) => ({
+        id: row.id,
+        label: row.name,
+      })),
       allowFreeText: true,
     });
     if (!answer || abort?.aborted) return { text: "No filter applied." };
@@ -177,6 +176,21 @@ const assistant = useTableAssistant(() => ({
 }));
 
 const features = [
+  kit.filters<AgentPerson>(AGENT_FILTERS),
+  kit.columnMenu(),
+  kit.resizableColumns(),
+  kit.savedViews({
+    storageKey: `adapttable-vue-${kit.key}-ai-views`,
+    urlKey: "ai",
+  }),
+  kit.editHistory(),
+  kit.undoRedoButtons(),
+  kit.cellNavigation(),
+  kit.exportCsv<AgentPerson>({ filename: "ai-people.csv" }),
+  kit.fullscreen(),
+  kit.rowPinning(),
+  kit.bulkActions([]),
+
   kit.editing<AgentPerson>((row, column, value) => {
     if (column !== "salary") throw new Error("This demo only edits salary");
     const salary = Number(value);
@@ -271,7 +285,8 @@ const SurfaceChoice = () => surfaceChoice.value;
       :columns="columns"
       :row-key="rowKey"
       :url-sync="false"
-      :defaults="{ limit: 10 }"
+      selectable
+      :defaults="{ limit: 5 }"
       :features="features"
     />
     <p class="hint" role="status" data-demo-log>{{ log }}</p>
@@ -282,6 +297,9 @@ const SurfaceChoice = () => surfaceChoice.value;
       :open="assistant.open.value"
       :on-open-change="assistant.setOpen"
       presentation="floating"
+      :class-name="
+        kit.key === 'vue-unstyled' ? 'mx-native-assistant' : undefined
+      "
       :dir="SHOWCASE_PRESENTATION.dir"
       :labels="SHOWCASE_PRESENTATION.labels"
       note="Scripted locally. Table changes and host writes are real."

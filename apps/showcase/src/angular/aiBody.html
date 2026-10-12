@@ -10,18 +10,19 @@
       <adapt-showcase-choice [props]="surfaceChoice()" />
     </div>
   </div>
-      <adapt-showcase-table
-        [dir]="presentation.dir"
-        [labels]="presentation.labels"
-        [attr.lang]="presentation.locale"
-        tableLabel="AI people"
-        [data]="rows()"
-        [columns]="columns"
-        [rowKey]="rowKey"
-        [urlSync]="false"
-        [defaults]="{ limit: 10 }"
-        [features]="features"
-      />
-      <p class="hint" role="status" data-demo-log>{{ log() }}</p>
-    <adapt-showcase-assistant [props]="assistantProps()" />
+  <adapt-showcase-table
+    [dir]="presentation.dir"
+    [labels]="presentation.labels"
+    [attr.lang]="presentation.locale"
+    tableLabel="AI people"
+    [data]="rows()"
+    [columns]="columns"
+    [rowKey]="rowKey"
+    [urlSync]="false"
+    [selectable]="true"
+    [defaults]="{ limit: 5 }"
+    [features]="features"
+  />
+  <p class="hint" role="status" data-demo-log>{{ log() }}</p>
+  <adapt-showcase-assistant [props]="assistantProps()" />
 </div>
