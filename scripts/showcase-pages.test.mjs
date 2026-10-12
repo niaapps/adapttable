@@ -409,6 +409,14 @@ describe("the showcase page manifest", () => {
       }
       const entry = entryModuleOf(source, page.html);
       assert.ok(entry, page.html);
+      if (source.includes('id="showcase-navigation"')) {
+        const entrySource = readFileSync(join(SHOWCASE, entry), "utf8");
+        assert.match(
+          entrySource,
+          /^import "\.{1,2}\/entry-navigation-shell";/m,
+          `${page.html} must mount its navigation from the page entry`
+        );
+      }
       assert.equal(
         (source.match(MODULE_SCRIPT) ?? []).filter((tag) => SRC.test(tag))
           .length,

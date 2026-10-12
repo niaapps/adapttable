@@ -209,7 +209,11 @@ onScopeDispose(() => {
 
 <template>
   <header ref="root" class="nav" @click.capture="guardLink">
-    <div class="nav__inner shell">
+    <div
+      class="nav__inner shell"
+      role="navigation"
+      aria-label="Vue showcase navigation"
+    >
       <ShowcaseWordmark :href="SITE_HOME" />
       <nav class="nav__links" aria-label="Demo pages">
         <a

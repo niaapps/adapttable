@@ -631,7 +631,6 @@ export const nativeVuePage = (definition = VUE_NATIVE_BASELINE) => {
       <a href="${upTo(dir)}vue/${kitPath}/">Adapter features</a>
       <a href="${siteUrl("/vue/getting-started/")}">Docs</a>
     </nav></div>
-    <script type="module" src="${upTo(dir)}src/vue/entry-navigation-shell.ts"></script>
     <div id="root"><main class="at-fallback"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p><p>${escapeHtml(notice)}</p></main></div>
     <footer class="vue-baseline"><a href="${upTo(dir)}third-party-notices.txt">Third-party notices</a></footer>
     <script type="module" src="${upTo(dir)}${entry.slice(1)}"></script>`

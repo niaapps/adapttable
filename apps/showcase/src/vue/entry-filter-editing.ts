@@ -1,3 +1,4 @@
+import "./entry-navigation-shell";
 import "@adapttable/vue-unstyled/styles.css";
 
 import { createApp } from "vue";

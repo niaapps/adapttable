@@ -15,7 +15,9 @@ for (const example of [
   test(`${example.path}: composed example links back to its kit's live demo and lab`, async ({
     page,
   }) => {
-    await page.goto(`/vue/${example.path}/?vue-live.q=stale`);
+    await page.goto(
+      `/vue/${example.path}/?theme=light&locale=en&vue-live.q=stale`
+    );
     const navigation = page.getByRole("navigation", {
       name: "Vue showcase navigation",
     });
@@ -26,15 +28,31 @@ for (const example of [
       name: "Live demo",
       exact: true,
     });
-    await expect(live).toHaveAttribute(
-      "href",
-      new RegExp(`vue-main/\\?kit=${key}$`)
-    );
-    await expect(
-      navigation.getByRole("link", { name: "Feature Lab", exact: true })
-    ).toHaveAttribute("href", new RegExp(`vue-all-options/\\?kit=${key}$`));
+    for (const [link, path] of [
+      [live, "/vue-main/"],
+      [
+        navigation.getByRole("link", { name: "Feature Lab", exact: true }),
+        "/vue-all-options/",
+      ],
+    ] as const) {
+      const destination = new URL(
+        (await link.getAttribute("href"))!,
+        page.url()
+      );
+      expect(destination.pathname).toBe(path);
+      expect(Object.fromEntries(destination.searchParams)).toEqual({
+        kit: key,
+        theme: "light",
+        locale: "en",
+      });
+    }
     await live.click();
-    await expect(page).toHaveURL(new RegExp(`/vue-main/\\?kit=${key}$`));
+    await expect(page).toHaveURL(/\/vue-main\/\?/);
+    expect(Object.fromEntries(new URL(page.url()).searchParams)).toEqual({
+      kit: key,
+      theme: "light",
+      locale: "en",
+    });
     await expect(
       page.locator('.mx-demo [data-adapttable-part="root"]').first()
     ).toBeVisible();

@@ -1863,7 +1863,11 @@ async function containedDispatchControls(
     const controls = card.locator(part("row-reorder-buttons"));
     await expect(controls).toBeVisible();
     await controls.evaluate((element) =>
-      element.scrollIntoView({ block: "center", inline: "nearest" })
+      element.scrollIntoView({
+        block: "center",
+        inline: "nearest",
+        behavior: "instant",
+      })
     );
     const up = controls.getByRole("button", { name: labels.up, exact: true });
     const down = controls.getByRole("button", {

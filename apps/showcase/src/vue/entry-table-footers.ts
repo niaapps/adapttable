@@ -1,3 +1,5 @@
+import "./entry-navigation-shell";
+
 import { createApp } from "vue";
 
 import TableFootersDemo from "./table-footers/TableFootersDemo.vue";

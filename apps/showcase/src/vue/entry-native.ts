@@ -1,3 +1,5 @@
+import "./entry-navigation-shell";
+
 import { createApp } from "vue";
 
 import NativeDemo from "./NativeDemo.vue";
