@@ -1,7 +1,6 @@
 import "../entry-navigation-shell";
 
-import { createApp } from "vue";
-
+import { createStandaloneApp } from "../createStandaloneApp";
 import Fixture from "./NaiveFilterPanelShowcase.vue";
 
-createApp(Fixture).mount("#root");
+createStandaloneApp(Fixture).mount("#root");

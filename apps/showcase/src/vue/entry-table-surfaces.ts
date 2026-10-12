@@ -1,7 +1,6 @@
 import "./entry-navigation-shell";
 
-import { createApp } from "vue";
-
 import Demo from "../../../../packages/vue/adapter-vue-unstyled/browser/table-surfaces/TableSurfacesDemo.vue";
+import { createStandaloneApp } from "./createStandaloneApp";
 
-createApp(Demo).mount("#root");
+createStandaloneApp(Demo).mount("#root");

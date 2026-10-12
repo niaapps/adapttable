@@ -1,4 +1,8 @@
 import "../styles.css";
+import "../matrix.css";
+import "../angular/matrixPage.css";
+import "../assistantShowcase.css";
+import "./matrix/matrixPage.css";
 
 import { createApp, h } from "vue";
 
@@ -15,6 +19,29 @@ if (root) {
   );
   if (!kit) throw new Error("The standalone example has no registered kit.");
   const active = root.dataset.page ?? "";
+  if (
+    [
+      "shadcn-vue/filter-panel",
+      "shadcn-vue/feature-parity",
+      "shadcn-vue/action-surfaces",
+      "naive-ui/filter-panel",
+    ].includes(active)
+  ) {
+    document
+      .getElementById("root")
+      ?.classList.add("shell", "vue-standalone-lab");
+  }
+  if (kit.key === "vue-unstyled") {
+    document
+      .getElementById("root")
+      ?.classList.add(
+        "mx",
+        "mx-ng",
+        "mx-ng--unstyled",
+        "shell",
+        "vue-native-page"
+      );
+  }
   document.documentElement.dataset.framework = "vue";
   createApp({
     setup() {

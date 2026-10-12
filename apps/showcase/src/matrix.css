@@ -472,6 +472,7 @@
   border-color: var(--kit-line);
 }
 .mx-code pre {
+  max-block-size: 26rem;
   margin: 0;
   padding: var(--sp-4);
   overflow-x: auto;

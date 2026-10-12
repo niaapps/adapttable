@@ -1,8 +1,7 @@
 import "../entry-navigation-shell";
 
-import { createApp } from "vue";
-
+import { createStandaloneApp } from "../createStandaloneApp";
 import ActionControlsDemo from "./ActionControlsDemo.vue";
 const root = document.getElementById("root");
 if (!root) throw new Error("The Vue action showcase has no #root.");
-createApp(ActionControlsDemo).mount(root);
+createStandaloneApp(ActionControlsDemo).mount(root);

@@ -2,8 +2,7 @@ import "../entry-navigation-shell";
 import "@adapttable/shadcn-vue/styles.css";
 import "./shadcn-theme.css";
 
-import { createApp } from "vue";
-
 import Fixture from "../../../../../packages/vue/adapter-shadcn-vue/test/browser/feature-parity.fixture";
+import { createStandaloneApp } from "../createStandaloneApp";
 
-createApp(Fixture).mount("#root");
+createStandaloneApp(Fixture).mount("#root");

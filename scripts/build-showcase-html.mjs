@@ -632,7 +632,11 @@ export const nativeVuePage = (definition = VUE_NATIVE_BASELINE) => {
       <a href="${siteUrl("/vue/getting-started/")}">Docs</a>
     </nav></div>
     <div id="root"><main class="at-fallback"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p><p>${escapeHtml(notice)}</p></main></div>
-    <footer class="vue-baseline"><a href="${upTo(dir)}third-party-notices.txt">Third-party notices</a></footer>
+    <footer class="foot vue-baseline"><div class="foot__inner shell"><div class="foot__lead">
+      <a class="brand" href="${siteUrl("/")}">Adapt<strong>Table</strong></a>
+      <p>Headless freedom, batteries included.</p>
+      <a href="${upTo(dir)}third-party-notices.txt">Third-party notices</a>
+    </div></div></footer>
     <script type="module" src="${upTo(dir)}${entry.slice(1)}"></script>`
     ),
   };

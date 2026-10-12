@@ -695,3 +695,13 @@ adapt-showcase-matrix-page *::after {
   outline: 2px solid var(--ng-accent);
   outline-offset: -2px;
 }
+
+/* Keep axis controls adjacent on a desktop and stack them inside a phone. */
+.mx-kit-host [data-adapttable-part="pivot-panel"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+.mx-kit-host [data-adapttable-part="pivot-panel"] > * {
+  min-inline-size: 0;
+}

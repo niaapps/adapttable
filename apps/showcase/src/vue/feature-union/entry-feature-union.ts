@@ -1,9 +1,8 @@
 import "../entry-navigation-shell";
 
-import { createApp } from "vue";
-
+import { createStandaloneApp } from "../createStandaloneApp";
 import FeatureUnionDemo from "./FeatureUnionDemo.vue";
 const root = document.getElementById("root");
 if (!root) throw new Error("The Vue showcase page has no #root to mount into.");
 document.documentElement.dataset.framework = "vue";
-createApp(FeatureUnionDemo).mount(root);
+createStandaloneApp(FeatureUnionDemo).mount(root);
