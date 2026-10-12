@@ -31,7 +31,11 @@ if (root) {
       .getElementById("root")
       ?.classList.add("shell", "vue-standalone-lab");
   }
-  if (kit.key === "vue-unstyled") {
+  // Authored pages own their complete layout, theme and overlay styles.
+  if (
+    kit.key === "vue-unstyled" &&
+    !["unstyled/workspace", "unstyled/preview"].includes(active)
+  ) {
     document
       .getElementById("root")
       ?.classList.add(
