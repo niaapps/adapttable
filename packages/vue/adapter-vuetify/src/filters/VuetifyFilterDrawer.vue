@@ -88,6 +88,7 @@ const Content = () => props.children;
       :retain-focus="true"
       persistent
       no-click-animation
+      transition="adapttable-vuetify-filter-drawer-transition"
       content-class="adapttable-vuetify-filter-drawer-overlay"
       :content-props="contentAttrs"
       v-bind="dialogAttrs"
