@@ -671,7 +671,8 @@
   position: fixed;
   inset-block: 0;
   inset-inline-end: 0;
-  inline-size: min(30rem, 100vw);
+  /* Match the fixed containing block, including classic scrollbar gutters. */
+  inline-size: min(30rem, 100%);
   border-radius: 0;
 }
 .at-reka-assistant-input {
