@@ -240,6 +240,8 @@ describe("native assistant", () => {
     expect(dialog?.tagName).toBe("DIALOG");
     expect(dialog?.open).toBe(true);
     expect(dialog?.style.position).toBe("fixed");
+    expect(dialog?.style.insetInlineStart).toBe("auto");
+    expect(dialog?.style.insetBlockStart).toBe("auto");
     expect(dialog?.style.inlineSize).toContain("400px");
     expect(dialog?.hasAttribute("aria-modal")).toBe(false);
     fixture.componentInstance.extras.set({
