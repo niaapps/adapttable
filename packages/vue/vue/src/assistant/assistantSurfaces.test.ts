@@ -259,6 +259,48 @@ describe("assistant semantic surfaces", () => {
     await settle();
     expect(approval.reject).toHaveBeenCalledOnce();
   });
+  it("rejects a modal on Escape while preserving nested control and composition ownership", async () => {
+    const approval = { ...pending(), presentation: "modal" as const };
+    const host = mount();
+    await settle();
+    const input = host.get("assistant-input");
+    input.focus();
+    host.props.value = { ...host.props.value, approval };
+    await settle();
+    const content = host.get("assistant-approval-modal-content");
+    expect(content.contains(document.activeElement)).toBe(true);
+    const consumed = new KeyboardEvent("keydown", {
+      key: "Escape",
+      bubbles: true,
+      cancelable: true,
+    });
+    consumed.preventDefault();
+    content.dispatchEvent(consumed);
+    content.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Escape",
+        isComposing: true,
+        bubbles: true,
+      })
+    );
+    content.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Enter", bubbles: true })
+    );
+    await settle();
+    expect(approval.reject).not.toHaveBeenCalled();
+    const escape = new KeyboardEvent("keydown", {
+      key: "Escape",
+      bubbles: true,
+      cancelable: true,
+    });
+    content.dispatchEvent(escape);
+    await settle();
+    expect(escape.defaultPrevented).toBe(true);
+    expect(approval.reject).toHaveBeenCalledOnce();
+    host.props.value = { ...host.props.value, approval: null };
+    await settle();
+    expect(document.activeElement).toBe(input);
+  });
   it("groups receipts as an accessible list and separates one action undo from turn undo", async () => {
     const undo = vi.fn();
     const undoAction = vi.fn();

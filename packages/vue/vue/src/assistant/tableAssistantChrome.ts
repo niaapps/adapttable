@@ -16,6 +16,8 @@ import {
   defineComponent,
   h,
   nextTick,
+  onBeforeUnmount,
+  onMounted,
   onScopeDispose,
   type PropType,
   type ShallowRef,
@@ -111,6 +113,57 @@ function review(
       })
     : null;
 }
+const ApprovalModalContent = defineComponent(
+  (props: { children: VNodeChild; onClose: () => void }) => {
+    const root = shallowRef<HTMLElement | null>(null);
+    const previous =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    onMounted(() => {
+      void nextTick(() => {
+        const target = root.value?.querySelector<HTMLElement>(
+          'button:not(:disabled), [tabindex="0"]'
+        );
+        (target ?? root.value)?.focus();
+      });
+    });
+    onBeforeUnmount(() => {
+      if (root.value?.contains(document.activeElement) && previous?.isConnected)
+        previous.focus();
+    });
+    return () =>
+      h(
+        "div",
+        {
+          ref: root,
+          tabindex: -1,
+          "data-adapttable-part": "assistant-approval-modal-content",
+          onKeydown: (event: KeyboardEvent) => {
+            if (
+              event.key !== "Escape" ||
+              event.defaultPrevented ||
+              event.isComposing
+            )
+              return;
+            event.preventDefault();
+            event.stopPropagation();
+            props.onClose();
+          },
+        },
+        [props.children]
+      );
+  },
+  {
+    name: "ApprovalModalContent",
+    props: {
+      children: {
+        type: [String, Number, Boolean, Array, Object] as PropType<VNodeChild>,
+      },
+      onClose: { type: Function as PropType<() => void>, required: true },
+    },
+  }
+);
 function modal(
   props: TableAssistantChromeProps,
   state: ChromeState
@@ -140,7 +193,10 @@ function modal(
     open: true,
     dir: props.dir,
     onClose: close,
-    children: review(props, true),
+    children: h(ApprovalModalContent, {
+      children: review(props, true),
+      onClose: close,
+    }),
   });
 }
 function launcher(
