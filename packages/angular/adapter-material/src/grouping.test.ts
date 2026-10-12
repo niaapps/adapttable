@@ -304,6 +304,24 @@ describe("grouping (Angular Material)", () => {
     expect(all("card")).toHaveLength(3);
   });
 
+  it("resets the add selector after its chosen column leaves the options", async () => {
+    const settle = await mount([groupingPanel()]);
+    const select = document.querySelector<HTMLSelectElement>(
+      '[data-adapttable-part="grouping-add"]'
+    )!;
+    select.value = "team";
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+    await settle();
+    expect(texts("group-label")).toEqual(["Core", "Web"]);
+    expect(select.value).toBe("");
+    expect(select.selectedOptions[0]?.textContent.trim()).toBe(
+      "Add grouping column"
+    );
+    expect([...select.options].some((option) => option.value === "team")).toBe(
+      false
+    );
+  });
+
   it("groups by a column dragged from its header into the panel", async () => {
     const settle = await mount([groupingPanel()]);
     expect(all("group-row")).toHaveLength(0);

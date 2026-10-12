@@ -3,7 +3,8 @@
 .adapt-material-overlay {
   color: var(--mat-sys-on-surface, #1d1b20);
   font-family: var(--mat-sys-body-medium-font, Roboto, sans-serif);
-  font-size: 14px;
+  font-size: var(--mat-sys-body-medium-size, 14px);
+  line-height: var(--mat-sys-body-medium-line-height, 1.5);
   --adapt-material-surface: var(--mat-sys-surface, #fffbfe);
   --adapt-material-line: var(--mat-sys-outline-variant, #cac4d0);
   --adapt-material-cell-space: 12px 16px;
@@ -100,6 +101,11 @@
   font-weight: 600;
   position: relative;
   white-space: nowrap;
+  background: var(--mat-sys-surface-container, #f3edf7);
+}
+.adapt-material [data-adapttable-part="grouping-panel"] .mat-mdc-form-field {
+  --mat-form-field-container-height: 40px;
+  --mat-form-field-container-vertical-padding: 8px;
 }
 .adapt-material th .adapt-material-sort-button {
   min-inline-size: 0;

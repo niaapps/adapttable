@@ -133,6 +133,9 @@
   [data-adapttable-kit="spartan"] [data-adapttable-part="footer"] {
     padding-inline: 0.75rem;
   }
+  [data-adapttable-kit="spartan"] [data-adapttable-part="toolbar"] {
+    padding-inline: 0.75rem;
+  }
   [data-adapttable-kit="spartan"] [data-adapttable-part="footer"] > label,
   [data-adapttable-kit="spartan"] [data-spartan-part="pager"] {
     @apply inline-flex flex-wrap items-center gap-2;
@@ -166,6 +169,7 @@
     border-collapse: separate;
     border-spacing: 0;
     inline-size: 100%;
+    line-height: 1.5;
   }
   [data-adapttable-kit="spartan"] :is(th, td) {
     border-block-end: 1px solid var(--at-spartan-border);

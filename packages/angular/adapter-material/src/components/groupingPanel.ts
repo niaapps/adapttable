@@ -183,17 +183,20 @@ class AdaptGroupingChip {
   host: { style: "display: contents" },
   template: `
     @let p = props();
-    <mat-form-field appearance="outline" subscriptSizing="dynamic"
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      [style.width]="
+        p['data-adapttable-part'] === 'grouping-add' ? width(p.label) : '8rem'
+      "
       ><select
         matNativeControl
         [attr.aria-label]="p.label"
         [attr.data-adapttable-part]="p['data-adapttable-part']"
         [disabled]="p.disabled ?? false"
         [value]="p.value"
-        [style.width]="
-          p['data-adapttable-part'] === 'grouping-add' ? width(p.label) : '8rem'
-        "
-        (change)="p.onChange($any($event.target).value)"
+        style="width: 100%"
+        (change)="change($any($event.target))"
       >
         @if (p["data-adapttable-part"] === "grouping-add") {
           <option value="" disabled hidden [selected]="p.value === ''">
@@ -212,6 +215,14 @@ class AdaptGroupingChip {
 class AdaptGroupingSelect {
   readonly props = input.required<GroupingPanelSelectProps>();
   protected readonly width = addControlWidth;
+
+  protected change(select: HTMLSelectElement): void {
+    const p = this.props();
+    const value = select.value;
+    // Add is an action, so reset before Angular removes the chosen option.
+    if (p["data-adapttable-part"] === "grouping-add") select.value = "";
+    p.onChange(value);
+  }
 }
 
 @Component({
@@ -319,13 +330,16 @@ class AdaptGroupingAggregationRemove {
   host: { style: "display: contents" },
   template: `
     @let p = props();
-    <mat-form-field appearance="outline" subscriptSizing="dynamic"
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      [style.width]="width(p.label)"
       ><select
         matNativeControl
         [attr.aria-label]="p.label"
         [attr.data-adapttable-part]="p['data-adapttable-part']"
         [disabled]="p.disabled === true || available().length === 0"
-        [style.width]="width(p.label)"
+        style="width: 100%"
         (change)="choose($any($event.target))"
       >
         <option value="" disabled hidden [selected]="true">
