@@ -433,8 +433,9 @@ export function createTableViewStore(
       }),
     setGroupBy: (key) =>
       commit((p) => {
-        if (key) p.set(ns + PARAM_GROUP_BY, key);
-        else clearParam(p, PARAM_GROUP_BY, defaultsOf().groupBy);
+        // A cleared grouping must survive a panel remount, including when
+        // its initial keys come from a feature rather than source defaults.
+        p.set(ns + PARAM_GROUP_BY, key ?? "");
         resetPage(p);
       }),
     initializeGroupBy: (key) =>
