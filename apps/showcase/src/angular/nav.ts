@@ -22,6 +22,7 @@ import {
   SHOWCASE_ADAPTERS,
 } from "../matrix/content";
 import { navigationMenuShift } from "../navGeometry";
+import { createNavMenuInteraction } from "../navMenuInteraction";
 import { SHOWCASE_DARK } from "./showcaseKit";
 import { AdaptShowcaseWordmark } from "./wordmark";
 
@@ -41,12 +42,24 @@ export class AdaptShowcaseNav {
   readonly shift = signal(0);
   private layoutFrame = 0;
   private pendingFocus: number | null = null;
+  readonly menu = createNavMenuInteraction(
+    (open) => {
+      this.open.set(open);
+      this.layoutMenu();
+    },
+    () =>
+      this.element.nativeElement
+        .querySelector(".nav__group")
+        ?.contains(document.activeElement) ?? false
+  );
   constructor() {
-    inject(DestroyRef).onDestroy(() => cancelAnimationFrame(this.layoutFrame));
+    inject(DestroyRef).onDestroy(() => {
+      cancelAnimationFrame(this.layoutFrame);
+      this.menu.dispose();
+    });
   }
   toggleMenu(): void {
-    this.open.update((value) => !value);
-    this.layoutMenu();
+    this.menu.toggle();
   }
   @HostListener("window:resize")
   layoutMenu(): void {
@@ -86,12 +99,12 @@ export class AdaptShowcaseNav {
     event.preventDefault();
     const index = event.key === "ArrowDown" ? 0 : -1;
     if (this.open()) {
+      this.menu.hold();
       this.focusItem(index);
       return;
     }
     this.pendingFocus = index;
-    this.open.set(true);
-    this.layoutMenu();
+    this.menu.hold();
   }
   menuKey(event: KeyboardEvent): void {
     const items = Array.from(
@@ -111,7 +124,7 @@ export class AdaptShowcaseNav {
       event.preventDefault();
       this.focusItem(next);
     }
-    if (event.key === "Tab") this.escape();
+    if (event.key === "Tab") this.menu.close();
   }
   readonly unavailableKit = new URLSearchParams(window.location.search).get(
     "kit-unavailable"
@@ -214,12 +227,12 @@ export class AdaptShowcaseNav {
         .querySelector(".nav__group")
         ?.contains(event.target)
     )
-      this.open.set(false);
+      this.menu.close();
   }
   @HostListener("document:keydown.escape")
   escape(): void {
     if (!this.open()) return;
-    this.open.set(false);
+    this.menu.close();
     this.element.nativeElement
       .querySelector<HTMLButtonElement>(".nav__trigger")
       ?.focus();

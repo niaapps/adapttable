@@ -13,6 +13,7 @@ import {
   SITE_HOME,
 } from "../../matrix/content";
 import { navigationMenuShift } from "../../navGeometry";
+import { createNavMenuInteraction } from "../../navMenuInteraction";
 import { frameworkDemoHref, vueHref } from "./routes";
 import ShowcaseWordmark from "./ShowcaseWordmark.vue";
 
@@ -47,6 +48,16 @@ const shift = shallowRef(0);
 const root = shallowRef<HTMLElement | null>(null);
 let pendingFocus: number | null = null;
 let frame = 0;
+const menu = createNavMenuInteraction(
+  (value) => {
+    open.value = value;
+    layoutMenu();
+  },
+  () =>
+    root.value
+      ?.querySelector(".nav__group")
+      ?.contains(document.activeElement) ?? false
+);
 
 const menuItems = (): HTMLAnchorElement[] =>
   Array.from(
@@ -82,8 +93,7 @@ function layoutMenu(): void {
 }
 
 function toggleMenu(): void {
-  open.value = !open.value;
-  layoutMenu();
+  menu.toggle();
 }
 
 function triggerKey(event: KeyboardEvent): void {
@@ -91,12 +101,12 @@ function triggerKey(event: KeyboardEvent): void {
   event.preventDefault();
   const index = event.key === "ArrowDown" ? 0 : -1;
   if (open.value) {
+    menu.hold();
     focusItem(index);
     return;
   }
   pendingFocus = index;
-  open.value = true;
-  layoutMenu();
+  menu.hold();
 }
 
 function menuKey(event: KeyboardEvent): void {
@@ -118,7 +128,7 @@ function menuKey(event: KeyboardEvent): void {
 
 function close(restore: boolean): void {
   if (!open.value) return;
-  open.value = false;
+  menu.close();
   if (restore)
     void nextTick(() =>
       root.value?.querySelector<HTMLButtonElement>(".nav__trigger")?.focus()
@@ -130,7 +140,7 @@ function outside(event: MouseEvent): void {
     event.target instanceof Node &&
     !root.value?.querySelector(".nav__group")?.contains(event.target)
   )
-    open.value = false;
+    menu.close();
 }
 
 function escape(event: KeyboardEvent): void {
@@ -200,6 +210,7 @@ onMounted(() => {
   window.addEventListener("resize", layoutMenu);
 });
 onScopeDispose(() => {
+  menu.dispose();
   cancelAnimationFrame(frame);
   document.removeEventListener("click", outside);
   document.removeEventListener("keydown", escape);
@@ -240,7 +251,11 @@ onScopeDispose(() => {
           :aria-current="active === 'unstyled/workspace' ? 'page' : undefined"
           >Order workspace</a
         >
-        <div class="nav__group">
+        <div
+          class="nav__group"
+          @pointerenter="menu.enter"
+          @pointerleave="menu.leave"
+        >
           <button
             type="button"
             class="nav__trigger"

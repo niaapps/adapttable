@@ -20,7 +20,11 @@
         [attr.aria-current]="active().endsWith('/ai') ? 'page' : null"
         >AI demo</a
       >
-      <div class="nav__group">
+      <div
+        class="nav__group"
+        (pointerenter)="menu.enter($event)"
+        (pointerleave)="menu.leave($event)"
+      >
         <button
           type="button"
           class="nav__trigger"
