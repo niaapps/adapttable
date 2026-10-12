@@ -19,16 +19,20 @@ const props = defineProps<{
 }>();
 const open = ref(false);
 const menu = ref<InstanceType<typeof QMenu> | null>(null);
+const triggerView = ref<Window | null>(null);
 const updatePosition = () => menu.value?.updatePosition();
+function clicked(event: MouseEvent) {
+  event.stopPropagation();
+  // QMenu portals its contents; its component $el is not the trigger's DOM.
+  triggerView.value =
+    (event.currentTarget as HTMLElement | null)?.ownerDocument.defaultView ??
+    null;
+}
 watch(
   open,
   (expanded, _previous, cleanup) => {
     if (!expanded) return;
-    const element: unknown = menu.value?.$el;
-    const view =
-      typeof Node !== "undefined" && element instanceof Node
-        ? element.ownerDocument?.defaultView
-        : null;
+    const view = triggerView.value;
     if (!view) return;
     view.addEventListener("scroll", updatePosition, true);
     view.addEventListener("resize", updatePosition);
@@ -58,7 +62,7 @@ function actionAttrs(action: RowActionControl<TRow>) {
       'aria-label': label,
       'aria-expanded': open,
       class: classNames.rowActionsTrigger,
-      onClick: (event: MouseEvent) => event.stopPropagation(),
+      onClick: clicked,
     }"
   >
     <span aria-hidden="true">⋮</span>
