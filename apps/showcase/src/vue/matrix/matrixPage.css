@@ -9,6 +9,11 @@ html[data-framework="vue"] {
   overflow-x: visible;
 }
 
+/* The kit app is embedded around a table, so its wrapper follows that table. */
+.vue-vuetify-root > .v-application__wrap {
+  min-height: 0;
+}
+
 #root:has(> .nav),
 #root:has(> .nav) *,
 #root:has(> .nav) *::before,

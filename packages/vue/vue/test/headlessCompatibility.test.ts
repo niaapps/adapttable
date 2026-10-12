@@ -326,6 +326,31 @@ describe("rendering helpers", () => {
 });
 
 describe("lifetime and adapter controls", () => {
+  it("anchors resize handles without replacing pinned header positioning", () => {
+    const test = shell([]);
+    expect(
+      required(test.table.desktop.value.headers[0]).attrs.style
+    ).not.toMatchObject({ position: "relative" });
+    test.current.value = [resizableColumns()];
+    expect(
+      required(test.table.desktop.value.headers[0]).attrs.style
+    ).toMatchObject({ position: "relative" });
+    test.table.table.layout.value.setPinned("team", "start");
+    expect(
+      required(test.table.desktop.value.headers[0]).attrs.style
+    ).toMatchObject({ position: "sticky" });
+    test.current.value = [];
+    expect(
+      required(test.table.desktop.value.headers[0]).resizeAttrs
+    ).toBeUndefined();
+    expect(
+      required(test.table.desktop.value.headers[0]).attrs.style
+    ).toMatchObject({ position: "sticky" });
+    expect(
+      required(test.table.desktop.value.headers[1]).attrs.style
+    ).not.toMatchObject({ position: "relative" });
+    test.scope.stop();
+  });
   it("resizableColumns removes pending drag listeners and invalidates old handles", () => {
     let pending: FrameRequestCallback | undefined;
     vi.stubGlobal("requestAnimationFrame", (run: FrameRequestCallback) => {

@@ -117,3 +117,45 @@
 [data-adapttable-kit="taiga-ui"] [data-adapttable-part="search"] {
   padding-inline-start: 36px;
 }
+
+/* Keep the resize target at the inline edge of its own column header. */
+[data-adapttable-kit="taiga-ui"]
+  [data-adapttable-part="header-cell"]:has(
+    [data-adapttable-part="resize-handle"]
+  ) {
+  position: relative;
+}
+[data-adapttable-kit="taiga-ui"] [data-adapttable-part="resize-handle"] {
+  position: absolute;
+  display: block;
+  inset-inline-end: 0;
+  inset-block: 0;
+  inline-size: 8px;
+  block-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+[data-adapttable-kit="taiga-ui"] [data-adapttable-part="resize-handle"]::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 3px;
+  inset-block: 25%;
+  inline-size: 2px;
+  background: var(--tui-border-normal);
+}
+[data-adapttable-kit="taiga-ui"]
+  [data-adapttable-part="resize-handle"]:is(:hover, :focus-visible)::after {
+  background: var(--tui-background-accent-1);
+}
+[data-adapttable-kit="taiga-ui"]
+  [data-adapttable-part="resize-handle"]:focus-visible {
+  outline: 2px solid var(--tui-background-accent-1);
+  outline-offset: -2px;
+}

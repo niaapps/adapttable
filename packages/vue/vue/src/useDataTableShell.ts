@@ -944,11 +944,18 @@ export function useDataTableShell<TRow>(
     ),
     headers: windowedBody.value.desktop.headers.map((header) => {
       const col = bodyColumnPositions.value.get(header.key) ?? -1;
+      const resizeAttrs = resize.value?.attrs(
+        header.key,
+        `${table.labels.value.resizeColumn}: ${header.context.label}`
+      );
       return {
         ...header,
         attrs: mergeVueAttrs(
           mergeVueAttrs(
-            header.attrs,
+            mergeVueAttrs(
+              resizeAttrs ? { style: { position: "relative" } } : {},
+              header.attrs
+            ),
             toVueAttrs({
               ...groupingPanel.value?.state.headerDragProps(header.key),
             })
@@ -994,10 +1001,7 @@ export function useDataTableShell<TRow>(
                 : null;
             }
           : undefined,
-        resizeAttrs: resize.value?.attrs(
-          header.key,
-          `${table.labels.value.resizeColumn}: ${header.context.label}`
-        ),
+        resizeAttrs,
       };
     }),
     rows: windowedBody.value.desktop.rows.map((row) =>
