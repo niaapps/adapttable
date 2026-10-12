@@ -72,10 +72,12 @@ describe("groupBy URL round-trip", () => {
     act(() => result.current.setGroupBy("name"));
     expect(adapter.getSearch()).toContain("groupBy=name");
     act(() => result.current.setGroupBy(undefined));
-    expect(adapter.getSearch()).not.toContain("groupBy");
+    expect(new URLSearchParams(adapter.getSearch()).get("groupBy")).toBe("");
+    expect(result.current.groupBy).toBeUndefined();
     act(() => result.current.setGroupBy("team"));
     act(() => result.current.clearAll());
-    expect(adapter.getSearch()).not.toContain("groupBy");
+    expect(new URLSearchParams(adapter.getSearch()).get("groupBy")).toBeNull();
+    expect(result.current.groupBy).toBeUndefined();
   });
 
   it("honours defaults.groupBy and empty-marker clear", () => {
