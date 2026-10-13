@@ -1,5 +1,29 @@
 # @adapttable/ng-zorro
 
+## 0.2.2
+
+### Patch Changes
+
+- eaac515: Give column resize handles visible, focusable targets at their header's inline edge. Kit theme tokens provide the grip and focus colors, while logical positioning supports both text directions.
+- 62c9b3f: Keep editable Vue cell values as their accessible names, with editing instructions provided as descriptions. Reduce button chrome on Vue Unstyled, Element Plus, Reka UI and Nuxt UI cell activation controls, and align the native Vue search icon with its input.
+  
+  Give unlabeled mobile card values the full row width and clear heading emphasis in all eight Vue adapters.
+  
+  Restore visible keyboard focus on Angular editable cells without resetting the focus styles supplied by their native controls.
+  
+  Arrange Vue grouping and aggregation controls in compact, responsive rows with visible section labels, bounded selects, and borderless aggregation pickers. Preserve each kit's own controls and consumer class hooks. Give Element Plus column-menu icon buttons usable hit areas and keep Quasar resize handles visually light without reducing their drag targets.
+  
+  Keep Angular aggregation labels, operations and removal controls aligned, and add spacing and a visible grouping label across all nine adapters.
+  
+  Expose stable, visible grouping insertion targets during pointer drags and a clearly marked removal target in Vue and Angular adapters. Respect kit theme colors and highlight the current destination without shifting the chips. Restore native pointer dragging from Naive UI buttons, including grouping handles and sortable headers.
+  
+  Style active Vue filters as wrapping chips instead of browser-default lists, preserve native remove/clear controls, and provide phone-sized touch targets. Separate group labels from counts, and reduce the chrome on Naive UI sort and group-toggle buttons.
+- Updated dependencies [7bedef1]
+- Updated dependencies [29ff08e]
+- Updated dependencies [9213f9a]
+  - @adapttable/angular@0.5.1
+  - @adapttable/core@3.9.1
+
 ## 0.2.1
 
 ### Patch Changes

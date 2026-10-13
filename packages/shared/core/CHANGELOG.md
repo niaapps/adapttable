@@ -1,5 +1,11 @@
 # @adapttable/core
 
+## 3.9.1
+
+### Patch Changes
+
+- 9213f9a: Preserve explicitly cleared grouping when a grouping panel remounts or the UI kit changes, so its initial groups do not reappear.
+
 ## 3.9.0
 
 ### Minor Changes

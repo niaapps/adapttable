@@ -1,5 +1,29 @@
 # @adapttable/reka-ui
 
+## 0.1.2
+
+### Patch Changes
+
+- 62c9b3f: Keep editable Vue cell values as their accessible names, with editing instructions provided as descriptions. Reduce button chrome on Vue Unstyled, Element Plus, Reka UI and Nuxt UI cell activation controls, and align the native Vue search icon with its input.
+  
+  Give unlabeled mobile card values the full row width and clear heading emphasis in all eight Vue adapters.
+  
+  Restore visible keyboard focus on Angular editable cells without resetting the focus styles supplied by their native controls.
+  
+  Arrange Vue grouping and aggregation controls in compact, responsive rows with visible section labels, bounded selects, and borderless aggregation pickers. Preserve each kit's own controls and consumer class hooks. Give Element Plus column-menu icon buttons usable hit areas and keep Quasar resize handles visually light without reducing their drag targets.
+  
+  Keep Angular aggregation labels, operations and removal controls aligned, and add spacing and a visible grouping label across all nine adapters.
+  
+  Expose stable, visible grouping insertion targets during pointer drags and a clearly marked removal target in Vue and Angular adapters. Respect kit theme colors and highlight the current destination without shifting the chips. Restore native pointer dragging from Naive UI buttons, including grouping handles and sortable headers.
+  
+  Style active Vue filters as wrapping chips instead of browser-default lists, preserve native remove/clear controls, and provide phone-sized touch targets. Separate group labels from counts, and reduce the chrome on Naive UI sort and group-toggle buttons.
+- 7ad34cc: Constrain assistant sheets to their fixed containing block so classic scrollbar gutters cannot push the conversation off-screen.
+- Updated dependencies [7bedef1]
+- Updated dependencies [54dd62a]
+- Updated dependencies [b267b30]
+- Updated dependencies [eaac515]
+  - @adapttable/vue@0.1.2
+
 ## 0.1.1
 
 ### Patch Changes
