@@ -2565,13 +2565,10 @@ export abstract class AdaptDataTableShell<TRow> implements OnInit {
       }
       return toggles;
     });
-    const summaryRow = this.summaryRow();
-    const summary = computed(() =>
-      summaryRow === undefined ? undefined : summaryRow(table.source().rows)
-    );
+    const summary = computed(() => this.summaryRow()?.(table.source().rows));
     const showSummary = computed(
       () =>
-        summaryRow !== undefined ||
+        this.summaryRow() !== undefined ||
         table.columns().some((column) => column.footer !== undefined)
     );
     const detailParent = computed((): NestedTableParent => ({

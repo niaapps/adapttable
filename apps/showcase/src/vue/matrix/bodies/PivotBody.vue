@@ -67,8 +67,12 @@ const model = computed(() =>
   pivotTableModel(
     pivot(rows, state.config.value, {
       collapsed: state.collapsed.value,
-      format: (value) =>
-        typeof value === "number" ? formatMoney(value) : value,
+      format: (value, measure) =>
+        typeof value === "number" &&
+        measure.key === "budget" &&
+        measure.agg !== "count"
+          ? formatMoney(value)
+          : value,
     }),
     {
       fields,
