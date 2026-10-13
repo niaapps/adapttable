@@ -36,8 +36,9 @@ function update(value: unknown): void {
 
 <template>
   <UTextarea
+    variant="none"
     :model-value="presentation"
-    :rows="2"
+    :rows="1"
     :size="size"
     :disabled="control.disabled"
     :placeholder="control.placeholder"

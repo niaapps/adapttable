@@ -376,6 +376,43 @@ describe("the kit's own controls", () => {
     expect(runSuggestion).toHaveBeenCalledWith("s1");
   });
 
+  it.each(["trigger", "item"])(
+    "dismisses shortcuts from the %s before closing the assistant",
+    async (target) => {
+      const onOpenChange = vi.fn();
+      mount(
+        <TableAssistant
+          assistant={view()}
+          labels={defaultLabels}
+          open
+          onOpenChange={onOpenChange}
+        />
+      );
+      const trigger = part("assistant-examples-menu")!;
+      fireEvent.click(trigger);
+      const item = await waitFor(() => {
+        expect(trigger).toHaveAttribute("aria-expanded", "true");
+        const entry = part("assistant-examples-item");
+        expect(entry).not.toBeNull();
+        return entry!;
+      });
+      fireEvent.keyDown(item, { key: "ArrowDown" });
+      expect(trigger).toHaveAttribute("aria-expanded", "true");
+      fireEvent.keyDown(target === "trigger" ? trigger : item, {
+        key: "Escape",
+      });
+      // JSDOM supplies no popup geometry. The browser suite checks visibility
+      // and hit testing; here the native trigger reports the closed state.
+      await waitFor(() =>
+        expect(trigger).toHaveAttribute("aria-expanded", "false")
+      );
+      expect(document.activeElement).toBe(trigger);
+      expect(onOpenChange).not.toHaveBeenCalled();
+      fireEvent.keyDown(trigger, { key: "Escape" });
+      await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+    }
+  );
+
   it("asks the backend's question with this kit's own option controls", () => {
     // The suggestion control has two homes: the shortcuts menu, and the
     // options on a question the backend put to the reader.

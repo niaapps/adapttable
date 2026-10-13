@@ -304,6 +304,36 @@ describe("AdaptTableAssistantChrome", () => {
     expect(host.open()).toBe(false);
     expect(document.activeElement).toBe(part("assistant-launcher"));
   });
+  it("restores focus after a modal releases inert and then stops observing", async () => {
+    const fixture = await mounted();
+    const owner = fixture.nativeElement as HTMLElement;
+    const nativeFocus = HTMLElement.prototype.focus;
+    // JSDOM does not enforce inert; emulate the browser's focus lock.
+    const focus = vi
+      .spyOn(HTMLElement.prototype, "focus")
+      .mockImplementation(function (this: HTMLElement, options?: FocusOptions) {
+        if (!this.closest("[inert]")) nativeFocus.call(this, options);
+      });
+    try {
+      owner.setAttribute("inert", "");
+      click("assistant-close");
+      await settle(fixture);
+      expect(document.activeElement).not.toBe(part("assistant-launcher"));
+      owner.removeAttribute("inert");
+      await Promise.resolve();
+      expect(document.activeElement).toBe(part("assistant-launcher"));
+
+      const other = document.createElement("button");
+      document.body.append(other);
+      other.focus();
+      owner.setAttribute("inert", "");
+      owner.removeAttribute("inert");
+      await Promise.resolve();
+      expect(document.activeElement).toBe(other);
+    } finally {
+      focus.mockRestore();
+    }
+  });
   it.each(["panel", "floating", "sheet"] as const)(
     "keeps greeting, pending and streaming rows directly inside the %s list",
     async (presentation) => {

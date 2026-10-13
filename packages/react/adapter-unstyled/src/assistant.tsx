@@ -77,13 +77,20 @@ function AssistantInput({
 }: Readonly<TableAssistantComposerProps>) {
   return (
     <textarea
-      rows={2}
+      rows={1}
       aria-label={label}
       placeholder={placeholder}
       data-adapttable-part={part}
       className={className}
       value={value}
       disabled={disabled}
+      style={{
+        width: "100%",
+        minWidth: 0,
+        resize: "none",
+        fieldSizing: "content",
+        maxHeight: "8lh",
+      }}
       onChange={(event) => {
         onChange(event.target.value);
       }}
@@ -141,13 +148,25 @@ function AssistantSheet({
     if (!dialog) return;
     // jsdom and very old browsers have no showModal; the element still
     // renders, so the panel degrades to a nonmodal one rather than vanishing.
-    if (open && !dialog.open) dialog.showModal?.();
+    if (open && !dialog.open) {
+      if (typeof dialog.showModal === "function") dialog.showModal();
+      else dialog.open = true;
+      dialog
+        .querySelector<HTMLElement>('[data-adapttable-part="assistant-input"]')
+        ?.focus();
+    }
     if (!open && dialog.open) dialog.close();
   }, [open]);
   return (
     <dialog
       ref={ref}
-      open={open}
+      style={{
+        inset: "auto 0 0",
+        margin: "0 auto",
+        inlineSize: "min(420px, 100%)",
+        blockSize: "85dvh",
+        maxBlockSize: "85dvh",
+      }}
       aria-label={label}
       dir={dir}
       data-adapttable-part={part}
@@ -179,7 +198,14 @@ function AssistantWindow({
       aria-label={label}
       data-adapttable-part={part}
       className={className}
-      style={{ margin: 0, padding: 0, border: 0, ...style }}
+      style={{
+        insetInlineStart: "auto",
+        insetBlockStart: "auto",
+        margin: 0,
+        padding: 0,
+        border: 0,
+        ...style,
+      }}
     >
       {children}
     </dialog>
@@ -246,17 +272,34 @@ function AssistantMenu({
   onSelect,
   maxHeight,
 }: Readonly<TableAssistantMenuProps>) {
+  const disclosure = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const element = disclosure.current;
+    if (!element) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || !element.open) return;
+      event.preventDefault();
+      event.stopPropagation();
+      element.open = false;
+      element.querySelector("summary")?.focus();
+    };
+    element.addEventListener("keydown", onKey);
+    return () => element.removeEventListener("keydown", onKey);
+  }, []);
   const close = (event: { currentTarget: HTMLElement }): void => {
     event.currentTarget.closest("details")?.removeAttribute("open");
   };
   return (
-    <details data-adapttable-part="assistant-examples">
+    <details ref={disclosure} data-adapttable-part="assistant-examples">
       <summary
         aria-label={label}
         title={label}
         data-adapttable-part={part}
         className={className}
         {...(disabled ? { "aria-disabled": true } : {})}
+        onClick={(event) => {
+          if (disabled) event.preventDefault();
+        }}
       >
         {icon}
       </summary>
@@ -268,6 +311,7 @@ function AssistantMenu({
           <li key={item.id}>
             <button
               type="button"
+              disabled={disabled}
               data-adapttable-part={item.part}
               onClick={(event) => {
                 close(event);

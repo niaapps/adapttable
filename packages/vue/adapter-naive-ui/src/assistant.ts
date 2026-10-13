@@ -10,6 +10,7 @@ import {
   TableAssistantChrome,
   type TableAssistantProps,
 } from "@adapttable/vue/adapter";
+import { useThemeVars } from "naive-ui";
 import { defineComponent, h, type PropType } from "vue";
 
 import {
@@ -18,8 +19,15 @@ import {
 } from "./assistant/controls";
 
 export const TableAssistant = defineComponent(
-  (props: TableAssistantProps) => () =>
-    h(TableAssistantChrome, { ...props, slots: naiveAssistantControls }),
+  (props: TableAssistantProps) => {
+    const theme = useThemeVars();
+    return () =>
+      h(TableAssistantChrome, {
+        ...props,
+        accent: props.accent ?? theme.value.primaryColor,
+        slots: naiveAssistantControls,
+      });
+  },
   {
     name: "NaiveTableAssistant",
     props: {

@@ -23,7 +23,11 @@ export const TableAssistant = defineComponent(
       { dir: props.dir },
       {
         default: () =>
-          h(TableAssistantChrome, { ...props, slots: shadcnAssistantControls }),
+          h(TableAssistantChrome, {
+            ...props,
+            accent: props.accent ?? "var(--primary)",
+            slots: shadcnAssistantControls,
+          }),
       }
     ),
   {

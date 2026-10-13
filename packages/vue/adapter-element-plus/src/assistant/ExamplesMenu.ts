@@ -35,6 +35,7 @@ export const ElementExamplesMenu = defineComponent(
     const active = useScopeActivity();
     const dropdown = shallowRef<DropdownInstance>();
     const trigger = shallowRef<HTMLElement | null>(null);
+    const open = shallowRef(false);
     let generation = 0;
     watch(
       [active, () => props.disabled, () => props.items, () => props.onSelect],
@@ -67,6 +68,9 @@ export const ElementExamplesMenu = defineComponent(
           hideTimeout: 0,
           disabled: props.disabled,
           maxHeight: props.maxHeight,
+          onVisibleChange: (value: boolean) => {
+            open.value = value;
+          },
           onCommand: (id: unknown) => {
             if (
               current() &&
@@ -89,8 +93,11 @@ export const ElementExamplesMenu = defineComponent(
                 title: props.label,
                 class: props.className,
                 "data-adapttable-part": props.part,
+                onKeydown: (event: KeyboardEvent) => {
+                  if (open.value) keydown(event);
+                },
               },
-              [props.icon, props.label]
+              [props.icon ?? props.label]
             ),
           dropdown: () =>
             h(

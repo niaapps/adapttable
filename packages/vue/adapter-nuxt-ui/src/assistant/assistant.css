@@ -1,4 +1,7 @@
 @layer components {
+  .adapttable-nuxt-assistant-menu {
+    z-index: 70;
+  }
   .adapttable-nuxt-assistant-panel,
   .adapttable-nuxt-assistant-window {
     display: flex;

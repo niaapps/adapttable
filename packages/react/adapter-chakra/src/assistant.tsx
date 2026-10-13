@@ -106,8 +106,11 @@ function AssistantInput({
 }: Readonly<TableAssistantComposerProps>) {
   return (
     <Textarea
-      rows={2}
-      resize="vertical"
+      rows={1}
+      minH="0"
+      fieldSizing="content"
+      maxH="8lh"
+      resize="none"
       aria-label={label}
       placeholder={placeholder}
       data-adapttable-part={part}

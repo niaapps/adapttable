@@ -356,6 +356,50 @@ describe("TableAssistant", () => {
 });
 
 describe("the native controls", () => {
+  it("dismisses shortcuts with Escape before closing the assistant", async () => {
+    const onOpenChange = vi.fn();
+    mount(
+      <TableAssistant
+        assistant={view()}
+        labels={defaultLabels}
+        open
+        onOpenChange={onOpenChange}
+      />
+    );
+    const trigger = part("assistant-examples-menu")!;
+    const disclosure = trigger.closest("details")!;
+    fireEvent.click(trigger);
+    disclosure.open = true;
+    fireEvent.keyDown(trigger, { key: "ArrowDown" });
+    expect(disclosure.open).toBe(true);
+    fireEvent.keyDown(part("assistant-examples-item")!, { key: "Escape" });
+    await Promise.resolve();
+    expect(disclosure.open).toBe(false);
+    expect(document.activeElement).toBe(trigger);
+    expect(onOpenChange).not.toHaveBeenCalled();
+    fireEvent.keyDown(trigger, { key: "Escape" });
+    await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
+  });
+
+  it("blocks shortcut activation while connecting", () => {
+    const runSuggestion = vi.fn();
+    mount(
+      <TableAssistant
+        assistant={view({ status: "connecting", runSuggestion })}
+        labels={defaultLabels}
+        open
+        onOpenChange={() => undefined}
+      />
+    );
+    const trigger = part("assistant-examples-menu")!;
+    expect(trigger).toHaveAttribute("aria-disabled", "true");
+    expect(fireEvent.click(trigger)).toBe(false);
+    expect(trigger.closest("details")!.open).toBe(false);
+    expect(part("assistant-examples-item")).toBeDisabled();
+    fireEvent.click(part("assistant-examples-item")!);
+    expect(runSuggestion).not.toHaveBeenCalled();
+  });
+
   it("reports what the reader types", () => {
     const setDraft = vi.fn();
     mount(
@@ -501,6 +545,8 @@ describe("the dictation language chooser", () => {
     expect(
       document.querySelector('[aria-label="Dictation language"]')
     ).not.toBeNull();
+    fireEvent.change(chip!, { target: { value: "ar-SA" } });
+    expect(speech.setLanguage).toHaveBeenCalledWith("ar-SA");
   });
 
   it("draws no chip when there is only one language to choose", () => {

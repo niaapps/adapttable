@@ -1,12 +1,17 @@
 /** One composer and keyboard contract for every Vue kit. */
 import { resolveLabels } from "@adapttable/core";
 import {
+  ASSISTANT_EXAMPLES_ICON,
+  ASSISTANT_SEND_ICON,
+  ASSISTANT_STOP_ICON,
   assistantComposerState,
   assistantIsBusy,
   assistantIsUsable,
+  assistantMicIcon,
 } from "@adapttable/core/binding";
 import { h } from "vue";
 
+import { assistantIcon } from "./assistantIcon";
 import type { TableAssistantProps, TableAssistantSlots } from "./contracts";
 export interface AssistantComposerProps extends Pick<
   TableAssistantProps,
@@ -23,6 +28,9 @@ function speechButton(props: AssistantComposerProps, usable: boolean) {
   return props.slots.Button({
     label: listening ? copy.assistantVoiceStop : copy.assistantVoiceStart,
     part: "assistant-voice",
+    icon: assistantIcon(assistantMicIcon(listening)),
+    iconOnly: true,
+    variant: listening ? "primary" : "subtle",
     disabled: !usable && !listening,
     onClick: listening ? speech.stop : speech.start,
   });
@@ -46,6 +54,10 @@ export function AssistantComposer(props: AssistantComposerProps) {
         display: "flex",
         alignItems: "flex-end",
         gap: "0.35em",
+        padding: "0.35em 0.35em 0.35em 0.6em",
+        borderRadius: "1.1em",
+        border: "1px solid color-mix(in srgb, currentColor 22%, transparent)",
+        background: "color-mix(in srgb, currentColor 3%, transparent)",
         flexShrink: 0,
         minWidth: 0,
       },
@@ -57,6 +69,13 @@ export function AssistantComposer(props: AssistantComposerProps) {
           "data-adapttable-part": "assistant-voice-status",
           role: "status",
           "aria-live": "polite",
+          style: {
+            position: "absolute",
+            inlineSize: "1px",
+            blockSize: "1px",
+            overflow: "hidden",
+            clipPath: "inset(50%)",
+          },
         },
         listening ? copy.assistantVoiceListening : ""
       ),
@@ -64,6 +83,7 @@ export function AssistantComposer(props: AssistantComposerProps) {
         ? slots.Menu({
             label: copy.assistantExamples,
             part: "assistant-examples-menu",
+            icon: assistantIcon(ASSISTANT_EXAMPLES_ICON),
             disabled: !usable || busy,
             maxHeight: "min(22em, 50vh)",
             items: assistant.suggestions.map((item) => ({
@@ -117,6 +137,9 @@ export function AssistantComposer(props: AssistantComposerProps) {
         ? slots.Button({
             label: copy.assistantStop,
             part: "assistant-stop",
+            icon: assistantIcon(ASSISTANT_STOP_ICON),
+            iconOnly: true,
+            variant: "secondary",
             onClick: assistant.stop,
           })
         : slots.Button({
@@ -124,6 +147,9 @@ export function AssistantComposer(props: AssistantComposerProps) {
               ? copy.assistantAnswerSend
               : copy.assistantSend,
             part: "assistant-send",
+            icon: assistantIcon(ASSISTANT_SEND_ICON),
+            iconOnly: true,
+            variant: "primary",
             disabled: !usable || !assistant.draft.trim(),
             onClick: send,
           }),

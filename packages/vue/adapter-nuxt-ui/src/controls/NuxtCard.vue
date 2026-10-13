@@ -8,12 +8,15 @@ import { useNuxtDensity } from "../densityContext";
 import { withoutAttrs } from "./attrs";
 
 defineOptions({ inheritAttrs: false });
-const props = defineProps<{ attrs: Attrs }>();
+const props = defineProps<{ attrs: Attrs; stretchBody?: boolean }>();
 const card = shallowRef<{ $el: unknown } | null>(null);
 const density = useNuxtDensity();
-const cardUi = computed(() =>
-  density.value === "compact" ? { body: "p-3 sm:p-3" } : undefined
-);
+const cardUi = computed(() => ({
+  body: [
+    density.value === "compact" ? "p-3 sm:p-3" : "",
+    props.stretchBody ? "flex min-h-0 flex-1 flex-col" : "",
+  ].join(" "),
+}));
 const attrs = computed(() => toVueAttrs(withoutAttrs(props.attrs, ["ref"])));
 function owner(): ElementRef<HTMLElement> | undefined {
   const ref = props.attrs.ref;

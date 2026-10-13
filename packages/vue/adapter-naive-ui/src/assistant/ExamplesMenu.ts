@@ -173,7 +173,7 @@ export const NaiveExamplesMenu = defineComponent(
                   if (active.value && !props.disabled) open.value = !open.value;
                 },
               },
-              [props.icon, props.label]
+              [props.icon ?? props.label]
             ),
           default: () => menuCard(props, card, keydown, choose),
         }

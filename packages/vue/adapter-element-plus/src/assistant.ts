@@ -19,7 +19,11 @@ import {
 
 export const TableAssistant = defineComponent(
   (props: TableAssistantProps) => () =>
-    h(TableAssistantChrome, { ...props, slots: elementAssistantControls }),
+    h(TableAssistantChrome, {
+      ...props,
+      accent: props.accent ?? "var(--el-color-primary)",
+      slots: elementAssistantControls,
+    }),
   {
     name: "ElementTableAssistant",
     props: {

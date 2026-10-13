@@ -178,6 +178,8 @@ export class AdaptAssistantMenu {
     // (undocumented)
     protected readonly inheritedDirection: Directionality;
     // (undocumented)
+    protected onMenuKeyDown(event: KeyboardEvent): void;
+    // (undocumented)
     readonly props: InputSignal<TableAssistantMenuProps>;
     // (undocumented)
     protected select(id: string): void;

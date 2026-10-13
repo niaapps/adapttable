@@ -44,7 +44,7 @@ export const shadcnAssistantControls: TableAssistantSlots = {
       class: ["resize-none", props.className],
       modelValue: props.value,
       disabled: props.disabled,
-      rows: 2,
+      rows: 1,
       "onUpdate:modelValue": (value: string | number) =>
         props.onChange(String(value)),
       onKeydown: props.onKeyDown,

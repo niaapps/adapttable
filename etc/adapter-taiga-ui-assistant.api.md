@@ -236,6 +236,18 @@ export class AdaptAssistantWindow {
     // (undocumented)
     readonly props: InputSignal<TableAssistantWindowProps>;
     // (undocumented)
+    protected readonly windowStyle: Signal<    {
+    zIndex: string;
+    position?: "absolute" | "fixed" | undefined;
+    insetBlockEnd?: string | undefined;
+    insetInlineEnd?: string | undefined;
+    inlineSize?: string;
+    blockSize?: string;
+    display?: "flex" | undefined;
+    flexDirection?: "column";
+    minHeight?: number;
+    }>;
+    // (undocumented)
     static ɵcmp: i0.ɵɵComponentDeclaration<AdaptAssistantWindow, "adapt-assistant-window", never, {
         "props": {
             "alias": "props";

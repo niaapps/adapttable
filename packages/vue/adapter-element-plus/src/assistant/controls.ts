@@ -41,7 +41,7 @@ export const elementAssistantControls: TableAssistantSlots = {
   Composer: (props) =>
     h(ElementInput, {
       type: "textarea",
-      rows: 2,
+      rows: 1,
       value: props.value,
       disabled: props.disabled,
       "data-adapttable-part": props.part,

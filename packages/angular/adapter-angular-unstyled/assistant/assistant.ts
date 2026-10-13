@@ -72,14 +72,15 @@ export class AdaptAssistantButton {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
   template: `<textarea
-    rows="2"
+    autofocus
+    rows="1"
     [attr.aria-label]="props().label"
     [placeholder]="props().placeholder"
     [attr.data-adapttable-part]="props().part"
     [class]="props().className"
     [value]="props().value"
     [disabled]="props().disabled === true"
-    style="width:100%;min-width:0;box-sizing:border-box;font:inherit;resize:vertical"
+    style="width:100%;min-width:0;box-sizing:border-box;font:inherit;resize:none;field-sizing:content;max-height:8lh"
     (input)="changed($event)"
     (keydown)="props().onKeyDown($event)"
   ></textarea>`,
@@ -153,6 +154,11 @@ export class AdaptAssistantSheet {
       if (this.props().open && !dialog.open) {
         if (typeof dialog.showModal === "function") dialog.showModal();
         else dialog.open = true;
+        dialog
+          .querySelector<HTMLElement>(
+            '[data-adapttable-part="assistant-input"]'
+          )
+          ?.focus();
       } else if (!this.props().open && dialog.open) {
         if (typeof dialog.close === "function") dialog.close();
         else dialog.open = false;

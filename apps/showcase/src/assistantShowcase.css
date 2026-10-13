@@ -18,14 +18,172 @@
   box-shadow: none;
 }
 
+/* Match the Mantine reference's composition with each adapter's real controls.
+ * This is application styling of public parts, including portaled surfaces. */
+.mx-assistant-layout [data-adapttable-part="assistant-header"] {
+  gap: 8px;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-title"] {
+  font-weight: 650;
+  font-size: 16px;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-composer"] {
+  align-items: center;
+  min-block-size: 44px;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-composer"]:focus-within {
+  outline: 2px solid var(--adapttable-assistant-accent, var(--brand));
+  outline-offset: 2px;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-input-container"] > * {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-composer"] textarea {
+  min-block-size: 24px;
+  max-block-size: 8lh;
+  resize: none;
+  field-sizing: content;
+  font: inherit;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+}
+.mx-assistant-layout
+  [data-adapttable-part="assistant-input-container"]
+  :is(
+    .n-input,
+    .el-textarea__inner,
+    .rt-TextAreaRoot,
+    .v-field,
+    .q-field__control,
+    .mdc-text-field,
+    .t-input,
+    tui-textfield
+  ) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding-block: 0;
+  min-block-size: 32px;
+}
+.mx-assistant-layout
+  [data-adapttable-part="assistant-input-container"]
+  :is(
+    .n-input__border,
+    .n-input__state-border,
+    .v-field__outline,
+    .mdc-notched-outline,
+    .mat-mdc-form-field-subscript-wrapper
+  ) {
+  display: none;
+}
+.mx-assistant-layout
+  [data-adapttable-part="assistant-input-container"]
+  .mat-mdc-form-field-infix {
+  min-block-size: 32px;
+  padding-block: 4px;
+}
+.mx-assistant-layout
+  [data-adapttable-part="assistant-input-container"]
+  :is(.v-field__input, .n-input__textarea-el) {
+  min-block-size: 24px;
+  padding-block: 6px;
+}
+.mx-assistant-layout
+  :is(
+    [data-adapttable-part="assistant-close"],
+    [data-adapttable-part="assistant-settings"],
+    [data-adapttable-part="assistant-examples-menu"],
+    [data-adapttable-part="assistant-send"],
+    [data-adapttable-part="assistant-stop"],
+    [data-adapttable-part="assistant-voice"]
+  ) {
+  inline-size: 32px;
+  min-inline-size: 32px;
+  block-size: 32px;
+  min-block-size: 32px;
+  padding: 6px;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-connection"] {
+  font-size: 10px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-receipts-group"] {
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--adapttable-assistant-accent, currentColor) 22%,
+      transparent
+    );
+  border-radius: 12px;
+  background: color-mix(
+    in srgb,
+    var(--adapttable-assistant-accent, currentColor) 5%,
+    transparent
+  );
+}
+.mx-assistant-layout [data-adapttable-part="assistant-receipts-heading"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-receipts"] {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-receipt"] {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 8px;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-receipt-summary"] {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  flex: 1 1 180px;
+  min-inline-size: 0;
+  gap: 4px 8px;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-receipt-detail-text"] {
+  font-size: 12px;
+  opacity: 0.7;
+}
+.mx-assistant-layout [data-adapttable-part="assistant-message-trailing"] {
+  display: inline-flex;
+  margin-inline-start: 6px;
+}
+.mx-assistant-layout
+  [data-adapttable-part="assistant-header"]
+  :is(button, [role="button"]),
+.mx-assistant-layout
+  [data-adapttable-part="assistant-composer"]
+  :is(button, summary) {
+  flex-shrink: 0;
+}
+
 /* Native HTML is styled by this application, including teleported windows. */
 .mx-native-assistant {
   --ai-accent: var(--brand);
+  --adapttable-assistant-accent: var(--brand);
   box-sizing: border-box;
   color: var(--ink);
   background: var(--page-surface);
   border: 1px solid var(--page-border);
-  border-radius: 16px;
+  border-radius: 8px;
   box-shadow: 0 16px 48px rgb(0 0 0 / 16%);
   padding: 14px;
   font: 14px/1.5 var(--font-sans);
@@ -40,7 +198,13 @@
   font-weight: 650;
 }
 .mx-native-assistant [data-adapttable-part="assistant-connection"] {
-  font-size: 12px;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 650;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: color-mix(in srgb, currentColor 6%, transparent);
   color: var(--ink-3);
 }
 .mx-native-assistant [data-adapttable-part="assistant-conversation"] {
@@ -81,13 +245,14 @@
 .mx-native-assistant textarea {
   width: 100%;
   min-width: 0;
-  min-height: 44px;
+  min-height: 24px;
   max-height: 140px;
-  resize: vertical;
-  padding: 8px;
-  background: var(--page-surface);
-  border: 1px solid var(--page-border);
-  border-radius: 8px;
+  resize: none;
+  padding: 6px 4px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  field-sizing: content;
 }
 .mx-native-assistant [data-adapttable-part="assistant-examples"] {
   position: relative;
@@ -134,8 +299,35 @@
   background: color-mix(in srgb, var(--brand) 10%, var(--page-surface));
 }
 .mx-native-assistant [data-adapttable-part="assistant-composer"] {
-  padding: 8px 0 0;
-  border-top: 1px solid var(--page-border);
+  outline-offset: 2px;
+}
+.mx-native-assistant [data-adapttable-part="assistant-composer"]:focus-within {
+  outline: 2px solid var(--brand);
+}
+.mx-native-assistant [data-adapttable-part="assistant-input"]:focus-visible {
+  outline: none;
+}
+.mx-native-assistant
+  :is(
+    [data-adapttable-part="assistant-close"],
+    [data-adapttable-part="assistant-settings"],
+    [data-adapttable-part="assistant-examples-menu"],
+    [data-adapttable-part="assistant-send"],
+    [data-adapttable-part="assistant-stop"]
+  ) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  min-block-size: 32px;
+  flex-shrink: 0;
+  padding: 6px;
+  border: 0;
+  background: transparent;
+}
+.mx-native-assistant [data-adapttable-part="assistant-send"] {
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+  color: var(--brand);
 }
 .mx-native-assistant [data-adapttable-part="assistant-panel"] {
   height: 520px;
@@ -207,30 +399,10 @@ dialog.mx-native-assistant > [data-adapttable-part="assistant-surface"] {
   font: 14px/1.6 var(--font-sans);
 }
 
-/* Message entry fills the pane; actions stay in their own compact row. */
-.mx-native-assistant [data-adapttable-part="assistant-composer"] {
-  flex-wrap: wrap;
-  gap: 8px;
-  padding-block-start: 12px;
-}
-.mx-native-assistant [data-adapttable-part="assistant-input-container"] {
-  order: -1;
-  flex-basis: 100%;
-}
-.mx-native-assistant textarea {
-  min-block-size: 72px;
-  max-block-size: 160px;
-  resize: none;
-  padding: 12px;
-  line-height: 1.5;
-}
-.mx-native-assistant [data-adapttable-part="assistant-send"],
-.mx-native-assistant [data-adapttable-part="assistant-stop"] {
-  margin-inline-start: auto;
-}
 .mx-native-assistant [data-adapttable-part="assistant-message-trailing"] {
-  display: block;
-  margin-block-start: 8px;
+  display: inline-flex;
+  margin-inline-start: 6px;
+  margin-block-start: 0;
 }
 .mx-native-assistant [data-adapttable-part="assistant-receipts-group"] {
   border: 1px solid var(--page-border);

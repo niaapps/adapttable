@@ -666,6 +666,7 @@
   inline-size: min(28rem, 100%);
   min-block-size: 24rem;
   overflow: hidden;
+  padding: 0.75rem;
 }
 .at-reka-assistant-sheet {
   position: fixed;

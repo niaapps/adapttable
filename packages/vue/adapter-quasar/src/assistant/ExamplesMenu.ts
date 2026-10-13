@@ -150,7 +150,7 @@ export const QuasarExamplesMenu = defineComponent(
             "data-adapttable-part": props.part,
           },
         },
-        () => [props.icon, props.label, menu]
+        () => [props.icon ?? props.label, menu]
       );
     };
   },

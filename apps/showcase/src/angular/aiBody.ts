@@ -184,12 +184,11 @@ export class AiBody {
     onOpenChange: (open) => this.open.set(open),
     presentation: "floating",
     className: ["unstyled", "aria"].includes(this.kit.key)
-      ? "mx-native-assistant"
-      : undefined,
+      ? "mx-assistant-layout mx-native-assistant"
+      : "mx-assistant-layout",
     dir: this.direction,
     labels: this.presentation.labels,
-    note: "Scripted locally. Table changes and host writes are real.",
-    greeting: "What would you like to do with these people?",
+    greeting: "",
   }));
 
   readonly features = [

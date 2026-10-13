@@ -32,6 +32,7 @@ const surface = (
   h(
     NuxtCard,
     {
+      stretchBody: true,
       attrs: {
         role: "region",
         "data-adapttable-part": props.part,

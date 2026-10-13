@@ -80,15 +80,17 @@ export class AdaptAssistantButton {
   host: { style: "display: contents" },
   template: `<mat-form-field appearance="outline" subscriptSizing="dynamic">
     <textarea
+      autofocus
+      cdkFocusInitial
       matInput
-      rows="2"
+      rows="1"
       [attr.aria-label]="props().label"
       [placeholder]="props().placeholder"
       [attr.data-adapttable-part]="props().part"
       [class]="props().className"
       [value]="props().value"
       [disabled]="props().disabled === true"
-      style="width:100%;min-width:0;box-sizing:border-box;font:inherit;resize:vertical"
+      style="width:100%;min-width:0;box-sizing:border-box;font:inherit;resize:none;field-sizing:content;max-height:8lh"
       (input)="changed($event)"
       (keydown)="props().onKeyDown($event)"
     ></textarea>
@@ -168,12 +170,13 @@ export class AdaptAssistantSheet {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
   template: `<mat-card
+    appearance="outlined"
     role="dialog"
     [attr.aria-label]="props().label"
     [attr.data-adapttable-part]="props().part"
     [class]="props().className"
     [style]="props().style"
-    style="margin:0;padding:0;border:0"
+    style="margin:0;padding:12px"
   >
     <ng-container [ngTemplateOutlet]="props().children" />
   </mat-card>`,

@@ -524,6 +524,93 @@ function showActions(): void {
 }
 
 describe("the launcher", () => {
+  it.each(["container", "settings"])(
+    "finishes the kit handoff while respecting focus on %s",
+    (target) => {
+      const frames: FrameRequestCallback[] = [];
+      const scheduled = vi
+        .spyOn(globalThis, "requestAnimationFrame")
+        .mockImplementation((callback) => {
+          frames.push(callback);
+          return frames.length;
+        });
+      try {
+        mount({ onSettings: () => undefined });
+        const composer = part("assistant-input")!;
+        const next =
+          target === "container"
+            ? part("assistant-surface")!
+            : part("assistant-settings")!;
+        if (target === "container") next.setAttribute("tabindex", "-1");
+        next.focus();
+        for (const frame of frames) frame(0);
+        expect(document.activeElement).toBe(
+          target === "container" ? composer : next
+        );
+      } finally {
+        scheduled.mockRestore();
+      }
+    }
+  );
+  it("finishes initial focus when a connecting session becomes ready without stealing focus on later turns", () => {
+    const props = {
+      slots: tableAssistantTestSlots,
+      labels: defaultLabels,
+      open: true,
+      onOpenChange: () => undefined,
+      onSettings: () => undefined,
+    };
+    const { rerender } = render(
+      <TableAssistantChrome
+        {...props}
+        assistant={view({ status: "connecting" })}
+      />
+    );
+    expect(part("assistant-input")).toBeDisabled();
+    rerender(<TableAssistantChrome {...props} assistant={view()} />);
+    expect(part("assistant-input")).toHaveFocus();
+    part("assistant-settings")?.focus();
+    rerender(
+      <TableAssistantChrome
+        {...props}
+        assistant={view({ status: "sending" })}
+      />
+    );
+    expect(part("assistant-settings")).toHaveFocus();
+  });
+  it("does not focus a retired surface from a queued opening handoff", () => {
+    const frames: FrameRequestCallback[] = [];
+    const scheduled = vi
+      .spyOn(globalThis, "requestAnimationFrame")
+      .mockImplementation((callback) => {
+        frames.push(callback);
+        return frames.length;
+      });
+    try {
+      const rendered = render(
+        <TableAssistantChrome
+          slots={tableAssistantTestSlots}
+          labels={defaultLabels}
+          assistant={view()}
+          open
+          onOpenChange={() => undefined}
+        />
+      );
+      const composer = part("assistant-input")!;
+      const focused = vi.spyOn(composer, "focus");
+      const next = document.createElement("button");
+      document.body.append(next);
+      next.focus();
+      rendered.unmount();
+      for (const frame of frames) frame(0);
+      expect(focused).not.toHaveBeenCalled();
+      expect(document.activeElement).toBe(next);
+      focused.mockRestore();
+      next.remove();
+    } finally {
+      scheduled.mockRestore();
+    }
+  });
   it("is the only thing shown while the panel is closed", () => {
     mount({ open: false });
 
@@ -611,14 +698,15 @@ describe("the header", () => {
 });
 
 describe("Escape", () => {
-  it("closes the panel", () => {
+  it("closes the panel", async () => {
     const { onOpenChange } = mount();
     fireEvent.keyDown(part("assistant-surface")!, { key: "Escape" });
+    await Promise.resolve();
 
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it("leaves an inner overlay's Escape alone", () => {
+  it("leaves an inner overlay's Escape alone", async () => {
     const { onOpenChange } = mount();
     // A kit popover inside the panel answers first and marks the key
     // handled. Closing the whole panel too would dismiss two things with one
@@ -629,13 +717,15 @@ describe("Escape", () => {
       event.preventDefault();
     });
     fireEvent.keyDown(inner, { key: "Escape" });
+    await Promise.resolve();
 
     expect(onOpenChange).not.toHaveBeenCalled();
   });
 
-  it("still closes when nothing inside handled the key", () => {
+  it("still closes when nothing inside handled the key", async () => {
     const { onOpenChange } = mount();
     fireEvent.keyDown(part("assistant-input")!, { key: "Escape" });
+    await Promise.resolve();
 
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });

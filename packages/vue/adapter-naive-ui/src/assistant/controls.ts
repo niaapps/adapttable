@@ -70,7 +70,7 @@ export const naiveAssistantControls: TableAssistantSlots = {
         placeholder: props.placeholder,
         class: props.className,
         disabled: props.disabled,
-        rows: 2,
+        rows: 1,
         onKeydown: props.onKeyDown,
       },
       onChange: props.onChange,
