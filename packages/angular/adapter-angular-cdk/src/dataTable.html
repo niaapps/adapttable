@@ -63,6 +63,25 @@
             }
           </select>
         </label>
+        <button
+          cdkMonitorElementFocus
+          data-adapttable-cdk-control
+          type="button"
+          data-adapttable-part="sort-direction"
+          [disabled]="!v.table.sortBy()"
+          [attr.aria-label]="
+            v.table.sortDir() === 'desc'
+              ? v.table.labels().sortAscending
+              : v.table.labels().sortDescending
+          "
+          (click)="sortDirection()"
+        >
+          {{
+            v.table.sortDir() === "desc"
+              ? v.table.labels().sortDescending
+              : v.table.labels().sortAscending
+          }}
+        </button>
       }
       @if (v.filters; as f) {
         <ng-template #filtersTrigger>

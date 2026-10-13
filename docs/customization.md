@@ -47,15 +47,16 @@ plain CSS, Tailwind, and shadcn tokens all work. The main parts are below;
 
 ### Toolbar & search
 
-| Part          | Element                                                                 |
-| ------------- | ----------------------------------------------------------------------- |
-| `root`        | The outer wrapper around the whole table.                               |
-| `toolbar`     | The toolbar row (search, filters, columns, views, your `toolbar`).      |
-| `searchField` | The search field wrapper (input + leading icon).                        |
-| `search`      | The search `<input>`.                                                   |
-| `searchIcon`  | The leading magnifying-glass icon.                                      |
-| `sortSelect`  | The mobile sort-by `<select>`.                                          |
-| `rowsPerPage` | Rows-per-page `<select>` (toolbar in infinite mode, footer when paged). |
+| Part            | Element                                                                     |
+| --------------- | --------------------------------------------------------------------------- |
+| `root`          | The outer wrapper around the whole table.                                   |
+| `toolbar`       | The toolbar row (search, filters, columns, views, your `toolbar`).          |
+| `searchField`   | The search field wrapper (input + leading icon).                            |
+| `search`        | The search `<input>`.                                                       |
+| `searchIcon`    | The leading magnifying-glass icon.                                          |
+| `sortSelect`    | The mobile sort-by `<select>`.                                              |
+| `sortDirection` | The mobile sort-direction button (`data-adapttable-part="sort-direction"`). |
+| `rowsPerPage`   | Rows-per-page `<select>` (toolbar in infinite mode, footer when paged).     |
 
 ### Filters
 

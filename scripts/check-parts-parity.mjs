@@ -206,12 +206,7 @@ const UNNAMED_IN_KITS = {};
  * have, each with the reason. A listed part must still be rendered by its kit
  * and still be missing from another native kit; otherwise the entry is stale.
  */
-const NATIVE_EXTRAS = {
-  "adapter-vue-unstyled": {
-    "sort-direction":
-      "Vue's mobile sort control toggles the direction with its own button; React and Angular mobile sorting uses the sort select alone.",
-  },
-};
+const NATIVE_EXTRAS = {};
 
 /** Every part named in one of the two accounted-for lists. */
 function accountedFor(groups) {

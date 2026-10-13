@@ -116,6 +116,7 @@ export const shadcnClassNames: {
     searchIcon: string;
     search: string;
     sortSelect: string;
+    sortDirection: string;
     rowsPerPage: string;
     filtersButton: string;
     addRow: string;

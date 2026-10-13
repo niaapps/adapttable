@@ -1503,6 +1503,15 @@ export abstract class AdaptDataTableShell<TRow> implements OnInit {
       );
   }
 
+  /** Reverse the current phone sort while preserving its selected column. */
+  protected sortDirection(): void {
+    const table = this.view()?.table;
+    if (!table?.sortBy()) return;
+    table
+      .source()
+      .setSort(table.sortBy(), table.sortDir() === "desc" ? "asc" : "desc");
+  }
+
   ngOnInit(): void {
     const resources = createFeatureResources(this.injector);
     const features = computed(

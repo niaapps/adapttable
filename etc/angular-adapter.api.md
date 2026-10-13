@@ -1965,6 +1965,7 @@ export abstract class AdaptDataTableShell<TRow> implements OnInit {
     protected readonly sidePanelSlot: FeatureSlotKey<Omit<SidePanelChromeProps<unknown, SidePanelEntry_2, KeyboardEvent>, "slots">>;
     readonly skeletonRows: InputSignal<number | undefined>;
     protected sortBy(event: Event | string): void;
+    protected sortDirection(): void;
     readonly source: InputSignal<TableSource<TRow> | Signal<TableSource<TRow>> | undefined>;
     protected readonly statusBarProps: Signal<{
         enabled: boolean;
