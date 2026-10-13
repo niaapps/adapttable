@@ -208,8 +208,6 @@ const UNNAMED_IN_KITS = {};
  */
 const NATIVE_EXTRAS = {
   "adapter-vue-unstyled": {
-    "row-edit-error":
-      "Vue's row-edit actions show the host's failed commit as a status; React and Angular surface edit errors on the cell editors only.",
     "batch-edit-error":
       "Vue's batch-edit bar shows the host's failed batch commit as a status; React and Angular have no batch-level error status.",
     "assistant-voice-error":

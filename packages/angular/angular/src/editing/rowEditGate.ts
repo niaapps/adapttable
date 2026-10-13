@@ -105,7 +105,7 @@ export interface BatchEditBarSlots {
       <span
         data-adapttable-part="row-edit-actions"
         [class]="className()"
-        style="display: inline-flex; gap: 4px"
+        style="display: inline-flex; flex-wrap: wrap; gap: 4px; min-width: 0"
       >
         @if (layout.showSave) {
           <ng-container
@@ -117,6 +117,14 @@ export interface BatchEditBarSlots {
           [adaptControl]="slots().Button"
           [adaptControlProps]="cancelProps()"
         />
+        @if (rowEditing().commit?.error; as error) {
+          <span
+            role="status"
+            data-adapttable-part="row-edit-error"
+            style="flex-basis: 100%; min-width: 0; overflow-wrap: anywhere"
+            >{{ error }}</span
+          >
+        }
       </span>
     }
   `,

@@ -243,6 +243,32 @@ afterEach(() => {
 });
 
 describe("AdaptRowEditActionsChrome", () => {
+  it.each(["retry", "cancel"])(
+    "announces a host failure and recovers through %s",
+    async (recovery) => {
+      const { host, settle } = await mount(RowHost);
+      host.onRowEdit.mockRejectedValueOnce(new Error("Host refused row"));
+      one("row-edit-begin").click();
+      await settle();
+      type("Ship it");
+      await settle();
+      one("row-edit-save").click();
+      await settle();
+      expect(one("row-edit-error").textContent).toContain("Host refused row");
+      expect(one("row-edit-error").getAttribute("role")).toBe("status");
+      expect((one("edit-cell-editor") as HTMLInputElement).value).toBe(
+        "Ship it"
+      );
+      one(recovery === "retry" ? "row-edit-save" : "row-edit-cancel").click();
+      await settle();
+      expect(part("row-edit-error")).toBeNull();
+      expect(part("row-edit-begin")).not.toBeNull();
+      expect(host.onRowEdit).toHaveBeenCalledTimes(
+        recovery === "retry" ? 2 : 1
+      );
+    }
+  );
+
   it("opens the row from begin and swaps to save and cancel", async () => {
     const { settle } = await mount(RowHost);
     expect(one("row-edit-begin").textContent.trim()).toBe("Edit row");

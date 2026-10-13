@@ -262,6 +262,23 @@ describe("useRowEditing", () => {
     expect(result.current.draftFor("title")).toBe("Other");
   });
 
+  it("repaints an unchanged draft as its host save starts, fails and is retried", async () => {
+    const onRowEdit = vi.fn().mockRejectedValueOnce(new Error("Save refused"));
+    const { result } = setup({ onRowEdit });
+    result.current.begin(TASK, "1");
+    result.current.setDraft("title", "Ship it");
+    const draft = result.current.signature;
+    result.current.save();
+    const pending = result.current.signature;
+    expect(pending).not.toBe(draft);
+    await Promise.resolve();
+    expect(result.current.commit?.error).toBe("Save refused");
+    expect(result.current.signature).not.toBe(pending);
+    expect(result.current.draftFor("title")).toBe("Ship it");
+    result.current.save();
+    expect(result.current.signature).toBe("");
+  });
+
   it("changes its signature so the open row repaints", () => {
     const { result } = setup();
     expect(result.current.signature).toBe("");

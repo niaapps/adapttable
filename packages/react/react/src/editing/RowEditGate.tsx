@@ -283,7 +283,7 @@ export function RowEditActionsChrome<TRow>({
     <span
       data-adapttable-part="row-edit-actions"
       className={className}
-      style={{ display: "inline-flex", gap: 4 }}
+      style={{ display: "inline-flex", flexWrap: "wrap", gap: 4, minWidth: 0 }}
     >
       {layout.showSave ? (
         <Button
@@ -307,6 +307,15 @@ export function RowEditActionsChrome<TRow>({
           controls.cancel();
         }}
       />
+      {options.rowEditing.commit?.error ? (
+        <span
+          role="status"
+          data-adapttable-part="row-edit-error"
+          style={{ flexBasis: "100%", minWidth: 0, overflowWrap: "anywhere" }}
+        >
+          {options.rowEditing.commit.error}
+        </span>
+      ) : null}
     </span>
   );
 }
