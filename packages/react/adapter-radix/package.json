@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/radix",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "description": "Radix Themes adapter for AdaptTable \u2014 a batteries-included Radix data table with sorting, filtering, URL state, selection, RTL, and dark mode.",
   "keywords": [
     "react",
@@ -462,7 +462,7 @@
   "dependencies": {
     "@adapttable/core": "3.9.1",
     "react-compiler-runtime": "^1.0.0",
-    "@adapttable/react": "1.7.1"
+    "@adapttable/react": "1.7.2"
   },
   "peerDependencies": {
     "@radix-ui/themes": "^3.0.0",

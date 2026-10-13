@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/react",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "Headless React binding and structural Chrome for AdaptTable. Hooks subscribe to the framework-neutral engine in @adapttable/core.",
   "keywords": [
     "react",

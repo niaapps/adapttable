@@ -1,5 +1,13 @@
 # @adapttable/angular-material
 
+## 0.2.3
+
+### Patch Changes
+
+- c8d10ab: Align assistant headers, composers, conversation alignment and viewport placement with the Mantine reference while retaining each adapter's native controls. Correct native dialog offsets, mobile focus handoff and nested shortcuts dismissal.
+- Updated dependencies [c8d10ab]
+  - @adapttable/angular@0.5.2
+
 ## 0.2.2
 
 ### Patch Changes
