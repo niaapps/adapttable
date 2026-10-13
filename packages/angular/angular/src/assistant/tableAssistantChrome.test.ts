@@ -695,6 +695,72 @@ describe("AdaptTableAssistantChrome", () => {
     await settle(fixture);
     expect(part("assistant-error")?.textContent?.trim()).toBe("fallback");
   });
+  it.each(["denied", "error"] as const)(
+    "announces %s while keeping typing and retry available",
+    async (status) => {
+      const setDraft = vi.fn();
+      const speech = {
+        available: true,
+        state: {
+          status,
+          language: "ar",
+          interim: "",
+          error: "تعذر تشغيل الإملاء",
+        },
+        languages: ["ar"],
+        start: vi.fn(),
+        stop: vi.fn(),
+        setLanguage: vi.fn(),
+      };
+      const fixture = await mounted(
+        { speech },
+        { draft: "Typed draft", setDraft }
+      );
+      expect(part("assistant-voice-error")?.textContent?.trim()).toBe(
+        "تعذر تشغيل الإملاء"
+      );
+      expect(part("assistant-voice-error")?.getAttribute("role")).toBe("alert");
+      const input = part("assistant-input") as HTMLTextAreaElement;
+      expect(input.value).toBe("Typed draft");
+      input.value = "Still typing";
+      input.dispatchEvent(new Event("input"));
+      expect(setDraft).toHaveBeenCalledWith("Still typing");
+      click("assistant-voice");
+      expect(speech.start).toHaveBeenCalledOnce();
+      fixture.componentInstance.extras.set({
+        speech: {
+          ...speech,
+          state: { status: "listening", language: "ar", interim: "" },
+        },
+      });
+      await settle(fixture);
+      expect(part("assistant-voice-error")).toBeNull();
+      click("assistant-close");
+      await settle(fixture);
+      expect(speech.stop).toHaveBeenCalled();
+    }
+  );
+
+  it("stops dictation when the host closes or unmounts the panel", async () => {
+    const speech = {
+      available: true,
+      state: { status: "listening" as const, language: "en", interim: "" },
+      languages: ["en"],
+      start: vi.fn(),
+      stop: vi.fn(),
+      setLanguage: vi.fn(),
+    };
+    const fixture = await mounted({ speech });
+    fixture.componentInstance.open.set(false);
+    await settle(fixture);
+    expect(speech.stop).toHaveBeenCalled();
+    speech.stop.mockClear();
+    fixture.componentInstance.open.set(true);
+    await settle(fixture);
+    fixture.destroy();
+    expect(speech.stop).toHaveBeenCalled();
+  });
+
   it("dictates, changes language, announces listening once and omits unavailable voice", async () => {
     const start = vi.fn();
     const stop = vi.fn();

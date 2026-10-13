@@ -2,7 +2,8 @@
   data-adapttable-part="assistant-composer"
   style="
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    align-items: stretch;
     gap: 0.35em;
     padding: 0.35em 0.35em 0.35em 0.6em;
     border-radius: 1.1em;
@@ -15,47 +16,61 @@
   "
 >
   <div
-    [adaptLiveRegion]="
-      listening()
-        ? (props().labels?.assistantVoiceListening ?? 'Listening')
-        : ''
-    "
-    part="assistant-voice-status"
-  ></div>
-  @if (menu(); as examples) {
-    @if (slots().Menu; as control) {
-      <ng-container [adaptControl]="control" [adaptControlProps]="examples" />
-    } @else {
-      <span data-adapttable-part="assistant-examples">
-        @for (item of exampleButtons(); track item.id) {
-          <ng-container
-            [adaptControl]="slots().Button"
-            [adaptControlProps]="item.button"
-          />
-        }
-      </span>
+    data-adapttable-part="assistant-composer-controls"
+    style="display: flex; align-items: flex-end; gap: 0.35em; min-width: 0"
+  >
+    <div
+      [adaptLiveRegion]="
+        listening()
+          ? (props().labels?.assistantVoiceListening ?? 'Listening')
+          : ''
+      "
+      part="assistant-voice-status"
+    ></div>
+    @if (menu(); as examples) {
+      @if (slots().Menu; as control) {
+        <ng-container [adaptControl]="control" [adaptControlProps]="examples" />
+      } @else {
+        <span data-adapttable-part="assistant-examples">
+          @for (item of exampleButtons(); track item.id) {
+            <ng-container
+              [adaptControl]="slots().Button"
+              [adaptControlProps]="item.button"
+            />
+          }
+        </span>
+      }
     }
-  }
-  <span
-    data-adapttable-part="assistant-input-container"
-    style="flex-grow: 1; flex-shrink: 1; min-width: 0; display: flex"
-    ><ng-container
-      [adaptControl]="slots().Composer"
-      [adaptControlProps]="composer()"
-  /></span>
-  @if (language(); as chip) {
-    @if (slots().LanguageChip; as control) {
-      <ng-container [adaptControl]="control" [adaptControlProps]="chip" />
+    <span
+      data-adapttable-part="assistant-input-container"
+      style="flex-grow: 1; flex-shrink: 1; min-width: 0; display: flex"
+      ><ng-container
+        [adaptControl]="slots().Composer"
+        [adaptControlProps]="composer()"
+    /></span>
+    @if (language(); as chip) {
+      @if (slots().LanguageChip; as control) {
+        <ng-container [adaptControl]="control" [adaptControlProps]="chip" />
+      }
     }
-  }
-  @if (props().speech?.available) {
+    @if (props().speech?.available) {
+      <ng-container
+        [adaptControl]="slots().Button"
+        [adaptControlProps]="microphone()"
+      />
+    }
     <ng-container
       [adaptControl]="slots().Button"
-      [adaptControlProps]="microphone()"
+      [adaptControlProps]="action()"
     />
+  </div>
+  @if (voiceError(); as error) {
+    <p
+      data-adapttable-part="assistant-voice-error"
+      role="alert"
+      style="margin: 0; min-width: 0; overflow-wrap: anywhere"
+    >
+      {{ error }}
+    </p>
   }
-  <ng-container
-    [adaptControl]="slots().Button"
-    [adaptControlProps]="action()"
-  />
 </div>

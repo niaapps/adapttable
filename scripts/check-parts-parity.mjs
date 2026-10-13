@@ -208,8 +208,6 @@ const UNNAMED_IN_KITS = {};
  */
 const NATIVE_EXTRAS = {
   "adapter-vue-unstyled": {
-    "assistant-voice-error":
-      "Vue's assistant composer names its voice-input error; React and Angular assistants show no voice-input error element.",
     "sort-direction":
       "Vue's mobile sort control toggles the direction with its own button; React and Angular mobile sorting uses the sort select alone.",
   },

@@ -98,7 +98,8 @@ export function AssistantComposer({
       data-adapttable-part="assistant-composer"
       style={{
         display: "flex",
-        alignItems: "flex-end",
+        flexDirection: "column",
+        alignItems: "stretch",
         gap: "0.35em",
         padding: "0.35em 0.35em 0.35em 0.6em",
         borderRadius: "1.1em",
@@ -110,90 +111,109 @@ export function AssistantComposer({
         flexShrink: 0,
       }}
     >
-      {/* Announced once when it starts, not on every interim result: a screen
+      <div
+        data-adapttable-part="assistant-composer-controls"
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          gap: "0.35em",
+          minWidth: 0,
+        }}
+      >
+        {/* Announced once when it starts, not on every interim result: a screen
           reader repeating every word heard is unusable. */}
-      <LiveRegion part="assistant-voice-status">
-        {listening ? (labels?.assistantVoiceListening ?? "Listening") : ""}
-      </LiveRegion>
-      {/* Where a reader looks when they do not know what to type. It leads the
+        <LiveRegion part="assistant-voice-status">
+          {listening ? (labels?.assistantVoiceListening ?? "Listening") : ""}
+        </LiveRegion>
+        {/* Where a reader looks when they do not know what to type. It leads the
           row rather than trailing it: the actions on the other end are what
           they press once they have written something. */}
-      {Menu && examples && examples.items.length > 0 ? (
-        <Menu
-          label={examples.label}
-          part="assistant-examples-menu"
-          icon={<ExamplesIcon />}
-          disabled={!usable}
-          items={examples.items}
-          onSelect={examples.onSelect}
-          maxHeight="min(22em, 50vh)"
-        />
-      ) : null}
-      {/* The input takes the room that is left. Without `minWidth: 0` a
+        {Menu && examples && examples.items.length > 0 ? (
+          <Menu
+            label={examples.label}
+            part="assistant-examples-menu"
+            icon={<ExamplesIcon />}
+            disabled={!usable}
+            items={examples.items}
+            onSelect={examples.onSelect}
+            maxHeight="min(22em, 50vh)"
+          />
+        ) : null}
+        {/* The input takes the room that is left. Without `minWidth: 0` a
           textarea's intrinsic width wins the flex negotiation and pushes Send
           off the end of a 400px window. */}
-      <span
-        data-adapttable-part="assistant-input-container"
-        style={{ flex: "1 1 auto", minWidth: 0, display: "flex" }}
-      >
-        <Composer
-          label={labels?.assistantPlaceholder ?? "Ask about this table…"}
-          placeholder={
-            placeholder ??
-            labels?.assistantPlaceholder ??
-            "Ask about this table…"
-          }
-          part="assistant-input"
-          value={draft}
-          disabled={!usable}
-          onChange={setDraft}
-          onKeyDown={onKeyDown}
-        />
-      </span>
-      {showChip && LanguageChip ? (
-        <LanguageChip
-          label={labels?.assistantVoiceLanguage ?? "Dictation language"}
-          value={speech.state.language}
-          options={speech.languages.map((value) => ({ value, label: value }))}
-          part="assistant-voice-language"
-          disabled={listening}
-          onChange={speech.setLanguage}
-        />
+        <span
+          data-adapttable-part="assistant-input-container"
+          style={{ flex: "1 1 auto", minWidth: 0, display: "flex" }}
+        >
+          <Composer
+            label={labels?.assistantPlaceholder ?? "Ask about this table…"}
+            placeholder={
+              placeholder ??
+              labels?.assistantPlaceholder ??
+              "Ask about this table…"
+            }
+            part="assistant-input"
+            value={draft}
+            disabled={!usable}
+            onChange={setDraft}
+            onKeyDown={onKeyDown}
+          />
+        </span>
+        {showChip && LanguageChip ? (
+          <LanguageChip
+            label={labels?.assistantVoiceLanguage ?? "Dictation language"}
+            value={speech.state.language}
+            options={speech.languages.map((value) => ({ value, label: value }))}
+            part="assistant-voice-language"
+            disabled={listening}
+            onChange={speech.setLanguage}
+          />
+        ) : null}
+        {speech?.available ? (
+          <Button
+            label={micLabel}
+            tooltip={micLabel}
+            part="assistant-voice"
+            variant={listening ? "primary" : "subtle"}
+            icon={<MicIcon listening={listening} />}
+            iconOnly
+            disabled={!usable}
+            onClick={listening ? speech.stop : speech.start}
+          />
+        ) : null}
+        {busy ? (
+          <Button
+            label={labels?.assistantStop ?? "Stop"}
+            tooltip={labels?.assistantStop ?? "Stop"}
+            part="assistant-stop"
+            variant="secondary"
+            icon={<StopIcon />}
+            iconOnly
+            onClick={onStop}
+          />
+        ) : (
+          <Button
+            label={labels?.assistantSend ?? "Send"}
+            tooltip={labels?.assistantSend ?? "Send"}
+            part="assistant-send"
+            variant="primary"
+            icon={<SendIcon />}
+            iconOnly
+            disabled={!usable || draft.trim() === ""}
+            onClick={onSend}
+          />
+        )}
+      </div>
+      {speech?.state.error ? (
+        <p
+          data-adapttable-part="assistant-voice-error"
+          role="alert"
+          style={{ margin: 0, minWidth: 0, overflowWrap: "anywhere" }}
+        >
+          {speech.state.error}
+        </p>
       ) : null}
-      {speech?.available ? (
-        <Button
-          label={micLabel}
-          tooltip={micLabel}
-          part="assistant-voice"
-          variant={listening ? "primary" : "subtle"}
-          icon={<MicIcon listening={listening} />}
-          iconOnly
-          disabled={!usable}
-          onClick={listening ? speech.stop : speech.start}
-        />
-      ) : null}
-      {busy ? (
-        <Button
-          label={labels?.assistantStop ?? "Stop"}
-          tooltip={labels?.assistantStop ?? "Stop"}
-          part="assistant-stop"
-          variant="secondary"
-          icon={<StopIcon />}
-          iconOnly
-          onClick={onStop}
-        />
-      ) : (
-        <Button
-          label={labels?.assistantSend ?? "Send"}
-          tooltip={labels?.assistantSend ?? "Send"}
-          part="assistant-send"
-          variant="primary"
-          icon={<SendIcon />}
-          iconOnly
-          disabled={!usable || draft.trim() === ""}
-          onClick={onSend}
-        />
-      )}
     </div>
   );
 }

@@ -14230,8 +14230,10 @@ its own recognizer can pass any object of that shape.
 
 ## How it works
 
-1. `useSpeechInput` builds one controller with `createSpeechInput` the first
-   time it renders with `voice` set, and disposes it on unmount.
+1. `useSpeechInput` creates a controller after mounting with `voice` set.
+   Turning voice off, changing its mode or language list, or unmounting
+   disposes that controller. Equivalent language lists retain active dictation;
+   React Strict Mode can clean up and recreate it safely.
 2. The panel draws the mic only when the handle's `available` is `true` —
    `voice` is set and this browser supports the chosen mode.
 3. Pressing the mic calls `start()`; pressing it again calls `stop()`.
@@ -14524,6 +14526,15 @@ These strings are the `TableLabels` keys `assistantVoiceStart`,
 `assistantVoiceStop`, `assistantVoiceListening` and `assistantVoiceLanguage`,
 translated by the `@adapttable/i18n` locales and overridable through the
 panel's `labels` prop.
+
+React, Angular and Vue panels render a supplied `speech.state.error` below
+the composer as an alert (`assistant-voice-error`). The message wraps without
+displacing the native input and buttons. A host can supply a localized error
+through its speech handle; the panel preserves that text. Permission denial
+and recognition failures retain the typed draft and allow a new dictation
+attempt. Unsupported browsers retain typing and omit the mic. Closing the
+panel or unmounting it stops recognition, including a controlled close by the
+host.
 
 ## Related
 
