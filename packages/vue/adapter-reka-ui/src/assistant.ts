@@ -23,7 +23,11 @@ export const TableAssistant = defineComponent(
       { dir: props.dir },
       {
         default: () =>
-          h(TableAssistantChrome, { ...props, slots: rekaAssistantControls }),
+          h(TableAssistantChrome, {
+            ...props,
+            accent: props.accent ?? "var(--at-reka-accent, #6d28d9)",
+            slots: rekaAssistantControls,
+          }),
       }
     ),
   {

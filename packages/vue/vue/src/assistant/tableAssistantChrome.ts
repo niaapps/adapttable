@@ -1,6 +1,8 @@
 /** Conversation structure, focus, placement and announcements with required kit controls. */
 import { resolveLabels } from "@adapttable/core";
 import {
+  ASSISTANT_CLOSE_ICON,
+  ASSISTANT_SETTINGS_ICON,
   assistantBadgeTone,
   assistantFloatingFits,
   assistantFloatingStyle,
@@ -31,6 +33,7 @@ import { useScopeActivity } from "../store";
 import { approvalIdentity } from "./approvalIdentity";
 import { ApprovalReviewChrome } from "./approvalReviewChrome";
 import { AssistantComposer } from "./assistantComposer";
+import { assistantIcon } from "./assistantIcon";
 import { AssistantMessage, speakerMark } from "./assistantMessages";
 import type {
   ApprovalReviewSlots,
@@ -270,7 +273,7 @@ function header(props: TableAssistantChromeProps, state: ChromeState) {
         "span",
         {
           "data-adapttable-part": "assistant-title",
-          style: { minWidth: 0, flex: "1 1 auto", overflowWrap: "anywhere" },
+          style: { minWidth: 0, fontWeight: 600, overflowWrap: "anywhere" },
         },
         copy.assistantTitle
       ),
@@ -279,15 +282,39 @@ function header(props: TableAssistantChromeProps, state: ChromeState) {
         part: "assistant-connection",
         tone: assistantBadgeTone(props.assistant.status),
       }),
-      props.onSettings
-        ? button(
-            props,
-            copy.assistantSettings,
-            "assistant-settings",
-            props.onSettings
-          )
-        : null,
-      button(props, copy.assistantClose, "assistant-close", state.close),
+      h(
+        "span",
+        {
+          style: {
+            marginInlineStart: "auto",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.15em",
+          },
+        },
+        [
+          props.onSettings
+            ? props.slots.Button({
+                label: copy.assistantSettings,
+                tooltip: copy.assistantSettings,
+                part: "assistant-settings",
+                icon: assistantIcon(ASSISTANT_SETTINGS_ICON),
+                iconOnly: true,
+                variant: "subtle",
+                onClick: props.onSettings,
+              })
+            : null,
+          props.slots.Button({
+            label: copy.assistantClose,
+            tooltip: copy.assistantClose,
+            part: "assistant-close",
+            icon: assistantIcon(ASSISTANT_CLOSE_ICON),
+            iconOnly: true,
+            variant: "subtle",
+            onClick: state.close,
+          }),
+        ]
+      ),
     ]
   );
 }

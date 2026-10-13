@@ -19,7 +19,11 @@ import {
 
 export const TableAssistant = defineComponent(
   (props: TableAssistantProps) => () =>
-    h(TableAssistantChrome, { ...props, slots: quasarAssistantControls }),
+    h(TableAssistantChrome, {
+      ...props,
+      accent: props.accent ?? "var(--q-primary)",
+      slots: quasarAssistantControls,
+    }),
   {
     name: "QuasarTableAssistant",
     props: {

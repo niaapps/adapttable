@@ -105,8 +105,9 @@ export class AdaptAssistantButton {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
   template: `<textarea
+    autofocus
     nz-input
-    rows="2"
+    rows="1"
     [attr.aria-label]="props().label"
     [placeholder]="props().placeholder"
     [attr.data-adapttable-part]="props().part"

@@ -40,6 +40,12 @@ const NativeSheet = defineComponent(
           "aria-label": props.label,
           class: props.className,
           dir: props.dir,
+          style: {
+            blockSize: "85dvh",
+            maxBlockSize: "85dvh",
+            inlineSize: "min(420px, calc(100% - 24px))",
+            boxSizing: "border-box",
+          },
           onCancel: (event: Event) => {
             event.preventDefault();
             props.onClose();
@@ -48,7 +54,11 @@ const NativeSheet = defineComponent(
             if (event.target === dialog.value) props.onClose();
           },
         },
-        [h("div", [props.children])]
+        [
+          h("div", { style: { height: "100%", minHeight: 0 } }, [
+            props.children,
+          ]),
+        ]
       );
   },
   {
@@ -104,7 +114,7 @@ export const nativeAssistantSlots: TableAssistantSlots = {
       class: props.className,
       value: props.value,
       disabled: props.disabled,
-      rows: 2,
+      rows: 1,
       onInput: (event: Event) => {
         if (event.target instanceof HTMLTextAreaElement)
           props.onChange(event.target.value);

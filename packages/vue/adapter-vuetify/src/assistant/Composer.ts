@@ -36,7 +36,7 @@ export const VuetifyAssistantComposer = defineComponent(
       h(
         VField,
         {
-          variant: "outlined",
+          variant: "plain",
           density: "compact",
           active: true,
           disabled: props.disabled,
@@ -56,7 +56,7 @@ export const VuetifyAssistantComposer = defineComponent(
               ...field,
               ref: textarea,
               value: props.value,
-              rows: 2,
+              rows: 1,
               placeholder: props.placeholder,
               disabled: props.disabled,
               "data-adapttable-part": props.part,

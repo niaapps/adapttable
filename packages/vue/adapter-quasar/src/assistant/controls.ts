@@ -62,6 +62,7 @@ export const quasarAssistantControls: TableAssistantSlots = {
     ),
   Composer: (props) =>
     h(QuasarInput, {
+      borderless: true,
       control: {
         type: "textarea",
         label: props.label,
@@ -70,7 +71,7 @@ export const quasarAssistantControls: TableAssistantSlots = {
           "data-adapttable-part": props.part,
           placeholder: props.placeholder,
           disabled: props.disabled,
-          rows: 2,
+          rows: 1,
           onKeydown: props.onKeyDown,
         },
         onChange: props.onChange,

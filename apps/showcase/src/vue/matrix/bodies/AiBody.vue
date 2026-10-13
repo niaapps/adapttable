@@ -298,12 +298,13 @@ const SurfaceChoice = () => surfaceChoice.value;
       :on-open-change="assistant.setOpen"
       presentation="floating"
       :class-name="
-        kit.key === 'vue-unstyled' ? 'mx-native-assistant' : undefined
+        kit.key === 'vue-unstyled'
+          ? 'mx-assistant-layout mx-native-assistant'
+          : 'mx-assistant-layout'
       "
       :dir="SHOWCASE_PRESENTATION.dir"
       :labels="SHOWCASE_PRESENTATION.labels"
-      note="Scripted locally. Table changes and host writes are real."
-      greeting="What would you like to do with these people?"
+      greeting=""
     />
   </div>
 </template>

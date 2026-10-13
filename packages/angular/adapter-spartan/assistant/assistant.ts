@@ -89,15 +89,16 @@ export class AdaptAssistantButton {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
   template: `<textarea
+    autofocus
     adaptHlmInput
-    rows="2"
+    rows="1"
     [attr.aria-label]="props().label"
     [placeholder]="props().placeholder"
     [attr.data-adapttable-part]="props().part"
     [class]="props().className"
     [value]="props().value"
     [disabled]="props().disabled === true"
-    style="width:100%;min-width:0;box-sizing:border-box;font:inherit;resize:vertical"
+    style="width:100%;min-width:0;box-sizing:border-box;font:inherit;resize:none;field-sizing:content;max-height:8lh"
     (input)="changed($event)"
     (keydown)="props().onKeyDown($event)"
   ></textarea>`,
@@ -151,6 +152,11 @@ export class AdaptAssistantPanel {
   host: { style: "display: contents" },
   template: `<div
     brnDialog
+    [autoFocus]="
+      props().part === 'assistant-sheet'
+        ? '[data-adapttable-part=assistant-input]'
+        : 'first-tabbable'
+    "
     [state]="props().open ? 'open' : 'closed'"
     (stateChanged)="$event === 'closed' && props().onClose()"
   >
@@ -192,7 +198,7 @@ export class AdaptAssistantSheet {
     [attr.data-adapttable-part]="props().part"
     [class]="props().className"
     [style]="props().style"
-    style="margin:0;padding:0;border:0"
+    style="margin:0;padding:12px"
   >
     <ng-container [ngTemplateOutlet]="props().children" />
   </section>`,
@@ -245,6 +251,7 @@ export class AdaptAssistantLanguageChip {
   host: { style: "display: contents" },
   template: `<div
     brnPopover
+    align="start"
     [adaptHlmPopoverLabel]="props().label"
     #details="brnPopover"
     data-adapttable-part="assistant-examples"
@@ -267,7 +274,7 @@ export class AdaptAssistantLanguageChip {
         data-adapttable-kit="spartan"
         data-spartan-part="assistant-examples-list"
         [style.max-height]="props().maxHeight"
-        style="overflow-y:auto"
+        style="overflow-y:auto;list-style:none;margin:0;padding:4px;min-inline-size:200px"
       >
         @for (item of props().items; track item.id) {
           <li>

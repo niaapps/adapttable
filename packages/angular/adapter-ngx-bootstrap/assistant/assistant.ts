@@ -85,15 +85,16 @@ export class AdaptAssistantButton {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
   template: `<textarea
+    autofocus
     class="form-control form-control-sm"
-    rows="2"
+    rows="1"
     [attr.aria-label]="props().label"
     [placeholder]="props().placeholder"
     [attr.data-adapttable-part]="props().part"
     [class]="props().className"
     [value]="props().value"
     [disabled]="props().disabled === true"
-    style="width:100%;min-width:0;box-sizing:border-box;font:inherit;resize:vertical"
+    style="width:100%;min-width:0;box-sizing:border-box;font:inherit;resize:none;field-sizing:content;max-height:8lh;border:0;box-shadow:none;background:transparent"
     (input)="changed($event)"
     (keydown)="props().onKeyDown($event)"
   ></textarea>`,
@@ -191,7 +192,7 @@ export class AdaptAssistantSheet {
     [attr.data-adapttable-part]="props().part"
     [class]="props().className"
     [style]="props().style"
-    style="inset-inline-start:auto;inset-block-start:auto;margin:0;padding:0;border:0"
+    style="inset-inline-start:auto;inset-block-start:auto;margin:0;padding:12px"
   >
     <ng-container [ngTemplateOutlet]="props().children" />
   </section>`,
@@ -243,11 +244,18 @@ export class AdaptAssistantLanguageChip {
     class="dropdown"
     [isDisabled]="props().disabled === true"
     [isAnimated]="false"
+    [dropup]="true"
     [container]="overlayContainer()"
     [autoClose]="true"
     [insideClick]="true"
     #dropdown="bs-dropdown"
     data-adapttable-part="assistant-examples"
+    (keydown.escape)="
+      dropdown.isOpen && $event.preventDefault();
+      dropdown.isOpen && $event.stopPropagation();
+      dropdown.hide();
+      trigger.focus()
+    "
   >
     <button
       class="btn btn-outline-secondary btn-sm"

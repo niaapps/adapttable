@@ -132,7 +132,7 @@ export const NativeExamplesMenu = defineComponent(
                 if (props.disabled || !active.value) event.preventDefault();
               },
             },
-            [props.icon, props.label]
+            [props.icon ?? props.label]
           ),
           h(
             "menu",

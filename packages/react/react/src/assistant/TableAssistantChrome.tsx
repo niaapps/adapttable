@@ -826,6 +826,14 @@ export function TableAssistantChrome({
   const wide = useFloatingFits();
   const launcherRef = useRef<HTMLElement | null>(null);
   const surfaceRef = useRef<HTMLDivElement | null>(null);
+  const [mountedSurface, setMountedSurface] = useState<HTMLDivElement | null>(
+    null
+  );
+  const focusedComposer = useRef<HTMLElement | null>(null);
+  const captureSurface = useCallback((element: HTMLDivElement | null) => {
+    surfaceRef.current = element;
+    setMountedSurface(element);
+  }, []);
   // Both optional, so both travel as spreads rather than undefined props.
   const given = present({ greeting, avatars });
   // The header and the transcript wear the same face, so the question of
@@ -848,12 +856,29 @@ export function TableAssistantChrome({
   // reader who pressed it is left on `body` and has to tab the whole page to
   // reach the thing they just opened. The composer is what they came for.
   useEffect(() => {
-    if (!open) return;
-    const composer = surfaceRef.current?.querySelector<HTMLElement>(
+    if (!open) {
+      focusedComposer.current = null;
+      return;
+    }
+    const composer = mountedSurface?.querySelector<HTMLElement>(
       '[data-adapttable-part="assistant-input"]'
     );
+    // Opening can precede session attachment. A disabled input cannot receive
+    // focus; finish the initial handoff once the controller becomes usable.
+    if (
+      !composer ||
+      composer.matches(":disabled") ||
+      focusedComposer.current === composer
+    )
+      return;
     composer?.focus();
-  }, [open]);
+    if (document.activeElement === composer) focusedComposer.current = composer;
+    const frame = requestAnimationFrame(() => {
+      composer.focus();
+      focusedComposer.current = composer;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [open, mountedSurface, assistant.status]);
 
   // Closing returns the reader where they were. Without this, focus falls to
   // the document and the next Tab starts from the top of the page.
@@ -863,24 +888,29 @@ export function TableAssistantChrome({
       '[data-adapttable-part="assistant-launcher"]'
     );
     trigger?.focus();
+    const frame = requestAnimationFrame(() => trigger?.focus());
+    return () => cancelAnimationFrame(frame);
   }, [open]);
 
   useEffect(() => {
-    if (!open) return;
-    const root = surfaceRef.current;
-    if (!root) return;
-    const onKey = (event: KeyboardEvent): void => {
-      // Only the innermost overlay answers Escape: a kit popover open inside
-      // the panel handles its own and stops this from seeing it.
-      if (event.key !== "Escape" || event.defaultPrevented) return;
-      event.preventDefault();
-      close();
+    if (!open || !mountedSurface) return;
+    let active = true;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      // Native listeners run before React's delegated handlers. Let the
+      // innermost kit menu consume Escape before deciding to close the pane.
+      queueMicrotask(() => {
+        if (!active || event.defaultPrevented) return;
+        event.preventDefault();
+        close();
+      });
     };
-    root.addEventListener("keydown", onKey);
+    mountedSurface.addEventListener("keydown", onKey);
     return () => {
-      root.removeEventListener("keydown", onKey);
+      active = false;
+      mountedSurface.removeEventListener("keydown", onKey);
     };
-  }, [open, close]);
+  }, [open, mountedSurface, close]);
 
   // A floating request that cannot fit becomes the kit's own modal sheet.
   // The switch is deliberate and only ever applies to `floating`: an explicit
@@ -919,7 +949,7 @@ export function TableAssistantChrome({
 
   const contents = (
     <div
-      ref={surfaceRef}
+      ref={captureSurface}
       data-adapttable-part="assistant-surface"
       style={{
         display: "flex",

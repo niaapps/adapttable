@@ -19,7 +19,11 @@ import {
 
 export const TableAssistant = defineComponent(
   (props: TableAssistantProps) => () =>
-    h(TableAssistantChrome, { ...props, slots: nuxtAssistantControls }),
+    h(TableAssistantChrome, {
+      ...props,
+      accent: props.accent ?? "var(--ui-primary)",
+      slots: nuxtAssistantControls,
+    }),
   {
     name: "NuxtTableAssistant",
     props: {

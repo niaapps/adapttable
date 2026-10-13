@@ -36,7 +36,7 @@ export const rekaAssistantControls: TableAssistantSlots = {
       class: ["at-reka-input", "at-reka-assistant-input", props.className],
       value: props.value,
       disabled: props.disabled,
-      rows: 2,
+      rows: 1,
       onInput: (event: Event) => {
         const target = event.currentTarget;
         if (target instanceof HTMLTextAreaElement) {

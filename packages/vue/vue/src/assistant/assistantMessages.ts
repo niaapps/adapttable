@@ -1,6 +1,7 @@
 /** Transcript and execution receipts. Backend text is always escaped Vue text. */
 import { resolveLabels, type TableLabels } from "@adapttable/core";
 import {
+  ASSISTANT_ACTIONS_ICON,
   ASSISTANT_AVATAR_ICON,
   assistantActionsName,
   assistantInitials,
@@ -65,6 +66,16 @@ export function speakerMark(
         blockSize: "1.9em",
         flexShrink: 0,
         overflow: "hidden",
+        borderRadius: "50%",
+        padding: "0.2em",
+        color:
+          role === "user"
+            ? "currentColor"
+            : "var(--adapttable-assistant-accent, currentColor)",
+        background:
+          role === "user"
+            ? "color-mix(in srgb, currentColor 10%, transparent)"
+            : "color-mix(in srgb, var(--adapttable-assistant-accent, currentColor) 14%, transparent)",
       },
     },
     [content]
@@ -320,7 +331,10 @@ function receiptGroup(
           visibility: state.tailInset === undefined ? "hidden" : "visible",
           inlineSize: "0.8em",
           blockSize: "0.42em",
-          background: "currentColor",
+          background: "inherit",
+          borderInlineStart: "1px solid",
+          borderBlockStart: "1px solid",
+          borderColor: "inherit",
           clipPath: "polygon(50% 0, 100% 100%, 0 100%)",
         },
       }),
@@ -358,6 +372,18 @@ function receiptGroup(
       ),
     ]
   );
+}
+function messagePresentation(mine: boolean) {
+  return {
+    columns: mine ? "minmax(0, 1fr) 1.9em" : "1.9em minmax(0, 1fr)",
+    markColumn: mine ? "2" : "1",
+    textColumn: mine ? "1" : "2",
+    alignment: mine ? "end" : "start",
+    radius: mine ? "1.1em 1.1em 0.35em 1.1em" : "1.1em 1.1em 1.1em 0.35em",
+    background: mine
+      ? "color-mix(in srgb, currentColor 10%, transparent)"
+      : "color-mix(in srgb, var(--adapttable-assistant-accent, currentColor) 14%, transparent)",
+  };
 }
 export const AssistantMessage = /*#__PURE__*/ defineComponent(
   (props: AssistantMessageProps) => {
@@ -471,6 +497,7 @@ export const AssistantMessage = /*#__PURE__*/ defineComponent(
           ),
         });
       const answer = props.onAnswer;
+      const presentation = messagePresentation(message.role === "user");
       return h(
         "li",
         {
@@ -478,7 +505,7 @@ export const AssistantMessage = /*#__PURE__*/ defineComponent(
           "data-role": message.role,
           style: {
             display: "grid",
-            gridTemplateColumns: "1.9em minmax(0, 1fr)",
+            gridTemplateColumns: presentation.columns,
             gap: "0.5em",
             alignItems: "start",
             minWidth: 0,
@@ -486,7 +513,16 @@ export const AssistantMessage = /*#__PURE__*/ defineComponent(
           "aria-busy": message.streaming ?? undefined,
         },
         [
-          speakerMark(props.avatars?.[message.role], message.role),
+          h(
+            "span",
+            {
+              style: {
+                gridColumn: presentation.markColumn,
+                gridRow: "1",
+              },
+            },
+            [speakerMark(props.avatars?.[message.role], message.role)]
+          ),
           h(
             "span",
             {
@@ -507,7 +543,13 @@ export const AssistantMessage = /*#__PURE__*/ defineComponent(
             {
               "data-adapttable-part": "assistant-message-text",
               style: {
-                gridColumn: "2",
+                gridColumn: presentation.textColumn,
+                gridRow: "1",
+                justifySelf: presentation.alignment,
+                maxInlineSize: "100%",
+                padding: "0.6em 0.8em",
+                borderRadius: presentation.radius,
+                background: presentation.background,
                 minWidth: 0,
                 margin: 0,
                 whiteSpace: "pre-wrap",
@@ -531,6 +573,9 @@ export const AssistantMessage = /*#__PURE__*/ defineComponent(
                           props.slots.Button({
                             label: assistantActionsName(receipts.length, copy),
                             part: "assistant-receipts-toggle-button",
+                            icon: assistantIcon(ASSISTANT_ACTIONS_ICON),
+                            iconOnly: true,
+                            variant: "subtle",
                             expanded: expanded.value,
                             onClick: actions.bind(
                               () => {

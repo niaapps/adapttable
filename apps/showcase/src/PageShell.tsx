@@ -3,29 +3,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type ReactNode, startTransition, useEffect, useState } from "react";
 
 import { DEMO_CONFIRM_EVENT, DEMO_NOTICE_EVENT, type DemoNotice } from "./data";
+import {
+  readShowcaseTheme,
+  storeShowcaseTheme,
+  updateShowcaseThemeUrl,
+} from "./matrix/theme";
 import { AppNav, Footer } from "./sections";
 import { StarTheRepo } from "./StarTheRepo";
 
 const queryClient = new QueryClient();
-
-const THEME_KEY = "adapttable-demo-theme";
-
-const readStoredTheme = (): boolean => {
-  try {
-    return window.localStorage.getItem(THEME_KEY) === "dark";
-  } catch {
-    return false;
-  }
-};
-
-const storeTheme = (dark: boolean): void => {
-  try {
-    window.localStorage.setItem(THEME_KEY, dark ? "dark" : "light");
-  } catch {
-    // Storage can be unavailable (private mode) — the theme simply
-    // won't persist across pages then.
-  }
-};
 
 /**
  * Shared chrome for every demo page: theme state, the app nav (page tabs),
@@ -45,7 +31,7 @@ export function PageShell({
 }>) {
   // Each demo page is its own static app, so the theme must live in
   // storage to survive page-to-page navigation.
-  const [dark, setDark] = useState(readStoredTheme);
+  const [dark, setDark] = useState(readShowcaseTheme);
   const [notice, setNotice] = useState<DemoNotice | null>(null);
   const [confirmRequest, setConfirmRequest] = useState<ConfirmRequest | null>(
     null
@@ -54,7 +40,7 @@ export function PageShell({
   useEffect(() => {
     document.documentElement.dataset.theme = dark ? "dark" : "light";
     document.documentElement.style.colorScheme = dark ? "dark" : "light";
-    storeTheme(dark);
+    storeShowcaseTheme(dark);
   }, [dark]);
 
   useEffect(() => {
@@ -80,7 +66,9 @@ export function PageShell({
         root={root}
         dark={dark}
         onToggleDark={() => {
-          startTransition(() => setDark((d) => !d));
+          const next = !dark;
+          updateShowcaseThemeUrl(next);
+          startTransition(() => setDark(next));
         }}
       />
       <main>{children(dark)}</main>

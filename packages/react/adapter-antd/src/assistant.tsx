@@ -25,6 +25,7 @@ import {
   Tooltip,
   Typography,
 } from "antd";
+import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 
 const TAG_COLOR: Record<string, string | undefined> = {
   neutral: undefined,
@@ -103,6 +104,7 @@ function AssistantInput({
 }: Readonly<TableAssistantComposerProps>) {
   return (
     <Input.TextArea
+      variant="borderless"
       autoSize={{ minRows: 1, maxRows: 6 }}
       aria-label={label}
       placeholder={placeholder}
@@ -177,7 +179,8 @@ function AssistantSheet({
       placement="bottom"
       open={open}
       onClose={onClose}
-      title={label}
+      aria-label={label}
+      closable={false}
       // antd's Drawer takes no `dir` of its own, and its own direction comes
       // from ConfigProvider — which a host may not have set for this subtree.
       // `rootStyle` reaches the portalled root, which is the element that has
@@ -285,11 +288,36 @@ function AssistantMenu({
   onSelect,
   maxHeight,
 }: Readonly<TableAssistantMenuProps>) {
+  const [open, setOpen] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const element = trigger.current;
+    if (!open || !element) return;
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      setOpen(false);
+      element.focus();
+    };
+    element.addEventListener("keydown", onKey);
+    return () => element.removeEventListener("keydown", onKey);
+  }, [open]);
+  const closeOnEscape = (event: KeyboardEvent<HTMLElement>) => {
+    if (!open || event.key !== "Escape") return;
+    event.preventDefault();
+    event.stopPropagation();
+    setOpen(false);
+    trigger.current?.focus();
+  };
   return (
     <Dropdown
+      open={open}
+      onOpenChange={setOpen}
       placement="topLeft"
       trigger={["click"]}
       menu={{
+        onKeyDown: closeOnEscape,
         items: items.map((item) => ({
           key: item.id,
           icon: item.icon,
@@ -305,6 +333,7 @@ function AssistantMenu({
           ),
         })),
         onClick: (event) => {
+          setOpen(false);
           onSelect(event.key);
         },
         style: { maxHeight, overflowY: "auto" },
@@ -312,6 +341,8 @@ function AssistantMenu({
     >
       <Tooltip title={label}>
         <Button
+          ref={trigger}
+          onKeyDown={closeOnEscape}
           type="text"
           size="small"
           aria-label={label}

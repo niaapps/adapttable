@@ -110,6 +110,7 @@ function AssistantInput({
   return (
     <TextField
       multiline
+      variant="standard"
       minRows={1}
       maxRows={6}
       size="small"
@@ -123,6 +124,7 @@ function AssistantInput({
       // an app styling or driving `assistant-input` means the textarea.
       slotProps={{
         htmlInput: { "aria-label": label, "data-adapttable-part": part },
+        input: { disableUnderline: true },
       }}
       onChange={(event) => {
         onChange(event.target.value);

@@ -28,7 +28,7 @@ function menuTrigger(props: TableAssistantMenuProps) {
         title: props.label,
         "data-adapttable-part": props.part,
       },
-      () => [props.icon, props.label]
+      () => [props.icon ?? props.label]
     )
   );
 }

@@ -19,7 +19,11 @@ import {
 
 export const TableAssistant = defineComponent(
   (props: TableAssistantProps) => () =>
-    h(TableAssistantChrome, { ...props, slots: vuetifyAssistantControls }),
+    h(TableAssistantChrome, {
+      ...props,
+      accent: props.accent ?? "rgb(var(--v-theme-primary))",
+      slots: vuetifyAssistantControls,
+    }),
   {
     name: "VuetifyTableAssistant",
     props: {

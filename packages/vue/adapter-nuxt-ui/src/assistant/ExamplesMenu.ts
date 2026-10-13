@@ -127,6 +127,7 @@ export const NuxtExamplesMenu = defineComponent(
       // Reka names its popover content a dialog; the menu is the list inside.
       const content = {
         "aria-label": props.label,
+        side: "top",
         align: "start",
         onOpenAutoFocus: focusFirst,
         onCloseAutoFocus: keepFocus,
@@ -150,7 +151,7 @@ export const NuxtExamplesMenu = defineComponent(
               },
             },
           },
-          () => [props.icon, props.label]
+          () => [props.icon ?? props.label]
         ),
         h(
           UPopover,

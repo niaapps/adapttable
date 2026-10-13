@@ -11,6 +11,8 @@
  * Every operation runs through the ordinary session executor against the live
  * revision, so what the reader sees happen to the rows is the real thing.
  */
+import "./assistantShowcase.css";
+
 import type {
   AgentCapabilityDefinition,
   AgentContextInputs,
@@ -504,7 +506,10 @@ function suggestionsFor(locale: Locale): AssistantSuggestion[] {
 
 function readRtl(): boolean {
   if (typeof window === "undefined") return false;
-  return new URLSearchParams(window.location.search).get("dir") === "rtl";
+  const params = new URLSearchParams(window.location.search);
+  return params.has("dir")
+    ? params.get("dir") === "rtl"
+    : params.get("locale") === "ar";
 }
 
 function applyField(row: StaffRow, key: string, value: unknown): StaffRow {
@@ -1307,6 +1312,11 @@ export function AiDemo({ dark, adapter }: Readonly<FeatureBodyProps>) {
           </Suspense>
           <div className="ai-demo__assistant">
             <Assistant
+              className={
+                ["tailwind", "shadcn", "unstyled"].includes(adapter)
+                  ? "mx-assistant-layout mx-native-assistant"
+                  : "mx-assistant-layout"
+              }
               assistant={assistant}
               labels={labels}
               dir={rtl ? "rtl" : "ltr"}

@@ -405,22 +405,61 @@ export class AdaptTableAssistantChrome {
     });
     let wasOpen: boolean | undefined;
     let previousSurface: HTMLElement | undefined;
-    afterRenderEffect(() => {
+    let restorePending = false;
+    afterRenderEffect((onCleanup) => {
       const open = this.props().open;
       const surface = this.surface()?.nativeElement;
       const anchor = this.launcherAnchor()?.nativeElement;
-      if (open && surface && (wasOpen !== true || previousSurface !== surface))
-        surface
-          .querySelector<HTMLElement>(
-            '[data-adapttable-part="assistant-input"]'
-          )
-          ?.focus();
-      if (!open && wasOpen !== false)
-        anchor
-          ?.querySelector<HTMLElement>(
+      if (open) restorePending = false;
+      if (
+        open &&
+        surface &&
+        (wasOpen !== true || previousSurface !== surface)
+      ) {
+        const composer = surface.querySelector<HTMLElement>(
+          '[data-adapttable-part="assistant-input"]'
+        );
+        composer?.focus();
+        // A kit may activate its focus trap after the embedded view mounts.
+        // Finish opening after that activation; never refocus during a turn.
+        const frame = requestAnimationFrame(() => {
+          if (this.props().open && this.surface()?.nativeElement === surface)
+            composer?.focus();
+        });
+        onCleanup(() => cancelAnimationFrame(frame));
+      }
+      if (
+        !open &&
+        (wasOpen !== false || previousSurface !== surface || restorePending)
+      ) {
+        restorePending = true;
+        let observer: MutationObserver | undefined;
+        const focusLauncher = () => {
+          if (this.props().open) return;
+          const target = anchor?.querySelector<HTMLElement>(
             '[data-adapttable-part="assistant-launcher"]'
-          )
-          ?.focus();
+          );
+          target?.focus({ preventScroll: true });
+          restorePending = !target?.matches(":focus");
+          if (!restorePending) observer?.disconnect();
+        };
+        focusLauncher();
+        const frame = requestAnimationFrame(focusLauncher);
+        // Native modals can keep the page inert until their exit animation
+        // finishes. Restore focus when that lock is released, not mid-exit.
+        const locked = anchor?.closest("[inert]");
+        if (locked && restorePending) {
+          observer = new MutationObserver(focusLauncher);
+          observer.observe(locked, {
+            attributes: true,
+            attributeFilter: ["inert"],
+          });
+        }
+        onCleanup(() => {
+          cancelAnimationFrame(frame);
+          observer?.disconnect();
+        });
+      }
       wasOpen = open;
       previousSurface = surface;
     });

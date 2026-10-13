@@ -10,6 +10,7 @@ defineOptions({ inheritAttrs: false });
 const props = defineProps<{
   control: QuasarInputControl;
   className?: string;
+  borderless?: boolean;
 }>();
 const input = shallowRef<InstanceType<typeof QInput> | null>(null);
 const id = `adapttable-quasar-${useId()}`;
@@ -44,7 +45,8 @@ const { presentation, update } = useQuasarPresentation(
     v-bind="attrs"
     :model-value="presentation"
     :type="control.type ?? 'text'"
-    outlined
+    :outlined="!borderless"
+    :borderless="borderless"
     dense
     hide-bottom-space
     @update:model-value="update"

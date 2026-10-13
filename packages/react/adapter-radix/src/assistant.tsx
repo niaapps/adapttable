@@ -88,6 +88,7 @@ function AssistantButton({
       type="button"
       size="1"
       variant={KIT_VARIANT[variant]}
+      {...(part === "assistant-back" ? { style: { margin: 0 } } : {})}
       aria-label={label}
       aria-expanded={expanded}
       data-adapttable-part={part}
@@ -113,7 +114,7 @@ function AssistantInput({
   return (
     <TextArea
       size="1"
-      rows={2}
+      rows={1}
       style={{ width: "100%" }}
       aria-label={label}
       placeholder={placeholder}
@@ -201,7 +202,17 @@ function AssistantSheet({
           minHeight: 0,
         }}
       >
-        <Dialog.Title style={{ margin: 0 }}>{label}</Dialog.Title>
+        <Dialog.Title
+          style={{
+            position: "absolute",
+            inlineSize: 1,
+            blockSize: 1,
+            overflow: "hidden",
+            clipPath: "inset(50%)",
+          }}
+        >
+          {label}
+        </Dialog.Title>
         {children}
       </Dialog.Content>
     </Dialog.Root>
@@ -222,7 +233,11 @@ function AssistantWindow({
       aria-label={label}
       data-adapttable-part={part}
       className={className}
-      style={{ ...style, boxShadow: "var(--shadow-5)" }}
+      style={{
+        ...style,
+        background: "var(--color-background)",
+        boxShadow: "var(--shadow-5)",
+      }}
     >
       {children}
     </Card>

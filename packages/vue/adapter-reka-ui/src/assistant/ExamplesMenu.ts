@@ -87,7 +87,7 @@ export const RekaExamplesMenu = defineComponent(
                 title: props.label,
                 "data-adapttable-part": props.part,
               },
-              { default: () => [props.icon, props.label] }
+              { default: () => [props.icon ?? props.label] }
             ),
             portal(),
           ],

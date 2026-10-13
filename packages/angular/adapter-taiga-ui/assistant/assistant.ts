@@ -26,6 +26,7 @@ import {
   viewChild,
 } from "@angular/core";
 import { TuiTitle } from "@taiga-ui/core";
+import { TuiBadge } from "@taiga-ui/kit";
 
 /** Taiga UI assistant controls over the shared Angular Chrome. */
 
@@ -81,11 +82,13 @@ export class AdaptAssistantButton {
   host: { style: "display: contents" },
   template: `<tui-textfield
     tuiTextfieldSize="s"
+    [tuiAppearanceFocus]="false"
     style="flex: 1; width: 100%; min-width: 0"
   >
     <textarea
+      autofocus
       tuiTextarea
-      [min]="2"
+      [min]="1"
       [max]="5"
       [attr.aria-label]="props().label"
       [placeholder]="props().placeholder"
@@ -106,13 +109,16 @@ export class AdaptAssistantInput {
   }
 }
 
-/** Native connection badge. @public */
+/** Taiga UI connection badge. @public */
 @Component({
-  imports: [...TAIGA_CONTROLS],
+  imports: [...TAIGA_CONTROLS, TuiBadge],
   selector: "adapt-assistant-badge",
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
   template: `<span
+    tuiBadge
+    size="s"
+    appearance="neutral"
     [attr.data-adapttable-part]="props().part"
     [attr.data-tone]="props().tone"
     [class]="props().className"
@@ -191,14 +197,20 @@ export class AdaptAssistantSheet {
       [attr.aria-label]="props().label"
       [attr.data-adapttable-part]="props().part"
       [class]="props().className"
-      [style]="props().style"
-      style="inset-inline-start:auto;inset-block-start:auto;margin:0;padding:0;border:0"
+      [style]="windowStyle()"
+      style="inset-inline-start:auto;inset-block-start:auto;margin:0;padding:12px;border:0;border-radius:var(--tui-radius-l);background:var(--tui-background-elevation-1);box-shadow:var(--tui-shadow-popup)"
     >
       <ng-container [ngTemplateOutlet]="props().children" /></section
   ></ng-template>`,
 })
 export class AdaptAssistantWindow {
   readonly props = input.required<TableAssistantWindowProps>();
+  // TuiPopup already supplies the overlay layer. A local stacking context
+  // would cover the kit's dropdowns mounted beside this window.
+  protected readonly windowStyle = computed(() => ({
+    ...this.props().style,
+    zIndex: "auto",
+  }));
 }
 
 /** Native dictation language selection. @public */
@@ -259,6 +271,8 @@ export class AdaptAssistantLanguageChip {
       appearance="secondary"
       type="button"
       [tuiDropdown]="menuContent"
+      tuiDropdownDirection="top"
+      tuiDropdownAlign="start"
       tuiDropdownRole="dialog"
       [adaptTaigaDropdownLabel]="props().label"
       [tuiDropdownOpen]="menuOpen()"
@@ -278,7 +292,7 @@ export class AdaptAssistantLanguageChip {
       <menu
         data-taiga-part="assistant-examples-list"
         [style.max-height]="props().maxHeight"
-        style="overflow-y:auto"
+        style="overflow-y:auto;list-style:none;margin:0;padding:4px"
       >
         @for (item of props().items; track item.id) {
           <li>

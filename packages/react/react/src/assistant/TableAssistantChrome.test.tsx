@@ -524,6 +524,32 @@ function showActions(): void {
 }
 
 describe("the launcher", () => {
+  it("finishes initial focus when a connecting session becomes ready without stealing focus on later turns", () => {
+    const props = {
+      slots: tableAssistantTestSlots,
+      labels: defaultLabels,
+      open: true,
+      onOpenChange: () => undefined,
+      onSettings: () => undefined,
+    };
+    const { rerender } = render(
+      <TableAssistantChrome
+        {...props}
+        assistant={view({ status: "connecting" })}
+      />
+    );
+    expect(part("assistant-input")).toBeDisabled();
+    rerender(<TableAssistantChrome {...props} assistant={view()} />);
+    expect(part("assistant-input")).toHaveFocus();
+    part("assistant-settings")?.focus();
+    rerender(
+      <TableAssistantChrome
+        {...props}
+        assistant={view({ status: "sending" })}
+      />
+    );
+    expect(part("assistant-settings")).toHaveFocus();
+  });
   it("is the only thing shown while the panel is closed", () => {
     mount({ open: false });
 
@@ -611,14 +637,15 @@ describe("the header", () => {
 });
 
 describe("Escape", () => {
-  it("closes the panel", () => {
+  it("closes the panel", async () => {
     const { onOpenChange } = mount();
     fireEvent.keyDown(part("assistant-surface")!, { key: "Escape" });
+    await Promise.resolve();
 
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it("leaves an inner overlay's Escape alone", () => {
+  it("leaves an inner overlay's Escape alone", async () => {
     const { onOpenChange } = mount();
     // A kit popover inside the panel answers first and marks the key
     // handled. Closing the whole panel too would dismiss two things with one
@@ -629,13 +656,15 @@ describe("Escape", () => {
       event.preventDefault();
     });
     fireEvent.keyDown(inner, { key: "Escape" });
+    await Promise.resolve();
 
     expect(onOpenChange).not.toHaveBeenCalled();
   });
 
-  it("still closes when nothing inside handled the key", () => {
+  it("still closes when nothing inside handled the key", async () => {
     const { onOpenChange } = mount();
     fireEvent.keyDown(part("assistant-input")!, { key: "Escape" });
+    await Promise.resolve();
 
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });

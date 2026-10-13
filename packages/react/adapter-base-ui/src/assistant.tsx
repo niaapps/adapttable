@@ -16,8 +16,10 @@ import {
 } from "@adapttable/react/adapter";
 import { Drawer } from "@base-ui/react/drawer";
 import { Menu } from "@base-ui/react/menu";
+import { useRef } from "react";
 
 import { NativeSelect } from "./components/primitives";
+import { ensureBaseUiDrawerStyles } from "./injectStyles";
 import { Badge, Button, Card, cx, IconButton } from "./ui";
 
 const BADGE_COLOR: Record<string, string> = {
@@ -97,9 +99,14 @@ function AssistantInput({
 }: Readonly<TableAssistantComposerProps>) {
   return (
     <textarea
-      rows={2}
+      rows={1}
       className={cx("adapttable-input", className)}
-      style={{ width: "100%", resize: "vertical" }}
+      style={{
+        width: "100%",
+        resize: "none",
+        fieldSizing: "content",
+        maxHeight: "8lh",
+      }}
       aria-label={label}
       placeholder={placeholder}
       data-adapttable-part={part}
@@ -141,7 +148,7 @@ function AssistantPanel({
     <Card
       aria-label={label}
       data-adapttable-part={part}
-      className={className}
+      className={cx("adapttable-base-ui", className)}
       style={{
         height: "100%",
         minHeight: 0,
@@ -163,6 +170,8 @@ function AssistantSheet({
   dir,
   children,
 }: Readonly<TableAssistantSheetProps>) {
+  ensureBaseUiDrawerStyles();
+  const popup = useRef<HTMLDivElement>(null);
   return (
     <Drawer.Root
       open={open}
@@ -175,10 +184,23 @@ function AssistantSheet({
         <Drawer.Backdrop className="adapttable-drawer-backdrop" />
         <Drawer.Viewport>
           <Drawer.Popup
+            ref={popup}
+            initialFocus={() =>
+              popup.current?.querySelector<HTMLElement>(
+                '[data-adapttable-part="assistant-input"]'
+              ) ?? true
+            }
             className={cx("adapttable-drawer", className)}
             dir={dir}
             data-adapttable-part={part}
-            style={{ height: "90dvh" }}
+            style={{
+              position: "fixed",
+              inset: "auto 0 0",
+              inlineSize: "100%",
+              maxInlineSize: "100%",
+              height: "90dvh",
+              overflow: "hidden",
+            }}
           >
             <Drawer.Content
               className="adapttable-drawer-content"
@@ -189,7 +211,16 @@ function AssistantSheet({
                 height: "100%",
               }}
             >
-              <Drawer.Title className="adapttable-drawer-title">
+              <Drawer.Title
+                className="adapttable-drawer-title"
+                style={{
+                  position: "absolute",
+                  inlineSize: 1,
+                  blockSize: 1,
+                  overflow: "hidden",
+                  clipPath: "inset(50%)",
+                }}
+              >
                 {label}
               </Drawer.Title>
               {children}
@@ -213,7 +244,7 @@ function AssistantWindow({
       role="dialog"
       aria-label={label}
       data-adapttable-part={part}
-      className={className}
+      className={cx("adapttable-base-ui", className)}
       style={{
         ...style,
         boxShadow: "var(--shadow-4, 0 10px 30px rgb(0 0 0 / 18%))",

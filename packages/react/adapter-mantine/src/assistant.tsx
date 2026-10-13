@@ -140,6 +140,7 @@ function AssistantInput({
 }: Readonly<TableAssistantComposerProps>) {
   return (
     <Textarea
+      data-autofocus
       rows={1}
       // Grows with what is typed, up to a cap, without Mantine's JS autosize:
       // that one listens to APIs jsdom does not implement, so every test that
@@ -232,7 +233,7 @@ function AssistantSheet({
         dir={dir}
         data-adapttable-part={part}
         className={className}
-        style={{ display: "flex", flexDirection: "column" }}
+        styles={{ content: { display: "flex", flexDirection: "column" } }}
       >
         {/* No Drawer.Header: the chrome draws one compact header — title,
             status, settings and close — and a kit header above it would say

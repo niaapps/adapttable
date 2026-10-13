@@ -78,16 +78,18 @@ export class AdaptAssistantButton {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
   template: `<textarea
+    autofocus
+    cdkFocusInitial
     cdkMonitorElementFocus
     data-adapttable-cdk-control
-    rows="2"
+    rows="1"
     [attr.aria-label]="props().label"
     [placeholder]="props().placeholder"
     [attr.data-adapttable-part]="props().part"
     [class]="props().className"
     [value]="props().value"
     [disabled]="props().disabled === true"
-    style="width:100%;min-width:0;box-sizing:border-box;font:inherit;resize:vertical"
+    style="width:100%;min-width:0;box-sizing:border-box;font:inherit;resize:none;field-sizing:content;max-height:8lh"
     (input)="changed($event)"
     (keydown)="props().onKeyDown($event)"
   ></textarea>`,
@@ -187,12 +189,13 @@ export class AdaptAssistantSheet {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
   template: `<dialog
+    class="adapt-cdk-surface"
     open
     [attr.aria-label]="props().label"
     [attr.data-adapttable-part]="props().part"
     [class]="props().className"
     [style]="props().style"
-    style="inset-inline-start:auto;inset-block-start:auto;margin:0;padding:0;border:0"
+    style="inset-inline-start:auto;inset-block-start:auto;margin:0;padding:12px"
   >
     <ng-container [ngTemplateOutlet]="props().children" />
   </dialog>`,
@@ -235,7 +238,10 @@ export class AdaptAssistantLanguageChip {
   imports: [A11yModule, AdaptCdkPopover, AdaptAssistantContent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
-  template: `<span data-adapttable-part="assistant-examples">
+  template: `<span
+    data-adapttable-part="assistant-examples"
+    (keydown)="onMenuKeyDown($event)"
+  >
     <adapt-cdk-popover
       [dir]="inheritedDirection.valueSignal()"
       [trigger]="trigger"
@@ -261,7 +267,7 @@ export class AdaptAssistantLanguageChip {
       <menu
         data-adapttable-part="assistant-examples-list"
         [style.max-height]="props().maxHeight"
-        style="overflow-y:auto"
+        style="overflow-y:auto;list-style:none;margin:0;padding:4px"
       >
         @for (item of props().items; track item.id) {
           <li>
@@ -290,6 +296,12 @@ export class AdaptAssistantMenu {
   protected readonly inheritedDirection = inject(Directionality);
   readonly props = input.required<TableAssistantMenuProps>();
   private readonly popover = viewChild.required(AdaptCdkPopover);
+  protected onMenuKeyDown(event: KeyboardEvent): void {
+    if (event.key !== "Escape" || !this.popover().open()) return;
+    event.preventDefault();
+    event.stopPropagation();
+    this.popover().close();
+  }
   protected select(id: string): void {
     if (this.props().disabled) return;
     this.popover().close();
