@@ -874,8 +874,17 @@ export function TableAssistantChrome({
     composer?.focus();
     if (document.activeElement === composer) focusedComposer.current = composer;
     const frame = requestAnimationFrame(() => {
+      const active = composer.ownerDocument.activeElement;
+      // A native focus trap may activate on the enclosing dialog. Finish
+      // that handoff, but respect a reader who already focused another control.
+      if (
+        !composer.isConnected ||
+        (active && active !== composer && !active.contains(composer))
+      )
+        return;
       composer.focus();
-      focusedComposer.current = composer;
+      if (composer.ownerDocument.activeElement === composer)
+        focusedComposer.current = composer;
     });
     return () => cancelAnimationFrame(frame);
   }, [open, mountedSurface, assistant.status]);
