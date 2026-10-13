@@ -98,6 +98,18 @@ export const nativeAssistantSlots: TableAssistantSlots = {
         "aria-expanded": props.expanded,
         title: props.tooltip,
         class: props.className,
+        style:
+          props.part === "assistant-launcher"
+            ? {
+                inlineSize: "56px",
+                blockSize: "56px",
+                padding: 0,
+                borderRadius: "50%",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }
+            : undefined,
         disabled: props.disabled,
         onClick: props.onClick,
       },

@@ -80,6 +80,30 @@ function view(): TableAssistantProps["assistant"] {
     runSuggestion: vi.fn(),
   };
 }
+it("keeps shortcuts discoverable when the host supplies no icon", async () => {
+  const selected = vi.fn();
+  mount(() =>
+    h("div", [
+      naiveAssistantControls.Menu({
+        label: "Shortcuts",
+        part: "assistant-examples-menu",
+        items: [
+          { id: "one", title: "Find Ada", part: "assistant-examples-item" },
+        ],
+        onSelect: selected,
+        maxHeight: "300px",
+      }),
+    ])
+  );
+  await flush();
+  const trigger = element<HTMLButtonElement>(part("assistant-examples-menu"));
+  expect(trigger.textContent?.trim()).toBe("Shortcuts");
+  trigger.click();
+  await flush();
+  element<HTMLButtonElement>(part("assistant-examples-item")).click();
+  await flush();
+  expect(selected).toHaveBeenCalledExactlyOnceWith("one");
+});
 it("selects a language through the genuine NSelect, then disables it while listening", async () => {
   const language = vi.fn();
   const start = vi.fn();

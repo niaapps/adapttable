@@ -346,6 +346,8 @@ function AssistantMenu({
           type="text"
           size="small"
           aria-label={label}
+          aria-haspopup="menu"
+          aria-expanded={open}
           data-adapttable-part={part}
           className={className}
           disabled={disabled}

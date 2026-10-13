@@ -65,6 +65,7 @@ export function speakerMark(
         inlineSize: "1.9em",
         blockSize: "1.9em",
         flexShrink: 0,
+        boxSizing: "border-box",
         overflow: "hidden",
         borderRadius: "50%",
         padding: "0.2em",
