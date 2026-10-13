@@ -228,7 +228,13 @@ export class AdaptRowEditActionsChrome<TRow> {
       <div
         data-adapttable-part="batch-edit-bar"
         [class]="className()"
-        style="display: flex; align-items: center; gap: 0.5em"
+        [attr.aria-busy]="
+          batch().commit?.phase === 'saving' ||
+          batch().commit?.phase === 'validating'
+            ? 'true'
+            : null
+        "
+        style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em"
       >
         <output data-adapttable-part="batch-edit-count">{{ m.count }}</output>
         @if (m.conflictMessage !== undefined) {
@@ -245,6 +251,14 @@ export class AdaptRowEditActionsChrome<TRow> {
           [adaptControl]="slots().Button"
           [adaptControlProps]="cancelProps()"
         />
+        @if (batch().commit?.error; as error) {
+          <span
+            role="status"
+            data-adapttable-part="batch-edit-error"
+            style="flex-basis: 100%; min-width: 0; overflow-wrap: anywhere"
+            >{{ error }}</span
+          >
+        }
       </div>
     }
   `,

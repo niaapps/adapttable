@@ -208,8 +208,6 @@ const UNNAMED_IN_KITS = {};
  */
 const NATIVE_EXTRAS = {
   "adapter-vue-unstyled": {
-    "batch-edit-error":
-      "Vue's batch-edit bar shows the host's failed batch commit as a status; React and Angular have no batch-level error status.",
     "assistant-voice-error":
       "Vue's assistant composer names its voice-input error; React and Angular assistants show no voice-input error element.",
     "sort-direction":

@@ -370,3 +370,46 @@ it("reconciles grouped data leaves using a feature-supplied conflict policy", as
   expect(all("edit-cell-conflict")).toHaveLength(0);
   expect(onCellEdit).not.toHaveBeenCalled();
 });
+
+for (const mobile of [false, true]) {
+  it.each(["retry", "cancel"])(
+    `reconciles an accepted row after partial failure (${mobile ? "phone" : "desktop"}, %s)`,
+    async (recovery) => {
+      const onBatchEdit = vi
+        .fn()
+        .mockRejectedValueOnce(new Error("Second row refused"));
+      const { host, settle } = await mount(mobile, [batchEditing(onBatchEdit)]);
+      const second = { ...ROW, id: "2", title: "Test" };
+      host.rows.set([ROW, second]);
+      await settle();
+      type("Ship it", 0);
+      type("Test it", 2);
+      await settle();
+      one("batch-edit-save").click();
+      await vi.waitFor(async () => {
+        await settle();
+        expect(one("batch-edit-error").textContent).toContain(
+          "Second row refused"
+        );
+      });
+      host.rows.set([{ ...ROW, title: "Ship it" }, second]);
+      await settle();
+      expect(all("batch-edit-save")).toHaveLength(0);
+      expect(field(2).value).toBe("Test it");
+      one("edit-cell-take-theirs").click();
+      await settle();
+      expect(one("batch-edit-count").textContent).toContain("1 unsaved row");
+      one(
+        recovery === "retry" ? "batch-edit-save" : "batch-edit-cancel"
+      ).click();
+      await settle();
+      expect(all("batch-edit-bar")).toHaveLength(0);
+      expect(field(0).value).toBe("Ship it");
+      expect(onBatchEdit).toHaveBeenCalledTimes(recovery === "retry" ? 2 : 1);
+      if (recovery === "retry")
+        expect(onBatchEdit).toHaveBeenLastCalledWith([
+          { row: second, rowId: "2", patch: { title: "Test it" } },
+        ]);
+    }
+  );
+}

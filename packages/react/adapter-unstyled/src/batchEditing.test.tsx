@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { DataTable } from "./data-table.test-utils";
@@ -55,6 +55,45 @@ describe("batch editing (unstyled)", () => {
     );
     return { onBatchEdit };
   };
+
+  for (const mobile of [false, true]) {
+    it.each(["retry", "cancel"])(
+      `keeps rejected batch drafts and offers recovery (${mobile ? "phone" : "desktop"}, %s)`,
+      async (recovery) => {
+        let rejectSave: (error: Error) => void = (error) => {
+          throw error;
+        };
+        const pending = new Promise<void>((_, reject) => {
+          rejectSave = reject;
+        });
+        const onBatchEdit = vi.fn().mockReturnValueOnce(pending);
+        table({ forceMobile: mobile, onBatchEdit });
+        fireEvent.change(editors()[0]!, { target: { value: "Ship it" } });
+        fireEvent.change(editors()[2]!, { target: { value: "Test it" } });
+        fireEvent.click(part("batch-edit-save")!);
+        fireEvent.click(part("batch-edit-save")!);
+        expect(onBatchEdit).toHaveBeenCalledOnce();
+        expect(part("batch-edit-bar")).toHaveAttribute("aria-busy", "true");
+        rejectSave(new Error("Batch save refused"));
+        await waitFor(() =>
+          expect(part("batch-edit-error")).toHaveTextContent(
+            "Batch save refused"
+          )
+        );
+        expect(part("batch-edit-error")).toHaveAttribute("role", "status");
+        expect(editors()[0]!).toHaveValue("Ship it");
+        expect(editors()[2]!).toHaveValue("Test it");
+        expect(part("batch-edit-count")).toHaveTextContent("2");
+        fireEvent.click(
+          part(recovery === "retry" ? "batch-edit-save" : "batch-edit-cancel")!
+        );
+        await waitFor(() => expect(part("batch-edit-bar")).toBeNull());
+        expect(onBatchEdit).toHaveBeenCalledTimes(recovery === "retry" ? 2 : 1);
+        expect(editors()[0]!).toHaveValue("Ship");
+        expect(editors()[2]!).toHaveValue("Test");
+      }
+    );
+  }
 
   it("opens every editable cell as a field, with nothing pending", () => {
     table();

@@ -6285,7 +6285,15 @@ rows". A value typed back to what it was stops counting. Changed cells carry
 
 Labels: `pendingRows(count)`, `saveAll`, `cancelAll` — localized in every locale.
 Parts: `batch-edit-cell`, `batch-edit-bar`, `batch-edit-count`,
-`batch-edit-save`, `batch-edit-cancel`.
+`batch-edit-save`, `batch-edit-cancel`, `batch-edit-error`.
+
+The bar exposes a busy state during a pending save and announces a rejected
+host save in `batch-edit-error`. Drafts remain available for retry or cancel;
+repeated Save clicks while a request is pending do not send another request.
+If the host has confirmed only part of a batch, reconcile those incoming rows
+with **Take theirs** before retrying: the accepted edits leave the pending
+batch, and only the remaining edits are sent. Cancel discards the remaining
+drafts while retaining the host's already applied rows.
 
 `batchEditing` is also its own entry, `@adapttable/<kit>/batch-editing`, for a
 table that wants only the batch mode.
