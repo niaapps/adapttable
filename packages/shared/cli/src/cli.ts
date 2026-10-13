@@ -8,6 +8,7 @@ import {
 } from "node:fs";
 import { dirname, extname, relative, resolve } from "node:path";
 
+import { KITS } from "./detect";
 import { InitError, type InitIO, runInit } from "./init";
 import { migrateV3Source } from "./migrateV3";
 
@@ -153,7 +154,7 @@ function main(argv: readonly string[]): number {
     command === "help"
   ) {
     console.log(
-      "Usage:\n  adapttable init [--force]\n  adapttable migrate-v3 [paths...] [--check]\n\nScaffold a table or migrate the provably safe parts of v2 source."
+      "Usage:\n  adapttable init [--force] [--kit <kit>]\n  adapttable migrate-v3 [paths...] [--check]\n\nScaffold a table or migrate the provably safe parts of v2 source."
     );
     return 0;
   }
@@ -169,7 +170,18 @@ function main(argv: readonly string[]): number {
       return runMigrateV3(process.cwd(), argv.slice(1));
     }
     const io = createNodeIO(process.cwd());
-    runInit(io, { force: argv.includes("--force") });
+    let kit;
+    for (let index = 1; index < argv.length; index++) {
+      const argument = argv[index];
+      if (argument === "--force") continue;
+      if (argument !== "--kit")
+        throw new InitError(`Unknown init option: ${argument}`);
+      const name = argv[++index];
+      kit = KITS.find((entry) => entry.kit === name)?.kit;
+      if (kit === undefined)
+        throw new InitError(`Unknown kit: ${name ?? "(missing --kit value)"}`);
+    }
+    runInit(io, { force: argv.includes("--force"), kit });
     return 0;
   } catch (error) {
     const message = error instanceof InitError ? error.message : String(error);

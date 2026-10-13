@@ -6,7 +6,16 @@
         "^build",
         "@adapttable/angular#build",
         "@adapttable/angular-unstyled#build",
-        "@adapttable/ng-zorro#build"
+        "@adapttable/ng-zorro#build",
+        "@adapttable/vue#build",
+        "@adapttable/vue-unstyled#build",
+        "@adapttable/element-plus#build",
+        "@adapttable/naive-ui#build",
+        "@adapttable/nuxt-ui#build",
+        "@adapttable/quasar#build",
+        "@adapttable/reka-ui#build",
+        "@adapttable/shadcn-vue#build",
+        "@adapttable/vuetify#build"
       ]
     },
     "test:coverage": {
@@ -14,7 +23,16 @@
         "^build",
         "@adapttable/angular#build",
         "@adapttable/angular-unstyled#build",
-        "@adapttable/ng-zorro#build"
+        "@adapttable/ng-zorro#build",
+        "@adapttable/vue#build",
+        "@adapttable/vue-unstyled#build",
+        "@adapttable/element-plus#build",
+        "@adapttable/naive-ui#build",
+        "@adapttable/nuxt-ui#build",
+        "@adapttable/quasar#build",
+        "@adapttable/reka-ui#build",
+        "@adapttable/shadcn-vue#build",
+        "@adapttable/vuetify#build"
       ]
     }
   }

@@ -29,22 +29,100 @@ Requires Node.js **22.12.0 or newer**; packed releases are tested on Node 22.12 
 
 - **Detects Angular** only when `package.json` lists `@angular/core` in
   dependencies or devDependencies **and** `angular.json` is present.
-  Otherwise it keeps the React scaffold.
+  Otherwise a declared `vue` dependency selects the Vue scaffold; other
+  projects retain React. Nuxt applications are recognized and receive a module
+  setup link without writing plain Vite provider files.
 - **Detects your UI kit** from `package.json` — Mantine, MUI, Chakra, Ant
   Design, Radix Themes, Base UI, shadcn/ui (via `components.json`), or
-  Tailwind for React; NG-ZORRO or native unstyled controls for Angular.
+  Tailwind for React; all nine shipped Angular kits; Vue Unstyled, Element Plus,
+  Vuetify, Naive UI, Reka UI, shadcn-vue, Nuxt UI and Quasar for plain Vue/Vite.
   Kit detection stays within the detected framework, including in mixed projects.
 - **Detects your package manager** from the lockfile (pnpm / yarn / bun /
   npm) and **prints** the right install command — it never installs
   anything itself; you run the command it shows.
-- **Scaffolds** `src/PeopleTable.tsx` for React or `src/app/peopleTable.ts`
-  for Angular, a sortable starter table wired to
+- **Scaffolds** `src/PeopleTable.tsx` for React, `src/app/peopleTable.ts`
+  for Angular, or `src/PeopleTable.vue` with `src/adapttable.ts` for Vue, a
+  sortable starter table wired to
   the matching adapter (every optional behavior is one feature import away — see
   the docs). Pass `--force` to overwrite an existing file.
+  Use `--kit <kit>` to choose a kit explicitly within the detected framework.
 - **One step it can't do for you:** wrap your app in the kit's provider
   (`MantineProvider`, MUI's `ThemeProvider`, `ChakraProvider`, antd's
   `ConfigProvider`, Radix's `Theme`) if it isn't already — that's the
   most common React first-run failure. Angular setup is below.
+
+## Vue/Vite setup
+
+Inside a plain Vue 3.5 application:
+
+```sh
+npx @adapttable/cli init
+npx @adapttable/cli init --kit element-plus
+```
+
+Explicit Vue kit identifiers: `vue-unstyled`, `element-plus`, `vuetify`,
+`naive-ui`, `reka-ui`, `shadcn-vue`, `nuxt-ui`, `quasar`. Dependency detection
+stays within Vue. A `components.json` selects shadcn-vue before its underlying
+Reka dependency; a concrete styled-kit dependency still takes priority.
+
+Run the printed install command, then render the generated component:
+
+```vue
+<script setup lang="ts">
+import PeopleTable from "./PeopleTable.vue";
+</script>
+
+<template><PeopleTable /></template>
+```
+
+Register the generated host setup once before mounting:
+
+```ts
+import { createApp } from "vue";
+import App from "./App.vue";
+import { installAdaptTable } from "./adapttable";
+
+const app = createApp(App);
+installAdaptTable(app);
+app.mount("#app");
+```
+
+The starter has Name/Role sorting and a native Name filter. Each styled kit
+loads its required CSS; Vuetify and Quasar register their plugins, and Nuxt UI
+registers its Vue plugin and wraps the table in `UApp`. Vue Unstyled needs no
+stylesheet. Naive UI and Element Plus can inherit your existing theme/locale
+providers. shadcn-vue ships its compiled controls and CSS; no Tailwind build is
+required for that kit.
+
+For Nuxt UI and Quasar, init also writes `adapttable.vite.ts`. Merge its native
+configuration into your host Vite configuration; it includes the Vue compiler,
+so keep only one registration of that compiler:
+
+```ts
+import { defineConfig, mergeConfig } from "vite";
+import { adaptTableViteConfig } from "./adapttable.vite.ts";
+
+export default defineConfig(
+  mergeConfig({/* your other settings */}, adaptTableViteConfig)
+);
+```
+
+Nuxt UI's generated CSS is processed with its official Tailwind/Vite plugin;
+its command includes the default Lucide icon collection and the compatible
+`unifont@0.7.4` dependency. Enable router integration in the generated plugin
+if your host uses Vue Router. The CLI preserves every existing generated file
+unless you pass `--force`; it never rewrites `main.ts`, `App.vue` or Vite config.
+
+These templates target plain Vue/Vite browser apps. Nuxt framework applications
+use their kit's module/plugin conventions instead; init explains that setup
+and writes nothing there. Quasar SSR/SSG uses Quasar CLI rather than this plain
+Vite starter. See [Vue installation and providers](https://adapttable.orwamahmoud.com/vue/getting-started/).
+
+The generated applications are verified through native production builds and
+rendered interactions. An additional check of every SDK declaration with
+`skipLibCheck: false` currently reports upstream declaration errors for the
+Vuetify framework and Nuxt UI Vue plugin. That stronger vendor check is not
+claimed as passing; init does not add type suppressions or change your tsconfig.
 
 ## Angular setup
 

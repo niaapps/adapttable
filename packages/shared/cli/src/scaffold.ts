@@ -1,4 +1,5 @@
 import type { KitInfo } from "./detect";
+import { vueScaffoldFiles, vueStarterComponent } from "./scaffoldVue";
 
 /**
  * A file the scaffolder will write.
@@ -22,6 +23,7 @@ export interface ScaffoldFile {
  */
 export function starterComponent(info: KitInfo): string {
   if (info.framework === "angular") return angularStarterComponent(info);
+  if (info.framework === "vue") return vueStarterComponent(info);
   return `"use client";
 import { DataTable, type ColumnDef } from "${info.adapter}";
 
@@ -115,6 +117,7 @@ export const STARTER_PATH = "src/PeopleTable.tsx";
  * @public
  */
 export function scaffoldFiles(info: KitInfo): ScaffoldFile[] {
+  if (info.framework === "vue") return vueScaffoldFiles(info);
   return [
     {
       path:
@@ -136,6 +139,7 @@ export function packagesFor(info: KitInfo): string[] {
   return [
     "@adapttable/core",
     ...(info.framework === "angular" ? ["@adapttable/angular"] : []),
+    ...(info.framework === "vue" ? ["@adapttable/vue", "vue@^3.5.18"] : []),
     info.adapter,
     ...info.extras,
   ];

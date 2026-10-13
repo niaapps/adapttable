@@ -19,7 +19,7 @@ export function detectKit(dependencies: Readonly<Record<string, string>>, option
 }): KitInfo;
 
 // @public
-export type Framework = "react" | "angular";
+export type Framework = "react" | "angular" | "vue";
 
 // @public
 export class InitError extends Error {}
@@ -36,6 +36,7 @@ export interface InitIO {
 // @public
 export interface InitOptions {
     force?: boolean;
+    kit?: Kit;
 }
 
 // @public
@@ -54,7 +55,7 @@ export interface InitResult {
 export function installCommand(pm: PackageManager, packages: readonly string[]): string;
 
 // @public
-export type Kit = "mantine" | "mui" | "chakra" | "antd" | "radix" | "base-ui" | "shadcn" | "unstyled" | "angular-unstyled" | "ng-zorro" | "angular-material" | "ng-bootstrap" | "spartan" | "taiga-ui" | "angular-aria" | "angular-cdk" | "ngx-bootstrap";
+export type Kit = "mantine" | "mui" | "chakra" | "antd" | "radix" | "base-ui" | "shadcn" | "unstyled" | "angular-unstyled" | "ng-zorro" | "angular-material" | "ng-bootstrap" | "spartan" | "taiga-ui" | "angular-aria" | "angular-cdk" | "ngx-bootstrap" | "vue-unstyled" | "element-plus" | "vuetify" | "naive-ui" | "reka-ui" | "shadcn-vue" | "nuxt-ui" | "quasar";
 
 // @public
 export interface KitInfo {
