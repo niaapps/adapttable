@@ -24,10 +24,17 @@ export function nuxtGroupingControls(
           role: "group",
           "aria-label": label,
           "data-mobile": mobile ? "" : undefined,
-          class: names().groupingPanel,
+          class: ["adapttable-nuxt-ui-grouping-layout", names().groupingPanel],
           ui: { body: "adapttable-nuxt-grouping-body" },
         },
-        () => children
+        () => [
+          h(
+            "span",
+            { class: "adapttable-nuxt-ui-grouping-layout-label" },
+            label
+          ),
+          children,
+        ]
       ),
     DropZone: ({ label, empty, active, dragging, dropProps, ...attrs }) =>
       h(
@@ -120,19 +127,13 @@ export function nuxtGroupingControls(
       ),
     AggregationItem: ({ label, readOnly, readOnlyLabel, children, ...attrs }) =>
       h(
-        UBadge,
+        "span",
         {
           ...attrs,
-          color: "neutral",
-          variant: "soft",
           class: names().groupingAggregationItem,
           "data-read-only": readOnly ? "" : undefined,
         },
-        () => [
-          h("span", label),
-          readOnly ? h("span", readOnlyLabel) : null,
-          children,
-        ]
+        [h("span", label), readOnly ? h("span", readOnlyLabel) : null, children]
       ),
     AggregationRemove: ({ label, onRemove, ...attrs }) =>
       h(

@@ -52,3 +52,43 @@ adapt-header-filter-trigger {
   display: inline-flex;
   flex: 0 0 auto;
 }
+
+/* Keep the resize target at the inline edge of its own column header. */
+[data-adapttable-part="header-cell"]:has(
+  [data-adapttable-part="resize-handle"]
+) {
+  position: relative;
+}
+[data-adapttable-part="resize-handle"] {
+  position: absolute;
+  display: block;
+  visibility: visible;
+  inset-inline-end: 0;
+  inset-block: 0;
+  inline-size: 8px;
+  block-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+[data-adapttable-part="resize-handle"]::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 3px;
+  inset-block: 25%;
+  inline-size: 2px;
+  background: var(--ant-color-border, #d9d9d9);
+}
+[data-adapttable-part="resize-handle"]:is(:hover, :focus-visible)::after {
+  background: var(--ant-color-primary, #1677ff);
+}
+[data-adapttable-part="resize-handle"]:focus-visible {
+  outline: 2px solid var(--ant-color-primary, #1677ff);
+  outline-offset: -2px;
+}

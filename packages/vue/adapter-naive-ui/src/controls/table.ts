@@ -20,7 +20,8 @@ export function naiveTableControls<TRow>(): Pick<
   const icon = (expanded: boolean) =>
     h("span", { "aria-hidden": "true" }, expanded ? "−" : "+");
   return {
-    SortButton: ({ attrs, content }) => naiveButton(attrs, content),
+    SortButton: ({ attrs, content }) =>
+      naiveButton(attrs, content, { text: true }),
     SelectionCheckbox: naiveCheckbox,
     ColumnGroupToggle: (props) =>
       ColumnGroupToggleChrome({

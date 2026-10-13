@@ -1,3 +1,4 @@
+import "../entry-navigation-shell";
 import "@adapttable/shadcn-vue/styles.css";
 import "./shadcn-theme.css";
 

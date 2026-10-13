@@ -16,6 +16,8 @@ import {
   defineComponent,
   h,
   nextTick,
+  onBeforeUnmount,
+  onMounted,
   onScopeDispose,
   type PropType,
   type ShallowRef,
@@ -111,6 +113,58 @@ function review(
       })
     : null;
 }
+const ApprovalModalContent = defineComponent(
+  (props: { children: VNodeChild; onClose: () => void }) => {
+    const root = shallowRef<HTMLElement | null>(null);
+    let previous: HTMLElement | null = null;
+    onMounted(() => {
+      previous =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
+      void nextTick(() => {
+        const target = root.value?.querySelector<HTMLElement>(
+          'button:not(:disabled), [tabindex="0"]'
+        );
+        (target ?? root.value)?.focus();
+      });
+    });
+    onBeforeUnmount(() => {
+      if (root.value?.contains(document.activeElement) && previous?.isConnected)
+        previous.focus();
+    });
+    return () =>
+      h(
+        "div",
+        {
+          ref: root,
+          tabindex: -1,
+          "data-adapttable-part": "assistant-approval-modal-content",
+          onKeydown: (event: KeyboardEvent) => {
+            if (
+              event.key !== "Escape" ||
+              event.defaultPrevented ||
+              event.isComposing
+            )
+              return;
+            event.preventDefault();
+            event.stopPropagation();
+            props.onClose();
+          },
+        },
+        [props.children]
+      );
+  },
+  {
+    name: "ApprovalModalContent",
+    props: {
+      children: {
+        type: [String, Number, Boolean, Array, Object] as PropType<VNodeChild>,
+      },
+      onClose: { type: Function as PropType<() => void>, required: true },
+    },
+  }
+);
 function modal(
   props: TableAssistantChromeProps,
   state: ChromeState
@@ -140,7 +194,10 @@ function modal(
     open: true,
     dir: props.dir,
     onClose: close,
-    children: review(props, true),
+    children: h(ApprovalModalContent, {
+      children: review(props, true),
+      onClose: close,
+    }),
   });
 }
 function launcher(
@@ -195,28 +252,44 @@ function launcher(
 }
 function header(props: TableAssistantChromeProps, state: ChromeState) {
   const copy = resolveLabels(props.labels);
-  return h("header", { "data-adapttable-part": "assistant-header" }, [
-    speakerMark(props.avatars?.assistant, "assistant", "assistant-mark"),
-    h(
-      "span",
-      { "data-adapttable-part": "assistant-title" },
-      copy.assistantTitle
-    ),
-    props.slots.Badge({
-      label: copy.assistantConnection(props.assistant.status),
-      part: "assistant-connection",
-      tone: assistantBadgeTone(props.assistant.status),
-    }),
-    props.onSettings
-      ? button(
-          props,
-          copy.assistantSettings,
-          "assistant-settings",
-          props.onSettings
-        )
-      : null,
-    button(props, copy.assistantClose, "assistant-close", state.close),
-  ]);
+  return h(
+    "header",
+    {
+      "data-adapttable-part": "assistant-header",
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: "0.5em",
+        flexShrink: 0,
+        minHeight: "3.5em",
+      },
+    },
+    [
+      speakerMark(props.avatars?.assistant, "assistant", "assistant-mark"),
+      h(
+        "span",
+        {
+          "data-adapttable-part": "assistant-title",
+          style: { minWidth: 0, flex: "1 1 auto", overflowWrap: "anywhere" },
+        },
+        copy.assistantTitle
+      ),
+      props.slots.Badge({
+        label: copy.assistantConnection(props.assistant.status),
+        part: "assistant-connection",
+        tone: assistantBadgeTone(props.assistant.status),
+      }),
+      props.onSettings
+        ? button(
+            props,
+            copy.assistantSettings,
+            "assistant-settings",
+            props.onSettings
+          )
+        : null,
+      button(props, copy.assistantClose, "assistant-close", state.close),
+    ]
+  );
 }
 function questionAdmission(
   props: TableAssistantChromeProps,
@@ -289,30 +362,43 @@ function messages(props: TableAssistantChromeProps, state: ChromeState) {
     (assistant.busy ?? assistantIsBusy(assistant.status)) &&
     !assistantQuestion(assistant.messages) &&
     !props.approval;
-  return h("ul", { "data-adapttable-part": "assistant-messages" }, [
-    ...rows,
-    working
-      ? h("li", { "data-adapttable-part": "assistant-working" }, [
-          h("span", {
-            "data-adapttable-part": "assistant-working-dot",
-            "aria-hidden": "true",
-            style: {
-              display: "inline-block",
-              inlineSize: "0.5em",
-              blockSize: "0.5em",
-              borderRadius: "50%",
-              background: "currentColor",
-              marginInlineEnd: "0.5em",
-            },
-          }),
-          h(
-            "span",
-            { "data-adapttable-part": "assistant-working-text" },
-            assistantWorkingText(assistant.progress, copy)
-          ),
-        ])
-      : null,
-  ]);
+  return h(
+    "ul",
+    {
+      "data-adapttable-part": "assistant-messages",
+      style: {
+        listStyle: "none",
+        margin: 0,
+        padding: 0,
+        display: "grid",
+        gap: "1em",
+      },
+    },
+    [
+      ...rows,
+      working
+        ? h("li", { "data-adapttable-part": "assistant-working" }, [
+            h("span", {
+              "data-adapttable-part": "assistant-working-dot",
+              "aria-hidden": "true",
+              style: {
+                display: "inline-block",
+                inlineSize: "0.5em",
+                blockSize: "0.5em",
+                borderRadius: "50%",
+                background: "currentColor",
+                marginInlineEnd: "0.5em",
+              },
+            }),
+            h(
+              "span",
+              { "data-adapttable-part": "assistant-working-text" },
+              assistantWorkingText(assistant.progress, copy)
+            ),
+          ])
+        : null,
+    ]
+  );
 }
 function allowances(props: TableAssistantChromeProps) {
   const assistant = props.assistant;

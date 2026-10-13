@@ -15,6 +15,11 @@ import type {
 } from "@adapttable/angular/adapter";
 import { Component, computed, inject, signal } from "@angular/core";
 
+import {
+  AGENT_FILTERS,
+  AGENT_PEOPLE as INITIAL,
+  type AgentPerson,
+} from "../aiPeople";
 import { SHOWCASE_PRESENTATION } from "./data";
 import {
   AdaptShowcaseAction,
@@ -23,18 +28,6 @@ import {
   AdaptShowcaseTable,
 } from "./kitComponents";
 import { SHOWCASE_KIT } from "./showcaseKit";
-
-interface AgentPerson {
-  id: string;
-  name: string;
-  salary: number;
-}
-
-const INITIAL: readonly AgentPerson[] = [
-  { id: "ada", name: "Ada Lovelace", salary: 120 },
-  { id: "grace", name: "Grace Hopper", salary: 140 },
-  { id: "katherine", name: "Katherine Johnson", salary: 130 },
-];
 
 const SUGGESTIONS: readonly AssistantSuggestion[] = [
   {
@@ -86,6 +79,9 @@ export class AiBody {
       editable: true,
       editor: "number",
     },
+    { key: "team", header: "Team", sortable: true },
+    { key: "status", header: "Status", sortable: true },
+    { key: "started", header: "Started", sortable: true },
   ];
   readonly session = signal<AgentSession | undefined>(undefined);
   readonly pending = signal<AgentApprovalPending | null>(null);
@@ -106,7 +102,10 @@ export class AiBody {
         const answer = await askUser?.({
           id: `person-${String(++this.turn)}`,
           question: "Which person should I show?",
-          options: INITIAL.map((row) => ({ id: row.id, label: row.name })),
+          options: INITIAL.slice(0, 3).map((row) => ({
+            id: row.id,
+            label: row.name,
+          })),
           allowFreeText: true,
         });
         if (!answer || abort?.aborted) return { text: "No filter applied." };
@@ -184,6 +183,9 @@ export class AiBody {
     open: this.open(),
     onOpenChange: (open) => this.open.set(open),
     presentation: "floating",
+    className: ["unstyled", "aria"].includes(this.kit.key)
+      ? "mx-native-assistant"
+      : undefined,
     dir: this.direction,
     labels: this.presentation.labels,
     note: "Scripted locally. Table changes and host writes are real.",
@@ -191,6 +193,21 @@ export class AiBody {
   }));
 
   readonly features = [
+    this.kit.filters<AgentPerson>(AGENT_FILTERS),
+    this.kit.columnMenu(),
+    this.kit.resizableColumns(),
+    this.kit.savedViews({
+      storageKey: `adapttable-angular-${this.kit.key}-ai-views`,
+      urlKey: "ai",
+    }),
+    this.kit.editHistory(),
+    this.kit.undoRedoButtons(),
+    this.kit.cellNavigation(),
+    this.kit.exportCsv<AgentPerson>({ filename: "ai-people.csv" }),
+    this.kit.fullscreen(),
+    this.kit.rowPinning(),
+    this.kit.bulkActions([]),
+
     this.kit.editing<AgentPerson>((row, column, value) => {
       if (column !== "salary") throw new Error("This demo only edits salary");
       const salary = Number(value);

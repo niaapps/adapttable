@@ -1,3 +1,4 @@
+import "../entry-navigation-shell";
 import "quasar/dist/quasar.rtl.css";
 import "@adapttable/quasar/styles.css";
 

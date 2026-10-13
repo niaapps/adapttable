@@ -8,6 +8,7 @@ import {
   frameworkDocsTarget,
   normalizeFramework,
   selectedFramework,
+  showcasePageHref,
 } from "./framework-navigation.mjs";
 
 const adapters = [
@@ -350,4 +351,28 @@ it("clears table URL state across framework modes and feature destinations", () 
         assert.equal(query.has(key), false);
     }
   }
+});
+
+for (const base of ["/", "/react/demo/", "/angular/demo/", "/vue/demo/"]) {
+  it(`page navigation resets table state but retains presentation under ${base}`, () => {
+    const source = `https://example.test${base}?kit=mui&locale=ar&density=compact&dir=rtl&demo.q=Ada&vue-live.groupBy=team&grouping=on&options=open#table`;
+    assert.equal(
+      showcasePageHref("all-options/?kit=material", source),
+      `${base}all-options/?kit=material&locale=ar&dir=rtl&density=compact`
+    );
+    assert.equal(
+      showcasePageHref("editing/?locale=en&dir=ltr#example", source),
+      `${base}editing/?locale=en&dir=ltr&density=compact#example`
+    );
+  });
+}
+
+it("workspace language reaches the live showcase without workspace query state", () => {
+  assert.equal(
+    showcasePageHref(
+      "/vue-main/?kit=vue-unstyled",
+      "https://example.test/vue/unstyled/workspace/?lang=ar&view=dispatch&layout=cards&workspace-orders.q=Acme&theme=dark"
+    ),
+    "/vue-main/?kit=vue-unstyled&theme=dark&locale=ar"
+  );
 });

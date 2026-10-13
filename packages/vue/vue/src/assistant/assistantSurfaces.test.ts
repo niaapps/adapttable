@@ -2,12 +2,14 @@ import type { AgentApprovalPending } from "@adapttable/core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createApp,
+  createSSRApp,
   defineComponent,
   h,
   KeepAlive,
   nextTick,
   shallowRef,
 } from "vue";
+import { renderToString } from "vue/server-renderer";
 
 import { testSlots } from "../../test/assistant-fixtures";
 import {
@@ -258,6 +260,67 @@ describe("assistant semantic surfaces", () => {
     callbacks.at(-1)?.();
     await settle();
     expect(approval.reject).toHaveBeenCalledOnce();
+  });
+  it("rejects a modal on Escape while preserving nested control and composition ownership", async () => {
+    const approval = { ...pending(), presentation: "modal" as const };
+    const host = mount();
+    await settle();
+    const input = host.get("assistant-input");
+    input.focus();
+    host.props.value = { ...host.props.value, approval };
+    await settle();
+    const content = host.get("assistant-approval-modal-content");
+    expect(content.contains(document.activeElement)).toBe(true);
+    const consumed = new KeyboardEvent("keydown", {
+      key: "Escape",
+      bubbles: true,
+      cancelable: true,
+    });
+    consumed.preventDefault();
+    content.dispatchEvent(consumed);
+    content.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "Escape",
+        isComposing: true,
+        bubbles: true,
+      })
+    );
+    content.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Enter", bubbles: true })
+    );
+    await settle();
+    expect(approval.reject).not.toHaveBeenCalled();
+    const escape = new KeyboardEvent("keydown", {
+      key: "Escape",
+      bubbles: true,
+      cancelable: true,
+    });
+    content.dispatchEvent(escape);
+    await settle();
+    expect(escape.defaultPrevented).toBe(true);
+    expect(approval.reject).toHaveBeenCalledOnce();
+    host.props.value = { ...host.props.value, approval: null };
+    await settle();
+    expect(document.activeElement).toBe(input);
+  });
+  it("renders modal approval content on the server without accessing browser focus", async () => {
+    const host = mount();
+    await settle();
+    const approval = { ...pending(), presentation: "modal" as const };
+    const props = { ...host.props.value, approval };
+    vi.stubGlobal("document", undefined);
+    try {
+      const html = await renderToString(
+        createSSRApp({ render: () => h(TableAssistantChrome, props) })
+      );
+      expect(html).toContain(
+        'data-adapttable-part="assistant-approval-modal-content"'
+      );
+      expect(html).toContain("Name 1");
+      expect(approval.reject).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
   it("groups receipts as an accessible list and separates one action undo from turn undo", async () => {
     const undo = vi.fn();

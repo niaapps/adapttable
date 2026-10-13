@@ -210,7 +210,11 @@ describe("createTableViewStore — mutators", () => {
     store.initializeGroupBy("region");
     expect(adapter.getSearch()).toBe("groupBy=team&atv=1");
     store.setGroupBy(undefined);
-    expect(adapter.getSearch()).toBe("atv=1");
+    expect(adapter.getSearch()).toBe("groupBy=&atv=1");
+    const remounted = tableStore(adapter.getSearch());
+    remounted.store.initializeGroupBy("team");
+    expect(remounted.store.getSnapshot().groupBy).toBeUndefined();
+    expect(remounted.adapter.getSearch()).toBe("groupBy=&atv=1");
     store.setGroupBy("region");
     expect(store.getSnapshot().groupBy).toBe("region");
 

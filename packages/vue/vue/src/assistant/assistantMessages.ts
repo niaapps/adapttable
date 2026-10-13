@@ -256,7 +256,7 @@ function questionOptions(
 ): VNodeChild {
   const question = message.question;
   if (!question) return null;
-  return h("div", [
+  return h("div", { style: { gridColumn: "2", minWidth: 0 } }, [
     h("p", question.question),
     answer && question.options?.length
       ? h(
@@ -302,9 +302,10 @@ function receiptGroup(
       "data-adapttable-part": "assistant-receipts-group",
       "aria-labelledby": state.headingId,
       style: {
+        gridColumn: "1 / -1",
+        minWidth: 0,
         position: "relative",
         marginBlockStart: "0.6em",
-        border: "1px solid currentColor",
         padding: "0.6em",
       },
     },
@@ -475,6 +476,13 @@ export const AssistantMessage = /*#__PURE__*/ defineComponent(
         {
           "data-adapttable-part": "assistant-message",
           "data-role": message.role,
+          style: {
+            display: "grid",
+            gridTemplateColumns: "1.9em minmax(0, 1fr)",
+            gap: "0.5em",
+            alignItems: "start",
+            minWidth: 0,
+          },
           "aria-busy": message.streaming ?? undefined,
         },
         [
@@ -498,7 +506,13 @@ export const AssistantMessage = /*#__PURE__*/ defineComponent(
             "p",
             {
               "data-adapttable-part": "assistant-message-text",
-              style: { whiteSpace: "pre-wrap", overflowWrap: "anywhere" },
+              style: {
+                gridColumn: "2",
+                minWidth: 0,
+                margin: 0,
+                whiteSpace: "pre-wrap",
+                overflowWrap: "anywhere",
+              },
             },
             [
               message.text,
@@ -552,15 +566,25 @@ export const AssistantMessage = /*#__PURE__*/ defineComponent(
               })
             : null,
           undo && !receipts.length
-            ? h("span", { "data-adapttable-part": "assistant-undo" }, [
-                wholeUndo("assistant-undo-button", copy.assistantUndo),
-                blocked(),
-              ])
+            ? h(
+                "span",
+                {
+                  "data-adapttable-part": "assistant-undo",
+                  style: { gridColumn: "2" },
+                },
+                [
+                  wholeUndo("assistant-undo-button", copy.assistantUndo),
+                  blocked(),
+                ]
+              )
             : null,
           action
             ? h(
                 "span",
-                { "data-adapttable-part": "assistant-message-action" },
+                {
+                  "data-adapttable-part": "assistant-message-action",
+                  style: { gridColumn: "2" },
+                },
                 [
                   props.slots.Button({
                     label: action.label,

@@ -36,7 +36,7 @@ for (const path of SWITCHER_PAGES) {
       } else {
         await page.goto(path);
         await page.getByTestId(`adapter-${kit}`).click();
-        await expect(page).not.toHaveURL(/[?&]kit=/);
+        await expect(page).toHaveURL(new RegExp(`[?&]kit=${kit}(?:&|$)`));
       }
       const root = tableRoot(page);
       await expect(root).toBeVisible();
@@ -66,7 +66,7 @@ for (const path of SWITCHER_PAGES) {
       } else {
         await page.goto(path);
         await page.getByTestId(`adapter-${kit}`).click();
-        await expect(page).not.toHaveURL(/[?&]kit=/);
+        await expect(page).toHaveURL(new RegExp(`[?&]kit=${kit}(?:&|$)`));
       }
       await page
         .locator("#demo")

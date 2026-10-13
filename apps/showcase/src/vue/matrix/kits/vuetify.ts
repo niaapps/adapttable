@@ -56,7 +56,7 @@ const Root = defineComponent(
     () =>
       h(
         VApp,
-        { theme: props.dark ? "dark" : "light" },
+        { theme: props.dark ? "dark" : "light", class: "vue-vuetify-root" },
         { default: () => slots.default?.() }
       ),
   { name: "VuetifyShowcaseRoot", props: ["dark", "dir"] }

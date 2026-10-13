@@ -177,7 +177,7 @@ export class AdaptAssistantSheet {
     [attr.data-adapttable-part]="props().part"
     [class]="props().className"
     [style]="props().style"
-    style="margin:0;padding:0;border:0"
+    style="inset-inline-start:auto;inset-block-start:auto;margin:0;padding:0;border:0"
   >
     <ng-container [ngTemplateOutlet]="props().children" />
   </dialog>`,
@@ -214,6 +214,65 @@ export class AdaptAssistantLanguageChip {
 /** The platform's disclosure keeps examples local and handles nested Escape. @public */
 @Component({
   selector: "adapt-assistant-menu",
+  styles: [
+    `
+      details {
+        position: relative;
+      }
+      summary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        list-style: none;
+        min-inline-size: 36px;
+        min-block-size: 36px;
+      }
+      summary::-webkit-details-marker {
+        display: none;
+      }
+      menu {
+        position: absolute;
+        inset-block-end: calc(100% + 8px);
+        inset-inline-start: 0;
+        z-index: 1;
+        inline-size: min(280px, calc(100vw - 32px));
+        margin: 0;
+        padding: 6px;
+        list-style: none;
+        box-sizing: border-box;
+        border: 1px solid color-mix(in srgb, CanvasText 16%, Canvas);
+        border-radius: 8px;
+        background: Canvas;
+        box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+      }
+      li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      menu button {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        inline-size: 100%;
+        padding: 8px;
+        border: 0;
+        background: transparent;
+        text-align: start;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+      menu button small {
+        flex: 1 1 100%;
+      }
+      menu button:is(:hover, :focus-visible) {
+        background: color-mix(in srgb, AccentColor 10%, Canvas);
+      }
+    `,
+  ],
   imports: [AdaptAssistantContent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },

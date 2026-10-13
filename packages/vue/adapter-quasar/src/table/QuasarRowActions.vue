@@ -6,7 +6,7 @@ import {
   type RowActionsLayout,
 } from "@adapttable/vue/adapter";
 import { QMenu } from "quasar";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 import QuasarButton from "../controls/QuasarButton.vue";
 
@@ -18,6 +18,31 @@ const props = defineProps<{
   classNames: DataTableClassNames;
 }>();
 const open = ref(false);
+const menu = ref<InstanceType<typeof QMenu> | null>(null);
+const triggerView = ref<Window | null>(null);
+const updatePosition = () => menu.value?.updatePosition();
+function clicked(event: MouseEvent) {
+  event.stopPropagation();
+  // QMenu portals its contents; its component $el is not the trigger's DOM.
+  triggerView.value =
+    (event.currentTarget as HTMLElement | null)?.ownerDocument.defaultView ??
+    null;
+}
+watch(
+  open,
+  (expanded, _previous, cleanup) => {
+    if (!expanded) return;
+    const view = triggerView.value;
+    if (!view) return;
+    view.addEventListener("scroll", updatePosition, true);
+    view.addEventListener("resize", updatePosition);
+    cleanup(() => {
+      view.removeEventListener("scroll", updatePosition, true);
+      view.removeEventListener("resize", updatePosition);
+    });
+  },
+  { flush: "post" }
+);
 function actionAttrs(action: RowActionControl<TRow>) {
   return mergeVueAttrs(action.attrs, {
     class: [props.classNames.actionButton, props.classNames.rowAction],
@@ -37,14 +62,16 @@ function actionAttrs(action: RowActionControl<TRow>) {
       'aria-label': label,
       'aria-expanded': open,
       class: classNames.rowActionsTrigger,
-      onClick: (event: MouseEvent) => event.stopPropagation(),
+      onClick: clicked,
     }"
   >
     <span aria-hidden="true">⋮</span>
     <QMenu
+      ref="menu"
       v-model="open"
       :class="classNames.rowActionsMenu"
       data-adapttable-part="row-actions-menu"
+      @show="updatePosition"
     >
       <div class="adapttable-quasar-row-actions-menu">
         <QuasarButton

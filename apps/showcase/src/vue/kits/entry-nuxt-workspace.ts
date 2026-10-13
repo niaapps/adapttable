@@ -1,3 +1,4 @@
+import "../entry-navigation-shell";
 import "./nuxt-ui.css";
 
 import ui from "@nuxt/ui/vue-plugin";

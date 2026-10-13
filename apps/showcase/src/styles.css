@@ -56,7 +56,13 @@ a {
   flex: 1;
 }
 
+/* Standalone examples have their navigation and legal footer outside #root. */
+#showcase-navigation + #root {
+  min-height: 0;
+}
+
 :where(:root:not([data-framework="angular"])) .shell {
+  box-sizing: border-box;
   max-width: 1140px;
   margin: 0 auto;
   padding-inline: 28px;

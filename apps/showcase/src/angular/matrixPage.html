@@ -4,12 +4,6 @@
 />
 
 <main>
-  @if (unavailableKit) {
-    <p class="shell" role="status">
-      {{ unavailableKit }} has no matching Angular kit. This example uses
-      {{ adapter().label }} and retains the feature where available.
-    </p>
-  }
   @if (unavailable) {
     <p class="shell" role="status">
       This feature is not available in this Angular kit. Explore the supported
@@ -21,9 +15,6 @@
     [class.mx-ng--unstyled]="adapter().key === 'unstyled'"
     [class.mx-ng--zorro]="adapter().key === 'ng-zorro'"
     [attr.data-angular-kit]="adapter().key"
-    [attr.data-adapttable-kit]="adapter().key"
-    [class.adapttable-ng-bootstrap]="adapter().key === 'ng-bootstrap'"
-    [class.adapttable-ngx-bootstrap]="adapter().key === 'ngx-bootstrap'"
     [attr.data-bs-theme]="dark() ? 'dark' : 'light'"
     [style.--kit]="'var(--brand)'"
     [style.--c]="'var(--brand)'"
@@ -159,9 +150,17 @@
     <p class="mx-seam">
       rendered by <span class="mx-seam__pkg">{{ adapter().pkg }}</span>
     </p>
-    <ng-template #demoBody
-      ><ng-container *ngComponentOutlet="body()"
-    /></ng-template>
+    <ng-template #demoBody>
+      <div
+        class="mx-kit-host"
+        [attr.data-adapttable-kit]="adapter().key"
+        [attr.data-bs-theme]="dark() ? 'dark' : 'light'"
+        [class.adapttable-ng-bootstrap]="adapter().key === 'ng-bootstrap'"
+        [class.adapttable-ngx-bootstrap]="adapter().key === 'ngx-bootstrap'"
+      >
+        <ng-container *ngComponentOutlet="body()" />
+      </div>
+    </ng-template>
     @if (kit.root; as kitRoot) {
       <ng-container
         [ngComponentOutlet]="kitRoot"

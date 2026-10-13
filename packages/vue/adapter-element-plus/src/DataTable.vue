@@ -537,7 +537,9 @@ function setScrollElement(element: HTMLElement | null): void {
   ) {
   padding-inline: 0;
   margin-inline-start: 0;
-  min-width: 0;
+  inline-size: 2rem;
+  min-inline-size: 2rem;
+  min-block-size: 2rem;
 }
 .adapttable-element-plus-column-panel
   [data-adapttable-part="column-menu-submenu"] {
@@ -599,5 +601,92 @@ function setScrollElement(element: HTMLElement | null): void {
 }
 .adapttable-element-plus [data-adapttable-part="header-rename-error"] {
   color: var(--el-color-danger);
+}
+
+/* An omitted mobile label leaves the value the full card width. */
+.adapttable-element-plus
+  [data-adapttable-part="card-row"]:has(
+    > [data-adapttable-part="card-label"]:empty
+  ) {
+  display: block;
+}
+.adapttable-element-plus [data-adapttable-part="card-label"]:empty {
+  display: none;
+}
+.adapttable-element-plus
+  [data-adapttable-part="card-row"]:has(
+    > [data-adapttable-part="card-label"]:empty
+  )
+  > [data-adapttable-part="card-value"] {
+  margin: 0;
+  text-align: start;
+  font-size: 1.05em;
+  font-weight: 600;
+}
+
+.adapttable-element-plus [data-adapttable-part="group-card"] > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.adapttable-element-plus
+  [data-adapttable-part="group-card"]
+  [data-adapttable-part="group-aggregate"] {
+  margin-inline-start: 0.375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.adapttable-element-plus
+  [data-adapttable-part="group-row"]
+  [data-adapttable-part="group-label"] {
+  margin-inline-start: 0.5rem;
+  font-weight: 600;
+}
+.adapttable-element-plus
+  [data-adapttable-part="group-row"]
+  [data-adapttable-part="group-count"] {
+  margin-inline-start: 0.375rem;
+  font-size: 0.875em;
+}
+
+.adapttable-element-plus [data-adapttable-part="chips"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.5rem 0;
+  list-style: none;
+  min-inline-size: 0;
+}
+.adapttable-element-plus [data-adapttable-part="chip"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  max-inline-size: 100%;
+  padding-inline-start: 0.625rem;
+  border: 1px solid var(--el-color-primary-light-7);
+  border-radius: 6px;
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+.adapttable-element-plus [data-adapttable-part="chip"]:last-child {
+  padding-inline-start: 0;
+  border: 0;
+  background: transparent;
+}
+.adapttable-element-plus [data-adapttable-part="chip-remove"] {
+  flex: 0 0 auto;
+  margin: 0;
+  min-inline-size: 2rem;
+  min-block-size: 2rem;
+}
+@media (max-width: 767px) {
+  .adapttable-element-plus [data-adapttable-part="chip-remove"] {
+    min-inline-size: 44px;
+    min-block-size: 44px;
+  }
 }
 </style>

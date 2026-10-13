@@ -1,0 +1,282 @@
+.angular-ai-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-block: 16px;
+}
+.angular-ai-choice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.ai-demo {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Native HTML is styled by this application, including teleported windows. */
+.mx-native-assistant {
+  --ai-accent: var(--brand);
+  box-sizing: border-box;
+  color: var(--ink);
+  background: var(--page-surface);
+  border: 1px solid var(--page-border);
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgb(0 0 0 / 16%);
+  padding: 14px;
+  font: 14px/1.5 var(--font-sans);
+  max-inline-size: calc(100vw - 24px);
+}
+.mx-native-assistant *,
+.mx-native-assistant *::before,
+.mx-native-assistant *::after {
+  box-sizing: border-box;
+}
+.mx-native-assistant [data-adapttable-part="assistant-title"] {
+  font-weight: 650;
+}
+.mx-native-assistant [data-adapttable-part="assistant-connection"] {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.mx-native-assistant [data-adapttable-part="assistant-conversation"] {
+  padding-block: 12px;
+}
+.mx-native-assistant [data-adapttable-part="assistant-message-text"] {
+  padding: 12px;
+  margin: 0;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--brand) 10%, var(--page-surface));
+  overflow-wrap: anywhere;
+}
+.mx-native-assistant [data-adapttable-part="assistant-empty-note"] {
+  color: var(--ink-3);
+  font-size: 12px;
+  margin-block: 12px;
+}
+.mx-native-assistant :is(button, summary, select, textarea) {
+  font: inherit;
+  color: inherit;
+}
+.mx-native-assistant :is(button, summary, select) {
+  min-block-size: 36px;
+  border: 1px solid var(--page-border);
+  border-radius: 8px;
+  background: var(--page-surface);
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.mx-native-assistant button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.mx-native-assistant :is(button, summary, select, textarea):focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+.mx-native-assistant textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  max-height: 140px;
+  resize: vertical;
+  padding: 8px;
+  background: var(--page-surface);
+  border: 1px solid var(--page-border);
+  border-radius: 8px;
+}
+.mx-native-assistant [data-adapttable-part="assistant-examples"] {
+  position: relative;
+  flex: 0 0 auto;
+}
+.mx-native-assistant summary {
+  list-style: none;
+}
+.mx-native-assistant summary::-webkit-details-marker {
+  display: none;
+}
+.mx-native-assistant [data-adapttable-part="assistant-examples-list"] {
+  position: absolute;
+  inset-block-end: calc(100% + 8px);
+  inset-inline-start: 0;
+  width: min(280px, calc(100vw - 48px));
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid var(--page-border);
+  border-radius: 10px;
+  background: var(--page-surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 15%);
+  z-index: 2;
+}
+.mx-native-assistant [data-adapttable-part="assistant-examples-list"] li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mx-native-assistant [data-adapttable-part="assistant-examples-item"] {
+  width: 100%;
+  text-align: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border: 0;
+}
+.mx-native-assistant [data-adapttable-part="assistant-examples-item"] small {
+  flex-basis: 100%;
+  color: var(--ink-3);
+}
+.mx-native-assistant [data-adapttable-part="assistant-examples-item"]:hover {
+  background: color-mix(in srgb, var(--brand) 10%, var(--page-surface));
+}
+.mx-native-assistant [data-adapttable-part="assistant-composer"] {
+  padding: 8px 0 0;
+  border-top: 1px solid var(--page-border);
+}
+.mx-native-assistant [data-adapttable-part="assistant-panel"] {
+  height: 520px;
+  max-height: 75dvh;
+}
+.vue-native-page {
+  padding-block: 36px;
+}
+.vue-native-page main {
+  display: grid;
+  gap: 18px;
+}
+.vue-native-page h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 650;
+}
+.vue-native-page label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.vue-native-page
+  :is([data-adapttable-part="assistant-panel"], .mx-native-assistant) {
+  inline-size: min(100%, 480px);
+  block-size: 520px;
+  max-block-size: 75dvh;
+}
+.native-assistant-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 24px;
+}
+.native-assistant-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  gap: 20px;
+  align-items: start;
+}
+.native-assistant-workspace > * {
+  min-inline-size: 0;
+}
+@media (max-width: 900px) {
+  .native-assistant-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* Native dialog slots reset their own box; pad the application's content. */
+dialog.mx-native-assistant > [data-adapttable-part="assistant-surface"] {
+  padding: 14px;
+}
+
+.vue-standalone-lab {
+  padding-block: 32px;
+}
+.vue-standalone-intro {
+  margin-block-end: 24px;
+}
+.vue-standalone-intro h1 {
+  margin: 0 0 12px;
+  font: 650 28px/1.25 var(--font-sans);
+  letter-spacing: -0.025em;
+}
+.vue-standalone-intro p {
+  max-inline-size: 720px;
+  margin: 0;
+  color: var(--ink-2);
+  font: 14px/1.6 var(--font-sans);
+}
+
+/* Message entry fills the pane; actions stay in their own compact row. */
+.mx-native-assistant [data-adapttable-part="assistant-composer"] {
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-block-start: 12px;
+}
+.mx-native-assistant [data-adapttable-part="assistant-input-container"] {
+  order: -1;
+  flex-basis: 100%;
+}
+.mx-native-assistant textarea {
+  min-block-size: 72px;
+  max-block-size: 160px;
+  resize: none;
+  padding: 12px;
+  line-height: 1.5;
+}
+.mx-native-assistant [data-adapttable-part="assistant-send"],
+.mx-native-assistant [data-adapttable-part="assistant-stop"] {
+  margin-inline-start: auto;
+}
+.mx-native-assistant [data-adapttable-part="assistant-message-trailing"] {
+  display: block;
+  margin-block-start: 8px;
+}
+.mx-native-assistant [data-adapttable-part="assistant-receipts-group"] {
+  border: 1px solid var(--page-border);
+  border-radius: 10px;
+  background: var(--page-bg);
+}
+.mx-native-assistant [data-adapttable-part="assistant-receipts-heading"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.mx-native-assistant
+  [data-adapttable-part="assistant-receipts-heading"]
+  strong {
+  font-size: 12px;
+  font-weight: 650;
+}
+.mx-native-assistant [data-adapttable-part="assistant-receipts"] {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.mx-native-assistant [data-adapttable-part="assistant-receipt"] {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.mx-native-assistant [data-adapttable-part="assistant-receipt-summary"] {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  flex: 1 1 180px;
+  min-inline-size: 0;
+  gap: 4px 8px;
+}
+.mx-native-assistant [data-adapttable-part="assistant-receipt-detail-text"] {
+  color: var(--ink-2);
+  font-size: 12px;
+}
+.mx-native-assistant [data-adapttable-part="assistant-question-options"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

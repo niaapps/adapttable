@@ -13,6 +13,7 @@ import {
   SITE_HOME,
 } from "../../matrix/content";
 import { navigationMenuShift } from "../../navGeometry";
+import { createNavMenuInteraction } from "../../navMenuInteraction";
 import { frameworkDemoHref, vueHref } from "./routes";
 import ShowcaseWordmark from "./ShowcaseWordmark.vue";
 
@@ -22,14 +23,24 @@ const props = defineProps<{
   /** The kit whose pages these are. */
   kit: ShowcaseAdapter;
   dark: boolean;
+  beforeNavigate?: () => boolean;
 }>();
 const emit = defineEmits<{ toggleDark: [] }>();
 
 const adapters = adaptersOf("vue").filter((adapter) => adapter.built);
 const features = featuresOf(props.kit);
 const kitPath = pathOf(props.kit);
-const demoHref = (lab = false) =>
-  `${vueHref(lab ? "all-options" : "")}?kit=${encodeURIComponent(props.kit.key)}`;
+const demoHref = (lab = false) => {
+  const url = new URL(
+    vueHref(lab ? "all-options" : ""),
+    window.location.origin
+  );
+  url.searchParams.set("kit", props.kit.key);
+  return url.pathname + url.search;
+};
+const unavailableKit = new URLSearchParams(window.location.search).get(
+  "kit-unavailable"
+);
 const docs = docsUrl("getting-started", "vue");
 const repo = "https://github.com/orwa-mahmoud/adapttable";
 const open = shallowRef(false);
@@ -37,6 +48,16 @@ const shift = shallowRef(0);
 const root = shallowRef<HTMLElement | null>(null);
 let pendingFocus: number | null = null;
 let frame = 0;
+const menu = createNavMenuInteraction(
+  (value) => {
+    open.value = value;
+    layoutMenu();
+  },
+  () =>
+    root.value
+      ?.querySelector(".nav__group")
+      ?.contains(document.activeElement) ?? false
+);
 
 const menuItems = (): HTMLAnchorElement[] =>
   Array.from(
@@ -72,8 +93,7 @@ function layoutMenu(): void {
 }
 
 function toggleMenu(): void {
-  open.value = !open.value;
-  layoutMenu();
+  menu.toggle();
 }
 
 function triggerKey(event: KeyboardEvent): void {
@@ -81,12 +101,12 @@ function triggerKey(event: KeyboardEvent): void {
   event.preventDefault();
   const index = event.key === "ArrowDown" ? 0 : -1;
   if (open.value) {
+    menu.hold();
     focusItem(index);
     return;
   }
   pendingFocus = index;
-  open.value = true;
-  layoutMenu();
+  menu.hold();
 }
 
 function menuKey(event: KeyboardEvent): void {
@@ -108,7 +128,7 @@ function menuKey(event: KeyboardEvent): void {
 
 function close(restore: boolean): void {
   if (!open.value) return;
-  open.value = false;
+  menu.close();
   if (restore)
     void nextTick(() =>
       root.value?.querySelector<HTMLButtonElement>(".nav__trigger")?.focus()
@@ -120,7 +140,7 @@ function outside(event: MouseEvent): void {
     event.target instanceof Node &&
     !root.value?.querySelector(".nav__group")?.contains(event.target)
   )
-    open.value = false;
+    menu.close();
 }
 
 function escape(event: KeyboardEvent): void {
@@ -138,13 +158,28 @@ function switchPage(event: Event): void {
     ...features.map((feature) => vueHref(`${kitPath}/${feature.slug}`)),
   ];
   const destination = destinations.find((href) => href === selected);
-  if (destination) window.location.assign(destination);
+  if (destination) {
+    if (props.beforeNavigate?.() === false) {
+      event.target.value =
+        destinations.find(
+          (href) =>
+            new URL(href, window.location.origin).pathname ===
+            window.location.pathname
+        ) ?? "";
+      return;
+    }
+    window.location.assign(destination);
+  }
 }
 
 function switchFramework(event: Event): void {
   if (!(event.target instanceof HTMLSelectElement)) return;
   const framework = event.target.value;
   if (framework !== "react" && framework !== "angular") return;
+  if (props.beforeNavigate?.() === false) {
+    event.target.value = "vue";
+    return;
+  }
   try {
     localStorage.setItem(FRAMEWORK_STORAGE_KEY, framework);
   } catch {
@@ -153,12 +188,29 @@ function switchFramework(event: Event): void {
   window.location.assign(frameworkDemoHref(framework));
 }
 
+function guardLink(event: MouseEvent): void {
+  const link =
+    event.target instanceof Element ? event.target.closest("a") : null;
+  if (
+    !link ||
+    link.target === "_blank" ||
+    event.button !== 0 ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.shiftKey ||
+    event.altKey
+  )
+    return;
+  if (props.beforeNavigate?.() === false) event.preventDefault();
+}
+
 onMounted(() => {
   document.addEventListener("click", outside);
   document.addEventListener("keydown", escape);
   window.addEventListener("resize", layoutMenu);
 });
 onScopeDispose(() => {
+  menu.dispose();
   cancelAnimationFrame(frame);
   document.removeEventListener("click", outside);
   document.removeEventListener("keydown", escape);
@@ -167,8 +219,12 @@ onScopeDispose(() => {
 </script>
 
 <template>
-  <header ref="root" class="nav">
-    <div class="nav__inner shell">
+  <header ref="root" class="nav" @click.capture="guardLink">
+    <div
+      class="nav__inner shell"
+      role="navigation"
+      aria-label="Vue showcase navigation"
+    >
       <ShowcaseWordmark :href="SITE_HOME" />
       <nav class="nav__links" aria-label="Demo pages">
         <a
@@ -189,15 +245,25 @@ onScopeDispose(() => {
           :aria-current="active.endsWith('/ai') ? 'page' : undefined"
           >AI demo</a
         >
-        <a :href="vueHref('unstyled/workspace')">Order workspace</a>
-        <div class="nav__group">
+        <a
+          :href="vueHref('unstyled/workspace')"
+          :class="{ 'is-on': active === 'unstyled/workspace' }"
+          :aria-current="active === 'unstyled/workspace' ? 'page' : undefined"
+          >Order workspace</a
+        >
+        <div
+          class="nav__group"
+          @pointerenter="menu.enter"
+          @pointerleave="menu.leave"
+        >
           <button
             type="button"
             class="nav__trigger"
             :class="{
               'is-on':
-                !['demo', 'all-options'].includes(active) &&
-                !active.endsWith('/ai'),
+                !['demo', 'all-options', 'unstyled/workspace'].includes(
+                  active
+                ) && !active.endsWith('/ai'),
             }"
             aria-controls="vue-adapter-menu"
             aria-haspopup="menu"
@@ -262,7 +328,10 @@ onScopeDispose(() => {
             >
               Feature Lab
             </option>
-            <option :value="vueHref('unstyled/workspace')">
+            <option
+              :value="vueHref('unstyled/workspace')"
+              :selected="active === 'unstyled/workspace'"
+            >
               Order workspace
             </option>
           </optgroup>
@@ -361,5 +430,10 @@ onScopeDispose(() => {
         </a>
       </div>
     </div>
+    <p v-if="unavailableKit" class="shell" role="status">
+      {{ unavailableKit }} has no matching Vue kit. This example uses
+      {{ kit.label }}
+      and retains the feature where available.
+    </p>
   </header>
 </template>

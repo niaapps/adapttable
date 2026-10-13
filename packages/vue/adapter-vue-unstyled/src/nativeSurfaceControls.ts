@@ -31,6 +31,12 @@ export function nativeSurfaceControls<TRow>(
         {
           "data-adapttable-part": "search-field",
           class: classNames.searchWrapper,
+          style: {
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            minInlineSize: 0,
+          },
         },
         [
           h("span", { style: liveStyle }, label),
@@ -44,6 +50,7 @@ export function nativeSurfaceControls<TRow>(
               height: "16",
               "aria-hidden": "true",
               focusable: "false",
+              style: { flexShrink: 0 },
               fill: "none",
               stroke: "currentColor",
             },

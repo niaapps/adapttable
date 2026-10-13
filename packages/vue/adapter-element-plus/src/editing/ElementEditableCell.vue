@@ -21,8 +21,13 @@ const controls: EditableCellChromeSlots<TRow> = {
     elementButton(
       {
         title: control.title,
-        "aria-label": control.title,
-        class: [control.className, names.value.editCellActivate],
+        text: true,
+        "aria-description": control.title,
+        class: [
+          "adapttable-element-edit-value",
+          control.className,
+          names.value.editCellActivate,
+        ],
         ref: control.activateRef,
         "data-adapttable-part": "edit-cell-activate",
         "data-save-status": control.saveStatus,
@@ -67,3 +72,23 @@ Render.props = renderProps;
 </script>
 
 <template><Render /></template>
+
+<style>
+.el-button.adapttable-element-edit-value {
+  justify-content: start;
+  inline-size: 100%;
+  min-inline-size: 0;
+  block-size: auto;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: text;
+}
+.el-button.adapttable-element-edit-value > span {
+  min-inline-size: 0;
+}
+</style>

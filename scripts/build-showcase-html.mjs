@@ -615,13 +615,6 @@ export const nativeVuePage = (definition = VUE_NATIVE_BASELINE) => {
   const { dir, title, description, path, entry, notice } = definition;
   const kitPath = path.split("/")[0];
   const kitKey = kitPath === "unstyled" ? "vue-unstyled" : kitPath;
-  const navigation = `<nav class="vue-example-nav" aria-label="Vue showcase navigation">
-      <strong>AdaptTable · Vue</strong>
-      <a href="${upTo(dir)}vue-main/?kit=${kitKey}">Live demo</a>
-      <a href="${upTo(dir)}vue-all-options/?kit=${kitKey}">Feature Lab</a>
-      <a href="${upTo(dir)}vue/${kitPath}/">Adapter features</a>
-      <a href="${siteUrl("/vue/getting-started/")}">Docs</a>
-    </nav>`;
   return {
     dir,
     html: htmlDocument(
@@ -632,18 +625,18 @@ export const nativeVuePage = (definition = VUE_NATIVE_BASELINE) => {
         route: demoRoute(path, "vue"),
         indexable: false,
       }),
-      `<style>
-      .vue-example-nav { display:flex; flex-wrap:wrap; align-items:center; gap:8px; max-width:1280px; margin:0 auto; padding:12px 16px; box-sizing:border-box; font:14px/1.5 system-ui,sans-serif; border-bottom:1px solid #d1d5db; }
-      .vue-example-nav strong { margin-inline-end:auto; }
-      .vue-example-nav a { display:inline-flex; align-items:center; min-height:44px; padding:0 12px; color:#226b50; border-radius:6px; text-decoration:none; }
-      .vue-example-nav a:hover { background:#226b5015; }
-      .vue-example-nav a:focus-visible { outline:2px solid currentColor; outline-offset:2px; }
-      [data-theme="dark"] .vue-example-nav { color:#e5e7eb; border-color:#374151; }
-      [data-theme="dark"] .vue-example-nav a { color:#6ee7b7; }
-    </style>
-    ${navigation}
+      `<div id="showcase-navigation" data-kit="${kitKey}" data-page="${path}"><nav aria-label="Vue showcase navigation">
+      <a href="${upTo(dir)}vue-main/?kit=${kitKey}">Live demo</a>
+      <a href="${upTo(dir)}vue-all-options/?kit=${kitKey}">Feature Lab</a>
+      <a href="${upTo(dir)}vue/${kitPath}/">Adapter features</a>
+      <a href="${siteUrl("/vue/getting-started/")}">Docs</a>
+    </nav></div>
     <div id="root"><main class="at-fallback"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p><p>${escapeHtml(notice)}</p></main></div>
-    <footer class="vue-baseline"><a href="${upTo(dir)}third-party-notices.txt">Third-party notices</a></footer>
+    <footer class="foot vue-baseline"><div class="foot__inner shell"><div class="foot__lead">
+      <a class="brand" href="${siteUrl("/")}">Adapt<strong>Table</strong></a>
+      <p>Headless freedom, batteries included.</p>
+      <a href="${upTo(dir)}third-party-notices.txt">Third-party notices</a>
+    </div></div></footer>
     <script type="module" src="${upTo(dir)}${entry.slice(1)}"></script>`
     ),
   };

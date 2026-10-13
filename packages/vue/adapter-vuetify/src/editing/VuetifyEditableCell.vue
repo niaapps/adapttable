@@ -23,7 +23,7 @@ const controls: EditableCellChromeSlots<TRow> = {
     vuetifyButton(
       {
         title: control.title,
-        "aria-label": control.title,
+        "aria-description": control.title,
         "data-adapttable-part": "edit-cell-activate",
         "data-save-status": control.saveStatus,
         "data-dirty": control.dirty ? "" : undefined,

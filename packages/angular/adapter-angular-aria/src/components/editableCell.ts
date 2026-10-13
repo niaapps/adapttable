@@ -40,6 +40,14 @@ import {
 
 @Component({
   selector: "adapt-edit-cell-activate",
+  styles: [
+    `
+      button:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+      }
+    `,
+  ],
   imports: [NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: "adapt-aria", style: "display: contents" },
@@ -54,7 +62,7 @@ import {
       [attr.data-save]="p.saveStatus ?? null"
       [attr.aria-busy]="p.saveStatus === 'saving' ? true : null"
       [class]="p.className"
-      style="all: unset; box-sizing: border-box; display: block; width: 100%; cursor: text; text-align: inherit"
+      style="appearance: none; box-sizing: border-box; display: block; width: 100%; min-width: 0; padding: 0; border: 0; border-radius: 2px; background: transparent; color: inherit; font: inherit; cursor: text; text-align: inherit; white-space: normal; overflow-wrap: anywhere"
       (dblclick)="p.onDoubleClick($event)"
       (click)="p.onClick($event)"
       (keydown)="p.onKeyDown($event)"

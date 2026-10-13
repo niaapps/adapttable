@@ -370,6 +370,10 @@ export default defineConfig({
         find: "@adapttable/shadcn-vue/styles.css",
         replacement: `${packageDir("adapter-shadcn-vue")}/src/styles.css`,
       },
+      {
+        find: "@adapttable/quasar/styles.css",
+        replacement: `${packageDir("adapter-quasar")}/src/styles.css`,
+      },
       { find: /^@adapttable\/core$/, replacement: pkg("core") },
       { find: /^@adapttable\/react$/, replacement: pkg("react") },
       { find: /^@adapttable\/vue$/, replacement: pkg("vue") },

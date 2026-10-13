@@ -1,5 +1,6 @@
-import { createApp } from "vue";
+import "./entry-navigation-shell";
 
+import { createStandaloneApp } from "./createStandaloneApp";
 import TableFootersDemo from "./table-footers/TableFootersDemo.vue";
 
-createApp(TableFootersDemo).mount("#root");
+createStandaloneApp(TableFootersDemo).mount("#root");

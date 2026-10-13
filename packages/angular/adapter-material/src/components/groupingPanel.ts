@@ -40,12 +40,16 @@ function addControlWidth(label: string): string {
       [attr.data-mobile]="p.mobile ? true : null"
       [attr.dir]="p.dir ?? null"
       [attr.data-adapttable-part]="p['data-adapttable-part']"
-      style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px"
+      style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 16px; min-inline-size: 0"
       (dragenter)="p.onDragEnter?.($event)"
       (dragover)="p.onDragOver?.($event)"
       (dragleave)="p.onDragLeave?.($event)"
       (drop)="p.onDrop?.($event)"
     >
+      <span
+        style="font-size: 0.8125rem; font-weight: 600; margin-inline-end: 8px"
+        >{{ p.label }}</span
+      >
       <ng-container [ngTemplateOutlet]="p.children" />
     </section>
   `,
@@ -56,6 +60,50 @@ class AdaptGroupingSurface {
 
 @Component({
   selector: "adapt-grouping-drop-zone",
+  styles: [
+    `
+      fieldset {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        margin: 0 2px;
+        padding: 0;
+        border: 1px dashed color-mix(in srgb, currentColor 30%, transparent);
+        border-radius: 4px;
+        min-inline-size: 10px;
+        min-block-size: 32px;
+      }
+      fieldset[data-empty] {
+        min-inline-size: 9rem;
+        min-block-size: 44px;
+        padding: 8px;
+      }
+      fieldset:not([data-empty]):not([data-active]):not([data-dragging]) {
+        opacity: 0;
+      }
+      fieldset[data-dragging] {
+        border-color: var(--mat-sys-primary, #6750a4);
+        background: color-mix(
+          in srgb,
+          var(--mat-sys-primary, #6750a4) 8%,
+          transparent
+        );
+      }
+      fieldset[data-active] {
+        border-color: var(--mat-sys-primary, #6750a4);
+        border-style: solid;
+        background: color-mix(
+          in srgb,
+          var(--mat-sys-primary, #6750a4) 22%,
+          transparent
+        );
+        outline: 2px solid var(--mat-sys-primary, #6750a4);
+        outline-offset: 1px;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
   template: `
@@ -74,8 +122,6 @@ class AdaptGroupingSurface {
     >
       @if (p.empty) {
         {{ p.label }}
-      } @else {
-        <span aria-hidden="true">│</span>
       }
     </fieldset>
   `,
@@ -137,17 +183,20 @@ class AdaptGroupingChip {
   host: { style: "display: contents" },
   template: `
     @let p = props();
-    <mat-form-field appearance="outline" subscriptSizing="dynamic"
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      [style.width]="
+        p['data-adapttable-part'] === 'grouping-add' ? width(p.label) : '8rem'
+      "
       ><select
         matNativeControl
         [attr.aria-label]="p.label"
         [attr.data-adapttable-part]="p['data-adapttable-part']"
         [disabled]="p.disabled ?? false"
         [value]="p.value"
-        [style.width]="
-          p['data-adapttable-part'] === 'grouping-add' ? width(p.label) : null
-        "
-        (change)="p.onChange($any($event.target).value)"
+        style="width: 100%"
+        (change)="change($any($event.target))"
       >
         @if (p["data-adapttable-part"] === "grouping-add") {
           <option value="" disabled hidden [selected]="p.value === ''">
@@ -166,10 +215,46 @@ class AdaptGroupingChip {
 class AdaptGroupingSelect {
   readonly props = input.required<GroupingPanelSelectProps>();
   protected readonly width = addControlWidth;
+
+  protected change(select: HTMLSelectElement): void {
+    const p = this.props();
+    const value = select.value;
+    // Add is an action, so reset before Angular removes the chosen option.
+    if (p["data-adapttable-part"] === "grouping-add") select.value = "";
+    p.onChange(value);
+  }
 }
 
 @Component({
   selector: "adapt-grouping-remove-zone",
+  styles: [
+    `
+      fieldset {
+        display: flex;
+        flex: 1 1 auto;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-inline-size: 0;
+        min-block-size: 44px;
+        margin: 0;
+        padding: 8px 12px;
+        border: 1px dashed var(--mat-sys-error, #b3261e);
+        border-radius: 6px;
+        color: var(--mat-sys-error, #b3261e);
+        font-size: 0.8125rem;
+      }
+      fieldset[data-active] {
+        background: color-mix(
+          in srgb,
+          var(--mat-sys-error, #b3261e) 12%,
+          transparent
+        );
+        border-style: solid;
+        outline: 2px solid var(--mat-sys-error, #b3261e);
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
   template: `
@@ -199,6 +284,7 @@ class AdaptGroupingRemoveZone {
   template: `
     @let p = props();
     <span
+      style="display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px; max-inline-size: 100%"
       [attr.data-read-only]="p.readOnly ? true : null"
       [attr.data-adapttable-part]="p['data-adapttable-part']"
     >
@@ -244,13 +330,16 @@ class AdaptGroupingAggregationRemove {
   host: { style: "display: contents" },
   template: `
     @let p = props();
-    <mat-form-field appearance="outline" subscriptSizing="dynamic"
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      [style.width]="width(p.label)"
       ><select
         matNativeControl
         [attr.aria-label]="p.label"
         [attr.data-adapttable-part]="p['data-adapttable-part']"
         [disabled]="p.disabled === true || available().length === 0"
-        [style.width]="width(p.label)"
+        style="width: 100%"
         (change)="choose($any($event.target))"
       >
         <option value="" disabled hidden [selected]="true">

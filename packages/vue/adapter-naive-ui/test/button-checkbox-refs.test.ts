@@ -31,6 +31,19 @@ afterEach(() => {
   for (const cleanup of cleanups) cleanup();
 });
 
+it("leaves mousedown available for native header and handle dragging", () => {
+  const view = mount(() => naiveButton({ draggable: true }, "Move Team"));
+  const button = view.host.querySelector("button")!;
+  const event = new MouseEvent("mousedown", {
+    bubbles: true,
+    cancelable: true,
+    button: 0,
+  });
+  button.dispatchEvent(event);
+  expect(event.defaultPrevented).toBe(false);
+  expect(button.draggable).toBe(true);
+});
+
 function control(kind: "button" | "checkbox", attrs: Attrs, changed = false) {
   if (kind === "button") {
     return naiveButton(attrs, changed ? "Updated" : "Initial");

@@ -1,3 +1,4 @@
+import "../entry-navigation-shell";
 import "./reka-theme.css";
 
 import { createApp } from "vue";

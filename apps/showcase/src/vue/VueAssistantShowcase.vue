@@ -14,7 +14,7 @@ import {
 import { DataTable } from "@adapttable/vue-unstyled";
 import {
   agentApproval,
-  tableAssistant,
+  TableAssistant,
 } from "@adapttable/vue-unstyled/assistant";
 import { computed, shallowRef } from "vue";
 
@@ -24,7 +24,7 @@ const rows = [
   { id: "alan", name: "Alan" },
   { id: "barbara", name: "Barbara" },
 ];
-const columns = [{ key: "name", sortable: true }];
+const columns = [{ key: "name", header: "Person", sortable: true }];
 const rowKey = (row: { id: string }) => row.id;
 const selected = shallowRef<string[]>([]);
 const accept = shallowRef(true);
@@ -263,10 +263,11 @@ const view = computed(() => ({
   onOpenChange: assistant.setOpen,
   approval: approval.value,
   speech: speech.view.value,
+  className: "mx-native-assistant",
   greeting: "Choose a person to select, or type ask.",
   note: "This local transport executes real table actions and reports their actual receipts.",
 }));
-const features = [agent, tableAssistant(), agentApproval()];
+const features = [agent, agentApproval()];
 const selection = (ids: string[]) => {
   if (accept.value) selected.value = ids;
 };
@@ -274,39 +275,50 @@ const selection = (ids: string[]) => {
 <template>
   <main>
     <h1>Vue native assistant</h1>
-    <label
-      ><input
-        v-model="accept"
-        type="checkbox"
-        data-testid="accept-model"
-      />Accept controlled selection</label
-    >
-    <label
-      ><input
-        v-model="voice"
-        type="checkbox"
-        data-testid="enable-speech"
-      />Enable browser dictation</label
-    >
-    <label
-      >Approval surface
-      <select v-model="presentation" data-testid="approval-surface">
-        <option value="widget">Conversation</option>
-        <option value="table">Table</option>
-        <option value="modal">Modal</option>
-      </select></label
-    >
-    <p data-testid="selected-ids">{{ selected.join(",") || "none" }}</p>
-    <DataTable
-      :data="rows"
-      :columns="columns"
-      :row-key="rowKey"
-      :features="features"
-      :assistant="view"
-      selectable
-      :selected-ids="selected"
-      :url-sync="false"
-      @update:selected-ids="selection"
-    />
+    <div class="native-assistant-controls">
+      <label
+        ><input
+          v-model="accept"
+          type="checkbox"
+          data-testid="accept-model"
+        />Accept controlled selection</label
+      >
+      <label
+        ><input
+          v-model="voice"
+          type="checkbox"
+          data-testid="enable-speech"
+        />Enable browser dictation</label
+      >
+      <label
+        >Approval surface
+        <select v-model="presentation" data-testid="approval-surface">
+          <option value="widget">Conversation</option>
+          <option value="table">Table</option>
+          <option value="modal">Modal</option>
+        </select></label
+      >
+    </div>
+    <p class="hint">
+      Selected people:
+      <output data-testid="selected-ids">{{
+        selected.join(",") || "none"
+      }}</output>
+    </p>
+    <div class="native-assistant-workspace">
+      <DataTable
+        :data="rows"
+        :columns="columns"
+        :row-key="rowKey"
+        :features="features"
+        selectable
+        :selected-ids="selected"
+        :url-sync="false"
+        @update:selected-ids="selection"
+      />
+      <div class="native-assistant-panel">
+        <TableAssistant v-bind="view" presentation="panel" />
+      </div>
+    </div>
   </main>
 </template>

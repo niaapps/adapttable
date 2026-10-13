@@ -3,6 +3,10 @@ import { onScopeDispose, shallowRef, watch } from "vue";
 
 import { FRAMEWORK_STORAGE_KEY } from "../../../../../scripts/framework-navigation.mjs";
 import {
+  canReplaceDemo,
+  navigateDemo,
+} from "../../angular/demoTransitions.mjs";
+import {
   adaptersOf,
   docsUrl,
   featuresOf,
@@ -106,8 +110,11 @@ function applyOptions(): void {
   const url = new URL(window.location.href);
   for (const [key, value] of Object.entries(pending.value))
     url.searchParams.set(key, value);
-  if (Object.keys(pending.value).length) window.location.assign(url.href);
-  else close();
+  if (Object.keys(pending.value).length) {
+    if (!canReplaceDemo()) return;
+    close();
+    navigateDemo(url);
+  } else close();
 }
 function stageOption(event: Event): void {
   const input = event.target;
@@ -125,13 +132,14 @@ onScopeDispose(() => dialog.value?.close());
 function setOption(key: string, value: string): void {
   const url = new URL(window.location.href);
   url.searchParams.set(key, value);
+  if (key === "kit") url.searchParams.delete("kit-unavailable");
   if (key === "locale") url.searchParams.delete("dir");
   if (key === "mode") {
     for (const name of [...url.searchParams.keys()])
       if (name.startsWith("vue-live.") || name.startsWith("vue-lab."))
         url.searchParams.delete(name);
   }
-  window.location.assign(url.href);
+  navigateDemo(url);
 }
 function change(event: Event): void {
   const input = event.target;
@@ -150,7 +158,9 @@ function reset(): void {
     window.location.origin
   );
   url.searchParams.set("kit", props.adapter.key);
-  window.location.assign(url.href);
+  if (!canReplaceDemo()) return;
+  close();
+  navigateDemo(url);
 }
 </script>
 
@@ -159,6 +169,7 @@ function reset(): void {
     :active="lab ? 'all-options' : 'demo'"
     :kit="adapter"
     :dark="dark"
+    :before-navigate="canReplaceDemo"
     @toggle-dark="dark = !dark"
   />
   <main class="shell vue-demo mx-vue">
@@ -186,6 +197,7 @@ function reset(): void {
         class="adtab"
         :class="{ 'is-on': item.key === adapter.key }"
         :aria-pressed="item.key === adapter.key"
+        :data-demo-control="'kit-' + item.key"
         @click="setOption('kit', item.key)"
       >
         <span class="adtab__l"
@@ -213,6 +225,7 @@ function reset(): void {
             ><input
               type="radio"
               :name="group.key"
+              :data-demo-control="group.key + '-' + option.value"
               :value="option.value"
               :checked="group.value === option.value"
               @change="change"
@@ -223,6 +236,7 @@ function reset(): void {
       <label class="angular-select"
         >Filters<select
           name="filters"
+          data-demo-control="filters"
           :value="current('filters', 'popover')"
           @change="change"
         >
@@ -231,21 +245,26 @@ function reset(): void {
           <option value="header">Header</option>
         </select></label
       >
-      <label
-        v-for="toggle in toggles.slice(0, 3)"
-        :key="toggle.key"
-        class="vue-demo__toggle"
-        ><input
-          type="checkbox"
-          :name="toggle.key"
-          :checked="current(toggle.key, toggle.initial ? 'on' : 'off') === 'on'"
-          :disabled="
-            current('mode', 'frontend') === 'server' &&
-            ['grouping', 'editing'].includes(toggle.key)
-          "
-          @change="change"
-        />{{ toggle.label }}</label
-      >
+      <div class="angular-options-switches">
+        <label
+          v-for="toggle in toggles.slice(0, 3)"
+          :key="toggle.key"
+          class="vue-demo__toggle"
+          ><input
+            type="checkbox"
+            :name="toggle.key"
+            :data-demo-control="toggle.key"
+            :checked="
+              current(toggle.key, toggle.initial ? 'on' : 'off') === 'on'
+            "
+            :disabled="
+              current('mode', 'frontend') === 'server' &&
+              ['grouping', 'editing'].includes(toggle.key)
+            "
+            @change="change"
+          />{{ toggle.label }}</label
+        >
+      </div>
     </section>
     <div v-if="lab" class="vue-demo__options">
       <div>
@@ -255,7 +274,13 @@ function reset(): void {
           specialized views.
         </p>
       </div>
-      <button ref="trigger" type="button" class="nav__docs" @click="open">
+      <button
+        ref="trigger"
+        type="button"
+        class="nav__docs"
+        data-demo-control="lab-options"
+        @click="open"
+      >
         Configure options
       </button>
     </div>

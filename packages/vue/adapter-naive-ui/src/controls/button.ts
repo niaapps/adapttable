@@ -15,6 +15,9 @@ export function naiveButton(
     NButton,
     {
       ...appearance,
+      // Naive's synthetic focus cancels mousedown, preventing native drags
+      // from both a handle and a sortable button inside a draggable header.
+      nativeFocusBehavior: true,
       ...nativeAttrs,
       attrType: type === "submit" || type === "reset" ? type : "button",
       size: appearance.size ?? "small",

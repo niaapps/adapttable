@@ -60,7 +60,8 @@
       "@adapttable/ai": ["../../shared/ai/src/index.ts"],
       "@adapttable/ai/voice": ["../../shared/ai/src/voice.ts"]
     },
-    "rootDirs": [".", "./.sfc-types"]
+    "rootDirs": [".", "./.sfc-types"],
+    "allowJs": true
   },
   "include": ["src", "test", "tsdown.config.ts", "vitest.config.ts", "browser"],
   "exclude": [

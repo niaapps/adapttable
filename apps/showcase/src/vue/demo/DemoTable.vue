@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { applyRowReorder } from "@adapttable/core";
 import { aggregate, useServerData } from "@adapttable/vue";
-import { shallowRef } from "vue";
+import { onScopeDispose, shallowRef } from "vue";
 
+import {
+  demoSession,
+  demoUrlAdapter,
+  registerDemoCapture,
+} from "../../angular/demoTransitions.mjs";
 import { formatMoney } from "../../people";
 import {
   applyPersonEdit,
@@ -24,7 +29,12 @@ const enabled = (key: string, initial = false): boolean =>
 const server = query.get("mode") === "server";
 const editing = enabled("editing", true) && !server;
 const grouped = enabled("grouping") && !server;
-const rows = shallowRef<readonly Person[]>(peopleRows());
+const rows = shallowRef<readonly Person[]>(
+  demoSession.read("vue-people", peopleRows)
+);
+onScopeDispose(
+  registerDemoCapture(() => demoSession.write("vue-people", rows.value))
+);
 const columns = peopleColumns({ editable: editing, status: kit.status });
 const urlKey = props.lab ? "vue-lab" : "vue-live";
 const log = shallowRef("");
@@ -40,6 +50,7 @@ const source = server
       error,
       supports: { filterTree: true },
       urlKey,
+      urlAdapter: demoUrlAdapter,
       defaults: { limit: 10 },
       onQueryChange: async (params, context) => {
         loading.value = true;
@@ -158,6 +169,7 @@ const density = query.get("density") === "compact" ? "compact" : "comfortable";
         :row-key="rowKey"
         table-label="People directory"
         :url-key="urlKey"
+        :url-adapter="demoUrlAdapter"
         :selectable="enabled('selection', lab)"
         :mobile-breakpoint="enabled('mobile') ? Number.MAX_SAFE_INTEGER : 768"
         :defaults="{ limit: 10 }"

@@ -16,16 +16,18 @@
 <ng-template #modalContent>
   @if (modalReview(); as review) {
     @if (props().approval; as pending) {
-      <adapt-approval-review-chrome
-        [review]="review"
-        [labels]="props().labels"
-        [slots]="reviewSlots()"
-        [expanded]="true"
-        [onApprove]="pending.approve"
-        [onReject]="pending.reject"
-        [onDecide]="pending.decideAt"
-        [onAlwaysAllow]="pending.alwaysAllow"
-      />
+      <div data-adapttable-part="assistant-approval-modal-content">
+        <adapt-approval-review-chrome
+          [review]="review"
+          [labels]="props().labels"
+          [slots]="reviewSlots()"
+          [expanded]="true"
+          [onApprove]="pending.approve"
+          [onReject]="pending.reject"
+          [onDecide]="pending.decideAt"
+          [onAlwaysAllow]="pending.alwaysAllow"
+        />
+      </div>
     }
   }
 </ng-template>

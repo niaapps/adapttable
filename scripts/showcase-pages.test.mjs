@@ -323,7 +323,18 @@ describe("the showcase page manifest", () => {
       );
       assert.equal(indexed.includes(`/vue/demo/${path}/`), false);
       const source = readFileSync(join(SHOWCASE, entry), "utf8");
-      assert.match(source, /createApp\(Fixture\)/);
+      if (path === "nuxt-ui/workspace") {
+        assert.match(
+          source,
+          /createApp\(Fixture\)\.use\(ui\)\.mount\("#root"\)/
+        );
+      } else {
+        assert.match(
+          source,
+          /createStandaloneApp\(Fixture\)\.mount\("#root"\)/
+        );
+        assert.match(source, /from "\.\.\/createStandaloneApp"/);
+      }
       // Each lab mounts its own kit's fixture, directly or through a showcase
       // wrapper component.
       const wrapper = VUE_KIT_LAB_WRAPPERS.get(path);
@@ -409,6 +420,14 @@ describe("the showcase page manifest", () => {
       }
       const entry = entryModuleOf(source, page.html);
       assert.ok(entry, page.html);
+      if (source.includes('id="showcase-navigation"')) {
+        const entrySource = readFileSync(join(SHOWCASE, entry), "utf8");
+        assert.match(
+          entrySource,
+          /^import "\.{1,2}\/entry-navigation-shell";/m,
+          `${page.html} must mount its navigation from the page entry`
+        );
+      }
       assert.equal(
         (source.match(MODULE_SCRIPT) ?? []).filter((tag) => SRC.test(tag))
           .length,
@@ -502,7 +521,11 @@ describe("the kit stylesheets every showcase page loads", () => {
       const sheets = sideEffectImportsIn(source).filter((imported) =>
         imported.endsWith(".css")
       );
-      assert.deepEqual(sheets, [`.${CHROME_SHEET}`], module);
+      assert.deepEqual(
+        sheets,
+        [`.${CHROME_SHEET}`, "../assistantShowcase.css"],
+        module
+      );
       assert.equal(sideEffectImportsIn(source).includes(KIT_STYLES), false);
     }
   });

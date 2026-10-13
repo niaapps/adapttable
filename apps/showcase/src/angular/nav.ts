@@ -12,6 +12,7 @@ import {
 import {
   FRAMEWORK_STORAGE_KEY,
   frameworkDemoTarget,
+  showcasePageHref,
   SITE_FRAMEWORKS,
 } from "../../../../scripts/framework-navigation.mjs";
 import {
@@ -20,7 +21,9 @@ import {
   kitAccent,
   SHOWCASE_ADAPTERS,
 } from "../matrix/content";
+import { updateShowcaseThemeUrl } from "../matrix/theme";
 import { navigationMenuShift } from "../navGeometry";
+import { createNavMenuInteraction } from "../navMenuInteraction";
 import { SHOWCASE_DARK } from "./showcaseKit";
 import { AdaptShowcaseWordmark } from "./wordmark";
 
@@ -40,12 +43,24 @@ export class AdaptShowcaseNav {
   readonly shift = signal(0);
   private layoutFrame = 0;
   private pendingFocus: number | null = null;
+  readonly menu = createNavMenuInteraction(
+    (open) => {
+      this.open.set(open);
+      this.layoutMenu();
+    },
+    () =>
+      this.element.nativeElement
+        .querySelector(".nav__group")
+        ?.contains(document.activeElement) ?? false
+  );
   constructor() {
-    inject(DestroyRef).onDestroy(() => cancelAnimationFrame(this.layoutFrame));
+    inject(DestroyRef).onDestroy(() => {
+      cancelAnimationFrame(this.layoutFrame);
+      this.menu.dispose();
+    });
   }
   toggleMenu(): void {
-    this.open.update((value) => !value);
-    this.layoutMenu();
+    this.menu.toggle();
   }
   @HostListener("window:resize")
   layoutMenu(): void {
@@ -85,12 +100,12 @@ export class AdaptShowcaseNav {
     event.preventDefault();
     const index = event.key === "ArrowDown" ? 0 : -1;
     if (this.open()) {
+      this.menu.hold();
       this.focusItem(index);
       return;
     }
     this.pendingFocus = index;
-    this.open.set(true);
-    this.layoutMenu();
+    this.menu.hold();
   }
   menuKey(event: KeyboardEvent): void {
     const items = Array.from(
@@ -110,8 +125,11 @@ export class AdaptShowcaseNav {
       event.preventDefault();
       this.focusItem(next);
     }
-    if (event.key === "Tab") this.escape();
+    if (event.key === "Tab") this.menu.close();
   }
+  readonly unavailableKit = new URLSearchParams(window.location.search).get(
+    "kit-unavailable"
+  );
   readonly frameworks = SITE_FRAMEWORKS;
   readonly adapters = SHOWCASE_ADAPTERS.filter(
     (adapter) => adapter.framework === "angular" && adapter.built !== false
@@ -119,13 +137,19 @@ export class AdaptShowcaseNav {
   readonly docs = docsUrl("getting-started", "angular");
   readonly repo = "https://github.com/orwa-mahmoud/adapttable";
   readonly deployed = /^\/angular\/demo(?:\/|$)/.test(window.location.pathname);
-  href(page: string): string {
+  private path(page: string): string {
     if (this.deployed) return `/angular/demo/${page ? page + "/" : ""}`;
     if (!page) return "/angular-main/";
     return page === "all-options" ? "/angular-all-options/" : `/${page}/`;
   }
+  href(page: string): string {
+    return showcasePageHref(this.path(page), window.location.href);
+  }
   demoHref(page: string): string {
-    return `${this.href(page)}?kit=${encodeURIComponent(this.kit())}`;
+    return showcasePageHref(
+      `${this.path(page)}?kit=${encodeURIComponent(this.kit())}`,
+      window.location.href
+    );
   }
   features() {
     const adapter = this.adapters.find((item) => item.key === this.kit());
@@ -134,6 +158,11 @@ export class AdaptShowcaseNav {
   accent(adapter: (typeof this.adapters)[number]): string {
     return kitAccent(adapter, this.dark());
   }
+  toggleTheme(): void {
+    this.dark.set(!this.dark());
+    updateShowcaseThemeUrl(this.dark());
+  }
+
   switchPage(event: Event): void {
     if (!(event.target instanceof HTMLSelectElement)) return;
     const selected = event.target.value;
@@ -147,8 +176,33 @@ export class AdaptShowcaseNav {
       ),
     ];
     const destination = destinations.find((href) => href === selected);
-    if (destination && this.beforeNavigate()())
+    if (destination) {
+      if (!this.beforeNavigate()()) {
+        event.target.value =
+          destinations.find(
+            (href) =>
+              new URL(href, window.location.origin).pathname ===
+              window.location.pathname
+          ) ?? "";
+        return;
+      }
       window.location.assign(destination);
+    }
+  }
+  guardLink(event: MouseEvent): void {
+    const link =
+      event.target instanceof Element ? event.target.closest("a") : null;
+    if (
+      !link ||
+      link.target === "_blank" ||
+      event.button !== 0 ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.altKey
+    )
+      return;
+    if (!this.beforeNavigate()()) event.preventDefault();
   }
   switchFramework(event: Event): void {
     if (!(event.target instanceof HTMLSelectElement)) return;
@@ -179,12 +233,12 @@ export class AdaptShowcaseNav {
         .querySelector(".nav__group")
         ?.contains(event.target)
     )
-      this.open.set(false);
+      this.menu.close();
   }
   @HostListener("document:keydown.escape")
   escape(): void {
     if (!this.open()) return;
-    this.open.set(false);
+    this.menu.close();
     this.element.nativeElement
       .querySelector<HTMLButtonElement>(".nav__trigger")
       ?.focus();

@@ -4,10 +4,6 @@
     display: flex;
     align-items: flex-end;
     gap: 0.35em;
-    padding: 0.35em 0.35em 0.35em 0.6em;
-    border-radius: 1.1em;
-    border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
-    background: color-mix(in srgb, currentColor 3%, transparent);
     position: sticky;
     inset-block-end: 0;
     flex-shrink: 0;
@@ -35,7 +31,9 @@
       </span>
     }
   }
-  <span style="flex: 1 1 auto; min-width: 0; display: flex"
+  <span
+    data-adapttable-part="assistant-input-container"
+    style="flex-grow: 1; flex-shrink: 1; min-width: 0; display: flex"
     ><ng-container
       [adaptControl]="slots().Composer"
       [adaptControlProps]="composer()"

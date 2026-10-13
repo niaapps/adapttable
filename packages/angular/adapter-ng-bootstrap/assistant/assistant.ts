@@ -193,7 +193,7 @@ export class AdaptAssistantSheet {
     [attr.data-adapttable-part]="props().part"
     [class]="props().className"
     [style]="props().style"
-    style="margin:0;padding:0;border:0"
+    style="inset-inline-start:auto;inset-block-start:auto;margin:0;padding:0;border:0"
   >
     <ng-container [ngTemplateOutlet]="props().children" />
   </section>`,

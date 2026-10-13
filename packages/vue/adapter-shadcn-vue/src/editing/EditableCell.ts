@@ -70,7 +70,7 @@ const EditableCellPresentation = defineComponent(
             variant: "ghost",
             type: "button",
             title: control.title,
-            "aria-label": control.title,
+            "aria-description": control.title,
             ref: control.activateRef,
             class: [control.className, names.value.editCellActivate],
             "data-adapttable-part": "edit-cell-activate",

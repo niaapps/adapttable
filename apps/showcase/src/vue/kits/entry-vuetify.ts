@@ -1,3 +1,4 @@
+import "../entry-navigation-shell";
 import "vuetify/styles";
 
 import { createApp } from "vue";

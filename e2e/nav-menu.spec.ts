@@ -240,14 +240,14 @@ test("every menu link is in the DOM with the menus closed", async ({
   // the matrix, because a list generated from the same source it checks
   // agrees with itself however wrong it is.
   expect(hrefs).toEqual([
-    "./mantine/",
-    "./mui/",
-    "./chakra/",
-    "./antd/",
-    "./radix/",
-    "./base-ui/",
-    "./shadcn/",
-    "./tailwind/",
+    "/mantine/",
+    "/mui/",
+    "/chakra/",
+    "/antd/",
+    "/radix/",
+    "/base-ui/",
+    "/shadcn/",
+    "/tailwind/",
   ]);
   // Hidden is not absent: the closed panel is out of the accessibility tree
   // and out of the tab order, which is what `visibility` buys over `opacity`.

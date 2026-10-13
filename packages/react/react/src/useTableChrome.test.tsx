@@ -414,10 +414,9 @@ describe("useTableChrome", () => {
     });
     expect(result.current.grouping).toBeDefined();
     act(() => result.current.grouping!.setGroupBy(null));
-    // The change APPLIED (URL cleared → prop groupBy still forces it on,
-    // but the mutator ran and the host was notified with the value).
+    // An explicit empty marker keeps the cleared choice across kit remounts.
     expect(onGroupByChange).toHaveBeenCalledWith([]);
-    expect(adapter.getSearch()).not.toContain("groupBy");
+    expect(new URLSearchParams(adapter.getSearch()).get("groupBy")).toBe("");
   });
 
   it("dev-warns when editable columns have no composed editing handler", () => {

@@ -15,6 +15,7 @@ import { createApp, h } from "vue";
 
 import { resolveMatrixRoute } from "../../matrix/content";
 import { SHOWCASE_PRESENTATION } from "./data";
+import { activateKitStyles } from "./kitStyles";
 import { loadVueShowcaseKit } from "./loadKit";
 import MatrixPage from "./MatrixPage.vue";
 import { SHOWCASE_KIT } from "./showcaseKit";
@@ -50,6 +51,7 @@ const dark = (() => {
 
 const app = createApp({ render: () => h(MatrixPage, { route }) });
 app.provide(SHOWCASE_KIT, kit);
+activateKitStyles(kit.key);
 kit.install?.(app, {
   dark,
   dir: SHOWCASE_PRESENTATION.dir,

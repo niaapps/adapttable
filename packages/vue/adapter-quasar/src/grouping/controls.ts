@@ -20,13 +20,23 @@ export function quasarGroupingSlots(
         {
           ...toVueAttrs(attrs),
           tag: "section",
-          class: names.value.groupingPanel,
+          class: [
+            "adapttable-quasar-grouping-layout",
+            names.value.groupingPanel,
+          ],
           flat: true,
           bordered: true,
           "aria-label": label,
           "data-mobile": mobile ? "" : undefined,
         },
-        () => children
+        () => [
+          h(
+            "span",
+            { class: "adapttable-quasar-grouping-layout-label" },
+            label
+          ),
+          children,
+        ]
       ),
     DropZone: ({ label, empty, active, dragging, dropProps, ...attrs }) =>
       h(
@@ -39,6 +49,7 @@ export function quasarGroupingSlots(
           flat: true,
           bordered: true,
           "aria-label": label,
+          "data-empty": empty ? "" : undefined,
           "data-active": active ? "" : undefined,
           "data-dragging": dragging ? "" : undefined,
         },
@@ -109,8 +120,8 @@ export function quasarGroupingSlots(
         () => label
       ),
     AggregationItem: ({ label, readOnly, readOnlyLabel, children, ...attrs }) =>
-      h(QChip, { ...attrs, class: names.value.groupingAggregationItem }, () => [
-        h("strong", label),
+      h("span", { ...attrs, class: names.value.groupingAggregationItem }, [
+        h("span", label),
         readOnly ? h("small", readOnlyLabel) : children,
       ]),
     AggregationRemove: ({ label, onRemove, ...attrs }) =>

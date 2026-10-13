@@ -331,13 +331,15 @@ function ApprovalModal({
       open
       onClose={mine.reject}
     >
-      <AssistantApproval
-        review={review}
-        pending={mine}
-        labels={labels}
-        slots={slots}
-        expanded
-      />
+      <div data-adapttable-part="assistant-approval-modal-content">
+        <AssistantApproval
+          review={review}
+          pending={mine}
+          labels={labels}
+          slots={slots}
+          expanded
+        />
+      </div>
     </Sheet>
   );
 }

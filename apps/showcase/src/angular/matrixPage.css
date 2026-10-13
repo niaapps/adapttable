@@ -30,7 +30,7 @@ adapt-showcase-matrix-page *::after {
   --ng-accent: var(--kit);
   --ng-wash: var(--kit-wash);
   color: var(--ink);
-  font-size: var(--fs-small);
+  font-size: 14px;
 }
 
 /* Long package identifiers need their own line on narrow phones. */
@@ -111,7 +111,8 @@ adapt-showcase-matrix-page *::after {
   min-height: 32px;
 }
 
-.mx-ng--unstyled button:hover:not(:disabled) {
+.mx-ng--unstyled
+  button:not([data-adapttable-part="filters-backdrop"]):hover:not(:disabled) {
   background: var(--ng-raised);
 }
 
@@ -652,4 +653,55 @@ adapt-showcase-matrix-page *::after {
   .angular-choice__options input:checked + span {
     border-color: Highlight;
   }
+}
+
+/* Keep the resize target at the inline edge of its own column header. */
+.mx-ng--unstyled
+  [data-adapttable-part="header-cell"]:has(
+    [data-adapttable-part="resize-handle"]
+  ) {
+  position: relative;
+}
+.mx-ng--unstyled [data-adapttable-part="resize-handle"] {
+  position: absolute;
+  display: block;
+  inset-inline-end: 0;
+  inset-block: 0;
+  inline-size: 8px;
+  block-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+.mx-ng--unstyled [data-adapttable-part="resize-handle"]::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 3px;
+  inset-block: 25%;
+  inline-size: 2px;
+  background: var(--ng-line);
+}
+.mx-ng--unstyled
+  [data-adapttable-part="resize-handle"]:is(:hover, :focus-visible)::after {
+  background: var(--ng-accent);
+}
+.mx-ng--unstyled [data-adapttable-part="resize-handle"]:focus-visible {
+  outline: 2px solid var(--ng-accent);
+  outline-offset: -2px;
+}
+
+/* Keep axis controls adjacent on a desktop and stack them inside a phone. */
+.mx-kit-host [data-adapttable-part="pivot-panel"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+.mx-kit-host [data-adapttable-part="pivot-panel"] > * {
+  min-inline-size: 0;
 }

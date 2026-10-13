@@ -378,6 +378,93 @@ it("uses a genuine Quasar menu for per-row actions and closes on invocation", as
   ).toBe("false");
 });
 
+it("keeps a programmatically opened native menu actionable without a captured trigger window", async () => {
+  const invoked = vi.fn();
+  const wrapper = mount(DataTable<HierarchyRow>, {
+    ...native,
+    props: {
+      ...common,
+      rowActionsLayout: "menu",
+      features: [
+        rowActions<HierarchyRow>([
+          { key: "open", label: "Open", onClick: invoked },
+        ]),
+      ],
+    },
+  });
+  wrappers.push(wrapper);
+  await settle();
+  // Native component consumers can emit a click without a DOM currentTarget.
+  const trigger = wrapper
+    .findAllComponents(QBtn)
+    .find(
+      (button) =>
+        button.attributes("data-adapttable-part") === "row-actions-trigger"
+    );
+  expect(trigger).toBeDefined();
+  trigger?.vm.$emit("click", new MouseEvent("click"));
+  wrapper.findComponent(QMenu).vm.show();
+  await vi.waitFor(() =>
+    expect(document.querySelector(part("row-actions-menu"))).not.toBeNull()
+  );
+  document
+    .querySelector<HTMLButtonElement>(
+      `${part("row-actions-menu")} ${part("action-button")}`
+    )
+    ?.click();
+  await settle();
+  expect(invoked).toHaveBeenCalledExactlyOnceWith(hierarchyRows[0]);
+});
+
+it.each(["close", "unmount"])(
+  "repositions an open native row menu and removes its window listeners on %s",
+  async (finish) => {
+    const added = vi.spyOn(window, "addEventListener");
+    const removed = vi.spyOn(window, "removeEventListener");
+    const wrapper = mount(DataTable<HierarchyRow>, {
+      ...native,
+      props: {
+        ...common,
+        rowActionsLayout: "menu",
+        features: [
+          rowActions<HierarchyRow>([
+            { key: "open", label: "Open", onClick: vi.fn() },
+          ]),
+        ],
+      },
+    });
+    wrappers.push(wrapper);
+    await settle();
+    const menu = wrapper.findComponent(QMenu);
+    const reposition = vi.spyOn(menu.vm, "updatePosition");
+    await wrapper.findAll(part("row-actions-trigger"))[0]?.trigger("click");
+    await vi.waitFor(() =>
+      expect(document.querySelector(part("row-actions-menu"))).not.toBeNull()
+    );
+    const listener = added.mock.calls.find(
+      ([kind, , capture]) => kind === "scroll" && capture === true
+    )?.[1];
+    expect(listener).toBeTypeOf("function");
+    reposition.mockClear();
+    window.dispatchEvent(new Event("scroll"));
+    window.dispatchEvent(new Event("resize"));
+    expect(reposition.mock.calls.length).toBeGreaterThanOrEqual(2);
+    if (finish === "close") {
+      await menu.vm.hide();
+      await settle();
+    } else {
+      wrapper.unmount();
+      wrappers.splice(wrappers.indexOf(wrapper), 1);
+    }
+    expect(removed).toHaveBeenCalledWith("scroll", listener, true);
+    expect(removed).toHaveBeenCalledWith("resize", listener);
+    reposition.mockClear();
+    window.dispatchEvent(new Event("scroll"));
+    window.dispatchEvent(new Event("resize"));
+    expect(reposition).not.toHaveBeenCalled();
+  }
+);
+
 it("composes native column group and sort controls with resize handles", async () => {
   const wrapper = mount(DataTable<HierarchyRow>, {
     ...native,

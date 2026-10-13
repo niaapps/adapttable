@@ -22,7 +22,7 @@ function read(): Presentation {
   const dark = theme === "light" ? false : storedTheme();
   return {
     view: view === "dispatch" || view === "revenue" ? view : "orders",
-    locale: query.get("lang") === "ar" ? "ar" : "en",
+    locale: (query.get("lang") ?? query.get("locale")) === "ar" ? "ar" : "en",
     layout: query.get("layout") === "cards" ? "cards" : "auto",
     dark: theme === "dark" || dark,
   };
@@ -34,6 +34,8 @@ export function useWorkspacePresentation() {
     const url = new URL(window.location.href);
     url.searchParams.set("view", value.view);
     url.searchParams.set("lang", value.locale);
+    if (url.searchParams.has("locale"))
+      url.searchParams.set("locale", value.locale);
     url.searchParams.set("layout", value.layout);
     url.searchParams.set("theme", value.dark ? "dark" : "light");
     return url;
@@ -46,12 +48,16 @@ export function useWorkspacePresentation() {
     state.value = read();
   };
   window.addEventListener("popstate", restore);
+  window.addEventListener("adapttable-presentation", restore);
   onScopeDispose(() => {
     window.removeEventListener("popstate", restore);
+    window.removeEventListener("adapttable-presentation", restore);
   });
   watch(
     state,
     (value) => {
+      document.documentElement.dataset.theme = value.dark ? "dark" : "light";
+      document.documentElement.classList.toggle("dark", value.dark);
       document.documentElement.lang = value.locale;
       document.documentElement.dir = value.locale === "ar" ? "rtl" : "ltr";
       document.documentElement.style.colorScheme = value.dark
@@ -72,6 +78,7 @@ export function useWorkspacePresentation() {
     if (url.href !== window.location.href)
       window.history.pushState(window.history.state, "", url);
     state.value = next;
+    window.dispatchEvent(new Event("adapttable-presentation"));
   };
   return { state, navigate };
 }

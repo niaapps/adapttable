@@ -20,13 +20,21 @@ export function shadcnGroupingControls(
         {
           ...toVueAttrs(attrs),
           class: [
+            "adapttable-shadcn-vue-grouping-layout",
             "flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted/30 p-3",
             names.value.groupingPanel,
           ],
           "aria-label": label,
           "data-mobile": mobile ? "" : undefined,
         },
-        [children]
+        [
+          h(
+            "span",
+            { class: "adapttable-shadcn-vue-grouping-layout-label" },
+            label
+          ),
+          children,
+        ]
       ),
     DropZone: ({ label, empty, active, dragging, dropProps, ...attrs }) =>
       h(
@@ -40,6 +48,7 @@ export function shadcnGroupingControls(
             "inline-flex min-h-9 min-w-2 items-center rounded border border-dashed border-border px-2 text-muted-foreground data-active:bg-accent",
             names.value.groupingDropZone,
           ],
+          "data-empty": empty ? "" : undefined,
           "data-active": active ? "" : undefined,
           "data-dragging": dragging ? "" : undefined,
         },

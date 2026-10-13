@@ -13,7 +13,7 @@ const preview = assistantPage.html
 const url = process.env.VUE_ASSISTANT_URL ?? preview;
 const part = (name: string) => `[data-adapttable-part="${name}"]`;
 test.beforeEach(async ({ page }) => {
-  const response = await page.goto(url);
+  const response = await page.goto(url, { waitUntil: "domcontentloaded" });
   expect(response?.ok(), `Assistant showcase navigation failed: ${url}`).toBe(
     true
   );

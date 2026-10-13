@@ -36,32 +36,15 @@ import {
   SITE_HOME,
   snippetFor,
 } from "../matrix/content";
+import {
+  readShowcaseTheme as readStoredTheme,
+  storeShowcaseTheme as storeTheme,
+} from "../matrix/theme";
 import { SHOWCASE_PRESENTATION } from "./data";
 import { AdaptShowcaseLandingTable, FEATURE_BODIES } from "./featureBodies";
 import { AdaptShowcaseNav } from "./nav";
 import { SHOWCASE_DARK, SHOWCASE_KIT } from "./showcaseKit";
 import { AdaptShowcaseWordmark } from "./wordmark";
-
-/** Where every showcase page keeps the reader's theme between pages. */
-const THEME_KEY = "adapttable-demo-theme";
-
-const readStoredTheme = (): boolean => {
-  try {
-    return window.localStorage.getItem(THEME_KEY) === "dark";
-  } catch {
-    // Storage can be unavailable (private mode): the page opens light.
-    return false;
-  }
-};
-
-const storeTheme = (dark: boolean): void => {
-  try {
-    window.localStorage.setItem(THEME_KEY, dark ? "dark" : "light");
-  } catch {
-    // Storage can be unavailable (private mode): the theme simply does not
-    // persist across pages then.
-  }
-};
 
 const escapeHtml = (text: string): string =>
   text
@@ -126,9 +109,6 @@ export class AdaptShowcaseMatrixPage {
   readonly copied = signal<"code" | "install" | null>(null);
 
   readonly siteHome = SITE_HOME;
-  readonly unavailableKit = new URLSearchParams(window.location.search).get(
-    "kit-unavailable"
-  );
   readonly unavailable = new URLSearchParams(window.location.search).get(
     "unavailable"
   );
@@ -216,6 +196,7 @@ export class AdaptShowcaseMatrixPage {
     effect(() => {
       const dark = this.dark();
       document.documentElement.dataset.theme = dark ? "dark" : "light";
+      document.documentElement.classList.toggle("dark", dark);
       document.documentElement.style.colorScheme = dark ? "dark" : "light";
       storeTheme(dark);
     });

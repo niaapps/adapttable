@@ -59,7 +59,7 @@ for (const kit of ["ng-bootstrap", "ngx-bootstrap"] as const) {
         const part = width < 600 ? "card" : "row";
         await expect(
           page.locator(`.ai-demo [data-adapttable-part="${part}"]`)
-        ).toHaveCount(3);
+        ).toHaveCount(5);
         await page
           .locator(".ai-demo")
           .evaluate((demo) =>

@@ -58,6 +58,7 @@ export const NativeColumnMenuPanel = defineComponent(
             boxSizing: "border-box",
             padding: "16px",
             display: "grid",
+            overflowY: "auto",
             gap: "12px",
             zIndex: 10050,
           },

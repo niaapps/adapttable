@@ -34,7 +34,8 @@ const controls: EditableCellChromeSlots<TRow> = {
         attrs: {
           ref: control.activateRef,
           title: control.title,
-          "aria-label": control.title,
+          variant: "ghost",
+          "aria-description": control.title,
           class: [control.className, names.value.editCellActivate],
           "data-adapttable-part": "edit-cell-activate",
           "data-save-status": control.saveStatus,
