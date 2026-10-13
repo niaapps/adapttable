@@ -467,4 +467,53 @@ describe("the table conformance suite", () => {
     await expect(first!.run()).rejects.toThrow();
     expect(unmounted).toBe(1);
   });
+
+  it("waits for a framework's queued mount before inspecting its first view", async () => {
+    let ready = false;
+    let released = 0;
+    const deferred: ConformanceDriver = {
+      name: "deferred",
+      mount(scenario) {
+        const view = referenceDriver.mount(scenario);
+        return {
+          ...view,
+          ready: Promise.resolve().then(() => {
+            ready = true;
+          }),
+          unmount: () => {
+            released++;
+            view.unmount();
+          },
+        };
+      },
+    };
+    const [first] = collect(deferred, (actual) => {
+      expect(ready).toBe(true);
+      return expect(actual);
+    });
+    await first!.run();
+    expect(released).toBe(1);
+  });
+
+  it("releases a mount whose readiness rejects without starting assertions", async () => {
+    let inspected = false;
+    let released = 0;
+    const deferred: ConformanceDriver = {
+      name: "failed mount",
+      mount: () => ({
+        container: document.createElement("div"),
+        ready: Promise.reject(new Error("Native mount failed")),
+        unmount: () => {
+          released++;
+        },
+      }),
+    };
+    const [first] = collect(deferred, (actual) => {
+      inspected = true;
+      return expect(actual);
+    });
+    await expect(first!.run()).rejects.toThrow("Native mount failed");
+    expect(inspected).toBe(false);
+    expect(released).toBe(1);
+  });
 });

@@ -58,6 +58,7 @@ export interface ConformanceLabels {
 // @public
 export interface ConformanceMount {
     readonly container: HTMLElement;
+    readonly ready?: Promise<void>;
     readonly unmount: () => void;
 }
 
