@@ -282,6 +282,33 @@ const VUE_SOURCES = [
 const isAngularSource = (id: string): boolean =>
   ANGULAR_SOURCES.some((dir) => id.startsWith(dir));
 
+const vuePlugin = vue({ template: { transformAssetUrls } });
+
+/** Vue's internal TS transform inherits OXC options outside Vite's refresh filter. */
+const vueTransformOptions = (): Plugin => ({
+  name: "adapttable-vue-transform-options",
+  configureServer(server) {
+    const api = vuePlugin.api;
+    if (!api) throw new Error("Vue compiler options are unavailable");
+    const oxc = server.config.oxc;
+    if (!oxc) return;
+    const jsx = oxc.jsx;
+    api.options = {
+      ...api.options,
+      devServer: {
+        ...server,
+        config: {
+          ...server.config,
+          oxc: {
+            ...oxc,
+            jsx: typeof jsx === "object" ? { ...jsx, refresh: false } : jsx,
+          },
+        },
+      },
+    };
+  },
+});
+
 export default defineConfig({
   base: "./",
   plugins: [
@@ -293,7 +320,8 @@ export default defineConfig({
       tsconfig: page("./src/angular/tsconfig.json"),
       transformFilter: (_code, id) => isAngularSource(id),
     }),
-    vue({ template: { transformAssetUrls } }),
+    vuePlugin,
+    vueTransformOptions(),
     ui({
       router: false,
       colorMode: false,
