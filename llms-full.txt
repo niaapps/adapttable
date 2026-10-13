@@ -34618,6 +34618,21 @@ for a custom response shape and change `selectorKey` when its external
 interpretation changes. No query library is imported by AdaptTable; that
 library owns its requests, cancellation, SSR and deactivation policy.
 
+For TanStack Vue Query v5, install `VueQueryPlugin` with a request-local
+`QueryClient` in the host app, then return the actual `useInfiniteQuery`
+result from `query(params)`. Use a computed key such as
+`computed(() => ["people", params.value])`; copying `params.value` once
+outside that computation loses paging, sorting and filter updates. Supply
+`initialPageParam` and `getNextPageParam`, and pass the query function's
+`signal` to your fetch. Paged requests read `params.value.page`; infinite
+requests use `pageParam`. AdaptTable shows the final page in paged mode and
+appends loaded pages in infinite mode. The integration tests mount a native
+table with TanStack Vue Query 5.104.2 and Vue 3.5.43, covering paging, sorting,
+search, column filters, loading, rejection/refetch, late responses and unmount
+cancellation. TanStack's Vue peer range includes Vue 3.3+; AdaptTable requires
+Vue 3.5+. TanStack remains a host dependency, not a runtime dependency of
+`@adapttable/vue`. See the [TanStack infinite-query guide](https://tanstack.com/query/latest/docs/framework/vue/guides/infinite-queries).
+
 ## URL state
 
 `useTableUrlState(options?: MaybeRefOrGetter<UseTableUrlStateOptions>)` returns
