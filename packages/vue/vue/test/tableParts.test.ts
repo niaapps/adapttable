@@ -257,7 +257,10 @@ it("aligns a single numeric group with its leaf header and values", () => {
       return () =>
         DesktopTableChrome({
           model: shell.desktop.value,
-          slots: {},
+          slots: {
+            SortButton: (props) => h("button", props.attrs, [props.content]),
+            SelectionCheckbox: (props) => h("input", props.attrs),
+          },
           classNames,
         });
     },
