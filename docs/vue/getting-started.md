@@ -39,9 +39,9 @@ binding-only factories require the corresponding adapter slots.
 The seven styled adapters expose the same 41 canonical feature factories, with
 kit-specific controls, and every one exports `standardFeatures()` from its
 `/preset` entry, an assistant surface from `/assistant` and a controlled
-`PivotPanel` from `/pivot`. A feature barrel is available only where the package
-exports it. See the [adapter entry map](./features.md#styled-adapter-feature-entries)
-for those boundaries. Compose standard Unstyled controls with `standardFeatures()`
+`PivotPanel` from `/pivot`. Every Vue kit exports an optional `/features` barrel
+with its own native factories. See the [adapter entry map](./features.md#styled-adapter-feature-entries)
+for writer and presentation boundaries. Compose standard Unstyled controls with `standardFeatures()`
 from `@adapttable/vue-unstyled/preset`, or choose individual feature entries.
 
 For strict template checking, use Vue tooling with `strictTemplates: true`.

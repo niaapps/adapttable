@@ -9,6 +9,7 @@ import { createSSRApp, h, shallowRef } from "vue";
 import { renderToString } from "vue/server-renderer";
 
 import { DataTable, type DataTableProps } from "../src";
+import { NaiveHistoryButtons } from "../src/editing/NaiveHistoryButtons";
 import {
   batchEditing,
   dirtyIndicators,
@@ -16,8 +17,7 @@ import {
   editing,
   rowEditing,
   undoRedoButtons,
-} from "../src/editing";
-import { NaiveHistoryButtons } from "../src/editing/NaiveHistoryButtons";
+} from "../src/features";
 import {
   click,
   deferred,

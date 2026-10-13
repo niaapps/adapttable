@@ -5,6 +5,20 @@ Requires Node.js **22.12.0 or newer**; packed releases are tested on Node 22.12 
 Quasar controls for AdaptTable's headless Vue binding. The Vue binding owns
 state and feature behavior; Quasar supplies the interactive components.
 
+## Combined feature imports
+
+Use `@adapttable/quasar/features` to compose the kit's native factories from
+one optional entry. Individual feature subpaths remain available; the base
+`DataTable` import does not load this barrel.
+
+```ts
+import { editing, filters } from "@adapttable/quasar/features";
+```
+
+The factories retain their individual signatures, native controls and
+host-owned callbacks. See the [Vue feature guide](https://adapttable.orwamahmoud.com/vue/features/)
+for composition and provider requirements.
+
 ## Features
 
 - Feature composition with 41 canonical factories and focused, opt-in imports.

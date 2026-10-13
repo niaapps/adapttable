@@ -358,6 +358,29 @@ it("includes emitted drawer CSS in the three drawer-capable unstyled consumers",
 });
 
 describe("optional Vue layout graphs", () => {
+  it("covers all five combined native entries without changing base ceilings", () => {
+    const entries = VUE_LAYOUT_GRAPH_SPECS.filter(
+      (entry) => entry.alsoEntryFile === "features.js"
+    );
+    assert.deepEqual(entries.map((entry) => entry.pkg).sort(), [
+      "adapter-element-plus",
+      "adapter-naive-ui",
+      "adapter-nuxt-ui",
+      "adapter-quasar",
+      "adapter-vuetify",
+    ]);
+    for (const entry of entries) {
+      assert.equal(entry.styleEntryFile, "styles.css");
+      assert.ok(entry.present.includes("editing"));
+      assert.ok(entry.present.includes("filters"));
+      assert.ok(entry.rejectOptionalAi);
+      const base = VUE_NATIVE_BASE_SPECS.find((spec) => spec.pkg === entry.pkg);
+      assert.ok(base);
+      assert.ok(base.hardBaseCeiling);
+      assert.equal(entry.consumerHost, base.consumerHost);
+    }
+  });
+
   it("keeps headless and named shell consumers separate from optional rendering", () => {
     const root = fixture("vue · simple table");
     const shell = VUE_LAYOUT_GRAPH_SPECS.find(

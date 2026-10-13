@@ -8,6 +8,20 @@ Vuetify controls for the headless AdaptTable Vue binding. AdaptTable owns query
 state and requests changes from the host; Vuetify supplies Material Design
 presentation. The adapter does not introduce a second table data engine.
 
+## Combined feature imports
+
+Use `@adapttable/vuetify/features` to compose the kit's native factories from
+one optional entry. Individual feature subpaths remain available; the base
+`DataTable` import does not load this barrel.
+
+```ts
+import { editing, filters } from "@adapttable/vuetify/features";
+```
+
+The factories retain their individual signatures, native controls and
+host-owned callbacks. See the [Vue feature guide](https://adapttable.orwamahmoud.com/vue/features/)
+for composition and provider requirements.
+
 ## Features
 
 - Feature composition with 41 canonical factories and focused, opt-in imports.
