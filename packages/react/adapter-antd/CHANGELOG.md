@@ -1,5 +1,13 @@
 # @adapttable/antd
 
+## 3.3.6
+
+### Patch Changes
+
+- c8d10ab: Align assistant headers, composers, conversation alignment and viewport placement with the Mantine reference while retaining each adapter's native controls. Correct native dialog offsets, mobile focus handoff and nested shortcuts dismissal.
+- Updated dependencies [c8d10ab]
+  - @adapttable/react@1.7.2
+
 ## 3.3.5
 
 ### Patch Changes

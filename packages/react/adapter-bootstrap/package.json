@@ -141,7 +141,7 @@
   "dependencies": {
     "@adapttable/core": "3.9.1",
     "react-compiler-runtime": "^1.0.0",
-    "@adapttable/react": "1.7.1"
+    "@adapttable/react": "1.7.2"
   },
   "peerDependencies": {
     "bootstrap": "^5.0.0",

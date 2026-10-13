@@ -1,5 +1,11 @@
 # @adapttable/react
 
+## 1.7.2
+
+### Patch Changes
+
+- c8d10ab: Align assistant headers, composers, conversation alignment and viewport placement with the Mantine reference while retaining each adapter's native controls. Correct native dialog offsets, mobile focus handoff and nested shortcuts dismissal.
+
 ## 1.7.1
 
 ### Patch Changes

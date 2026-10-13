@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@adapttable/core": "^3.9.1",
-    "@adapttable/unstyled": "^3.3.4",
+    "@adapttable/unstyled": "^3.3.5",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

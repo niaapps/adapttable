@@ -1,5 +1,11 @@
 # @adapttable/vue
 
+## 0.1.3
+
+### Patch Changes
+
+- c8d10ab: Align assistant headers, composers, conversation alignment and viewport placement with the Mantine reference while retaining each adapter's native controls. Correct native dialog offsets, mobile focus handoff and nested shortcuts dismissal.
+
 ## 0.1.2
 
 ### Patch Changes
