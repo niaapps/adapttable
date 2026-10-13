@@ -684,6 +684,8 @@ export class AdaptAssistantComposer {
     // (undocumented)
     protected readonly usable: Signal<boolean>;
     // (undocumented)
+    protected readonly voiceError: Signal<string | undefined>;
+    // (undocumented)
     static ɵcmp: i0.ɵɵComponentDeclaration<AdaptAssistantComposer, "adapt-assistant-composer", never, {
         "props": {
             "alias": "props";
