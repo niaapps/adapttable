@@ -1,5 +1,13 @@
 # @adapttable/react
 
+## 1.7.1
+
+### Patch Changes
+
+- 29ff08e: Keep assistant input-container and modal-content part markers on equivalent structural elements across React, Angular and Vue.
+- Updated dependencies [9213f9a]
+  - @adapttable/core@3.9.1
+
 ## 1.7.0
 
 ### Minor Changes

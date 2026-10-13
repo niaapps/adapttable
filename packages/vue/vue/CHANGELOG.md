@@ -1,5 +1,16 @@
 # @adapttable/vue
 
+## 0.1.2
+
+### Patch Changes
+
+- 7bedef1: Keep expanded assistant action details across the transcript width without squeezing reply text, and expose the composer input container for application layout styling. Remove presentation colors from the Angular structural composer.
+- 54dd62a: Handle Escape inside modal approval content so every Vue kit settles cancellation as rejection. Preserve nested controls' consumed Escape events and input composition ownership.
+- b267b30: Lay out assistant headers, messages and composers through structural chrome, keeping the title, transcript and native controls readable without relying on browser list defaults.
+- eaac515: Anchor enabled column resize handles to their own header cells, preserving sticky positioning for pinned columns. Handles no longer overlap at the edge of the page or span the full viewport height.
+- Updated dependencies [9213f9a]
+  - @adapttable/core@3.9.1
+
 ## 0.1.1
 
 ### Patch Changes

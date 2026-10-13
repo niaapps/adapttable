@@ -1,5 +1,14 @@
 # @adapttable/mui
 
+## 3.3.5
+
+### Patch Changes
+
+- Updated dependencies [29ff08e]
+- Updated dependencies [9213f9a]
+  - @adapttable/react@1.7.1
+  - @adapttable/core@3.9.1
+
 ## 3.3.4
 
 ### Patch Changes

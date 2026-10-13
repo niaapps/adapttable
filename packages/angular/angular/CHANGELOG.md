@@ -1,5 +1,14 @@
 # @adapttable/angular
 
+## 0.5.1
+
+### Patch Changes
+
+- 7bedef1: Keep expanded assistant action details across the transcript width without squeezing reply text, and expose the composer input container for application layout styling. Remove presentation colors from the Angular structural composer.
+- 29ff08e: Keep assistant input-container and modal-content part markers on equivalent structural elements across React, Angular and Vue.
+- Updated dependencies [9213f9a]
+  - @adapttable/core@3.9.1
+
 ## 0.5.0
 
 ### Minor Changes

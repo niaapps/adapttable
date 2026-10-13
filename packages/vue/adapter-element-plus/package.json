@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/element-plus",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Element Plus data table controls for the AdaptTable Vue binding.",
   "license": "MIT",
   "author": "Orwa Mahmoud",
@@ -17,7 +17,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@adapttable/vue": "0.1.1"
+    "@adapttable/vue": "0.1.2"
   },
   "peerDependencies": {
     "element-plus": "^2.14.7",
