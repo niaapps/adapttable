@@ -106,7 +106,7 @@ export interface HeaderGroupCell {
   hideLabel: boolean;
   /**
    * Header alignment. Omit and {@link groupedHeaderAlign} uses `"center"`,
-   * the previous hardcoded value.
+   * unless a single leaf supplies its own alignment.
    */
   align?: GroupedHeaderAlign;
 }
@@ -279,6 +279,25 @@ function headerGroupRowAt<TRow>(
       hideLabel: collapsedHere && stub,
       align: id === null ? undefined : groups?.get(id)?.align,
     });
+  }
+  return alignSingleLeafGroups(cells, columns);
+}
+
+function alignSingleLeafGroups<TRow>(
+  cells: HeaderGroupCell[],
+  columns: readonly ColumnMetadata<TRow>[]
+): HeaderGroupCell[] {
+  let columnIndex = 0;
+  for (const cell of cells) {
+    if (
+      cell.label !== null &&
+      cell.span === 1 &&
+      !cell.hideLabel &&
+      cell.align === undefined
+    ) {
+      cell.align = columns[columnIndex]?.align;
+    }
+    columnIndex += cell.span;
   }
   return cells;
 }

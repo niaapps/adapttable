@@ -105,6 +105,14 @@ Rows that are totals are marked for styling: every row-header cell carries
 `subtotal` or `grandTotal`, and the row itself is yours through
 `rowAppearance({ rowClassName })` from `@adapttable/<kit>/row-appearance`.
 
+The configuration panel fills its container: Rows and Columns share the
+available width, and Measures spans the next row. Narrow containers stack all
+three zones. The structural `pivot-zones` and `pivot-zone-layout` parts expose
+this layout without replacing each kit's native configuration controls.
+A group above a single measure follows that column's alignment, so its caption,
+measure label and numeric values share an edge. Groups spanning several measures
+remain centered unless the host specifies a group alignment.
+
 ## Measures
 
 A measure is a column key and an aggregation:

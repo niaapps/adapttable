@@ -241,3 +241,33 @@ it("distinguishes spanning group bands from the leaf header row", () => {
     )
   ).toEqual(["header-group-row", "header-row"]);
 });
+
+it("aligns a single numeric group with its leaf header and values", () => {
+  const root = document.createElement("div");
+  const app = createApp({
+    setup() {
+      const shell = useDataTableShell({
+        data,
+        columns: [
+          { key: "score", header: "Score", group: "Results", align: "end" },
+        ],
+        rowKey: (row: Row) => row.id,
+        urlSync: false,
+      });
+      return () =>
+        DesktopTableChrome({
+          model: shell.desktop.value,
+          slots: {},
+          classNames,
+        });
+    },
+  });
+  app.mount(root);
+  releases.push(() => app.unmount());
+  for (const name of ["header-group-cell", "header-cell", "cell"]) {
+    const element = root.querySelector<HTMLElement>(
+      `[data-adapttable-part="${name}"]`
+    )!;
+    expect(element.style.textAlign).toBe("end");
+  }
+});

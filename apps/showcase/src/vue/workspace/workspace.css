@@ -1104,9 +1104,7 @@ body.vue-workspace-page[data-workspace-theme="dark"] {
   margin-block: 12px;
 }
 .vue-workspace-page [data-adapttable-part="pivot-panel"] {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  display: block;
   margin-block-end: 16px;
 }
 .vue-workspace-page [data-adapttable-part="pivot-zone"] {

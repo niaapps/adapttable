@@ -1917,20 +1917,9 @@ a {
 .pivot-layout > * {
   min-width: 0;
 }
-/* Kit Surfaces are a vertical flex of the three zones (correct in a docked
-   side panel). On this page they become a row. `!important` beats the kit's
-   own `display: flex` / `flex-direction: column`, including antd's inline
-   styles. Feature Lab does not use `.pivot-layout`, so it stays stacked. */
+/* The binding lays out the native pivot zones inside the kit surface. */
 .pivot-layout [data-adapttable-part="pivot-panel"] {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  align-items: stretch;
-}
-@media (max-width: 900px) {
-  .pivot-layout [data-adapttable-part="pivot-panel"] {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  display: block !important;
 }
 .pivot-table-wrap {
   min-width: 0;

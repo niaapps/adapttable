@@ -10,6 +10,7 @@ import {
   columnGroupHeaderCaption,
   EXTRA_ROW_PARTS,
   extraUncoveredColSpans,
+  groupedHeaderAlign,
   mergeVueAttrs,
   renderContent,
   renderFooter,
@@ -237,6 +238,7 @@ export function QuasarDesktop<TRow>({
                   colspan: cell.colSpan,
                   rowspan: cell.rowSpan,
                   "data-adapttable-part": "header-group-cell",
+                  style: { textAlign: groupedHeaderAlign(cell.cell.align) },
                   class: names.columnGroup,
                 },
                 [
