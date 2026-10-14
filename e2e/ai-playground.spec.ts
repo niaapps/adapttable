@@ -389,6 +389,37 @@ test.describe(`${CANONICAL_AI_ADAPTER} conversational workflows`, () => {
     await expect(drawer).toBeHidden();
   });
 
+  test("opening demo options stops a pending background scroll", async ({
+    page,
+  }) => {
+    const trigger = page.getByTestId("ai-demo-options");
+    await trigger.focus();
+    await page.evaluate(() =>
+      window.scrollBy({ top: 400, behavior: "smooth" })
+    );
+    await trigger.press("Enter");
+    const drawer = page.getByTestId("ai-demo-options-drawer");
+    await expect(drawer).toBeVisible();
+    const resting = await page.evaluate(() => window.scrollY);
+    const positions = await page.evaluate(
+      () =>
+        new Promise<number[]>((resolve) => {
+          const observed = new Set<number>();
+          let frames = 0;
+          const sample = () => {
+            observed.add(window.scrollY);
+            if (++frames === 30) resolve([...observed]);
+            else requestAnimationFrame(sample);
+          };
+          requestAnimationFrame(sample);
+        })
+    );
+    expect(positions).toEqual([resting]);
+    await page.keyboard.press("Escape");
+    await expect(drawer).toBeHidden();
+    await expect(trigger).toBeFocused();
+  });
+
   test("pins a column and a row through the assistant", async ({ page }) => {
     await expect.poll(async () => catalogText(page)).toContain("view.pinRow");
 
@@ -555,6 +586,7 @@ test.describe(`${CANONICAL_AI_ADAPTER} conversational workflows`, () => {
  */
 test.describe("the star prompt and an open conversation", () => {
   test("waits while the assistant is open, then asks", async ({ page }) => {
+    await page.clock.install();
     await page.addInitScript(() => {
       Object.defineProperty(navigator, "webdriver", { get: () => false });
       // Five seconds left on its timer — enough to open the conversation
@@ -571,7 +603,7 @@ test.describe("the star prompt and an open conversation", () => {
 
     const star = page.locator(".star-the-repo");
     // Past the moment it was due, and still not on screen.
-    await page.waitForTimeout(6000);
+    await page.clock.runFor(6000);
     await expect(star).toHaveCount(0);
 
     await page.locator(part("assistant-close")).click();

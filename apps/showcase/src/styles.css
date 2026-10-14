@@ -23,6 +23,8 @@ html {
    panel is open, so a gesture over it moves the panel and nothing else. */
 html:has(.ai-opts[open]) {
   overflow: hidden;
+  overflow-anchor: none;
+  scroll-behavior: auto;
 }
 /* `html body` so the brand font outranks Chakra's runtime body reset —
    without it the whole chrome silently falls back to the system font. */
