@@ -31,6 +31,23 @@ export class HlmPopoverLabel {
         if (host.style.inlineSize !== inlineSize)
           host.style.setProperty("inline-size", inlineSize, "important");
       }
+      // CDK computes physical right offsets against innerWidth. The native
+      // top layer's containing block excludes a reserved root gutter, so a
+      // right-anchored host otherwise lands one gutter too far left.
+      if (host && this.document.defaultView) {
+        const rightAnchored =
+          host.style.right !== "" &&
+          host.style.right !== "auto" &&
+          (host.style.left === "" || host.style.left === "auto");
+        const gutter = rightAnchored
+          ? Math.max(
+              0,
+              this.document.defaultView.innerWidth -
+                this.document.documentElement.getBoundingClientRect().width
+            )
+          : 0;
+        host.style.translate = `${String(gutter)}px`;
+      }
       if (pane && pane.getAttribute("aria-label") !== label)
         pane.setAttribute("aria-label", label);
     };

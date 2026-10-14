@@ -269,7 +269,7 @@ describe("the Spartan Angular toolbar controls", () => {
     expect(parts("views-item")).toEqual([]);
   });
 
-  it("shifts the Arabic views panel by the reserved scrollbar gutter", async () => {
+  it("leaves the Arabic views panel's gutter correction to its native host", async () => {
     document.documentElement.setAttribute("dir", "rtl");
     const width = vi
       .spyOn(document.documentElement, "getBoundingClientRect")
@@ -288,7 +288,7 @@ describe("the Spartan Angular toolbar controls", () => {
         await settle();
       };
       await open();
-      expect(part("views-panel")?.style.translate).toBe("15px");
+      expect(part("views-panel")?.style.translate).toBe("0px");
       document.body.dispatchEvent(
         new KeyboardEvent("keydown", { key: "Escape", keyCode: 27 })
       );
