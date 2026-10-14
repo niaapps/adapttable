@@ -100,7 +100,7 @@ test("switching from Quasar to Nuxt leaves checkbox labels beside their controls
     })
     .click();
   await expect(
-    page.getByText("pnpm add @adapttable/nuxt-ui", { exact: true })
+    page.getByText("npx @adapttable/cli init --kit nuxt-ui", { exact: true })
   ).toBeVisible();
   const picker = page.locator(
     '[data-adapttable-part="grouping-aggregation-add"]'
@@ -124,7 +124,7 @@ test("switching from Quasar to Nuxt leaves checkbox labels beside their controls
     })
     .click();
   await expect(
-    page.getByText("pnpm add @adapttable/quasar", { exact: true })
+    page.getByText("npx @adapttable/cli init --kit quasar", { exact: true })
   ).toBeVisible();
   await expect(
     page

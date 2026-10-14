@@ -89,7 +89,9 @@ test("Vue switches kits and options without navigation or losing committed edits
     })
     .click();
   await expect(
-    page.getByText("pnpm add @adapttable/element-plus", { exact: true })
+    page.getByText("npx @adapttable/cli init --kit element-plus", {
+      exact: true,
+    })
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Ada updated", exact: true })
