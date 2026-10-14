@@ -1,5 +1,19 @@
 # @adapttable/ai-react
 
+## 0.2.16
+
+### Patch Changes
+
+- 43e2007: Keep dictation usable after React Strict Mode effect cleanup, and release the previous recognizer when voice is disabled or its mode or languages change. Preserve current draft callbacks and active dictation across equivalent language lists.
+- Updated dependencies [753873b]
+- Updated dependencies [c201ffb]
+- Updated dependencies [330566b]
+- Updated dependencies [d35c348]
+- Updated dependencies [d7ddec5]
+  - @adapttable/react@1.7.3
+  - @adapttable/core@3.10.0
+  - @adapttable/ai@0.6.2
+
 ## 0.2.15
 
 ### Patch Changes

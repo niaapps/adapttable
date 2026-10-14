@@ -1,5 +1,23 @@
 # @adapttable/spartan
 
+## 0.2.4
+
+### Patch Changes
+
+- 66aa1f8: Make descending sorting reachable from mobile cards with each kit's native direction button. Preserve the selected column, localized labels, keyboard activation and shared URL/Saved Views state.
+  
+  The Angular binding adds the protected `AdaptDataTableShell.sortDirection()` transition for native adapter templates.
+- 9660922: Keep the saved-view name field readable on phones and wrap the native save button when the menu cannot fit both controls beside each other. Correct native right-anchored popovers for reserved scrollbar gutters in either text direction so the saved-views panel stays inside the viewport.
+- Updated dependencies [019364c]
+- Updated dependencies [753873b]
+- Updated dependencies [66aa1f8]
+- Updated dependencies [c201ffb]
+- Updated dependencies [330566b]
+- Updated dependencies [d35c348]
+- Updated dependencies [d7ddec5]
+  - @adapttable/angular@0.6.0
+  - @adapttable/core@3.10.0
+
 ## 0.2.3
 
 ### Patch Changes

@@ -1,5 +1,22 @@
 # @adapttable/shadcn
 
+## 3.4.0
+
+### Minor Changes
+
+- 66aa1f8: Expose a native mobile sort-direction button and its optional `classNames.sortDirection` styling hook. The shadcn preset supplies its own border, hover, focus and disabled styles. Sorting continues to use the same column, URL and Saved Views state.
+
+### Patch Changes
+
+- Updated dependencies [753873b]
+- Updated dependencies [66aa1f8]
+- Updated dependencies [110fd7a]
+- Updated dependencies [330566b]
+- Updated dependencies [d35c348]
+- Updated dependencies [d7ddec5]
+  - @adapttable/react@1.7.3
+  - @adapttable/unstyled@3.4.0
+
 ## 3.3.5
 
 ### Patch Changes

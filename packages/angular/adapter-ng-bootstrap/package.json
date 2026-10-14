@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/ng-bootstrap",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "AdaptTable Angular tables with ng-bootstrap overlays and isolated Bootstrap controls.",
   "keywords": [
     "angular",
@@ -219,8 +219,8 @@
     "rxjs": "^7.4.0"
   },
   "dependencies": {
-    "@adapttable/core": "3.9.1",
-    "@adapttable/angular": "0.5.2",
+    "@adapttable/core": "3.10.0",
+    "@adapttable/angular": "0.6.0",
     "tslib": "^2.8.1"
   },
   "engines": {

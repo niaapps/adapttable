@@ -1,5 +1,18 @@
 # @adapttable/nuxt-ui
 
+## 0.2.0
+
+### Minor Changes
+
+- d9f78ab: Add an optional `./features` entry collecting each kit's native feature factories and their existing signatures. Preserve individual feature subpaths and keep optional composition out of the base DataTable graph.
+
+### Patch Changes
+
+- d35c348: Align a single-column group caption with its leaf header and values, honor group alignment in Vue renderers, and let pivot configuration zones fill their container with responsive axis panels and a full-width measures panel. Keep explicit group alignment, spanning headers and native kit controls intact.
+- Updated dependencies [330566b]
+- Updated dependencies [d35c348]
+  - @adapttable/vue@0.1.4
+
 ## 0.1.3
 
 ### Patch Changes

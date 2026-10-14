@@ -1,5 +1,23 @@
 # @adapttable/ngx-bootstrap
 
+## 0.2.4
+
+### Patch Changes
+
+- 66aa1f8: Make descending sorting reachable from mobile cards with each kit's native direction button. Preserve the selected column, localized labels, keyboard activation and shared URL/Saved Views state.
+  
+  The Angular binding adds the protected `AdaptDataTableShell.sortDirection()` transition for native adapter templates.
+- c7d999d: Reopen the native column menu reliably after Escape, including rapid keyboard activation before the close/open input values render separately. Render prepared placement inputs before the native popup opens so short-screen menus open above their trigger, and cancel a second activation while opening is pending. Apply the height and scrolling budget to the complete native popup, including its border and padding, so the outer edge stays on screen.
+- Updated dependencies [019364c]
+- Updated dependencies [753873b]
+- Updated dependencies [66aa1f8]
+- Updated dependencies [c201ffb]
+- Updated dependencies [330566b]
+- Updated dependencies [d35c348]
+- Updated dependencies [d7ddec5]
+  - @adapttable/angular@0.6.0
+  - @adapttable/core@3.10.0
+
 ## 0.2.3
 
 ### Patch Changes
