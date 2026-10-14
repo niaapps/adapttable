@@ -13,11 +13,15 @@ import {
   injectPopoverSpace,
 } from "@adapttable/angular/adapter";
 import {
+  afterNextRender,
   afterRenderEffect,
+  type AfterRenderRef,
   ChangeDetectionStrategy,
   Component,
   computed,
   type ElementRef,
+  inject,
+  Injector,
   signal,
   viewChild,
 } from "@angular/core";
@@ -299,6 +303,9 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
       <div
         class="dropdown-menu"
         *dropdownMenu
+        [style.max-height]="panelStyle()['max-height']"
+        [style.overflow-y]="panelStyle()['overflow-y']"
+        [style.box-sizing]="panelStyle()['box-sizing']"
         (keydown.escape)="
           $event.preventDefault();
           $event.stopPropagation();
@@ -312,7 +319,8 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
             data-ngx-bootstrap-part="column-menu-panel"
             [attr.aria-label]="p.labels.columns"
             [attr.dir]="p.dir ?? null"
-            [style]="panelStyle()"
+            [style.border]="panelStyle().border"
+            [style.padding]="panelStyle().padding"
           >
             <div data-ngx-bootstrap-part="column-menu-header">
               <span data-ngx-bootstrap-part="column-menu-title">{{
@@ -427,9 +435,33 @@ export class AdaptColumnMenu extends AdaptColumnMenuModel {
   });
   protected readonly preferredAbove = signal(false);
   private readonly preparedHeight = signal(360);
+  private readonly injector = inject(Injector);
+  private pendingOpen: AfterRenderRef | undefined;
   protected toggleMenu(): void {
     this.prepare();
-    this.dropdown()?.toggle(true);
+    if (this.dropdown()?.isOpen) {
+      this.closeMenu();
+      return;
+    }
+    if (this.pendingOpen) {
+      this.closeMenu();
+      return;
+    }
+    // Render dropup and height inputs before the SDK measures its popup.
+    // Opening still calls the SDK directly, so a close/open input pair
+    // coalescing into one render cannot leave the native dropdown closed.
+    this.pendingOpen = afterNextRender(
+      () => {
+        this.pendingOpen = undefined;
+        this.dropdown()?.show();
+      },
+      { injector: this.injector }
+    );
+  }
+  private closeMenu(): void {
+    this.pendingOpen?.destroy();
+    this.pendingOpen = undefined;
+    this.dropdown()?.hide();
   }
   protected prepare(): void {
     const anchor = this.opener()?.nativeElement;
@@ -463,7 +495,7 @@ export class AdaptColumnMenu extends AdaptColumnMenuModel {
           event.isComposing
         )
           return;
-        this.dropdown()?.hide();
+        this.closeMenu();
         this.opener()?.nativeElement.focus();
       };
       const outside = (event: MouseEvent) => {
@@ -474,7 +506,7 @@ export class AdaptColumnMenu extends AdaptColumnMenuModel {
             this.panel()?.nativeElement?.contains(target))
         )
           return;
-        this.menuOpen.set(false);
+        this.closeMenu();
       };
       document.addEventListener("click", outside);
       cleanup(() => document.removeEventListener("click", outside));
@@ -487,7 +519,7 @@ export class AdaptColumnMenu extends AdaptColumnMenuModel {
 
   protected readonly popover = {
     open: this.menuOpen.asReadonly(),
-    toggle: (): void => this.dropdown()?.toggle(true),
-    close: (): void => this.dropdown()?.hide(),
+    toggle: (): void => this.toggleMenu(),
+    close: (): void => this.closeMenu(),
   };
 }

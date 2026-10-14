@@ -178,7 +178,13 @@ for (const framework of ["react", "angular", "vue"]) {
         });
         await expect
           .poll(async () => {
-            const box = await menu.boundingBox();
+            // The native dropdown adds padding and a border outside the
+            // semantic fieldset. Check its visible surface, not only the group.
+            const box = await menu.evaluate((element) =>
+              (element.closest(".dropdown-menu") ?? element)
+                .getBoundingClientRect()
+                .toJSON()
+            );
             return (
               !!box &&
               box.x >= -1 &&

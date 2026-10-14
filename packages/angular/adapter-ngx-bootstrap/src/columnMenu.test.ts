@@ -127,7 +127,11 @@ describe("the unstyled Angular Columns menu", () => {
       bottom: 352,
     } as DOMRect);
     await open();
-    expect(part("column-menu-panel")?.style.maxHeight).toBe("304px");
+    const popup =
+      part("column-menu-panel")?.closest<HTMLElement>(".dropdown-menu");
+    expect(popup?.style.maxHeight).toBe("304px");
+    expect(popup?.style.overflowY).toBe("auto");
+    expect(part("column-menu-panel")?.closest(".dropup")).not.toBeNull();
     vi.restoreAllMocks();
   });
 
@@ -220,6 +224,19 @@ describe("the unstyled Angular Columns menu", () => {
       expect(part("column-menu-panel")).not.toBeNull();
       expect(part("column-menu-search")).not.toBeNull();
     }
+  });
+
+  it("cancels a second activation before the native opening render", async () => {
+    const { part, settle } = await mount();
+    const button = part<HTMLButtonElement>("column-menu-button")!;
+    button.click();
+    button.click();
+    await settle();
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    expect(part("column-menu-panel")).toBeNull();
+    button.click();
+    await settle();
+    expect(part("column-menu-panel")).not.toBeNull();
   });
 
   it("hides and shows a column, and keeps a locked one", async () => {
