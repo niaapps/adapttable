@@ -86,4 +86,6 @@ process.stdout.write(
       ? ` — ${String(failed.length)} failed: ${failed.map((f) => f.task).join(", ")}\n`
       : " — all passed\n")
 );
-process.exit(failed.length > 0 ? 1 : 0);
+// Let buffered task output drain before exit, including when another runner
+// captures this process through a pipe.
+process.exitCode = failed.length > 0 ? 1 : 0;
