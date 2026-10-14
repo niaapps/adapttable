@@ -56,6 +56,15 @@ for (const kit of builtAdapters("vue")) {
       page,
     }) => {
       await page.setViewportSize({ width, height: 900 });
+      // Test keyboard loading explicitly: scrolling to a button also triggers
+      // the automatic sentinel. The native suite covers observer loading.
+      if (width === 390)
+        await page.addInitScript(() => {
+          Object.defineProperty(window, "IntersectionObserver", {
+            configurable: true,
+            value: undefined,
+          });
+        });
       await page.goto(`/vue/${pathOf(kit)}/ai/?locale=en`);
       const rows = page.locator(`.mx-demo [data-adapttable-part="${rowPart}"]`);
       await part(page, "assistant-launcher").click();
@@ -83,9 +92,11 @@ for (const kit of builtAdapters("vue")) {
           name: "Load more",
           exact: true,
         });
-        await more.click();
+        await more.focus();
+        await more.press("Enter");
         await expect(rows).toHaveCount(10);
-        await more.click();
+        await more.focus();
+        await more.press("Enter");
         await expect(rows).toHaveCount(15);
         await expect(more).toHaveCount(0);
         await part(page, "assistant-launcher").click();
