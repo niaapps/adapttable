@@ -1,5 +1,16 @@
 # @adapttable/vue-unstyled
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [c201ffb]
+- Updated dependencies [330566b]
+- Updated dependencies [d35c348]
+- Updated dependencies [d7ddec5]
+  - @adapttable/core@3.10.0
+  - @adapttable/vue@0.1.4
+
 ## 0.1.3
 
 ### Patch Changes

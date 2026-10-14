@@ -1,5 +1,25 @@
 # @adapttable/angular
 
+## 0.6.0
+
+### Minor Changes
+
+- 66aa1f8: Make descending sorting reachable from mobile cards with each kit's native direction button. Preserve the selected column, localized labels, keyboard activation and shared URL/Saved Views state.
+  
+  The Angular binding adds the protected `AdaptDataTableShell.sortDirection()` transition for native adapter templates.
+
+### Patch Changes
+
+- 019364c: Refresh rendered summary rows and cards when the host replaces, removes or restores its summary callback. Pivot grand totals now stay in sync with aggregation changes without rebuilding the table.
+- 753873b: Expose rejected batch saves as accessible batch-level status messages and mark pending batch saves busy. Preserve drafts and native retry/cancel controls, including partial-save reconciliation without resubmitting accepted rows.
+- 330566b: Render supplied dictation errors as wrapping alerts below the native composer controls. Keep typing and retries available, and stop active recognition when a React or Angular assistant is dismissed or unmounted.
+- d35c348: Align a single-column group caption with its leaf header and values, honor group alignment in Vue renderers, and let pivot configuration zones fill their container with responsive axis panels and a full-width measures panel. Keep explicit group alignment, spanning headers and native kit controls intact.
+- d7ddec5: Keep row-save failures visible through native React and Angular row actions. Preserve drafts for retry or cancel, and include commit transitions in the row memo signature so pending and failed saves repaint without another edit.
+- Updated dependencies [c201ffb]
+- Updated dependencies [d35c348]
+- Updated dependencies [d7ddec5]
+  - @adapttable/core@3.10.0
+
 ## 0.5.2
 
 ### Patch Changes

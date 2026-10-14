@@ -1,5 +1,20 @@
 # @adapttable/radix
 
+## 3.3.7
+
+### Patch Changes
+
+- 66aa1f8: Make descending sorting reachable from mobile cards with each kit's native direction button. Preserve the selected column, localized labels, keyboard activation and shared URL/Saved Views state.
+  
+  The Angular binding adds the protected `AdaptDataTableShell.sortDirection()` transition for native adapter templates.
+- Updated dependencies [753873b]
+- Updated dependencies [c201ffb]
+- Updated dependencies [330566b]
+- Updated dependencies [d35c348]
+- Updated dependencies [d7ddec5]
+  - @adapttable/react@1.7.3
+  - @adapttable/core@3.10.0
+
 ## 3.3.6
 
 ### Patch Changes

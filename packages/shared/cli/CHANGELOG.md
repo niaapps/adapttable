@@ -1,5 +1,11 @@
 # @adapttable/cli
 
+## 3.3.0
+
+### Minor Changes
+
+- 92ae449: Detect plain Vue projects and scaffold all eight native Vue kits with a sortable, filterable SFC, kit-specific styles and required application/Vite setup. Add explicit `init --kit` selection within the detected framework, preserve host files, and identify Nuxt applications without writing incompatible Vite providers.
+
 ## 3.2.0
 
 ### Minor Changes

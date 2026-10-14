@@ -1,5 +1,16 @@
 # @adapttable/core
 
+## 3.10.0
+
+### Minor Changes
+
+- c201ffb: Let conformance mounts expose an optional readiness promise for queued framework rendering, preserving synchronous drivers and every behavioral assertion. Exercise virtualization with a dataset larger than the viewport and overscan so small tables are not incorrectly rejected for rendering every row.
+
+### Patch Changes
+
+- d35c348: Align a single-column group caption with its leaf header and values, honor group alignment in Vue renderers, and let pivot configuration zones fill their container with responsive axis panels and a full-width measures panel. Keep explicit group alignment, spanning headers and native kit controls intact.
+- d7ddec5: Keep row-save failures visible through native React and Angular row actions. Preserve drafts for retry or cancel, and include commit transitions in the row memo signature so pending and failed saves repaint without another edit.
+
 ## 3.9.1
 
 ### Patch Changes

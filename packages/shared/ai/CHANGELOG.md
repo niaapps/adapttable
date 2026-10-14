@@ -1,5 +1,14 @@
 # @adapttable/ai
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [c201ffb]
+- Updated dependencies [d35c348]
+- Updated dependencies [d7ddec5]
+  - @adapttable/core@3.10.0
+
 ## 0.6.1
 
 ### Patch Changes

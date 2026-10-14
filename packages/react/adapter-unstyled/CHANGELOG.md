@@ -1,5 +1,22 @@
 # @adapttable/unstyled
 
+## 3.4.0
+
+### Minor Changes
+
+- 66aa1f8: Expose a native mobile sort-direction button and its optional `classNames.sortDirection` styling hook. The shadcn preset supplies its own border, hover, focus and disabled styles. Sorting continues to use the same column, URL and Saved Views state.
+
+### Patch Changes
+
+- 110fd7a: Suppress the native mobile card list's outside markers on each card, preserving list semantics and preventing horizontal overflow in narrow right-to-left layouts.
+- Updated dependencies [753873b]
+- Updated dependencies [c201ffb]
+- Updated dependencies [330566b]
+- Updated dependencies [d35c348]
+- Updated dependencies [d7ddec5]
+  - @adapttable/react@1.7.3
+  - @adapttable/core@3.10.0
+
 ## 3.3.5
 
 ### Patch Changes
