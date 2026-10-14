@@ -111,7 +111,11 @@ function rtlScrollbarGutter(dir: string | null | undefined): string {
             </div>
           }
           <hr data-spartan-part="views-divider" />
-          <div data-spartan-part="views-save-row" [style]="saveRowStyle">
+          <div
+            data-spartan-part="views-save-row"
+            [style]="rowStyle"
+            style="flex-wrap: wrap"
+          >
             <input
               adaptHlmInput
               data-spartan-part="views-input"
@@ -159,10 +163,6 @@ export class AdaptSavedViewsMenu implements OnInit {
     display: "flex",
     "align-items": "center",
     gap: "6px",
-  };
-  protected readonly saveRowStyle = {
-    ...this.rowStyle,
-    "flex-wrap": "wrap",
   };
   protected readonly name = signal("");
   protected readonly trimmed = computed(() => this.name().trim());
