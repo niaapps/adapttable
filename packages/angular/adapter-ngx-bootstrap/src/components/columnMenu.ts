@@ -429,7 +429,7 @@ export class AdaptColumnMenu extends AdaptColumnMenuModel {
   private readonly preparedHeight = signal(360);
   protected toggleMenu(): void {
     this.prepare();
-    this.menuOpen.update((open) => !open);
+    this.dropdown()?.toggle(true);
   }
   protected prepare(): void {
     const anchor = this.opener()?.nativeElement;
@@ -487,7 +487,7 @@ export class AdaptColumnMenu extends AdaptColumnMenuModel {
 
   protected readonly popover = {
     open: this.menuOpen.asReadonly(),
-    toggle: (): void => this.dropdown()?.toggle(),
+    toggle: (): void => this.dropdown()?.toggle(true),
     close: (): void => this.dropdown()?.hide(),
   };
 }

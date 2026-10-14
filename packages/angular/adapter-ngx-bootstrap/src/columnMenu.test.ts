@@ -206,6 +206,22 @@ describe("the unstyled Angular Columns menu", () => {
     expect(part("column-menu-panel")).toBeNull();
   });
 
+  it("reopens the native dropdown when Escape and activation share a render turn", async () => {
+    const { part, open, settle } = await mount();
+    await open();
+    const button = part<HTMLButtonElement>("column-menu-button")!;
+    for (let cycle = 0; cycle < 3; cycle++) {
+      pressEscapeFrom(part<HTMLInputElement>("column-menu-search")!);
+      // Reactivate before the controlled input's close/open values can be
+      // rendered separately. The native dropdown has already been hidden.
+      button.click();
+      await settle();
+      expect(button.getAttribute("aria-expanded")).toBe("true");
+      expect(part("column-menu-panel")).not.toBeNull();
+      expect(part("column-menu-search")).not.toBeNull();
+    }
+  });
+
   it("hides and shows a column, and keeps a locked one", async () => {
     const { fixture, part, headers, open, item, settle } = await mount();
     await open();
