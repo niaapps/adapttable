@@ -127,11 +127,13 @@ claimed as passing; init does not add type suppressions or change your tsconfig.
 ## Angular setup
 
 With both Angular markers present, `init` writes a standalone `PeopleTable`
-component. `ng-zorro-antd` selects `@adapttable/ng-zorro`; without it, the
-component uses `@adapttable/angular-unstyled`. React kit dependencies,
+component. Installed SDK dependencies select one of the nine supported Angular
+kits; without a matching SDK, it uses `@adapttable/angular-unstyled`. Use
+`--kit` to choose explicitly, for example
+`npx @adapttable/cli init --kit angular-material`. React kit dependencies,
 Tailwind and `components.json` do not override that Angular selection.
 
-Both Angular kits are public npm packages. Run the printed install command
+All nine Angular kits are public npm packages. Run the printed install command
 with your package manager. The CLI does not check registry availability,
 install packages or edit `package.json`.
 
@@ -169,6 +171,8 @@ from your app's global CSS:
 ```
 
 The native kit requires no theme stylesheet.
+For another kit, follow its provider and stylesheet instructions in the
+[Angular setup guide](https://adapttable.orwamahmoud.com/angular/getting-started/).
 
 ## Migrate from v2
 

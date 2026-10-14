@@ -5,6 +5,7 @@
 />
 <main
   class="shell angular-demo"
+  [attr.dir]="presentation.locale === 'ar' ? 'rtl' : 'ltr'"
   [style.--kit]="'var(--brand)'"
   [style.--c]="'var(--brand)'"
   [class.angular-no-motion]="!motion || reducedMotion()"
@@ -52,7 +53,8 @@
       </div>
     }
     <div
-      class="adapterbar angular-kits"
+      class="adapterbar angular-kits demo-kit-cards"
+      [style.--demo-kit-count]="adapters.length"
       role="radiogroup"
       aria-label="Angular adapter"
     >
@@ -65,6 +67,7 @@
           ><input
             type="radio"
             [attr.aria-label]="adapter.label"
+            [attr.aria-describedby]="'kit-description-' + adapter.key"
             name="kit"
             [value]="adapter.key"
             [checked]="kit.key === adapter.key"
@@ -73,16 +76,41 @@
           /><span class="adtab__dot" aria-hidden="true"></span
           ><span class="adtab__l"
             ><strong>{{ adapter.label.replace("Angular ", "") }}</strong
-            ><small>{{ adapter.blurb }}</small></span
+            ><small [id]="'kit-description-' + adapter.key">{{
+              adapter.blurb
+            }}</small></span
           ></label
         >
       }
     </div>
-    <p class="hint">
-      All nine Angular kits are published on npm. Choose a kit to explore its
-      native controls, then follow its setup guide in the docs.
-    </p>
-    <div class="controls angular-options">
+    <section class="demo-setup" aria-label="Angular setup">
+      <div class="demo-setup__main">
+        <div class="demo-setup__command">
+          <span aria-hidden="true">$</span><code>{{ setupCommand }}</code>
+          <button
+            type="button"
+            (click)="copySetup()"
+            aria-label="Copy setup command"
+          >
+            {{ setupCopyStatus() === "Copied" ? "Copied" : "Copy" }}
+          </button>
+        </div>
+        <a class="demo-setup__docs" [href]="setupDocs">Setup and providers</a>
+      </div>
+      <p class="demo-setup__feedback" role="status">{{ setupCopyStatus() }}</p>
+      <details class="demo-setup__direct">
+        <summary>Direct installation</summary>
+        <code>pnpm add {{ adapter.pkg }}</code>
+        <p>
+          Run the CLI in your Angular project, or install directly and follow
+          the kit's provider and stylesheet setup.
+        </p>
+      </details>
+    </section>
+    <section
+      class="controls angular-options demo-preferences"
+      aria-label="Demo preferences"
+    >
       <fieldset class="angular-choice">
         <legend>Data</legend>
         <div class="angular-choice__options">
@@ -191,7 +219,7 @@
           </label>
         </div>
       </fieldset>
-      <label
+      <label class="angular-select"
         >Filters<select
           [value]="filterMode"
           (change)="change('filters', $event)"
@@ -232,7 +260,7 @@
           />Motion</label
         >
       </div>
-    </div>
+    </section>
     @if (server) {
       <p class="hint">
         Server mode uses the shared simulated API with latency, filtering,

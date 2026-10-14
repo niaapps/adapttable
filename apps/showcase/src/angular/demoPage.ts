@@ -44,7 +44,7 @@ import {
 } from "@angular/core";
 
 import { FRAMEWORK_STORAGE_KEY } from "../../../../scripts/framework-navigation.mjs";
-import { kitAccent, SHOWCASE_ADAPTERS } from "../matrix/content";
+import { docsUrl, kitAccent, SHOWCASE_ADAPTERS } from "../matrix/content";
 import {
   budget,
   formatMoney,
@@ -91,6 +91,11 @@ const option = (key: string, fallback: string): string =>
   new URLSearchParams(window.location.search).get(key) ?? fallback;
 const enabled = (key: string, fallback = false): boolean =>
   option(key, fallback ? "on" : "off") === "on";
+const cliKitNames: Readonly<Record<string, string>> = {
+  unstyled: "angular-unstyled",
+  material: "angular-material",
+  aria: "angular-aria",
+};
 
 function initialStructure(server: boolean, urlKey: string): string {
   if (server) return "flat";
@@ -190,6 +195,18 @@ export class AdaptShowcaseDemoPage {
   readonly adapter = this.adapters.find(
     (adapter) => adapter.key === this.kit.key
   )!;
+  readonly setupDocs = docsUrl("getting-started", "angular");
+  readonly cliKit = cliKitNames[this.kit.key] ?? this.kit.key;
+  readonly setupCommand = `npx @adapttable/cli init --kit ${this.cliKit}`;
+  readonly setupCopyStatus = signal("");
+  async copySetup(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(this.setupCommand);
+      this.setupCopyStatus.set("Copied");
+    } catch {
+      this.setupCopyStatus.set("Copy unavailable. Select the command to copy.");
+    }
+  }
   readonly urlKey = this.lab ? "lab" : "live";
   readonly server = ["server", "backend"].includes(option("mode", "frontend"));
   readonly dataset =
@@ -942,18 +959,29 @@ export class AdaptShowcaseDemoPage {
       window.removeEventListener("storage", reloadViews);
       refreshOnOpen.destroy();
     });
+    const requestedTheme = option("theme", "");
+    const hasRequestedTheme =
+      requestedTheme === "dark" || requestedTheme === "light";
+    if (hasRequestedTheme) this.dark.set(requestedTheme === "dark");
     try {
-      this.dark.set(
-        demoSession.read(
-          "dark",
-          () => localStorage.getItem("adapttable-demo-theme") === "dark"
-        )
-      );
+      if (!hasRequestedTheme)
+        this.dark.set(
+          demoSession.read(
+            "dark",
+            () => localStorage.getItem("adapttable-demo-theme") === "dark"
+          )
+        );
       localStorage.setItem(FRAMEWORK_STORAGE_KEY, "angular");
     } catch {
       /* Storage is optional. */
     }
     effect(() => {
+      const url = new URL(window.location.href);
+      const theme = this.dark() ? "dark" : "light";
+      if (url.searchParams.get("theme") !== theme) {
+        url.searchParams.set("theme", theme);
+        replaceDemoUrl(url);
+      }
       document.documentElement.dataset.theme = this.dark() ? "dark" : "light";
       document.documentElement.style.colorScheme = this.dark()
         ? "dark"

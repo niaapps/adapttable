@@ -34,6 +34,7 @@ import UApp from "@nuxt/ui/components/App.vue";
 import UBadge from "@nuxt/ui/components/Badge.vue";
 import UButton from "@nuxt/ui/components/Button.vue";
 import USelect from "@nuxt/ui/components/Select.vue";
+import { ar, en } from "@nuxt/ui/locale";
 import ui from "@nuxt/ui/vue-plugin";
 import { defineComponent, h } from "vue";
 
@@ -49,9 +50,13 @@ const BADGE_COLOR = {
 
 /** Nuxt UI's app root carries its portals, tooltips and toasts. */
 const Root = defineComponent(
-  (_props: { dark: boolean; dir: "ltr" | "rtl" }, { slots }) =>
+  (props: { dark: boolean; dir: "ltr" | "rtl" }, { slots }) =>
     () =>
-      h(UApp, { toaster: null }, { default: () => slots.default?.() }),
+      h(
+        UApp,
+        { toaster: null, locale: props.dir === "rtl" ? ar : en },
+        { default: () => slots.default?.() }
+      ),
   { name: "NuxtUiShowcaseRoot", props: ["dark", "dir"] }
 );
 

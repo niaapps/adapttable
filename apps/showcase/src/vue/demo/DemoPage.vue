@@ -5,11 +5,13 @@ import { FRAMEWORK_STORAGE_KEY } from "../../../../../scripts/framework-navigati
 import {
   canReplaceDemo,
   navigateDemo,
+  replaceDemoUrl,
 } from "../../angular/demoTransitions.mjs";
 import {
   adaptersOf,
   docsUrl,
   featuresOf,
+  kitAccent,
   pathOf,
   type ShowcaseAdapter,
 } from "../../matrix/content";
@@ -76,8 +78,23 @@ const toggles = [
     : []),
 ];
 const dark = shallowRef(false);
+const setupCopyStatus = shallowRef("");
+const setupCommand = () =>
+  `npx @adapttable/cli init --kit ${props.adapter.key}`;
+async function copySetup(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(setupCommand());
+    setupCopyStatus.value = "Copied";
+  } catch {
+    setupCopyStatus.value = "Copy unavailable. Select the command to copy.";
+  }
+}
 try {
-  dark.value = localStorage.getItem("adapttable-demo-theme") === "dark";
+  const requestedTheme = query.get("theme");
+  dark.value =
+    requestedTheme === "dark" || requestedTheme === "light"
+      ? requestedTheme === "dark"
+      : localStorage.getItem("adapttable-demo-theme") === "dark";
   localStorage.setItem(FRAMEWORK_STORAGE_KEY, "vue");
 } catch {
   /* Storage is optional. */
@@ -89,6 +106,12 @@ watch(
     document.documentElement.classList.toggle("dark", value);
     document.documentElement.style.colorScheme = value ? "dark" : "light";
     kit.setDark?.(value);
+    const url = new URL(window.location.href);
+    const theme = value ? "dark" : "light";
+    if (url.searchParams.get("theme") !== theme) {
+      url.searchParams.set("theme", theme);
+      replaceDemoUrl(url);
+    }
     try {
       localStorage.setItem("adapttable-demo-theme", value ? "dark" : "light");
     } catch {
@@ -172,8 +195,11 @@ function reset(): void {
     :before-navigate="canReplaceDemo"
     @toggle-dark="dark = !dark"
   />
-  <main class="shell vue-demo mx-vue">
-    <header class="vue-demo__intro">
+  <main
+    class="shell vue-demo mx-vue"
+    :dir="SHOWCASE_PRESENTATION.locale === 'ar' ? 'rtl' : 'ltr'"
+  >
+    <header class="vue-demo__intro" dir="auto">
       <h1>
         {{
           lab
@@ -189,7 +215,12 @@ function reset(): void {
         }}
       </p>
     </header>
-    <div class="adapterbar" role="group" aria-label="Vue adapter">
+    <div
+      class="adapterbar demo-kit-cards"
+      :style="{ '--demo-kit-count': adapters.length }"
+      role="group"
+      aria-label="Vue adapter"
+    >
       <button
         v-for="item in adapters"
         :key="item.key"
@@ -197,22 +228,49 @@ function reset(): void {
         class="adtab"
         :class="{ 'is-on': item.key === adapter.key }"
         :aria-pressed="item.key === adapter.key"
+        :title="item.label + ' — ' + item.blurb"
+        :style="{ '--c': kitAccent(item, dark) }"
         :data-demo-control="'kit-' + item.key"
         @click="setOption('kit', item.key)"
       >
+        <span class="adtab__dot" aria-hidden="true"></span>
         <span class="adtab__l"
-          ><b>{{ item.label }}</b
+          ><strong>{{ item.label }}</strong
           ><small>{{ item.blurb }}</small></span
         >
       </button>
     </div>
-    <div class="vue-demo__install">
-      <code>pnpm add {{ adapter.pkg }}</code>
-      <a :href="docsUrl('getting-started', 'vue')"
-        >Installation and providers</a
-      >
-    </div>
-    <section class="controls angular-options" aria-label="Demo preferences">
+    <section class="demo-setup" aria-label="Vue setup">
+      <div class="demo-setup__main">
+        <div class="demo-setup__command">
+          <span aria-hidden="true">$</span><code>{{ setupCommand() }}</code>
+          <button
+            type="button"
+            aria-label="Copy setup command"
+            @click="copySetup"
+          >
+            {{ setupCopyStatus === "Copied" ? "Copied" : "Copy" }}
+          </button>
+        </div>
+        <a class="demo-setup__docs" :href="docsUrl('getting-started', 'vue')"
+          >Setup and providers</a
+        >
+      </div>
+      <p class="demo-setup__feedback" role="status">{{ setupCopyStatus }}</p>
+      <details class="demo-setup__direct">
+        <summary>Direct installation</summary>
+        <code>pnpm add {{ adapter.pkg }}</code>
+        <p>
+          Run the CLI in a Vue/Vite project, or install directly and follow the
+          kit's provider and stylesheet setup. Nuxt applications use the Nuxt
+          setup guide.
+        </p>
+      </details>
+    </section>
+    <section
+      class="controls angular-options demo-preferences"
+      aria-label="Demo preferences"
+    >
       <fieldset
         v-for="group in groups"
         :key="group.key"

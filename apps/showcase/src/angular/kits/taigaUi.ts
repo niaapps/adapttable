@@ -49,9 +49,13 @@ import { sidePanel } from "@adapttable/taiga-ui/side-panel";
 import { statusBar } from "@adapttable/taiga-ui/status-bar";
 import { tree } from "@adapttable/taiga-ui/tree";
 import { virtualize } from "@adapttable/taiga-ui/virtualize";
-import { inject } from "@angular/core";
+import { inject, signal } from "@angular/core";
 import { TUI_ASSETS_PATH } from "@taiga-ui/core";
+import { TUI_LANGUAGE } from "@taiga-ui/i18n";
+import { TUI_ARABIC_LANGUAGE } from "@taiga-ui/i18n/languages/arabic";
+import { TUI_ENGLISH_LANGUAGE } from "@taiga-ui/i18n/languages/english";
 
+import { SHOWCASE_PRESENTATION } from "../data";
 import { SHOWCASE_ASSET_ROOT, type ShowcaseKit } from "../showcaseKit";
 import { ShowcaseStatus } from "./taigaUiStatus";
 
@@ -61,6 +65,15 @@ export const kit = {
   root: AdaptTaigaRoot,
   providers: [
     ...provideAdaptTaiga(),
+    {
+      provide: TUI_LANGUAGE,
+      useFactory: () =>
+        signal(
+          SHOWCASE_PRESENTATION.locale === "ar"
+            ? TUI_ARABIC_LANGUAGE
+            : TUI_ENGLISH_LANGUAGE
+        ),
+    },
     {
       provide: TUI_ASSETS_PATH,
       useFactory: () => `${inject(SHOWCASE_ASSET_ROOT)}/taiga-ui/icons`,
