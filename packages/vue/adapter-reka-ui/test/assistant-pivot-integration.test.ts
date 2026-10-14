@@ -111,7 +111,7 @@ it("uses a real assistant Dialog with one close request, nested menu Escape and 
   expect(sheet.contains(item)).toBe(false);
   await key(item, "Escape");
   expect(open.value).toBe(true);
-  expect(document.activeElement).toBe(menu);
+  await vi.waitFor(() => expect(document.activeElement).toBe(menu));
   expect(close).toHaveBeenCalledTimes(1);
   await key(input, "Escape");
   expect(open.value).toBe(true);
