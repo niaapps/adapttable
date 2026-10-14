@@ -454,12 +454,7 @@ export function createRowEditStore<TRow>(
  */
 export function rowEditSignature(snapshot: RowEditSnapshot): string {
   if (snapshot.activeRowId === null) return "";
-  const commit = snapshot.commit
-    ? ":commit:" + JSON.stringify(snapshot.commit)
-    : "";
-  return `${snapshot.activeRowId}:${Object.entries(snapshot.drafts)
-    .map(([key, value]) => `${key}=${value}`)
-    .join("|")}${commit}`;
+  return JSON.stringify(snapshot);
 }
 
 /**

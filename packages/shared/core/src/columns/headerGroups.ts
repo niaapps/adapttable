@@ -241,9 +241,27 @@ export function headerGroupRows<TRow>(
   const collapsed = new Set(collapsedIds);
   const rows: HeaderGroupCell[][] = [];
   for (let depth = 0; depth < maxDepth; depth += 1) {
-    rows.push(
-      headerGroupRowAt(columns, paths, collapsed, collapsible, depth, groups)
+    const cells = headerGroupRowAt(
+      columns,
+      paths,
+      collapsed,
+      collapsible,
+      depth,
+      groups
     );
+    let columnIndex = 0;
+    for (const cell of cells) {
+      if (
+        cell.label !== null &&
+        cell.span === 1 &&
+        !cell.hideLabel &&
+        cell.align === undefined
+      ) {
+        cell.align = columns[columnIndex]?.align;
+      }
+      columnIndex += cell.span;
+    }
+    rows.push(cells);
   }
   return rows;
 }
@@ -279,25 +297,6 @@ function headerGroupRowAt<TRow>(
       hideLabel: collapsedHere && stub,
       align: id === null ? undefined : groups?.get(id)?.align,
     });
-  }
-  return alignSingleLeafGroups(cells, columns);
-}
-
-function alignSingleLeafGroups<TRow>(
-  cells: HeaderGroupCell[],
-  columns: readonly ColumnMetadata<TRow>[]
-): HeaderGroupCell[] {
-  let columnIndex = 0;
-  for (const cell of cells) {
-    if (
-      cell.label !== null &&
-      cell.span === 1 &&
-      !cell.hideLabel &&
-      cell.align === undefined
-    ) {
-      cell.align = columns[columnIndex]?.align;
-    }
-    columnIndex += cell.span;
   }
   return cells;
 }

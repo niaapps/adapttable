@@ -12,6 +12,7 @@ import type { EditableColumnLike } from "./cellEditing";
 import {
   createRowEditStore,
   rowEditingView,
+  rowEditSignature,
   type RowEditStoreOptions,
 } from "./rowEditing";
 
@@ -277,6 +278,20 @@ describe("useRowEditing", () => {
     expect(result.current.draftFor("title")).toBe("Ship it");
     result.current.save();
     expect(result.current.signature).toBe("");
+  });
+
+  it("distinguishes delimiter-bearing drafts so memoized rows repaint", () => {
+    const first = rowEditSignature({
+      activeRowId: "1",
+      drafts: { title: "A|status=B" },
+      isDirty: true,
+    });
+    const second = rowEditSignature({
+      activeRowId: "1",
+      drafts: { title: "A", status: "B" },
+      isDirty: true,
+    });
+    expect(second).not.toBe(first);
   });
 
   it("changes its signature so the open row repaints", () => {
