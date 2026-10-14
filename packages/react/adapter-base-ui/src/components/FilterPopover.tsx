@@ -63,14 +63,10 @@ export function FilterPopover({
           side="bottom"
           align={dir === "rtl" ? "start" : "end"}
           sideOffset={8}
-          // The filter form GROWS while it is open (picking the "between"
-          // operator reveals a second bound input). With the default
-          // flip behaviour Base UI answered that by throwing the whole
-          // panel above the trigger — it covered the page header and the
-          // control the user had just clicked. Keep the side pinned to
-          // `bottom` (`side: "none"`) and only shift horizontally.
+          // Keep the side stable as fields grow, while allowing the native
+          // positioner to shift a panel away from the viewport's bottom edge.
           collisionAvoidance={{
-            side: "none",
+            side: "shift",
             align: "shift",
             fallbackAxisSide: "none",
           }}
