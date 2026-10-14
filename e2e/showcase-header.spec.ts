@@ -1,31 +1,62 @@
 import { expect, test } from "@playwright/test";
 
-test("Angular phone navigation accepts registered destinations and rejects a modified option", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/angular-main/?kit=material");
-  const select = page.getByRole("combobox", { name: "Demo page", exact: true });
-  const title = await page.title();
-  const injected = "javascript:document.title='unexpected-navigation'";
-  await select.evaluate((element, value) => {
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = "Unregistered destination";
-    element.append(option);
-  }, injected);
-  await select.selectOption(injected);
-  await expect(page).toHaveURL(/\/angular-main\/\?kit=material$/);
-  await expect(page).toHaveTitle(title);
-  await select.selectOption("/angular-all-options/?kit=material");
-  await expect(page).toHaveURL(/\/angular-all-options\/\?kit=material$/);
-  await select.selectOption("/material/columns/");
-  await expect(page).toHaveURL(/\/material\/columns\/$/);
-  await select.selectOption("/material/");
-  await expect(page).toHaveURL(/\/material\/$/);
-  await select.selectOption("/material/ai/");
-  await expect(page).toHaveURL(/\/material\/ai\/$/);
-});
+for (const { framework, live, lab, kit, label, entry } of [
+  {
+    framework: "Angular",
+    live: "/angular-main/",
+    lab: "/angular-all-options/",
+    kit: "material",
+    label: "Angular Material",
+    entry: "/material/",
+  },
+  {
+    framework: "Vue",
+    live: "/vue-main/",
+    lab: "/vue-all-options/",
+    kit: "vuetify",
+    label: "Vuetify",
+    entry: "/vue/vuetify/",
+  },
+]) {
+  test(`${framework} phone navigation accepts registered destinations and rejects a modified option`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${live}?kit=${kit}`);
+    const select = page.getByRole("combobox", {
+      name: "Demo page",
+      exact: true,
+    });
+    const originalSelection = await select.inputValue();
+    const originalUrl = page.url();
+    const title = await page.title();
+    const injected = "javascript:document.title='unexpected-navigation'";
+    await select.evaluate((element, value) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = "Unregistered destination";
+      element.append(option);
+    }, injected);
+    await select.selectOption(injected);
+    await expect(page).toHaveURL(originalUrl);
+    await expect(select).toHaveValue(originalSelection);
+    await expect(page).toHaveTitle(title);
+    await select.selectOption({ label: "Feature Lab" });
+    await expect.poll(() => new URL(page.url()).pathname).toBe(lab);
+    expect(Object.fromEntries(new URL(page.url()).searchParams)).toEqual({
+      kit,
+      theme: "light",
+    });
+    await select.selectOption({ label: "Columns" });
+    await expect
+      .poll(() => new URL(page.url()).pathname)
+      .toBe(`${entry}columns/`);
+    await select.selectOption({ label: label });
+    await expect.poll(() => new URL(page.url()).pathname).toBe(entry);
+    await select.selectOption({ label: "AI" });
+    await expect.poll(() => new URL(page.url()).pathname).toBe(`${entry}ai/`);
+  });
+}
 
 for (const route of ["/angular-main/", "/angular-all-options/", "/ng-zorro/"]) {
   test(`${route}: Angular header has framework-specific destinations and fits a phone`, async ({
@@ -119,7 +150,11 @@ test("framework switching retains local Feature Lab kit context in both directio
   await page
     .getByRole("combobox", { name: "Framework", exact: true })
     .selectOption("react");
-  await expect(page).toHaveURL(/\/all-options\/\?kit=antd$/);
+  await expect.poll(() => new URL(page.url()).pathname).toBe("/all-options/");
+  expect(Object.fromEntries(new URL(page.url()).searchParams)).toEqual({
+    kit: "antd",
+    theme: "light",
+  });
   await expect(
     page.getByRole("combobox", { name: "Framework", exact: true })
   ).toHaveValue("react");
@@ -133,7 +168,13 @@ test("framework switching retains local Feature Lab kit context in both directio
   await page
     .getByRole("combobox", { name: "Framework", exact: true })
     .selectOption("angular");
-  await expect(page).toHaveURL(/\/angular-all-options\/\?kit=ng-zorro$/);
+  await expect
+    .poll(() => new URL(page.url()).pathname)
+    .toBe("/angular-all-options/");
+  expect(Object.fromEntries(new URL(page.url()).searchParams)).toEqual({
+    kit: "ng-zorro",
+    theme: "light",
+  });
   await expect(
     page.getByRole("combobox", { name: "Framework", exact: true })
   ).toHaveValue("angular");
