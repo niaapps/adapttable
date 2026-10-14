@@ -1503,6 +1503,15 @@ export abstract class AdaptDataTableShell<TRow> implements OnInit {
       );
   }
 
+  /** Reverse the current phone sort while preserving its selected column. */
+  protected sortDirection(): void {
+    const table = this.view()?.table;
+    if (!table?.sortBy()) return;
+    table
+      .source()
+      .setSort(table.sortBy(), table.sortDir() === "desc" ? "asc" : "desc");
+  }
+
   ngOnInit(): void {
     const resources = createFeatureResources(this.injector);
     const features = computed(
@@ -2565,13 +2574,10 @@ export abstract class AdaptDataTableShell<TRow> implements OnInit {
       }
       return toggles;
     });
-    const summaryRow = this.summaryRow();
-    const summary = computed(() =>
-      summaryRow === undefined ? undefined : summaryRow(table.source().rows)
-    );
+    const summary = computed(() => this.summaryRow()?.(table.source().rows));
     const showSummary = computed(
       () =>
-        summaryRow !== undefined ||
+        this.summaryRow() !== undefined ||
         table.columns().some((column) => column.footer !== undefined)
     );
     const detailParent = computed((): NestedTableParent => ({

@@ -68,6 +68,9 @@ export class AdaptAssistantComposer {
   protected readonly listening = computed(
     () => this.props().speech?.state.status === "listening"
   );
+  protected readonly voiceError = computed(
+    () => this.props().speech?.state.error
+  );
   protected readonly composer = computed((): TableAssistantComposerProps => ({
     label: this.copy().assistantPlaceholder,
     placeholder: this.props().placeholder ?? this.copy().assistantPlaceholder,

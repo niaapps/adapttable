@@ -1,5 +1,6 @@
 /** Main and Feature Lab replace kit providers in-place without replacing the document. */
 import "../styles.css";
+import "../demoLayout.css";
 import "../assistantShowcase.css";
 
 import { ADAPTTABLE_URL_ADAPTER } from "@adapttable/angular";

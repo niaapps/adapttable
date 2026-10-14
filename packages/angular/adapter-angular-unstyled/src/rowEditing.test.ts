@@ -92,6 +92,39 @@ afterEach(() => {
 });
 
 describe("row editing (unstyled Angular)", () => {
+  for (const mobile of [false, true]) {
+    it.each(["retry", "cancel"])(
+      `keeps a failed save visible and its draft recoverable (${mobile ? "phone" : "desktop"}, %s)`,
+      async (recovery) => {
+        const onRowEdit = vi
+          .fn()
+          .mockRejectedValueOnce(new Error("Row save refused"));
+        const settle = await mount([rowEditing(onRowEdit)], mobile);
+        all("row-edit-begin")[0]!.click();
+        await settle();
+        type(editors()[0]!, "Ship it");
+        await settle();
+        one("row-edit-save").click();
+        await settle();
+        expect(one("row-edit-error").textContent).toContain("Row save refused");
+        expect(one("row-edit-error").getAttribute("role")).toBe("status");
+        expect(editors()[0]!.value).toBe("Ship it");
+        one(recovery === "retry" ? "row-edit-save" : "row-edit-cancel").click();
+        await settle();
+        expect(editors()).toHaveLength(0);
+        expect(all("row-edit-error")).toHaveLength(0);
+        expect(onRowEdit).toHaveBeenCalledTimes(recovery === "retry" ? 2 : 1);
+        if (recovery === "retry") {
+          expect(onRowEdit).toHaveBeenLastCalledWith(ROWS[0], {
+            title: "Ship it",
+          });
+        } else {
+          expect(document.body.textContent).toContain("Ship");
+        }
+      }
+    );
+  }
+
   it("offers one labelled begin control per row and opens no field", async () => {
     await mount([rowEditing(vi.fn())]);
     const begins = all("row-edit-begin");

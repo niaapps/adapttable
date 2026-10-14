@@ -183,7 +183,14 @@ export function AiDemoOptions({
   useEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
+    if (open && !dialog.open) {
+      const view = dialog.ownerDocument.defaultView;
+      const top = view?.scrollY;
+      const left = view?.scrollX;
+      dialog.showModal();
+      // Stop a pending page scroll before the modal holds the background.
+      view?.scrollTo({ top, left, behavior: "instant" });
+    }
     if (!open && dialog.open) dialog.close();
   }, [open]);
 

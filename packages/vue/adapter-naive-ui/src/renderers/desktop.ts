@@ -10,6 +10,7 @@ import {
   columnGroupHeaderCaption,
   EXTRA_ROW_PARTS,
   extraUncoveredColSpans,
+  groupedHeaderAlign,
   mergeVueAttrs,
   renderContent,
   renderFooter,
@@ -213,6 +214,7 @@ export function NaiveDesktopTable<TRow>(props: {
         rowspan: item.rowSpan,
         class: names.columnGroup,
         "data-adapttable-part": "header-group-cell",
+        style: { textAlign: groupedHeaderAlign(item.cell.align) },
       },
       () => [
         columnGroupHeaderCaption(item.cell),

@@ -1217,8 +1217,12 @@ class PivotBody {
     return this.kit.pivotTableModel(
       pivot(this.rows, this.state.config(), {
         collapsed: this.state.collapsed(),
-        format: (value) =>
-          typeof value === "number" ? formatMoney(value) : value,
+        format: (value, measure) =>
+          typeof value === "number" &&
+          measure.key === "budget" &&
+          measure.agg !== "count"
+            ? formatMoney(value)
+            : value,
       }),
       {
         fields: this.fields,

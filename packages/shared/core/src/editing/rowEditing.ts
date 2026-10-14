@@ -65,7 +65,7 @@ export interface RowEditingState<TRow> {
   cancel: () => void;
   /** Whether any draft differs from the row's stored value. */
   isDirty: boolean;
-  /** A digest of the open row's drafts, for a row memo comparator. */
+  /** A digest of the open row's drafts and save state, for a row memo comparator. */
   signature: string;
   /** The row the form opened against, or `undefined` when none is open. */
   openedRow: () => TRow | undefined;
@@ -448,15 +448,13 @@ export function createRowEditStore<TRow>(
 }
 
 /**
- * The digest of an open form's drafts, for a row memo comparator.
+ * The digest of an open form's drafts and save state, for a row memo comparator.
  *
  * @public
  */
 export function rowEditSignature(snapshot: RowEditSnapshot): string {
   if (snapshot.activeRowId === null) return "";
-  return `${snapshot.activeRowId}:${Object.entries(snapshot.drafts)
-    .map(([key, value]) => `${key}=${value}`)
-    .join("|")}`;
+  return JSON.stringify(snapshot);
 }
 
 /**

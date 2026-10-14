@@ -118,6 +118,48 @@ afterEach(() => {
 });
 
 describe("batch editing (unstyled Angular)", () => {
+  for (const mobile of [false, true]) {
+    it.each(["retry", "cancel"])(
+      `keeps rejected batch drafts and offers recovery (${mobile ? "phone" : "desktop"}, %s)`,
+      async (recovery) => {
+        let rejectSave: (error: Error) => void = (error) => {
+          throw error;
+        };
+        const pending = new Promise<void>((_, reject) => {
+          rejectSave = reject;
+        });
+        const onBatchEdit = vi.fn().mockReturnValueOnce(pending);
+        const settle = await mount(onBatchEdit, mobile);
+        type(editors()[0]!, "Ship it");
+        type(editors()[2]!, "Test it");
+        await settle();
+        one("batch-edit-save").click();
+        one("batch-edit-save").click();
+        await settle();
+        expect(onBatchEdit).toHaveBeenCalledOnce();
+        expect(one("batch-edit-bar").getAttribute("aria-busy")).toBe("true");
+        rejectSave(new Error("Batch save refused"));
+        await vi.waitFor(async () => {
+          await settle();
+          expect(one("batch-edit-error").textContent).toContain(
+            "Batch save refused"
+          );
+        });
+        expect(one("batch-edit-error").getAttribute("role")).toBe("status");
+        expect(changedValues()).toEqual(["Ship it", "Test it"]);
+        expect(one("batch-edit-count").textContent).toContain("2");
+        one(
+          recovery === "retry" ? "batch-edit-save" : "batch-edit-cancel"
+        ).click();
+        await settle();
+        expect(all("batch-edit-bar")).toHaveLength(0);
+        expect(onBatchEdit).toHaveBeenCalledTimes(recovery === "retry" ? 2 : 1);
+        expect(editors()[0]!.value).toBe("Ship");
+        expect(editors()[2]!.value).toBe("Test");
+      }
+    );
+  }
+
   it("opens every editable cell as a field, with nothing pending", async () => {
     await mount();
     expect(editors().map((field) => field.value)).toEqual([

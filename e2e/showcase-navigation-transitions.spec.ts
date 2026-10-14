@@ -43,7 +43,7 @@ for (const framework of ["react", "angular", "vue"] as const) {
       const errors: string[] = [];
       page.on("pageerror", (error) => errors.push(error.message));
       await page.goto(
-        `${modes[framework].live}?kit=${kit.key}&locale=en&density=compact&foreign.q=stale&grouping=off`
+        `${modes[framework].live}?kit=${kit.key}&locale=en&density=compact&theme=dark&foreign.q=stale&grouping=off`
       );
       const search = page.locator(searchSelector).first();
       await expect(search).toBeVisible();
@@ -67,9 +67,11 @@ for (const framework of ["react", "angular", "vue"] as const) {
       expect(query.get("kit")).toBe(kit.key);
       expect(query.get("locale")).toBe("en");
       expect(query.get("density")).toBe("compact");
+      expect(query.get("theme")).toBe("dark");
+      await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
       expect(
         [...query.keys()].filter(
-          (key) => !["kit", "locale", "density"].includes(key)
+          (key) => !["kit", "locale", "density", "theme"].includes(key)
         )
       ).toEqual([]);
       await expect(search).toHaveValue("");
@@ -94,6 +96,11 @@ for (const framework of ["react", "angular", "vue"] as const) {
         query = new URL(page.url()).searchParams;
         expect(query.get("locale")).toBe("en");
         expect(query.get("density")).toBe("compact");
+        expect(query.get("theme")).toBe("dark");
+        await expect(page.locator("html")).toHaveAttribute(
+          "data-theme",
+          "dark"
+        );
         await expectCompact(page, next);
         expect(query.has("foreign.q")).toBe(false);
         expect([...query.keys()].some((key) => key.endsWith(".q"))).toBe(false);
@@ -109,7 +116,9 @@ for (const framework of ["vue", "angular"] as const) {
   }) => {
     test.setTimeout(180_000);
     const kits = builtAdapters(framework);
-    await page.goto(`${modes[framework].live}?kit=${kits[0].key}&editing=off`);
+    const firstKit = kits[0];
+    if (!firstKit) throw new Error(`No registered ${framework} kits`);
+    await page.goto(`${modes[framework].live}?kit=${firstKit.key}&editing=off`);
     const search = page.locator(searchSelector).first();
     await search.fill("Ada");
     await expect
@@ -118,7 +127,7 @@ for (const framework of ["vue", "angular"] as const) {
       )
       .toBe(true);
     const origin = await page.evaluate(() => performance.timeOrigin);
-    for (const kit of [...kits, ...kits.toReversed()]) {
+    for (const kit of [...kits, ...[...kits].reverse()]) {
       if (framework === "vue")
         await page.locator(`[data-demo-control="kit-${kit.key}"]`).click();
       else
@@ -183,10 +192,11 @@ for (const framework of ["angular", "vue"] as const) {
       name: "Demo page",
       exact: true,
     });
+    const originalSelection = await picker.inputValue();
     await picker.selectOption({ label: "Feature Lab" });
     await expect(warning).toBeVisible();
     await expect(page).toHaveURL(original);
-    await expect(picker).toHaveValue(`${modes[framework].live}?kit=${kit}`);
+    await expect(picker).toHaveValue(originalSelection);
     await warning.getByRole("button", { name: "Return to editing" }).click();
     await expect(editor).toHaveValue("");
     await editor.press("Escape");

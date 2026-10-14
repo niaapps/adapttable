@@ -163,8 +163,12 @@ export function PivotTableView<TRow>({
     const result = pivot(rows, config, {
       collapsed,
       aggregators: RANGE_BY_NAME,
-      format: (value) =>
-        typeof value === "number" ? money.format(value) : value,
+      format: (value, measure) =>
+        typeof value === "number" &&
+        measure.key === "budget" &&
+        measure.agg !== "count"
+          ? money.format(value)
+          : value,
     });
     return pivotTableModel(result, {
       fields,

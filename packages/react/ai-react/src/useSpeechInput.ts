@@ -26,7 +26,13 @@ import {
   type VoiceOptions,
 } from "@adapttable/ai/voice";
 import type { SpeechInputHandle } from "@adapttable/react/adapter";
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
 /** How the hook is configured. @public */
 export interface UseSpeechInputOptions {
@@ -60,34 +66,36 @@ export function useSpeechInput(
   const clipRef = useRef(onClip);
   clipRef.current = onClip;
 
-  const languages = voice?.languages?.length
-    ? voice.languages
-    : [locale ?? "en-US"];
-  const inputRef = useRef<SpeechInput | null>(null);
-  if (voice && !inputRef.current) {
-    inputRef.current = createSpeechInput({
-      mode: voice.mode ?? "browser",
+  const enabled = voice !== undefined;
+  const mode = voice?.mode ?? "browser";
+  // A host may construct the same language array on each render. Compare its
+  // values so an active recognizer survives those equivalent configurations.
+  const languagesKey = JSON.stringify(
+    voice?.languages?.length ? voice.languages : [locale ?? "en-US"]
+  );
+  const languages = useMemo(
+    () => JSON.parse(languagesKey) as readonly string[],
+    [languagesKey]
+  );
+  const [input, setInput] = useState<SpeechInput | null>(null);
+  useEffect(() => {
+    if (!enabled) {
+      setInput(null);
+      return;
+    }
+    const remembered = readRememberedLanguage();
+    const current = createSpeechInput({
+      mode,
       languages,
-      // Remembered from a previous visit when the browser kept it, and the
-      // first offered language otherwise.
-      ...(readRememberedLanguage()
-        ? { initialLanguage: readRememberedLanguage() }
-        : {}),
+      ...(remembered ? { initialLanguage: remembered } : {}),
       onDraft: (text) => draftRef.current(text),
       onClip: (clip) => clipRef.current?.(clip),
     });
-  }
-  const input = inputRef.current;
-
-  useEffect(
-    () => () => {
-      input?.dispose();
-      // A disposed controller is never revived: a remount builds a fresh one,
-      // the way the assistant store does.
-      inputRef.current = null;
-    },
-    [input]
-  );
+    setInput(current);
+    // Every effect setup owns a fresh controller. Strict Mode can clean up
+    // and set up again without leaving the composer attached to a disposed one.
+    return () => current.dispose();
+  }, [enabled, mode, languages]);
 
   const state = useSyncExternalStore(
     (listener) => input?.subscribe(listener) ?? (() => undefined),

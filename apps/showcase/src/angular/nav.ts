@@ -176,18 +176,16 @@ export class AdaptShowcaseNav {
       ),
     ];
     const destination = destinations.find((href) => href === selected);
-    if (destination) {
-      if (!this.beforeNavigate()()) {
-        event.target.value =
-          destinations.find(
-            (href) =>
-              new URL(href, window.location.origin).pathname ===
-              window.location.pathname
-          ) ?? "";
-        return;
-      }
-      window.location.assign(destination);
+    if (!destination || !this.beforeNavigate()()) {
+      event.target.value =
+        destinations.find(
+          (href) =>
+            new URL(href, window.location.origin).pathname ===
+            window.location.pathname
+        ) ?? "";
+      return;
     }
+    window.location.assign(destination);
   }
   guardLink(event: MouseEvent): void {
     const link =

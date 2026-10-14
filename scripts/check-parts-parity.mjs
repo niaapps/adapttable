@@ -206,18 +206,7 @@ const UNNAMED_IN_KITS = {};
  * have, each with the reason. A listed part must still be rendered by its kit
  * and still be missing from another native kit; otherwise the entry is stale.
  */
-const NATIVE_EXTRAS = {
-  "adapter-vue-unstyled": {
-    "row-edit-error":
-      "Vue's row-edit actions show the host's failed commit as a status; React and Angular surface edit errors on the cell editors only.",
-    "batch-edit-error":
-      "Vue's batch-edit bar shows the host's failed batch commit as a status; React and Angular have no batch-level error status.",
-    "assistant-voice-error":
-      "Vue's assistant composer names its voice-input error; React and Angular assistants show no voice-input error element.",
-    "sort-direction":
-      "Vue's mobile sort control toggles the direction with its own button; React and Angular mobile sorting uses the sort select alone.",
-  },
-};
+const NATIVE_EXTRAS = {};
 
 /** Every part named in one of the two accounted-for lists. */
 function accountedFor(groups) {

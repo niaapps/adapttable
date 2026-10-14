@@ -10,6 +10,20 @@ Nuxt UI controls for AdaptTable's headless Vue binding. The binding owns table
 state, callbacks and structural Chrome; this adapter supplies Nuxt UI components.
 It does not use Nuxt UI's separate `UTable` engine.
 
+## Combined feature imports
+
+Use `@adapttable/nuxt-ui/features` to compose the kit's native factories from
+one optional entry. Individual feature subpaths remain available; the base
+`DataTable` import does not load this barrel.
+
+```ts
+import { editing, filters } from "@adapttable/nuxt-ui/features";
+```
+
+The factories retain their individual signatures, native controls and
+host-owned callbacks. See the [Vue feature guide](https://adapttable.orwamahmoud.com/vue/features/)
+for composition and provider requirements.
+
 ## Features
 
 The Nuxt UI adapter currently exports 41 canonical feature factories. Its base

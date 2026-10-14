@@ -438,6 +438,16 @@
         "types": "./dist/column-selection.d.cts",
         "default": "./dist/column-selection.cjs"
       }
+    },
+    "./features": {
+      "import": {
+        "types": "./dist/features.d.ts",
+        "default": "./dist/features.js"
+      },
+      "require": {
+        "types": "./dist/features.d.cts",
+        "default": "./dist/features.cjs"
+      }
     }
   },
   "dependencies": {
@@ -448,6 +458,7 @@
     "vue": "^3.5.18"
   },
   "devDependencies": {
+    "@adapttable/core": "workspace:*",
     "@nuxt/ui": "4.11.3",
     "vue": "^3.5.43",
     "@iconify-json/lucide": "1.2.140"

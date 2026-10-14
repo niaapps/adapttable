@@ -20,6 +20,7 @@ const NARROW = [320, 390, 768] as const;
 const OVERLAYS = [
   '[role="dialog"]',
   '[role="menu"]',
+  '[role="listbox"]',
   '[data-adapttable-part$="-popover"]',
   '[data-adapttable-part$="-menu"]',
   '[data-adapttable-part$="-drawer"]',
@@ -66,10 +67,14 @@ for (const width of NARROW) {
     ).toBeVisible();
 
     for (const name of TRIGGERS) {
-      const trigger = page.getByRole("button", { name }).first();
+      const trigger =
+        name.source === "sort"
+          ? page.getByRole("textbox", { name: "Sort by", exact: true })
+          : page.getByRole("button", { name }).first();
       if ((await trigger.count()) === 0) continue;
       await trigger.click();
-      await page.waitForTimeout(250);
+      const overlays = page.locator(OVERLAYS).filter({ visible: true });
+      await expect(overlays.first()).toBeVisible();
 
       const outside = await escapees(page);
       expect(
@@ -78,7 +83,7 @@ for (const width of NARROW) {
       ).toEqual([]);
 
       await page.keyboard.press("Escape");
-      await page.waitForTimeout(150);
+      await expect(overlays).toHaveCount(0);
     }
   });
 

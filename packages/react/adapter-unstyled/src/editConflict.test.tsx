@@ -1,4 +1,4 @@
-import { fireEvent, render } from "@testing-library/react";
+import { fireEvent, render, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { DataTable } from "./data-table.test-utils";
@@ -318,7 +318,8 @@ describe("edit conflict, row mode (unstyled)", () => {
 /** A batch-editing table with two editable fields. */
 function batchTable(
   rows: Task[],
-  onBatchEdit: (edits: readonly unknown[]) => void
+  onBatchEdit: (edits: readonly unknown[]) => void,
+  mobile = false
 ) {
   return (
     <DataTable
@@ -327,6 +328,7 @@ function batchTable(
       rowKey={(r) => r.id}
       urlSync={false}
       batchEditing
+      forceMobile={mobile}
       onBatchEdit={onBatchEdit}
     />
   );
@@ -405,6 +407,42 @@ describe("edit conflict, batch mode (unstyled)", () => {
       },
     ]);
   });
+
+  for (const mobile of [false, true]) {
+    it.each(["retry", "cancel"])(
+      `reconciles an accepted row after partial failure (${mobile ? "phone" : "desktop"}, %s)`,
+      async (recovery) => {
+        const onBatchEdit = vi
+          .fn()
+          .mockRejectedValueOnce(new Error("Second row refused"));
+        const { rerender } = render(batchTable(ROWS, onBatchEdit, mobile));
+        fireEvent.change(editors()[0]!, { target: { value: "Ship it" } });
+        fireEvent.change(editors()[2]!, { target: { value: "Test it" } });
+        fireEvent.click(part("batch-edit-save")!);
+        await waitFor(() =>
+          expect(part("batch-edit-error")).toHaveTextContent(
+            "Second row refused"
+          )
+        );
+        const accepted = [{ ...ROWS[0]!, title: "Ship it" }, ROWS[1]!];
+        rerender(batchTable(accepted, onBatchEdit, mobile));
+        expect(part("batch-edit-save")).toBeNull();
+        expect(editors()[2]).toHaveValue("Test it");
+        fireEvent.click(part("edit-cell-take-theirs")!);
+        expect(part("batch-edit-count")).toHaveTextContent("1 unsaved row");
+        fireEvent.click(
+          part(recovery === "retry" ? "batch-edit-save" : "batch-edit-cancel")!
+        );
+        await waitFor(() => expect(part("batch-edit-bar")).toBeNull());
+        expect(editors()[0]).toHaveValue("Ship it");
+        expect(onBatchEdit).toHaveBeenCalledTimes(recovery === "retry" ? 2 : 1);
+        if (recovery === "retry")
+          expect(onBatchEdit).toHaveBeenLastCalledWith([
+            { row: ROWS[1], rowId: "2", patch: { title: "Test it" } },
+          ]);
+      }
+    );
+  }
 
   it("leaves an untouched batch alone", () => {
     const onBatchEdit = vi.fn();

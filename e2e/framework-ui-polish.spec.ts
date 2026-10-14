@@ -7,26 +7,41 @@ async function settleOverlay(surface: Locator): Promise<void> {
   await expect
     .poll(() =>
       surface.evaluate((element) => {
+        const running: {
+          target: string;
+          animation: string;
+          time: string;
+        }[] = [];
+        const name = (animation: Animation): string => {
+          if (animation instanceof CSSTransition)
+            return animation.transitionProperty;
+          if (animation instanceof CSSAnimation) return animation.animationName;
+          return "animation";
+        };
         for (
           let parent: Element | null = element;
           parent;
           parent = parent.parentElement
         ) {
-          if (
-            parent
-              .getAnimations()
-              .some(
-                (animation) =>
-                  animation.playState === "running" &&
-                  animation.effect?.getComputedTiming().iterations !== Infinity
-              )
-          )
-            return false;
+          const finite = parent
+            .getAnimations()
+            .filter(
+              (animation) =>
+                animation.playState === "running" &&
+                animation.effect?.getComputedTiming().iterations !== Infinity
+            );
+          running.push(
+            ...finite.map((animation) => ({
+              target: parent.tagName + "." + parent.className,
+              animation: name(animation),
+              time: String(animation.currentTime),
+            }))
+          );
         }
-        return true;
+        return running;
       })
     )
-    .toBe(true);
+    .toEqual([]);
 }
 
 for (const framework of ["react", "angular", "vue"]) {
@@ -46,6 +61,7 @@ for (const framework of ["react", "angular", "vue"]) {
         await page.goto(
           `${framework === "vue" ? "/vue" : ""}/${pathOf(kit)}/filtering/?locale=${variant.locale}`
         );
+        await page.evaluate(() => document.fonts.ready);
         // Exercise the reserved scrollbar space used by Linux/Windows,
         // including on macOS where native scrollbars normally overlay content.
         await page.addStyleTag({
@@ -162,7 +178,13 @@ for (const framework of ["react", "angular", "vue"]) {
         });
         await expect
           .poll(async () => {
-            const box = await menu.boundingBox();
+            // The native dropdown adds padding and a border outside the
+            // semantic fieldset. Check its visible surface, not only the group.
+            const box = await menu.evaluate((element) =>
+              (element.closest(".dropdown-menu") ?? element)
+                .getBoundingClientRect()
+                .toJSON()
+            );
             return (
               !!box &&
               box.x >= -1 &&
@@ -213,3 +235,45 @@ test("native selection columns stay compact and Vue's portal retains the table t
     await expect(trigger).toBeFocused();
   }
 });
+
+for (const locale of ["en", "ar"] as const) {
+  test(`base-ui: ${locale} filter panel shifts inside the viewport at a bottom-edge trigger`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto(`/base-ui/filtering/?locale=${locale}`);
+    const labels = getLabels(locale);
+    const trigger = page
+      .getByRole("button", { name: labels.filters, exact: true })
+      .first();
+    await expect(trigger).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+    await trigger.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      window.scrollBy({
+        top: box.top - (innerHeight - box.height - 12),
+        behavior: "instant",
+      });
+    });
+    await trigger.click();
+    const panel = page.getByTestId("adapttable-filter-popover");
+    await expect(panel).toBeVisible();
+    await settleOverlay(panel);
+    await expect
+      .poll(async () => {
+        const box = await panel.boundingBox();
+        return (
+          !!box &&
+          box.x >= -1 &&
+          box.y >= -1 &&
+          box.x + box.width <= 1281 &&
+          box.y + box.height <= 721
+        );
+      })
+      .toBe(true);
+    await expect(panel.locator("..")).toHaveAttribute("data-side", "bottom");
+    await page.keyboard.press("Escape");
+    await expect(panel).toBeHidden();
+    await expect(trigger).toBeFocused();
+  });
+}

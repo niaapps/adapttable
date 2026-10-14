@@ -3,6 +3,7 @@ import "../../angular/matrixPage.css";
 import "../../angular/demoPage.css";
 import "../matrix/matrixPage.css";
 import "./demo.css";
+import "../../demoLayout.css";
 
 import { type App, createApp, h } from "vue";
 

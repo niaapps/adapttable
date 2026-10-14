@@ -6,7 +6,7 @@
 .adapttable-vuetify-pivot fieldset {
   display: grid;
   gap: 0.5rem;
-  min-inline-size: 12rem;
+  min-inline-size: 0;
   margin: 0;
   padding: 0.5rem 0.75rem 0.75rem;
   border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));

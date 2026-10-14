@@ -134,7 +134,7 @@ it.each<FilterDef<Row>>([
       if (def.type === "multiSelect") {
         expect(document.querySelector('[role="menu"]')).not.toBeNull();
         await key(element('[role="menu"]'), "Escape");
-        expect(document.activeElement).toBe(target);
+        await vi.waitFor(() => expect(document.activeElement).toBe(target));
       }
     }
     expect(

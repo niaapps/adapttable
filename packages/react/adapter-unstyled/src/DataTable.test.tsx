@@ -71,6 +71,36 @@ beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }));
 afterEach(() => vi.useRealTimers());
 
 describe("<DataTable> (unstyled)", () => {
+  it("switches mobile sorting in both directions and restores the URL order", () => {
+    const { container } = renderHarness({ isMobile: true });
+    expect(
+      screen.getByRole("button", { name: "Sort descending" })
+    ).toBeDisabled();
+    fireEvent.change(screen.getByRole("combobox", { name: "Sort by" }), {
+      target: { value: "name" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Sort descending" }));
+    expect(adapter.getSearch()).toContain("sortBy=name");
+    expect(adapter.getSearch()).toContain("sortDir=desc");
+    const cards = () => [
+      ...container.querySelectorAll('[data-adapttable-part="card"]'),
+    ];
+    expect(cards()[0]?.textContent).toContain("Bob");
+    fireEvent.click(screen.getByRole("button", { name: "Sort ascending" }));
+    expect(cards()[0]?.textContent).toContain("Alice");
+    act(() => adapter.setSearch("sortBy=name&sortDir=desc"));
+    expect(cards()[0]?.textContent).toContain("Bob");
+    expect(
+      screen.getByRole("button", { name: "Sort ascending" })
+    ).toBeEnabled();
+    fireEvent.change(screen.getByRole("combobox", { name: "Sort by" }), {
+      target: { value: "" },
+    });
+    expect(
+      screen.getByRole("button", { name: "Sort descending" })
+    ).toBeDisabled();
+  });
+
   it("renders normally under hostile URL params and corrupt storage", () => {
     // Prototype-named filter keys, an absurd colW, and garbage in the
     // column-layout storage must all degrade silently.

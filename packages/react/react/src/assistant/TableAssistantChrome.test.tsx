@@ -1946,6 +1946,75 @@ describe("dictating instead of typing", () => {
     };
   }
 
+  it.each(["denied", "error"] as const)(
+    "announces %s without losing typing and clears it after retry",
+    (status) => {
+      const setDraft = vi.fn();
+      const input = speech({
+        state: {
+          status,
+          language: "ar",
+          interim: "",
+          error: "تعذر تشغيل الإملاء",
+        },
+      });
+      const props = {
+        slots: tableAssistantTestSlots,
+        assistant: view({ draft: "Typed draft", setDraft }),
+        open: true,
+        onOpenChange: vi.fn(),
+        speech: input,
+        greeting: "",
+      };
+      const { rerender } = render(<TableAssistantChrome {...props} />);
+      expect(part("assistant-voice-error")).toHaveTextContent(
+        "تعذر تشغيل الإملاء"
+      );
+      expect(part("assistant-voice-error")).toHaveAttribute("role", "alert");
+      expect(part("assistant-input")).toHaveValue("Typed draft");
+      fireEvent.change(part("assistant-input")!, {
+        target: { value: "Still typing" },
+      });
+      expect(setDraft).toHaveBeenCalledWith("Still typing");
+      fireEvent.click(part("assistant-voice")!);
+      expect(input.start).toHaveBeenCalledOnce();
+      rerender(
+        <TableAssistantChrome
+          {...props}
+          speech={{
+            ...input,
+            state: { status: "listening", language: "ar", interim: "" },
+          }}
+        />
+      );
+      expect(part("assistant-voice-error")).toBeNull();
+      fireEvent.click(part("assistant-close")!);
+      expect(input.stop).toHaveBeenCalled();
+    }
+  );
+
+  it("stops dictation when a host closes or unmounts the panel", () => {
+    const input = speech({
+      state: { status: "listening", language: "en", interim: "" },
+    });
+    const props = {
+      slots: tableAssistantTestSlots,
+      assistant: view(),
+      onOpenChange: vi.fn(),
+      speech: input,
+      greeting: "",
+    };
+    const { rerender, unmount } = render(
+      <TableAssistantChrome {...props} open />
+    );
+    rerender(<TableAssistantChrome {...props} open={false} />);
+    expect(input.stop).toHaveBeenCalled();
+    input.stop.mockClear();
+    rerender(<TableAssistantChrome {...props} open />);
+    unmount();
+    expect(input.stop).toHaveBeenCalled();
+  });
+
   it("offers a mic when the browser can listen", () => {
     const input = speech();
     mount({ speech: input });

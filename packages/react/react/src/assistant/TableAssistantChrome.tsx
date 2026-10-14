@@ -847,9 +847,24 @@ export function TableAssistantChrome({
     : {};
   const Button = slots.Button;
 
+  const speechRef = useRef(speech);
+  speechRef.current = speech;
+  const voiceWasOpen = useRef(open);
   const close = useCallback(() => {
+    speechRef.current?.stop();
+    voiceWasOpen.current = false;
     onOpenChange(false);
   }, [onOpenChange]);
+  useEffect(() => {
+    if (voiceWasOpen.current && !open) speechRef.current?.stop();
+    voiceWasOpen.current = open;
+  }, [open]);
+  useEffect(
+    () => () => {
+      speechRef.current?.stop();
+    },
+    []
+  );
 
   // Opening puts the reader where they were going. The launcher leaves the
   // document when the panel takes its place, so without this a keyboard

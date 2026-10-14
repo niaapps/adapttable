@@ -9,7 +9,7 @@ Each adapter supplies its own controls; the binding owns the table model.
 ## Availability and scope
 
 The Vue binding, Unstyled adapter and all seven styled adapters are public
-public `0.1.0` packages. Install the native kit in your Vue application:
+public packages. Install the native kit in your Vue application:
 
 ```sh
 pnpm add @adapttable/vue-unstyled vue@^3.5.0
@@ -39,9 +39,9 @@ binding-only factories require the corresponding adapter slots.
 The seven styled adapters expose the same 41 canonical feature factories, with
 kit-specific controls, and every one exports `standardFeatures()` from its
 `/preset` entry, an assistant surface from `/assistant` and a controlled
-`PivotPanel` from `/pivot`. A feature barrel is available only where the package
-exports it. See the [adapter entry map](./features.md#styled-adapter-feature-entries)
-for those boundaries. Compose standard Unstyled controls with `standardFeatures()`
+`PivotPanel` from `/pivot`. Every Vue kit exports an optional `/features` barrel
+with its own native factories. See the [adapter entry map](./features.md#styled-adapter-feature-entries)
+for writer and presentation boundaries. Compose standard Unstyled controls with `standardFeatures()`
 from `@adapttable/vue-unstyled/preset`, or choose individual feature entries.
 
 For strict template checking, use Vue tooling with `strictTemplates: true`.
@@ -304,6 +304,33 @@ Continue with the [Vue feature guide](./features.md) for composition examples,
 the [Vue API reference](./api.md) for component and adapter contracts, and the
 [shared concepts](../concepts.md) for engine ownership.
 
+## Scaffold a Vue/Vite table
+
+Inside an existing plain Vue application, run:
+
+```sh
+npx @adapttable/cli init
+```
+
+The CLI detects all eight shipped Vue kits and defaults to Vue Unstyled when
+no styled kit is declared. To choose one explicitly, use
+`npx @adapttable/cli init --kit element-plus` (or `vue-unstyled`, `vuetify`,
+`naive-ui`, `reka-ui`, `shadcn-vue`, `nuxt-ui`, `quasar`). Run the printed
+install command, import `PeopleTable.vue` into your host, and call the generated
+`installAdaptTable(app)` before mounting. The starter includes native sorting
+and filtering. Existing generated files are preserved unless `--force` is given.
+
+Nuxt UI and Quasar also generate `adapttable.vite.ts`: merge its configuration
+into your host's Vite configuration using `mergeConfig`, keeping one Vue compiler
+plugin. The generated setup owns the appropriate SDK plugins, native CSS and
+Nuxt UI Tailwind inputs. Your host's `main.ts`, root component and Vite config
+are not overwritten. See the [CLI setup guide](https://github.com/orwa-mahmoud/adapttable/tree/main/packages/shared/cli#vuevite-setup).
+
+The generated templates support plain Vue/Vite browser applications. A Nuxt
+framework project is recognized but receives module setup guidance without
+writing plain Vite provider files. Follow the Nuxt UI module documentation for
+that environment, and Quasar CLI for Quasar SSR/SSG.
+
 ## Optional AI binding
 
 Add `@adapttable/ai-vue` when your application needs an agent, conversation
@@ -315,8 +342,8 @@ pnpm add @adapttable/ai-vue
 
 It requires Vue `^3.5.0`.
 The base table and assistant UI entries remain usable without AI. See
-[assistant and approvals](./assistant.md). The CLI currently scaffolds React and
-Angular projects; these Vue examples use explicit application setup.
+[assistant and approvals](./assistant.md). Assistant integration remains opt-in
+after scaffolding the table.
 
 ## Explore a connected workspace
 

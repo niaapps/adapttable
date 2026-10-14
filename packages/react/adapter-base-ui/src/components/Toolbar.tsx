@@ -162,6 +162,30 @@ export function Toolbar<TRow>({
             }
           />
         )}
+        {table.isMobile && sortOptions && sortOptions.length > 0 && (
+          <Button
+            variant="outline"
+            size="2"
+            type="button"
+            data-adapttable-part="sort-direction"
+            disabled={!source.sortBy}
+            aria-label={
+              source.sortDir === "desc"
+                ? labels.sortAscending
+                : labels.sortDescending
+            }
+            onClick={() =>
+              source.setSort(
+                source.sortBy,
+                source.sortDir === "desc" ? "asc" : "desc"
+              )
+            }
+          >
+            {source.sortDir === "desc"
+              ? labels.sortDescending
+              : labels.sortAscending}
+          </Button>
+        )}
         {toolbar}
         {hasFilters && filtersMode === "popover" ? (
           <FeatureSlot

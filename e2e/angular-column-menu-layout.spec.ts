@@ -48,12 +48,19 @@ for (const kit of builtAdapters("angular")) {
         .or(page.getByRole("group", { name: labels.columns, exact: true }))
         .filter({ visible: true })
         .first();
-      const bounds = await panel.boundingBox();
+      // A scrollable popup's fieldset may exceed the visible surface. Include
+      // the native wrapper's padding and border in the viewport assertion.
+      const bounds = await panel.evaluate((element) =>
+        (element.closest(".dropdown-menu") ?? element)
+          .getBoundingClientRect()
+          .toJSON()
+      );
       expect(bounds).not.toBeNull();
       expect(bounds!.x).toBeGreaterThanOrEqual(0);
       expect(bounds!.y).toBeGreaterThanOrEqual(0);
       expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(1281);
       expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(901);
+      await expect(row).toBeInViewport({ ratio: 1 });
       const geometry = await row.evaluate((element) => {
         const label = element.querySelector(
           ':scope > span:not([role="button"]):not([data-adapttable-part="column-menu-grip"])'

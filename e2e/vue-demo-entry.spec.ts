@@ -98,7 +98,7 @@ for (const kit of builtAdapters("vue")) {
   test(`${kit.key}: live search, lab options and feature links retain the kit and reset table queries`, async ({
     page,
   }) => {
-    await page.goto(`/vue-main/?kit=${kit.key}&editing=off`);
+    await page.goto(`/vue-main/?kit=${kit.key}&editing=off&theme=dark`);
     const search = page.locator(
       '.mx-demo input[data-adapttable-part="search"], .mx-demo [data-adapttable-part="search"] input'
     );
@@ -107,9 +107,14 @@ for (const kit of builtAdapters("vue")) {
       .poll(() => new URL(page.url()).searchParams.get("vue-live.q"))
       .toBe("Ada");
     await page.getByRole("link", { name: "Feature Lab", exact: true }).click();
-    await expect(page).toHaveURL(
-      new RegExp(`/vue-all-options/\\?kit=${kit.key}$`)
-    );
+    await expect
+      .poll(() => new URL(page.url()).pathname)
+      .toBe("/vue-all-options/");
+    expect(Object.fromEntries(new URL(page.url()).searchParams)).toEqual({
+      kit: kit.key,
+      theme: "dark",
+    });
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
       "Every option. Your combination."
     );
@@ -138,7 +143,12 @@ for (const kit of builtAdapters("vue")) {
       .getByRole("navigation", { name: "Vue feature examples" })
       .getByRole("link", { name: "Columns", exact: true })
       .click();
-    await expect(page).toHaveURL(new RegExp(`/vue/${pathOf(kit)}/columns/$`));
-    expect(new URL(page.url()).search).toBe("");
+    await expect
+      .poll(() => new URL(page.url()).pathname)
+      .toBe(`/vue/${pathOf(kit)}/columns/`);
+    expect(Object.fromEntries(new URL(page.url()).searchParams)).toEqual({
+      theme: "dark",
+    });
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   });
 }

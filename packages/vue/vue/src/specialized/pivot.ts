@@ -74,48 +74,79 @@ export function PivotPanelChrome(props: PivotPanelChromeProps): VNodeChild {
   return slots.Surface({
     className,
     "data-adapttable-part": "pivot-panel",
-    children: pivotPanelZones(fields, config, labels, aggregationLabels).map(
-      ({ zone, label, entries, addOptions }) =>
-        slots.Zone({
-          zone,
-          label,
-          "data-adapttable-part": "pivot-zone",
-          children: [
-            ...entries.map((entry) =>
-              slots.Field({
-                label: entry.label,
-                "data-adapttable-part": "pivot-field",
-                moveUpLabel: labels.pivotMoveUp,
-                moveDownLabel: labels.pivotMoveDown,
-                removeLabel: labels.pivotRemove,
-                onMoveUp: entry.canMoveUp
-                  ? () => onChange(moveField(config, zone, entry.index, -1))
-                  : undefined,
-                onMoveDown: entry.canMoveDown
-                  ? () => onChange(moveField(config, zone, entry.index, 1))
-                  : undefined,
-                onRemove: () =>
-                  onChange(removeField(config, zone, entry.index)),
-                aggregation:
-                  entry.aggregation === undefined
-                    ? undefined
-                    : slots.Agg({
-                        label: labels.pivotAggregation,
-                        value: entry.aggregation,
-                        options: PIVOT_AGGREGATIONS,
-                        optionLabels: aggregationLabels,
-                        onChange: (next) =>
-                          onChange(setMeasureAgg(config, entry.index, next)),
-                      }),
-              })
-            ),
-            slots.Add({
-              label: labels.pivotAdd,
-              options: addOptions,
-              onAdd: (key) => onChange(assignField(config, key, zone)),
-            }),
-          ],
-        })
+    children: h(
+      "div",
+      {
+        "data-adapttable-part": "pivot-zones",
+        style: {
+          display: "grid",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(min(100%, max(20rem, calc((100% - 0.75rem) / 2))), 1fr))",
+          gap: "0.75rem",
+          width: "100%",
+          minWidth: 0,
+        },
+      },
+      pivotPanelZones(fields, config, labels, aggregationLabels).map(
+        ({ zone, label, entries, addOptions }) =>
+          h(
+            "div",
+            {
+              "data-adapttable-part": "pivot-zone-layout",
+              style: {
+                display: "grid",
+                minWidth: 0,
+                gridColumn: zone === "measures" ? "1 / -1" : undefined,
+              },
+            },
+            [
+              slots.Zone({
+                zone,
+                label,
+                "data-adapttable-part": "pivot-zone",
+                children: [
+                  ...entries.map((entry) =>
+                    slots.Field({
+                      label: entry.label,
+                      "data-adapttable-part": "pivot-field",
+                      moveUpLabel: labels.pivotMoveUp,
+                      moveDownLabel: labels.pivotMoveDown,
+                      removeLabel: labels.pivotRemove,
+                      onMoveUp: entry.canMoveUp
+                        ? () =>
+                            onChange(moveField(config, zone, entry.index, -1))
+                        : undefined,
+                      onMoveDown: entry.canMoveDown
+                        ? () =>
+                            onChange(moveField(config, zone, entry.index, 1))
+                        : undefined,
+                      onRemove: () =>
+                        onChange(removeField(config, zone, entry.index)),
+                      aggregation:
+                        entry.aggregation === undefined
+                          ? undefined
+                          : slots.Agg({
+                              label: labels.pivotAggregation,
+                              value: entry.aggregation,
+                              options: PIVOT_AGGREGATIONS,
+                              optionLabels: aggregationLabels,
+                              onChange: (next) =>
+                                onChange(
+                                  setMeasureAgg(config, entry.index, next)
+                                ),
+                            }),
+                    })
+                  ),
+                  slots.Add({
+                    label: labels.pivotAdd,
+                    options: addOptions,
+                    onAdd: (key) => onChange(assignField(config, key, zone)),
+                  }),
+                ],
+              }),
+            ]
+          )
+      )
     ),
   });
 }

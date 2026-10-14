@@ -132,7 +132,10 @@ describe("the unstyled Angular Columns menu", () => {
     } as DOMRect);
     button.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
     await open();
-    expect(part("column-menu-panel")?.style.maxHeight).toBe("304px");
+    const popup =
+      part("column-menu-panel")?.closest<HTMLElement>(".dropdown-menu");
+    expect(popup?.style.maxHeight).toBe("304px");
+    expect(popup?.style.overflowY).toBe("auto");
     vi.restoreAllMocks();
   });
 

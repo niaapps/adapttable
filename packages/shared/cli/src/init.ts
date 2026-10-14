@@ -4,6 +4,7 @@ import {
   type Framework,
   type Kit,
   type KitInfo,
+  KITS,
   mergeDependencies,
 } from "./detect";
 import {
@@ -39,6 +40,8 @@ export interface InitIO {
 export interface InitOptions {
   /** Overwrite existing scaffold files. Defaults to `false`. */
   force?: boolean;
+  /** Explicit kit within the detected framework; otherwise detect dependencies. */
+  kit?: Kit;
 }
 
 /**
@@ -94,11 +97,16 @@ function missingPackages(
 ): string[] {
   return packagesFor(info).filter((specifier) => {
     if (info.privatePreview && specifier === info.adapter) return false;
-    if (framework !== "angular" || !info.extras.includes(specifier))
+    if (
+      (framework !== "angular" && framework !== "vue") ||
+      !info.extras.includes(specifier)
+    )
       return true;
     // Angular extras in KITS carry version ranges; compare their bare names so
     // an existing host peer is not reinstalled or upgraded by the command.
-    const name = specifier.slice(0, specifier.lastIndexOf("@"));
+    const versionStart = specifier.indexOf("@", 1);
+    const name =
+      versionStart < 0 ? specifier : specifier.slice(0, versionStart);
     return !Object.hasOwn(deps, name);
   });
 }
@@ -131,11 +139,52 @@ function logHostSetup(io: InitIO, framework: Framework, info: KitInfo): void {
         '   NG-ZORRO requires Angular 22 and ng-zorro-antd 22.1.1-compatible peers. Match any missing Angular peers to your installed Angular version. Add @import "ng-zorro-antd/ng-zorro-antd.min.css"; to your global stylesheet.'
       );
     }
+  } else if (framework === "vue") {
+    io.log(
+      '3. Import PeopleTable from "./PeopleTable.vue" and render <PeopleTable /> in your Vue component.'
+    );
+    io.log(
+      '   In src/main.ts: import { installAdaptTable } from "./adapttable"; call installAdaptTable(app) before app.mount().'
+    );
+    if (info.kit === "nuxt-ui" || info.kit === "quasar") {
+      io.log(
+        '   Merge adaptTableViteConfig from "./adapttable.vite.ts" into vite.config.ts with Vite mergeConfig. This includes the Vue compiler; do not register it twice.'
+      );
+    }
+    io.log(
+      `   Provider and style setup: src/adapttable.ts. Kit guide: https://adapttable.orwamahmoud.com/vue/${info.kit === "vue-unstyled" ? "getting-started" : info.kit}/`
+    );
   } else {
     io.log(
       "3. Wrap your app in your UI kit's provider (MantineProvider / ThemeProvider / ChakraProvider / ConfigProvider — per its docs), render <PeopleTable />, done."
     );
   }
+}
+
+/** Validate the native host before creating any file. */
+function selectedKit(
+  io: InitIO,
+  deps: Record<string, string>,
+  framework: Framework,
+  kit?: Kit
+): KitInfo {
+  if (framework === "vue" && Object.hasOwn(deps, "nuxt")) {
+    throw new InitError(
+      "Vue init currently scaffolds plain Vue/Vite apps. For a Nuxt app, use the kit's Nuxt module/provider setup at https://adapttable.orwamahmoud.com/vue/getting-started/; no files were written."
+    );
+  }
+  if (kit !== undefined) {
+    const selected = KITS.find((entry) => entry.kit === kit);
+    if (!selected || (selected.framework ?? "react") !== framework)
+      throw new InitError(
+        `Kit "${kit}" is not supported for the detected ${framework} project.`
+      );
+    return selected;
+  }
+  return detectKit(deps, {
+    framework,
+    hasComponentsJson: io.exists("components.json"),
+  });
 }
 
 /**
@@ -172,10 +221,7 @@ export function runInit(io: InitIO, options: InitOptions = {}): InitResult {
   const framework = detectFramework(deps, {
     hasAngularJson: io.exists("angular.json"),
   });
-  const info = detectKit(deps, {
-    framework,
-    hasComponentsJson: io.exists("components.json"),
-  });
+  const info = selectedKit(io, deps, framework, options.kit);
   const pm = choosePackageManager(io.listRootFiles());
   const packages = missingPackages(info, framework, deps);
   const command = installCommand(pm, packages);
@@ -191,9 +237,12 @@ export function runInit(io: InitIO, options: InitOptions = {}): InitResult {
     written.push(file.path);
   }
 
+  const frameworkLabel = { react: "React", angular: "Angular", vue: "Vue" }[
+    framework
+  ];
   io.log(
-    framework === "angular"
-      ? `AdaptTable — detected Angular (${info.label}).`
+    framework !== "react"
+      ? `AdaptTable — detected ${frameworkLabel} (${info.label}).`
       : `AdaptTable — detected ${info.label}.`
   );
   const chakraNote = chakraVersionWarning(info.kit, deps["@chakra-ui/react"]);

@@ -16,6 +16,7 @@
     "vue": "^3.5.0"
   },
   "devDependencies": {
+    "@tanstack/vue-query": "5.104.2",
     "vue": "^3.5.43"
   },
   "engines": {

@@ -31,13 +31,21 @@ while (!existsSync("release/" + name)) {
   await setTimeout(10);
 }
 appendFileSync("events", name + ":end\\n");
-process.exit(name === "beta" ? Number(process.env.RUNNER_BETA_EXIT ?? 0) : 0);
+const payloadBytes = Number(process.env.RUNNER_PAYLOAD_BYTES ?? 0);
+if (payloadBytes) process.stdout.write("x".repeat(payloadBytes) + "\\n" + name + ":tail\\n");
+process.exitCode = name === "beta" ? Number(process.env.RUNNER_BETA_EXIT ?? 0) : 0;
 `;
 
 /** Run real npm scripts in a dependency-free temporary package. */
 function fixture(
   context,
-  { concurrency, fail = false, hold = false, tasks = TASKS } = {}
+  {
+    concurrency,
+    fail = false,
+    hold = false,
+    tasks = TASKS,
+    payloadBytes = 0,
+  } = {}
 ) {
   const dir = mkdtempSync(join(tmpdir(), "run-parallel-"));
   mkdirSync(join(dir, "started"));
@@ -59,6 +67,7 @@ function fixture(
     npm_execpath: "npm",
     npm_config_cache: join(dir, "npm-cache"),
     RUNNER_BETA_EXIT: fail ? "7" : "0",
+    RUNNER_PAYLOAD_BYTES: String(payloadBytes),
   };
   delete env.ADAPTTABLE_CHECK_CONCURRENCY;
   if (concurrency !== undefined) env.ADAPTTABLE_CHECK_CONCURRENCY = concurrency;
@@ -128,6 +137,21 @@ describe("check concurrency", () => {
 });
 
 describe("package script scheduling", () => {
+  for (const fail of [false, true]) {
+    it(`drains large piped task output before ${fail ? "failure" : "success"} exit`, async (context) => {
+      const payloadBytes = 300_000;
+      const run = fixture(context, { tasks: ["beta"], fail, payloadBytes });
+      const result = await run.done;
+      assert.equal(result.code, fail ? 1 : 0);
+      assert.ok(
+        result.output.includes("x".repeat(payloadBytes)),
+        "complete payload is retained"
+      );
+      assert.match(result.output, /beta:tail/);
+      assert.match(result.output, fail ? /1 failed: beta/ : /all passed/);
+    });
+  }
+
   it("starts every task together when the control is absent", async (context) => {
     const run = fixture(context, { hold: true });
     await waitForStart(run, TASKS);

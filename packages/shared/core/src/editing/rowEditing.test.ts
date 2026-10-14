@@ -12,6 +12,7 @@ import type { EditableColumnLike } from "./cellEditing";
 import {
   createRowEditStore,
   rowEditingView,
+  rowEditSignature,
   type RowEditStoreOptions,
 } from "./rowEditing";
 
@@ -260,6 +261,37 @@ describe("useRowEditing", () => {
     // The first row's drafts are gone with it — one row is open at a time.
     expect(result.current.activeRowId).toBe("2");
     expect(result.current.draftFor("title")).toBe("Other");
+  });
+
+  it("repaints an unchanged draft as its host save starts, fails and is retried", async () => {
+    const onRowEdit = vi.fn().mockRejectedValueOnce(new Error("Save refused"));
+    const { result } = setup({ onRowEdit });
+    result.current.begin(TASK, "1");
+    result.current.setDraft("title", "Ship it");
+    const draft = result.current.signature;
+    result.current.save();
+    const pending = result.current.signature;
+    expect(pending).not.toBe(draft);
+    await Promise.resolve();
+    expect(result.current.commit?.error).toBe("Save refused");
+    expect(result.current.signature).not.toBe(pending);
+    expect(result.current.draftFor("title")).toBe("Ship it");
+    result.current.save();
+    expect(result.current.signature).toBe("");
+  });
+
+  it("distinguishes delimiter-bearing drafts so memoized rows repaint", () => {
+    const first = rowEditSignature({
+      activeRowId: "1",
+      drafts: { title: "A|status=B" },
+      isDirty: true,
+    });
+    const second = rowEditSignature({
+      activeRowId: "1",
+      drafts: { title: "A", status: "B" },
+      isDirty: true,
+    });
+    expect(second).not.toBe(first);
   });
 
   it("changes its signature so the open row repaints", () => {

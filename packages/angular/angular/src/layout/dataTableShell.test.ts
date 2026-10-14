@@ -1,6 +1,6 @@
 /** Shared shell behavior exercised through the native reference kit's slots. */
 
-import { Component } from "@angular/core";
+import { Component, signal } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { expect, it } from "vitest";
 
@@ -71,3 +71,54 @@ it("keeps search and selection scoped to each inherited table shell", async () =
   expect(fixture.componentInstance.secondSelection).toEqual([]);
   fixture.destroy();
 });
+
+it.each([false, true])(
+  "refreshes and removes a host summary without rebuilding its table (mobile=%s)",
+  async (mobile) => {
+    @Component({
+      imports: [AdaptDataTable],
+      template: `<adapt-data-table
+        [data]="rows"
+        [columns]="columns"
+        [rowKey]="rowKey"
+        [urlSync]="false"
+        [forceMobile]="mobile"
+        [summaryRow]="summary()"
+      />`,
+    })
+    class Host {
+      readonly rows = [{ id: "one", name: "Ada" }];
+      readonly columns = [
+        { key: "name", accessor: (row: { name: string }) => row.name },
+      ];
+      readonly rowKey = (row: { id: string }) => row.id;
+      readonly mobile = mobile;
+      readonly summary = signal<(() => Record<string, unknown>) | undefined>(
+        () => ({ name: "Sum total" })
+      );
+    }
+    const fixture = TestBed.createComponent(Host);
+    fixture.autoDetectChanges();
+    await fixture.whenStable();
+    const root = fixture.nativeElement as HTMLElement;
+    const total = () =>
+      root.querySelector(
+        '[data-adapttable-part="summary-row"], [data-adapttable-part="summary-card"]'
+      );
+    try {
+      expect(total()?.textContent).toContain("Sum total");
+      fixture.componentInstance.summary.set(() => ({ name: "Count total" }));
+      await fixture.whenStable();
+      expect(total()?.textContent).toContain("Count total");
+      expect(root.textContent).not.toContain("Sum total");
+      fixture.componentInstance.summary.set(undefined);
+      await fixture.whenStable();
+      expect(total()).toBeNull();
+      fixture.componentInstance.summary.set(() => ({ name: "Restored total" }));
+      await fixture.whenStable();
+      expect(total()?.textContent).toContain("Restored total");
+    } finally {
+      fixture.destroy();
+    }
+  }
+);

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { DataTable } from "./data-table.test-utils";
@@ -63,6 +63,40 @@ describe("row editing (unstyled)", () => {
       )[0]!
     );
   };
+
+  for (const mobile of [false, true]) {
+    it.each(["retry", "cancel"])(
+      `keeps a failed save visible and its draft recoverable (${mobile ? "phone" : "desktop"}, %s)`,
+      async (recovery) => {
+        const onRowEdit = vi
+          .fn()
+          .mockRejectedValueOnce(new Error("Row save refused"));
+        table({ forceMobile: mobile, onRowEdit });
+        openFirstRow();
+        fireEvent.change(editors()[0]!, { target: { value: "Ship it" } });
+        fireEvent.click(part("row-edit-save")!);
+        await waitFor(() =>
+          expect(part("row-edit-error")).toHaveTextContent("Row save refused")
+        );
+        expect(part("row-edit-error")).toHaveAttribute("role", "status");
+        expect(editors()[0]!.value).toBe("Ship it");
+        if (recovery === "retry") {
+          fireEvent.click(part("row-edit-save")!);
+          await waitFor(() => expect(editors()).toHaveLength(0));
+          expect(onRowEdit).toHaveBeenCalledTimes(2);
+          expect(onRowEdit).toHaveBeenLastCalledWith(ROWS[0], {
+            title: "Ship it",
+          });
+        } else {
+          fireEvent.click(part("row-edit-cancel")!);
+          expect(onRowEdit).toHaveBeenCalledOnce();
+          expect(editors()).toHaveLength(0);
+          expect(screen.getByText("Ship")).toBeInTheDocument();
+        }
+        expect(part("row-edit-error")).toBeNull();
+      }
+    );
+  }
 
   it("offers one control per row and opens none of them", () => {
     table();

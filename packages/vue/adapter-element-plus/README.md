@@ -41,6 +41,20 @@ const rowKey = (row: Person) => row.id;
 </template>
 ```
 
+## Combined feature imports
+
+Use `@adapttable/element-plus/features` to compose the kit's native factories from
+one optional entry. Individual feature subpaths remain available; the base
+`DataTable` import does not load this barrel.
+
+```ts
+import { editing, filters } from "@adapttable/element-plus/features";
+```
+
+The factories retain their individual signatures, native controls and
+host-owned callbacks. See the [Vue feature guide](https://adapttable.orwamahmoud.com/vue/features/)
+for composition and provider requirements.
+
 ## Features
 
 - Feature composition with 41 canonical factories and focused, opt-in imports.

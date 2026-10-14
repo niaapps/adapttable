@@ -293,14 +293,20 @@ export class AdaptColumnMenuEdgeRow extends AdaptColumnMenuEdgeRowModel {}
       >
         {{ p.labels.columns }}
       </button>
-      <div ngbDropdownMenu>
+      <div
+        ngbDropdownMenu
+        [style.max-height]="panelStyle()['max-height']"
+        [style.overflow-y]="panelStyle()['overflow-y']"
+        [style.box-sizing]="panelStyle()['box-sizing']"
+      >
         @if (popover.open()) {
           <fieldset
             #panel
             data-ng-bootstrap-part="column-menu-panel"
             [attr.aria-label]="p.labels.columns"
             [attr.dir]="p.dir ?? null"
-            [style]="panelStyle()"
+            [style.border]="panelStyle().border"
+            [style.padding]="panelStyle().padding"
           >
             <div data-ng-bootstrap-part="column-menu-header">
               <span data-ng-bootstrap-part="column-menu-title">{{

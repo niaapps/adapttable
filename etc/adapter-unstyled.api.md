@@ -415,6 +415,7 @@ export interface DataTableClassNames {
     sidePanelClose?: string;
     sidePanelTab?: string;
     sortButton?: string;
+    sortDirection?: string;
     sortIndex?: string;
     sortSelect?: string;
     statusBar?: string;

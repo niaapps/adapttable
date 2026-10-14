@@ -127,7 +127,11 @@ describe("the unstyled Angular Columns menu", () => {
       bottom: 352,
     } as DOMRect);
     await open();
-    expect(part("column-menu-panel")?.style.maxHeight).toBe("304px");
+    const popup =
+      part("column-menu-panel")?.closest<HTMLElement>(".dropdown-menu");
+    expect(popup?.style.maxHeight).toBe("304px");
+    expect(popup?.style.overflowY).toBe("auto");
+    expect(part("column-menu-panel")?.closest(".dropup")).not.toBeNull();
     vi.restoreAllMocks();
   });
 
@@ -204,6 +208,35 @@ describe("the unstyled Angular Columns menu", () => {
     document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     await settle();
     expect(part("column-menu-panel")).toBeNull();
+  });
+
+  it("reopens the native dropdown when Escape and activation share a render turn", async () => {
+    const { part, open, settle } = await mount();
+    await open();
+    const button = part<HTMLButtonElement>("column-menu-button")!;
+    for (let cycle = 0; cycle < 3; cycle++) {
+      pressEscapeFrom(part<HTMLInputElement>("column-menu-search")!);
+      // Reactivate before the controlled input's close/open values can be
+      // rendered separately. The native dropdown has already been hidden.
+      button.click();
+      await settle();
+      expect(button.getAttribute("aria-expanded")).toBe("true");
+      expect(part("column-menu-panel")).not.toBeNull();
+      expect(part("column-menu-search")).not.toBeNull();
+    }
+  });
+
+  it("cancels a second activation before the native opening render", async () => {
+    const { part, settle } = await mount();
+    const button = part<HTMLButtonElement>("column-menu-button")!;
+    button.click();
+    button.click();
+    await settle();
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    expect(part("column-menu-panel")).toBeNull();
+    button.click();
+    await settle();
+    expect(part("column-menu-panel")).not.toBeNull();
   });
 
   it("hides and shows a column, and keeps a locked one", async () => {

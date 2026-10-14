@@ -687,6 +687,7 @@ const KEYS = [
   "searchField",
   "searchIcon",
   "sortSelect",
+  "sortDirection",
   "rowsPerPage",
   "filtersButton",
   "filtersIcon",

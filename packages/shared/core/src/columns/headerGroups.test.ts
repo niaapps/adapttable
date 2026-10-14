@@ -355,6 +355,32 @@ describe("toggleCollapsedColumnGroup", () => {
   });
 });
 
+describe("single-leaf group alignment", () => {
+  it("follows the numeric leaf while spanning groups remain centered", () => {
+    const plan = htmlGroupedHeaderPlan([
+      { ...col("active", "Active"), align: "end" },
+      { ...col("first", "Several"), align: "end" },
+      { ...col("second", "Several"), align: "end" },
+    ])!;
+    const groups = plan[0]!.filter((cell) => cell.kind === "group");
+    expect(groups.map((cell) => groupedHeaderAlign(cell.cell.align))).toEqual([
+      "end",
+      "center",
+    ]);
+  });
+
+  it("keeps an explicit group alignment above a numeric leaf", () => {
+    const plan = htmlGroupedHeaderPlan(
+      [{ ...col("active", "Active"), align: "end" }],
+      [],
+      false,
+      new Map([[columnGroupId(["Active"]), { align: "start" }]])
+    )!;
+    const group = plan[0]![0]!;
+    expect(group.kind === "group" && group.cell.align).toBe("start");
+  });
+});
+
 describe("groupedHeaderCellStyle", () => {
   it("locks a hidden-label stub so the table cannot stretch it", () => {
     expect(

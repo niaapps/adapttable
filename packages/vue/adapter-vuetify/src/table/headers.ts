@@ -6,6 +6,7 @@ import type {
 import {
   columnGroupHeaderCaption,
   type DataTableClassNames,
+  groupedHeaderAlign,
   mergeVueAttrs,
   renderContent,
   renderHeader,
@@ -230,6 +231,7 @@ export function vuetifyHeaderRows<TRow>(
               colspan: cell.colSpan,
               rowspan: cell.rowSpan,
               "data-adapttable-part": "header-group-cell",
+              style: { textAlign: groupedHeaderAlign(cell.cell.align) },
               class: names.columnGroup,
             },
             [

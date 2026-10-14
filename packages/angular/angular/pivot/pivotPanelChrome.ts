@@ -215,15 +215,27 @@ export class AdaptPivotZoneChrome {
   imports: [AdaptControl, AdaptPivotZoneChrome],
   template: `
     <ng-template #body>
-      @for (zone of zones(); track zone.zone) {
-        <adapt-pivot-zone-chrome
-          [zone]="zone"
-          [config]="config()"
-          [onChange]="onChange()"
-          [labels]="resolved()"
-          [slots]="slots()"
-        />
-      }
+      <div
+        data-adapttable-part="pivot-zones"
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, max(20rem, calc((100% - 0.75rem) / 2))), 1fr)); gap: 0.75rem; width: 100%; min-width: 0;"
+      >
+        @for (zone of zones(); track zone.zone) {
+          <div
+            data-adapttable-part="pivot-zone-layout"
+            style="display: grid; min-width: 0;"
+            [style.grid-column]="zone.zone === 'measures' ? '1 / -1' : null"
+          >
+            <adapt-pivot-zone-chrome
+              style="display: contents;"
+              [zone]="zone"
+              [config]="config()"
+              [onChange]="onChange()"
+              [labels]="resolved()"
+              [slots]="slots()"
+            />
+          </div>
+        }
+      </div>
     </ng-template>
     <ng-container
       [adaptControl]="slots().Surface"

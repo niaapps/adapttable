@@ -188,6 +188,30 @@ export function Toolbar<TRow>({
             ))}
           </TextField>
         )}
+        {table.isMobile && sortOptions && sortOptions.length > 0 && (
+          <Button
+            variant="outlined"
+            size="small"
+            type="button"
+            data-adapttable-part="sort-direction"
+            disabled={!source.sortBy}
+            aria-label={
+              source.sortDir === "desc"
+                ? labels.sortAscending
+                : labels.sortDescending
+            }
+            onClick={() =>
+              source.setSort(
+                source.sortBy,
+                source.sortDir === "desc" ? "asc" : "desc"
+              )
+            }
+          >
+            {source.sortDir === "desc"
+              ? labels.sortDescending
+              : labels.sortAscending}
+          </Button>
+        )}
         {toolbar}
         {filtersButton}
         {hasFilters && filtersMode === "popover" && (

@@ -37,6 +37,7 @@ import { VChip } from "vuetify/components/VChip";
 import { VSelect } from "vuetify/components/VSelect";
 import { createVuetify } from "vuetify/framework";
 import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
+import { ar, en } from "vuetify/locale";
 
 import type { ShowcaseKit } from "../showcaseKit";
 import DataTable from "./tables/VuetifyDataTable.vue";
@@ -68,7 +69,11 @@ export const kit: ShowcaseKit = {
   install: (app, appearance) => {
     vuetify = createVuetify({
       theme: { defaultTheme: appearance.dark ? "dark" : "light" },
-      locale: { rtl: { ar: true } },
+      locale: {
+        locale: appearance.locale === "ar" ? "ar" : "en",
+        messages: { ar, en },
+        rtl: { ar: true },
+      },
       icons: { defaultSet: "mdi", aliases, sets: { mdi } },
     });
     app.use(vuetify);

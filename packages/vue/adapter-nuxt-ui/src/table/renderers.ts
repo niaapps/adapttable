@@ -10,6 +10,7 @@ import {
   columnGroupHeaderCaption,
   EXTRA_ROW_PARTS,
   extraUncoveredColSpans,
+  groupedHeaderAlign,
   mergeVueAttrs,
   renderCell,
   renderContent,
@@ -293,6 +294,7 @@ export function NuxtDesktopTable<TRow>({
                   rowspan: cell.rowSpan,
                   class: names.columnGroup,
                   "data-adapttable-part": "header-group-cell",
+                  style: { textAlign: groupedHeaderAlign(cell.cell.align) },
                 },
                 [
                   columnGroupHeaderCaption(cell.cell),

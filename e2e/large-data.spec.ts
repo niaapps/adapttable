@@ -47,7 +47,10 @@ async function openFilters(page: Page): Promise<void> {
   // The card is taller than the window, so reaching a field further down makes
   // Playwright scroll — which dismisses an anchored popover before it is used.
   await trigger.evaluate((node) => {
-    window.scrollBy(0, node.getBoundingClientRect().top - 60);
+    window.scrollBy({
+      top: node.getBoundingClientRect().top - 60,
+      behavior: "instant",
+    });
   });
   await trigger.click();
   await expect(trigger).toHaveAttribute("aria-expanded", "true");

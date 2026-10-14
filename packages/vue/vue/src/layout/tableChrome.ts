@@ -4,6 +4,7 @@ import {
   type ColumnGroupToggleProps,
   EXTRA_ROW_PARTS,
   extraUncoveredColSpans,
+  groupedHeaderAlign,
   type HeaderGroupCell,
 } from "@adapttable/core/binding";
 import {
@@ -472,6 +473,7 @@ export function DesktopTableChrome<TRow>(props: {
                       rowspan: cell.rowSpan,
                       class: classNames.columnGroup,
                       "data-adapttable-part": "header-group-cell",
+                      style: { textAlign: groupedHeaderAlign(cell.cell.align) },
                     },
                     groupContent(cell.cell)
                   )

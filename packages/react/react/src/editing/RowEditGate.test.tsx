@@ -394,6 +394,50 @@ describe("rowEditControls", () => {
 });
 
 describe("RowEditActions", () => {
+  it.each(["retry", "cancel"])(
+    "announces a host failure and recovers through %s",
+    async (recovery) => {
+      const onRowEdit = vi
+        .fn()
+        .mockRejectedValueOnce(new Error("Host refused row"));
+      function Host() {
+        const rowEditing = useRowEditing<Task>({
+          enabled: true,
+          columns: COLUMNS,
+          onRowEdit,
+        });
+        return (
+          <>
+            <RowEditActionsChrome
+              slots={rowEditTestSlots}
+              rowEditing={rowEditing}
+              row={TASK}
+              rowId="1"
+            />
+            <button onClick={() => rowEditing.setDraft("title", "Ship it")}>
+              Draft row
+            </button>
+          </>
+        );
+      }
+      render(<Host />);
+      fireEvent.click(part("row-edit-begin")!);
+      fireEvent.click(screen.getByRole("button", { name: "Draft row" }));
+      await act(async () => {
+        fireEvent.click(part("row-edit-save")!);
+        await Promise.resolve();
+      });
+      expect(part("row-edit-error")).toHaveTextContent("Host refused row");
+      expect(part("row-edit-error")).toHaveAttribute("role", "status");
+      fireEvent.click(
+        part(recovery === "retry" ? "row-edit-save" : "row-edit-cancel")!
+      );
+      expect(part("row-edit-error")).toBeNull();
+      expect(part("row-edit-begin")).not.toBeNull();
+      expect(onRowEdit).toHaveBeenCalledTimes(recovery === "retry" ? 2 : 1);
+    }
+  );
+
   it("offers only an Edit control on a closed row", () => {
     const result = mountRowEditing();
     render(

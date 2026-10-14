@@ -20,6 +20,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   type ElementRef,
   inject,
@@ -297,7 +298,10 @@ export class AdaptTableAssistantChrome {
       };
     return common;
   });
+  private voiceWasOpen = false;
   protected readonly close = () => {
+    this.props().speech?.stop();
+    this.voiceWasOpen = false;
     this.props().onOpenChange(false);
   };
   protected readonly expand = () => {
@@ -400,6 +404,14 @@ export class AdaptTableAssistantChrome {
     };
   });
   constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      this.props().speech?.stop();
+    });
+    effect(() => {
+      const props = this.props();
+      if (this.voiceWasOpen && !props.open) props.speech?.stop();
+      this.voiceWasOpen = props.open;
+    });
     effect(() => {
       if (!this.review()) this.expanded.set(false);
     });

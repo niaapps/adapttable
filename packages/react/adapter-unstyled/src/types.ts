@@ -31,6 +31,8 @@ export interface DataTableClassNames {
   searchIcon?: string;
   /** The toolbar's sort-by select. */
   sortSelect?: string;
+  /** The mobile button that switches the current sort direction. */
+  sortDirection?: string;
   /** Rows-per-page `<select>` (toolbar in infinite mode, footer when paged). */
   rowsPerPage?: string;
   /** The Filters trigger. */

@@ -158,18 +158,16 @@ function switchPage(event: Event): void {
     ...features.map((feature) => vueHref(`${kitPath}/${feature.slug}`)),
   ];
   const destination = destinations.find((href) => href === selected);
-  if (destination) {
-    if (props.beforeNavigate?.() === false) {
-      event.target.value =
-        destinations.find(
-          (href) =>
-            new URL(href, window.location.origin).pathname ===
-            window.location.pathname
-        ) ?? "";
-      return;
-    }
-    window.location.assign(destination);
+  if (!destination || props.beforeNavigate?.() === false) {
+    event.target.value =
+      destinations.find(
+        (href) =>
+          new URL(href, window.location.origin).pathname ===
+          window.location.pathname
+      ) ?? "";
+    return;
   }
+  window.location.assign(destination);
 }
 
 function switchFramework(event: Event): void {

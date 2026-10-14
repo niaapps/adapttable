@@ -175,6 +175,27 @@ export const VUE_CONSUMER_SPECS = [
 
 /** Optional rendering is checked independently from the existing size budgets. */
 export const VUE_LAYOUT_GRAPH_SPECS = [
+  ...VUE_NATIVE_BASE_SPECS.filter((spec) =>
+    [
+      "adapter-element-plus",
+      "adapter-naive-ui",
+      "adapter-nuxt-ui",
+      "adapter-quasar",
+      "adapter-vuetify",
+    ].includes(spec.pkg)
+  ).map((spec) => ({
+    name: `${spec.pkg.slice("adapter-".length)} · features barrel`,
+    pkg: spec.pkg,
+    consumerHost: spec.consumerHost,
+    alsoEntryFile: "features.js",
+    code: 'export { DataTable } from "PKG";\nexport * from "ALSO";\nimport "STYLE";',
+    styleEntryFile: spec.styleEntryFile,
+    presentCss: spec.presentCss,
+    functionality: "Native table and combined native feature factories",
+    present: ["DataTable", "editing", "filters", "rowActions", "savedViews"],
+    absent: [],
+    rejectOptionalAi: true,
+  })),
   {
     name: "vue · headless adapter shell",
     pkg: "vue",

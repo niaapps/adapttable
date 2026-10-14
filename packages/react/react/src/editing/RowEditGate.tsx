@@ -283,7 +283,7 @@ export function RowEditActionsChrome<TRow>({
     <span
       data-adapttable-part="row-edit-actions"
       className={className}
-      style={{ display: "inline-flex", gap: 4 }}
+      style={{ display: "inline-flex", flexWrap: "wrap", gap: 4, minWidth: 0 }}
     >
       {layout.showSave ? (
         <Button
@@ -307,6 +307,15 @@ export function RowEditActionsChrome<TRow>({
           controls.cancel();
         }}
       />
+      {options.rowEditing.commit?.error ? (
+        <span
+          role="status"
+          data-adapttable-part="row-edit-error"
+          style={{ flexBasis: "100%", minWidth: 0, overflowWrap: "anywhere" }}
+        >
+          {options.rowEditing.commit.error}
+        </span>
+      ) : null}
     </span>
   );
 }
@@ -481,11 +490,19 @@ export function BatchEditBarChrome<TRow>({
   const model = batchEditBarModel(batch, contested, labels);
   if (!model) return null;
   const Button = slots.Button;
+  const busy =
+    batch.commit?.phase === "saving" || batch.commit?.phase === "validating";
   return (
     <div
       data-adapttable-part="batch-edit-bar"
       className={className}
-      style={{ display: "flex", alignItems: "center", gap: "0.5em" }}
+      aria-busy={busy || undefined}
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        gap: "0.5em",
+      }}
     >
       <output data-adapttable-part="batch-edit-count">{model.count}</output>
       {model.conflictMessage !== undefined ? (
@@ -506,6 +523,15 @@ export function BatchEditBarChrome<TRow>({
         className={buttonClassName}
         onClick={batch.cancelAll}
       />
+      {batch.commit?.error ? (
+        <span
+          role="status"
+          data-adapttable-part="batch-edit-error"
+          style={{ flexBasis: "100%", minWidth: 0, overflowWrap: "anywhere" }}
+        >
+          {batch.commit.error}
+        </span>
+      ) : null}
     </div>
   );
 }

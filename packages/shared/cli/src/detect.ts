@@ -3,7 +3,7 @@
  *
  * @public
  */
-export type Framework = "react" | "angular";
+export type Framework = "react" | "angular" | "vue";
 
 /**
  * A UI kit AdaptTable can scaffold for.
@@ -27,7 +27,15 @@ export type Kit =
   | "taiga-ui"
   | "angular-aria"
   | "angular-cdk"
-  | "ngx-bootstrap";
+  | "ngx-bootstrap"
+  | "vue-unstyled"
+  | "element-plus"
+  | "vuetify"
+  | "naive-ui"
+  | "reka-ui"
+  | "shadcn-vue"
+  | "nuxt-ui"
+  | "quasar";
 
 /**
  * Metadata about a kit's adapter and the packages it needs.
@@ -244,10 +252,81 @@ export const KITS: readonly KitInfo[] = [
     extras: [],
     label: "Angular unstyled",
   },
+  {
+    kit: "nuxt-ui",
+    framework: "vue",
+    adapter: "@adapttable/nuxt-ui",
+    signals: ["@nuxt/ui"],
+    extras: [
+      "@nuxt/ui@^4.11.3",
+      "tailwindcss@^4.1.0",
+      "@iconify-json/lucide@^1.2.0",
+      "unifont@0.7.4",
+    ],
+    label: "Nuxt UI",
+  },
+  {
+    kit: "element-plus",
+    framework: "vue",
+    adapter: "@adapttable/element-plus",
+    signals: ["element-plus"],
+    extras: ["element-plus@^2.14.7"],
+    label: "Element Plus",
+  },
+  {
+    kit: "vuetify",
+    framework: "vue",
+    adapter: "@adapttable/vuetify",
+    signals: ["vuetify"],
+    extras: ["vuetify@^4.2.4"],
+    label: "Vuetify",
+  },
+  {
+    kit: "naive-ui",
+    framework: "vue",
+    adapter: "@adapttable/naive-ui",
+    signals: ["naive-ui"],
+    extras: ["naive-ui@^2.45.3"],
+    label: "Naive UI",
+  },
+  {
+    kit: "quasar",
+    framework: "vue",
+    adapter: "@adapttable/quasar",
+    signals: ["quasar"],
+    extras: ["quasar@2.34.0", "@quasar/vite-plugin@^2.0.2"],
+    label: "Quasar",
+  },
+  {
+    kit: "shadcn-vue",
+    framework: "vue",
+    adapter: "@adapttable/shadcn-vue",
+    signals: [],
+    extras: ["reka-ui@^2.11.0"],
+    label: "shadcn-vue",
+  },
+  {
+    kit: "reka-ui",
+    framework: "vue",
+    adapter: "@adapttable/reka-ui",
+    signals: ["reka-ui"],
+    extras: ["reka-ui@^2.11.0"],
+    label: "Reka UI",
+  },
+  {
+    kit: "vue-unstyled",
+    framework: "vue",
+    adapter: "@adapttable/vue-unstyled",
+    signals: [],
+    extras: [],
+    label: "Vue unstyled",
+  },
 ];
 
 const UNSTYLED = KITS.find((k) => k.kit === "unstyled")!;
 const ANGULAR_UNSTYLED = KITS.find((k) => k.kit === "angular-unstyled")!;
+const VUE_UNSTYLED = KITS.find((k) => k.kit === "vue-unstyled")!;
+const SHADCN_VUE = KITS.find((k) => k.kit === "shadcn-vue")!;
 
 /**
  * The shadcn/ui kit — selected by `runInit` when a `components.json` is found.
@@ -258,7 +337,8 @@ export const SHADCN = KITS.find((k) => k.kit === "shadcn")!;
 
 /**
  * Detect Angular only when both its dependency and workspace file are present.
- * All other projects retain the React scaffold.
+ * Otherwise detect Vue from its declared dependency, including Nuxt apps.
+ * Other projects retain the React scaffold.
  *
  * @param dependencies - Merged `dependencies` + `devDependencies` map.
  * @param options - Whether the project contains `angular.json`.
@@ -269,9 +349,11 @@ export function detectFramework(
   dependencies: Readonly<Record<string, string>>,
   options?: { hasAngularJson?: boolean }
 ): Framework {
-  return options?.hasAngularJson && Object.hasOwn(dependencies, "@angular/core")
-    ? "angular"
-    : "react";
+  if (options?.hasAngularJson && Object.hasOwn(dependencies, "@angular/core"))
+    return "angular";
+  if (Object.hasOwn(dependencies, "vue") || Object.hasOwn(dependencies, "nuxt"))
+    return "vue";
+  return "react";
 }
 
 /**
@@ -295,6 +377,16 @@ export function detectKit(
   options?: { hasComponentsJson?: boolean; framework?: Framework }
 ): KitInfo {
   const framework = options?.framework ?? "react";
+  if (framework === "vue" && options?.hasComponentsJson) {
+    // Copied shadcn-vue components depend on Reka, which must not win first.
+    const concreteKit = KITS.find(
+      (info) =>
+        info.framework === "vue" &&
+        info.kit !== "reka-ui" &&
+        info.signals.some((pkg) => Object.hasOwn(dependencies, pkg))
+    );
+    return concreteKit ?? SHADCN_VUE;
+  }
   for (const info of KITS) {
     if ((info.framework ?? "react") !== framework) continue;
     if (info.signals.some((pkg) => Object.hasOwn(dependencies, pkg))) {
@@ -304,6 +396,7 @@ export function detectKit(
     }
   }
   if (framework === "angular") return ANGULAR_UNSTYLED;
+  if (framework === "vue") return VUE_UNSTYLED;
   return options?.hasComponentsJson ? SHADCN : UNSTYLED;
 }
 

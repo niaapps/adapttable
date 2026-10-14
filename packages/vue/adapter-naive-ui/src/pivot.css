@@ -6,7 +6,7 @@
 .adapttable-naive-pivot fieldset {
   display: grid;
   gap: 8px;
-  min-inline-size: 12rem;
+  min-inline-size: 0;
   margin: 0;
   padding: 8px 12px 12px;
   border: 1px solid var(--n-border-color, rgb(224 224 230));

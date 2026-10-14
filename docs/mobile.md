@@ -20,14 +20,14 @@ on a phone it renders the card list. Everything below is tuning.
 
 ## What changes on mobile — and what deliberately doesn't
 
-| Surface                                                             | Desktop                             | Mobile                                              |
-| ------------------------------------------------------------------- | ----------------------------------- | --------------------------------------------------- |
-| Rows                                                                | `<table>` rows                      | Cards — one per row, labels from the column headers |
-| Sorting                                                             | Clickable column headers            | A sort-by `<select>` (options via `sortByOptions`)  |
-| Pagination                                                          | Pager (or infinite)                 | `paginationMode="auto"` resolves to infinite scroll |
-| Row actions                                                         | Trailing icon buttons               | Card buttons                                        |
-| Long lists                                                          | Row virtualization (`virtualize()`) | Card virtualization through the same feature        |
-| Filters, chips, search, selection, bulk bar, saved views, URL state | identical                           | identical                                           |
+| Surface                                                             | Desktop                             | Mobile                                                |
+| ------------------------------------------------------------------- | ----------------------------------- | ----------------------------------------------------- |
+| Rows                                                                | `<table>` rows                      | Cards — one per row, labels from the column headers   |
+| Sorting                                                             | Clickable column headers            | Native sort-by select and ascending/descending button |
+| Pagination                                                          | Pager (or infinite)                 | `paginationMode="auto"` resolves to infinite scroll   |
+| Row actions                                                         | Trailing icon buttons               | Card buttons                                          |
+| Long lists                                                          | Row virtualization (`virtualize()`) | Card virtualization through the same feature          |
+| Filters, chips, search, selection, bulk bar, saved views, URL state | identical                           | identical                                             |
 
 The second half of that table is the point: behavior that took real work to
 get right — declarative filters, select-across-pages, shareable URL state —
@@ -48,6 +48,11 @@ layouts.
   v4. `hideOnMobile` decides what a card shows: every column without it
   appears.
 - **`sortByOptions`** — the options offered by the mobile sort-by select.
+  The direction button is disabled until a column is selected. It keeps the
+  selected column while switching ascending/descending order, and uses the
+  same URL and Saved Views state as desktop sorting. Its accessible name
+  describes the next action; its text shows the current direction. All React,
+  Angular and Vue kits use their native controls and localized sort labels.
 - **`forceMobile`** — pin either layout regardless of viewport: cards inside a
   desktop dashboard panel, or the full table in a tablet kiosk. The
   [mobile demo](https://adapttable.orwamahmoud.com/react/demo/mantine/mobile-cards/) uses

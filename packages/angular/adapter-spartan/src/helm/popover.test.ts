@@ -6,7 +6,7 @@ import {
   BrnPopoverTrigger,
 } from "@spartan-ng/brain/popover";
 import { within } from "@testing-library/dom";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { expectNamedPopover, focusAndClick } from "../../testUtils";
 import { HlmButton } from "./controls";
@@ -37,7 +37,56 @@ describe("native Brain popover names", () => {
   afterEach(() => {
     TestBed.resetTestingModule();
     document.body.replaceChildren();
+    document.documentElement.removeAttribute("dir");
+    vi.restoreAllMocks();
   });
+
+  it.each(["ltr", "rtl"])(
+    "corrects a right-anchored native host against a reserved gutter in %s",
+    async (dir) => {
+      document.documentElement.setAttribute("dir", dir);
+      const inner = vi.spyOn(window, "innerWidth", "get").mockReturnValue(390);
+      vi.spyOn(
+        document.documentElement,
+        "getBoundingClientRect"
+      ).mockReturnValue({
+        width: 375,
+      } as DOMRect);
+      const fixture = TestBed.createComponent(Host);
+      document.body.append(fixture.nativeElement as HTMLElement);
+      fixture.autoDetectChanges();
+      await fixture.whenStable();
+      const trigger = (fixture.nativeElement as HTMLElement).querySelector(
+        "button"
+      )!;
+      focusAndClick(trigger);
+      await fixture.whenStable();
+      const pane = document.getElementById(
+        trigger.getAttribute("aria-controls")!
+      )!;
+      const host = pane.parentElement!;
+      host.setAttribute("popover", "manual");
+      // Actual CI trace: CDK's 253px host has a 137px physical right offset
+      // in a 390px window whose containing block is only 375px wide.
+      host.style.cssText =
+        "display: block; width: 253px; top: 10px; right: 137px; left: auto";
+      fixture.componentInstance.label.set("Saved views");
+      await fixture.whenStable();
+      expect(host.style.translate).toBe("15px");
+      expect(host.style.width).toBe("253px");
+      expect(host.style.right).toBe("137px");
+
+      inner.mockReturnValue(375);
+      window.dispatchEvent(new Event("resize"));
+      expect(host.style.translate).toBe("0px");
+
+      inner.mockReturnValue(390);
+      host.style.left = "0px";
+      host.style.right = "auto";
+      window.dispatchEvent(new Event("resize"));
+      expect(host.style.translate).toBe("0px");
+    }
+  );
 
   it("names the controlled native pane, updates its locale and names a reopened pane", async () => {
     const fixture = TestBed.createComponent(Host);

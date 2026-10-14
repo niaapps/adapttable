@@ -24,6 +24,7 @@
     "vue": "^3.5.0"
   },
   "devDependencies": {
+    "@adapttable/core": "workspace:*",
     "element-plus": "2.14.7",
     "vue": "^3.5.43",
     "@adapttable/i18n": "workspace:*"
@@ -460,6 +461,16 @@
       "require": {
         "types": "./dist/assistant.d.cts",
         "default": "./dist/assistant.cjs"
+      }
+    },
+    "./features": {
+      "import": {
+        "types": "./dist/features.d.ts",
+        "default": "./dist/features.js"
+      },
+      "require": {
+        "types": "./dist/features.d.cts",
+        "default": "./dist/features.cjs"
       }
     }
   },

@@ -13,6 +13,7 @@ export default defineConfig({
     "src/row-reorder.ts",
 
     "src/index.ts",
+    "src/features.ts",
     "src/tree.ts",
     "src/row-detail.ts",
     "src/row-actions.ts",

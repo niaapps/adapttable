@@ -147,6 +147,8 @@ export interface ConformanceScenario {
 export interface ConformanceMount {
   /** The element the table rendered into. */
   readonly container: HTMLElement;
+  /** Completion of a framework's queued mount render; omit for synchronous mounts. */
+  readonly ready?: Promise<void>;
   /** Remove the table. */
   readonly unmount: () => void;
 }
@@ -345,6 +347,7 @@ export function tableConformanceTests(
   driver: ConformanceDriver,
   harness: ConformanceHarness
 ): readonly ConformanceTest[] {
+  // Expectations use the supplied minimal protocol, not global runner matchers.
   const { expect, fireEvent, waitFor } = harness;
   const tests: ConformanceTest[] = [];
   const it = (name: string, run: () => Promise<void>): void => {
@@ -358,6 +361,7 @@ export function tableConformanceTests(
   ): Promise<void> => {
     const mounted = driver.mount(scenario);
     try {
+      await mounted.ready;
       await body(mounted.container);
     } finally {
       mounted.unmount();
@@ -442,14 +446,16 @@ export function tableConformanceTests(
   it("lays the rows out as cards on a phone", () =>
     withTable({ ...BASE, mobile: true }, (container) => {
       expect(part(container, "cards")).not.toBeNull();
-      expect(parts(container, "card").length).toBe(3);
+      const renderedCardCount = parts(container, "card").length;
+      expect(renderedCardCount).toBe(3);
       expect(part(container, "table")).toBeNull();
     }));
 
   it("says when there is nothing to show", () =>
     withTable({ ...BASE, rows: [] }, (container) => {
       expect(container.textContent?.includes(defaultLabels.noData)).toBe(true);
-      expect(parts(container, "row").length).toBe(0);
+      const renderedRowCount = parts(container, "row").length;
+      expect(renderedRowCount).toBe(0);
     }));
 
   it("selects a row from its checkbox and marks it selected", () =>
@@ -520,7 +526,8 @@ export function tableConformanceTests(
 
   it("states the dataset size on a page that shows part of it", () =>
     withTable({ ...BASE, pageSize: 2 }, (container) => {
-      expect(parts(container, "row").length).toBe(2);
+      const renderedRowCount = parts(container, "row").length;
+      expect(renderedRowCount).toBe(2);
       expect(part(container, "table")?.getAttribute("aria-rowcount")).toBe("3");
       // Nothing claims the grid keyboard contract without cell navigation.
       expect(container.querySelector('[role="grid"]')).toBeNull();
@@ -711,13 +718,23 @@ export function tableConformanceTests(
       }
     ));
 
-  it("renders a window of virtualized phone cards, not every card", () =>
-    withTable({ ...BASE, virtualize: true, mobile: true }, (container) => {
-      expect(part(container, "cards")).not.toBeNull();
-      expect(parts(container, "card").length < CONFORMANCE_ROWS.length).toBe(
-        true
-      );
+  it("renders a window of virtualized phone cards, not every card", () => {
+    // A few rows legitimately fit in a viewport plus overscan. Use enough
+    // records to distinguish a real window from rendering the whole dataset.
+    const rows = Array.from({ length: 100 }, (_, index) => ({
+      id: `virtual-${index}`,
+      name: `Person ${index}`,
+      age: index,
     }));
+    return withTable(
+      { ...BASE, rows, virtualize: true, mobile: true },
+      (container) => {
+        expect(part(container, "cards")).not.toBeNull();
+        const rendersSubset = parts(container, "card").length < rows.length;
+        expect(rendersSubset).toBe(true);
+      }
+    );
+  });
 
   return tests;
 }

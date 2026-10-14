@@ -523,7 +523,13 @@ describe("the kit stylesheets every showcase page loads", () => {
       );
       assert.deepEqual(
         sheets,
-        [`.${CHROME_SHEET}`, "../assistantShowcase.css"],
+        module === "src/angular/entry-demo.ts"
+          ? [
+              `.${CHROME_SHEET}`,
+              "../demoLayout.css",
+              "../assistantShowcase.css",
+            ]
+          : [`.${CHROME_SHEET}`, "../assistantShowcase.css"],
         module
       );
       assert.equal(sideEffectImportsIn(source).includes(KIT_STYLES), false);

@@ -438,6 +438,31 @@ function DataTableContent<TRow>(incoming: Readonly<DataTableProps<TRow>>) {
                         </select>
                       </label>
                     )}
+                    {chrome.isMobile &&
+                      sortOptions &&
+                      sortOptions.length > 0 && (
+                        <button
+                          type="button"
+                          data-adapttable-part="sort-direction"
+                          className={classNames.sortDirection}
+                          disabled={!viewSource.sortBy}
+                          aria-label={
+                            viewSource.sortDir === "desc"
+                              ? labels.sortAscending
+                              : labels.sortDescending
+                          }
+                          onClick={() =>
+                            viewSource.setSort(
+                              viewSource.sortBy,
+                              viewSource.sortDir === "desc" ? "asc" : "desc"
+                            )
+                          }
+                        >
+                          {viewSource.sortDir === "desc"
+                            ? labels.sortDescending
+                            : labels.sortAscending}
+                        </button>
+                      )}
                     {toolbar}
                     {filters &&
                       (filtersMode === "popover" ? (

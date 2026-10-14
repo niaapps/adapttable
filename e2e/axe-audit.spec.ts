@@ -115,6 +115,12 @@ for (const kit of builtAdapters("angular")) {
       await expect(filterLayout).toHaveValue(layout.toLowerCase());
       await expect(filterLayout.locator("option:checked")).toHaveText(layout);
       const trigger = angularPart(kit, page, "filters-button", demo(page));
+      await trigger.scrollIntoViewIfNeeded();
+      // Focus on the layout selector can start a smooth document scroll.
+      // Finish positioning before opening a popover that dismisses on scroll.
+      await trigger.evaluate(() =>
+        window.scrollTo({ top: scrollY, left: scrollX, behavior: "instant" })
+      );
       await trigger.click();
       const panelPart =
         layout === "Drawer" ? "filters-panel" : "filters-popover";

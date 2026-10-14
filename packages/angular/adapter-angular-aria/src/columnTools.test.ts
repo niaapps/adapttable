@@ -287,5 +287,14 @@ describe("the Angular Aria table's column tools", () => {
     await fixture.whenStable();
     const cards = parts("card").map((card) => card.textContent ?? "");
     expect(cards[0]).toContain("Amman");
+    const direction = parts("sort-direction")[0]! as HTMLButtonElement;
+    expect(direction.getAttribute("aria-label")).toBe("Sort descending");
+    direction.click();
+    await fixture.whenStable();
+    expect(parts("card")[0]?.textContent).toContain("Dubai");
+    expect(direction.getAttribute("aria-label")).toBe("Sort ascending");
+    direction.click();
+    await fixture.whenStable();
+    expect(parts("card")[0]?.textContent).toContain("Amman");
   });
 });
