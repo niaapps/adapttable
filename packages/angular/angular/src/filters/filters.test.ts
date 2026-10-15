@@ -129,6 +129,21 @@ describe("the field widgets", () => {
     expect(range().op).toBeUndefined();
   });
 
+  it("follows restored range operators without losing an uncommitted choice on unrelated changes", () => {
+    const { source } = table();
+    const range = rangeFilterFor(DEFS[1]!, source);
+    range().setOp("gte");
+    source().setExtra("name", "Ada");
+    expect(range().op).toBe("gte");
+    source().setExtras({ ageMin: "30", ageMax: "40", ageOp: "between" });
+    expect(range().op).toBe("between");
+    expect(range().arity).toBe("two");
+    expect([range().a, range().b]).toEqual(["30", "40"]);
+    source().clearExtras();
+    expect(range().op).toBeUndefined();
+    expect(range().arity).toBe("one");
+  });
+
   it("writes a yes/no filter", () => {
     const { source } = table();
     const yes = booleanFilterFor(DEFS[2]!, source);

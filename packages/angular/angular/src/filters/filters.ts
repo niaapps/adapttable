@@ -29,7 +29,13 @@ import {
   type TextOp,
 } from "@adapttable/core";
 import type { FeatureHostState } from "@adapttable/core/binding";
-import { computed, type Signal, signal, untracked } from "@angular/core";
+import {
+  computed,
+  linkedSignal,
+  type Signal,
+  signal,
+  untracked,
+} from "@angular/core";
 
 import { type MaybeSignal, readMaybe } from "../store";
 import { activeFilterChipsFor } from "./activeFilterChips";
@@ -182,20 +188,37 @@ export function rangeFilterFor<TRow>(
   def: MaybeSignal<FilterDef<TRow>>,
   source: Signal<TableSource<TRow>>
 ): Signal<RangeFieldWidget> {
-  // `null` is "the reader cleared the operator"; `undefined` is "not chosen
-  // yet", which reads the operator the filter bag already holds.
-  const chosen = signal<RangeOp | null | undefined>(undefined);
+  // A local operator preview survives unrelated table updates, but restoring
+  // a view or clearing this filter replaces it with the persisted operator.
+  const persisted = computed(
+    () => {
+      const current = readMaybe(def);
+      const op = initialRangeFilterOp(current, source().extra);
+      const widget = rangeFilterWidget(current, source(), op);
+      return {
+        key: current.key,
+        type: current.type,
+        op,
+        a: widget.a,
+        b: widget.b,
+      };
+    },
+    {
+      equal: (left, right) =>
+        left.key === right.key &&
+        left.type === right.type &&
+        left.op === right.op &&
+        left.a === right.a &&
+        left.b === right.b,
+    }
+  );
+  const chosen = linkedSignal(() => persisted().op);
   const setOp = (next: RangeOp | undefined): void => {
-    chosen.set(next ?? null);
+    chosen.set(next);
   };
   return computed(() => {
     const current = readMaybe(def);
-    const picked = chosen();
-    const op =
-      picked === undefined
-        ? initialRangeFilterOp(current, source().extra)
-        : (picked ?? undefined);
-    return { ...rangeFilterWidget(current, source(), op), setOp };
+    return { ...rangeFilterWidget(current, source(), chosen()), setOp };
   });
 }
 
