@@ -349,9 +349,9 @@ export interface ResolvedTableOptions<TRow> extends UseDataTableShellOptions<TRo
     // (undocumented)
     readonly onCellCut?: (range: CellRange) => void;
     // (undocumented)
-    readonly onCellFill?: (edits: CellEdit<TRow>[]) => void;
+    readonly onCellFill?: (edits: CellEdit<TRow>[]) => unknown;
     // (undocumented)
-    readonly onCellPaste?: (edits: CellEdit<TRow>[]) => void;
+    readonly onCellPaste?: (edits: CellEdit<TRow>[]) => unknown;
     // (undocumented)
     readonly onCellRangeChange?: (range: CellRange | null) => void;
     // (undocumented)
@@ -867,9 +867,9 @@ export interface UseDataTableShellOptions<TRow> extends Omit<UseDataTableOptions
     // (undocumented)
     readonly onCellCut?: (range: CellRange) => void;
     // (undocumented)
-    readonly onCellFill?: (edits: CellEdit<TRow>[]) => void;
+    readonly onCellFill?: (edits: CellEdit<TRow>[]) => unknown;
     // (undocumented)
-    readonly onCellPaste?: (edits: CellEdit<TRow>[]) => void;
+    readonly onCellPaste?: (edits: CellEdit<TRow>[]) => unknown;
     // (undocumented)
     readonly onDensityChange?: (next: TableDensity) => void;
     // (undocumented)
