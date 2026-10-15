@@ -12,6 +12,8 @@ import {
   deriveSortByOptions,
   devWarn,
   type Direction,
+  gridCellAttributes,
+  gridColumnHeaderAttributes,
   gridContainerAttributes,
   gridRowAttributes,
   nextSort,
@@ -392,6 +394,9 @@ export function injectDataTable<TRow>(
       isMobile() ? "mobile" : "desktop"
     )
   );
+  const columnIndices = computed(
+    () => new Map(columns().map((column, index) => [column.key, index]))
+  );
   // A width the user dragged lives in the layout; the host's own widths win.
   const widths = computed(() => ({
     ...layout().state.widths,
@@ -572,7 +577,7 @@ export function injectDataTable<TRow>(
       ...gridContainerAttributes({
         enabled: false,
         windowed: windowed(),
-        columnsWindowed: false,
+        columnsWindowed: featureOptions().virtualizeColumns === true,
         rowCount: source().total,
         colCount: columns().length,
       }),
@@ -587,6 +592,13 @@ export function injectDataTable<TRow>(
       );
       return {
         ...attributes,
+        ...gridColumnHeaderAttributes(
+          {
+            enabled: false,
+            columnsWindowed: featureOptions().virtualizeColumns === true,
+          },
+          columnIndices().get(column.key) ?? -1
+        ),
         "data-pinned": layout().pinOffset(column.key)?.side,
         style: { ...attributes.style, ...pinStyle(column.key, true) },
       };
@@ -616,6 +628,20 @@ export function injectDataTable<TRow>(
       const attributes = cellAttributes(column, sizing());
       return {
         ...attributes,
+        ...gridCellAttributes(
+          {
+            enabled: false,
+            columnsWindowed: featureOptions().virtualizeColumns === true,
+            active: null,
+            firstRowIndex: windowStart(),
+            range: null,
+            fillPreview: null,
+          },
+          {
+            row: 0,
+            col: columnIndices().get(column.key) ?? -1,
+          }
+        ),
         "data-pinned": layout().pinOffset(column.key)?.side,
         style: { ...attributes.style, ...pinStyle(column.key, false) },
       };

@@ -248,7 +248,7 @@ export function injectGridFocus<TRow>(
     const grid = gridCellAttributes(
       {
         enabled: enabled(),
-        columnsWindowed: false,
+        columnsWindowed: table.featureOptions.virtualizeColumns === true,
         active,
         firstRowIndex: table.windowStart(),
         range,
@@ -311,7 +311,7 @@ export function injectGridFocus<TRow>(
         ...gridContainerAttributes({
           enabled: true,
           windowed: windowed(),
-          columnsWindowed: false,
+          columnsWindowed: table.featureOptions.virtualizeColumns === true,
           rowCount: table.source().total,
           colCount: table.columns().length,
         }),
@@ -324,7 +324,10 @@ export function injectGridFocus<TRow>(
     headerCellAttrs: (column, col) => ({
       ...table.headerCellAttrs(column),
       ...gridColumnHeaderAttributes(
-        { enabled: enabled(), columnsWindowed: false },
+        {
+          enabled: enabled(),
+          columnsWindowed: table.featureOptions.virtualizeColumns === true,
+        },
         col
       ),
     }),

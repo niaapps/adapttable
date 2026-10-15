@@ -279,5 +279,16 @@ describe("virtualize (unstyled Angular)", () => {
       'th[data-adapttable-part="column-spacer-start"]'
     )!;
     expect(startSpacer.style.width).toBe("300px");
+    expect(document.querySelector("table")?.getAttribute("aria-colcount")).toBe(
+      String(COLUMN_COUNT)
+    );
+    for (const selector of ["header-cell", "cell"]) {
+      const cells = document.querySelectorAll(
+        `[data-adapttable-part="${selector}"]`
+      );
+      expect(
+        [...cells].slice(0, 9).map((cell) => cell.getAttribute("aria-colindex"))
+      ).toEqual(["4", "5", "6", "7", "8", "9", "10", "11", "12"]);
+    }
   });
 });
