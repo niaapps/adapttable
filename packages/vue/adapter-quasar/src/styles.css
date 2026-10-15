@@ -48,6 +48,15 @@
 .adapttable-quasar .q-field {
   min-inline-size: min(100%, 8rem);
 }
+/* The page-size field has a definite width before its flex group wraps. */
+.adapttable-quasar
+  [data-adapttable-part="footer"]
+  > div:first-child
+  > .q-field {
+  min-inline-size: 0;
+  inline-size: 8rem;
+  max-inline-size: 100%;
+}
 .adapttable-quasar-table-surface {
   overflow: visible;
 }
