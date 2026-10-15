@@ -15,6 +15,7 @@ import {
   REORDER_COLUMN_KEY,
   resolveUrlAdapter,
   type RowAction,
+  stableKey,
   type TableDensity,
   type TableSource,
   withRowPinActions,
@@ -389,6 +390,26 @@ export function useDataTableShell<TRow>(
     source: viewSource,
     selection: selection.value,
   }));
+  watch(
+    () => {
+      const current = source.value;
+      return stableKey([
+        current.search,
+        current.extra,
+        current.filterTree,
+        current.groupBy,
+      ]);
+    },
+    () => {
+      // Query changes start a new selection scope; page and sort changes do not.
+      if (
+        selectionState.selectedCount.value > 0 ||
+        selectionState.allMatching.value
+      )
+        selectionState.clear();
+    },
+    { flush: "sync" }
+  );
   const editHistory = state.get(editHistoryModelKey<TRow>());
   const gridFocus = state.get(GRID_FOCUS_MODEL);
   const find = state.get(FIND_MODEL);

@@ -35,3 +35,4 @@ Keep table state and editing history consistent across async work and framework 
 - Ignore server export progress callbacks after the run succeeds, fails or is dismissed, keeping terminal outcomes stable.
 - Retire React's all-matching selection on query reset even without explicit selected IDs, and when across-page selection becomes unavailable.
 - Retire pending clipboard reads and cuts when the grid detaches, preventing delayed host writes after unmount or remount.
+- Reset Vue row selection when search, filters or grouping change, retain it across paging and sorting, and respect controlled host refusal. Include compound filters in React's selection reset key.

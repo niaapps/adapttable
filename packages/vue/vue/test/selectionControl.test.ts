@@ -118,6 +118,51 @@ function mount(options: FixtureOptions = {}) {
 }
 
 describe("semantic selection control projection", () => {
+  it.each(["search", "extra", "tree", "group"] as const)(
+    "clears selection and all-matching when the %s query changes",
+    async (query) => {
+      const view = mount({ defaultSelectedIds: ["a", "off-page"] });
+      view.shell.selection.value!.selectAllMatching();
+      expect(view.shell.selection.value!.allMatching.value).toBe(true);
+      const source = view.shell.source.value;
+      if (query === "search") source.setSearch("Bea");
+      if (query === "extra") source.setExtra("name", "Bea");
+      if (query === "tree")
+        source.setFilterTree?.({
+          combinator: "and",
+          conditions: [{ key: "name", op: "eq", value: "Bea" }],
+        });
+      if (query === "group") source.setGroupBy?.("name");
+      await nextTick();
+      expect(view.shell.selection.value!.allMatching.value).toBe(false);
+      expect(view.shell.selection.value!.selectedCount.value).toBe(0);
+      expect(view.updates).toEqual([[]]);
+    }
+  );
+
+  it("requests a query reset once while preserving a controlled host refusal", async () => {
+    const view = mount({ controlled: ["a"] });
+    view.shell.source.value.setSearch("Bea");
+    await nextTick();
+    expect(view.updates).toEqual([[]]);
+    expect([...view.shell.selection.value!.selectedIds.value]).toEqual(["a"]);
+  });
+
+  it("keeps selection through paging and sorting, and avoids empty query-reset callbacks", async () => {
+    const view = mount();
+    view.shell.source.value.setSearch("a");
+    await nextTick();
+    expect(view.updates).toEqual([]);
+    view.shell.selection.value!.toggle("a");
+    view.shell.selection.value!.selectAllMatching();
+    view.shell.source.value.setSort("name", "desc");
+    view.shell.source.value.setPage(2);
+    await nextTick();
+    expect(view.updates).toEqual([["a"]]);
+    expect(view.shell.selection.value!.allMatching.value).toBe(true);
+    expect([...view.shell.selection.value!.selectedIds.value]).toEqual(["a"]);
+  });
+
   it("aliases the actual state/action and retains full native attrs unchanged", () => {
     const onChange = vi.fn();
     const attrs: SelectionCheckboxAttrs = {

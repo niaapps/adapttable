@@ -14,6 +14,7 @@ import { DataTableShellView } from "./chromeBodyGate";
 import { editHistory } from "./edit-history";
 import { batchEditing, editing } from "./editing";
 import { exportCsv } from "./export-csv";
+import { bulkActions } from "./factories";
 import { findInTable } from "./find-in-table";
 import { fullscreen } from "./fullscreen";
 import { FeatureProviders, FeatureSlot } from "./providers";
@@ -99,6 +100,22 @@ describe("a table that composed none of the live features", () => {
 });
 
 describe("each live feature replaces its stand-in with the real hook", () => {
+  it("retires row selection when a compound filter changes the query", () => {
+    const view = mount([bulkActions([])]);
+    act(() => view.current.chrome.table.selection!.toggle("a"));
+    act(() => view.current.chrome.table.selection!.selectAllMatching());
+    expect(view.current.chrome.table.selection!.allMatching).toBe(true);
+    act(() =>
+      view.current.source.setFilterTree?.({
+        combinator: "and",
+        conditions: [{ key: "name", op: "eq", value: "Bob" }],
+      })
+    );
+    expect(view.current.source.filterTree?.conditions).toHaveLength(1);
+    expect(view.current.chrome.table.selection!.allMatching).toBe(false);
+    expect(view.current.chrome.table.selection!.selectedCount).toBe(0);
+  });
+
   it("cell navigation brings its destination into a virtualized body", () => {
     const scrollToRow = vi.fn();
     const view = mount([cellNavigation()], scrollToRow);
