@@ -82,8 +82,6 @@ const RESTORES: Readonly<Record<string, string>> = {
 
 /** Fields compared between the two views, in restore order. */
 const FIELDS = [
-  "page",
-  "limit",
   "search",
   "sortBy",
   "sortDir",
@@ -93,6 +91,10 @@ const FIELDS = [
   "pinnedRows",
   "hiddenColumns",
   "columnOrder",
+  // Restoring a query can reset pagination or change its valid range.
+  // Restore the requested page only after the result set is back in place.
+  "page",
+  "limit",
 ] as const;
 
 type ViewField = (typeof FIELDS)[number];

@@ -1530,6 +1530,9 @@ export function createTableAssistant(
       errorCode = undefined;
       // The offer belonged to a message the reader has just removed.
       undoPlan = null;
+      actionPlans = new Map();
+      resumable = undefined;
+      interrupted = undefined;
       status = live.session && live.transport ? "ready" : status;
       publish();
     },
