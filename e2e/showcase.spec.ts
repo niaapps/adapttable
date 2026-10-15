@@ -268,7 +268,7 @@ test("mobile page previews the native card layout for every adapter", async ({
     await page.goto(`/${adapter}/mobile-cards/`);
     const root = page.locator(`[data-adapter="${adapter}"]`);
     await expect(root.getByRole("list", { name: "Data table" })).toBeVisible();
-    await expect(root.getByRole("columnheader")).toHaveCount(0);
+    await expect(root.locator('[data-adapttable-part="table"]')).toHaveCount(0);
     expect(
       await page
         .locator(".phone-frame")

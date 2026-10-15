@@ -105,6 +105,7 @@ for (const kit of ANGULAR_KITS) {
       page,
     }) => {
       await page.goto(PAGE);
+      await page.getByRole("button", { name: "Paged", exact: true }).click();
       await expect(part(page, "pager")).toHaveCount(0);
       await expect(part(page, "card")).toHaveCount(8);
       await part(page, "card").last().scrollIntoViewIfNeeded();

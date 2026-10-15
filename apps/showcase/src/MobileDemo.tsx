@@ -105,6 +105,7 @@ export function MobileDemo({ dark, adapter }: Readonly<FeatureBodyProps>) {
             <Suspense fallback={<DemoFallback />}>
               <DemoScenarioProvider value="mobile">
                 <Demo
+                  focused
                   mode="frontend"
                   locale={initialDemoLocale()}
                   dark={dark}

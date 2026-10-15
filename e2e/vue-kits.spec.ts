@@ -288,6 +288,16 @@ for (const kit of VUE_KIT_PAGES) {
         "ORD-1044"
       );
       await page.getByRole("searchbox").fill("");
+      await expect(page.getByTestId("selection-status")).toHaveText(
+        "0 selected"
+      );
+      await table
+        .locator('tbody [data-row-id="ORD-1042"]')
+        .getByRole("checkbox")
+        .press("Space");
+      await expect(page.getByTestId("selection-status")).toHaveText(
+        "1 selected"
+      );
       await page
         .getByRole("button", { name: "Next page", exact: true })
         .press("Enter");
