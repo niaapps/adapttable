@@ -4,7 +4,7 @@ import { builtAdapters, pathOf } from "../apps/showcase/matrix.mjs";
 
 for (const framework of ["angular", "vue"]) {
   for (const kit of builtAdapters(framework)) {
-    test(`${kit.key}: rejected paste and fill announce failure without creating undo history`, async ({
+    test(`${kit.key}: Caps Lock paste and fill announce rejected saves without creating undo history`, async ({
       page,
       context,
     }) => {
@@ -28,13 +28,13 @@ for (const framework of ["angular", "vue"]) {
         navigator.clipboard.writeText("Rejected paste")
       );
       await first.focus();
-      await page.keyboard.press("Control+v");
+      await page.keyboard.press("Control+V");
       await expect(announcement).toHaveText("Paste failed");
       await expect(undo).toBeDisabled();
       await reject.click();
       await first.focus();
       await page.keyboard.press("Shift+ArrowDown");
-      await page.keyboard.press("Control+d");
+      await page.keyboard.press("Control+D");
       await expect(announcement).toHaveText("Fill failed");
       await expect(undo).toBeDisabled();
       expect(errors).toEqual([]);

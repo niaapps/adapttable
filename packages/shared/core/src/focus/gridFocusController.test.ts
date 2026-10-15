@@ -368,6 +368,75 @@ describe("history keys", () => {
 });
 
 describe("modified keys", () => {
+  it.each(["F", "C", "X", "D", "V"])(
+    "handles the %s shortcut with Caps Lock",
+    async (letter) => {
+      const onFind = vi.fn();
+      const onCut = vi.fn();
+      const onFill = vi.fn();
+      const onPaste = vi.fn();
+      const grid = createGridFocusController(
+        base({ onFind, onCut, onFill, onPaste })
+      );
+      grid.selectRange({
+        anchor: { row: 0, col: 0 },
+        head: { row: 1, col: 0 },
+      });
+      clipboard.readText.mockResolvedValue("Edited");
+      const event = key(letter, { ctrlKey: true });
+      grid.keyDown(event);
+      await settle();
+      expect(event.preventDefault).toHaveBeenCalled();
+      const called = {
+        F: onFind,
+        C: clipboard.writeText,
+        X: onCut,
+        D: onFill,
+        V: onPaste,
+      };
+      expect(called[letter as keyof typeof called]).toHaveBeenCalledOnce();
+    }
+  );
+
+  it.each(["keyboard", "drag"])(
+    "announces a %s fill whose parser rejects its value",
+    (mode) => {
+      const onFill = vi.fn();
+      const grid = createGridFocusController(
+        base({
+          onFill,
+          columns: [
+            {
+              ...COLUMNS[0]!,
+              parseValue: () => {
+                throw new Error("Invalid fill value");
+              },
+            },
+          ],
+        })
+      );
+      const initial = {
+        anchor: { row: 0, col: 0 },
+        head: { row: mode === "keyboard" ? 1 : 0, col: 0 },
+      };
+      grid.selectRange(initial);
+      expect(() => {
+        if (mode === "keyboard") grid.keyDown(key("d", { ctrlKey: true }));
+        else {
+          grid.pressFillHandle({
+            preventDefault: vi.fn(),
+            stopPropagation: vi.fn(),
+          });
+          grid.enterCell({ row: 1, col: 0 });
+          grid.releasePointer();
+        }
+      }).not.toThrow();
+      expect(onFill).not.toHaveBeenCalled();
+      expect(grid.getSnapshot().announcement).toBe("Fill failed");
+      expect(grid.getSnapshot().range).toEqual(initial);
+      expect(grid.getSnapshot().fillPreview).toBeNull();
+    }
+  );
   it("opens the find bar on Ctrl/Cmd+F when there is one", () => {
     const onFind = vi.fn();
     const grid = createGridFocusController(base({ onFind }));

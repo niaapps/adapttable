@@ -544,26 +544,28 @@ export function createGridFocusController<TRow>(
     const { range } = snapshot;
     const { onFill } = options;
     if (!range || !onFill) return;
-    const edits = fillRangeEdits({
-      source: range,
-      to,
-      rows: options.rows,
-      columns: options.columns,
-      firstRowIndex: firstRow(),
-    });
-    if (edits.length === 0) return;
+    let count = 0;
     // The filled rectangle stays selected, as it does in a spreadsheet: the
     // next fill continues from what was just written.
     applyGesture(
-      () => onFill(edits),
+      () => {
+        const edits = fillRangeEdits({
+          source: range,
+          to,
+          rows: options.rows,
+          columns: options.columns,
+          firstRowIndex: firstRow(),
+        });
+        count = edits.length;
+        return count > 0 ? onFill(edits) : undefined;
+      },
       () =>
         batch(() => {
+          if (count === 0) return;
           if (snapshot.range === range)
             write({ range: fillTargetRange(range, to) });
           say(
-            (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(
-              edits.length
-            )
+            (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(count)
           );
         }),
       labels()?.gridRangeFillFailed ?? defaultLabels.gridRangeFillFailed
@@ -597,23 +599,25 @@ export function createGridFocusController<TRow>(
   /** Ctrl/Cmd+D — the selection's top row carries into the rest of it. */
   const fillDown = (selection: CellRange): void => {
     const b = cellRangeBounds(selection);
-    const edits = fillRangeEdits({
-      source: {
-        anchor: { row: b.fromRow, col: b.fromCol },
-        head: { row: b.fromRow, col: b.toCol },
-      },
-      to: { row: b.toRow, col: b.toCol },
-      rows: options.rows,
-      columns: options.columns,
-      firstRowIndex: firstRow(),
-    });
+    let count = 0;
     applyGesture(
-      () => options.onFill?.(edits),
+      () => {
+        const edits = fillRangeEdits({
+          source: {
+            anchor: { row: b.fromRow, col: b.fromCol },
+            head: { row: b.fromRow, col: b.toCol },
+          },
+          to: { row: b.toRow, col: b.toCol },
+          rows: options.rows,
+          columns: options.columns,
+          firstRowIndex: firstRow(),
+        });
+        count = edits.length;
+        return options.onFill?.(edits);
+      },
       () =>
         say(
-          (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(
-            edits.length
-          )
+          (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(count)
         ),
       labels()?.gridRangeFillFailed ?? defaultLabels.gridRangeFillFailed
     );
@@ -694,21 +698,22 @@ export function createGridFocusController<TRow>(
     }
     const { range } = snapshot;
     const { onFind, onFill, onPaste } = options;
+    const key = event.key.toLowerCase();
     // Ctrl/Cmd+F belongs to the table only when the table has a find bar to
     // open; otherwise the browser's own find is the right answer.
-    if (event.key === "f" && onFind) {
+    if (key === "f" && onFind) {
       event.preventDefault();
       onFind();
       return true;
     }
-    if ((event.key === "c" || event.key === "x") && range) {
+    if ((key === "c" || key === "x") && range) {
       event.preventDefault();
-      copySelection(range, event.key === "x");
+      copySelection(range, key === "x");
       return true;
     }
     // Nothing to carry into a one-row selection, so the key stays the
     // browser's there.
-    if (event.key === "d" && onFill && range && !isSingleRowRange(range)) {
+    if (key === "d" && onFill && range && !isSingleRowRange(range)) {
       event.preventDefault();
       fillDown(range);
       return true;
@@ -717,7 +722,7 @@ export function createGridFocusController<TRow>(
     // the focused cell and lets the clipboard's own shape decide the rest, so
     // this takes the same `from` the movement keys take rather than demanding
     // a selection first.
-    if (event.key === "v" && onPaste) {
+    if (key === "v" && onPaste) {
       event.preventDefault();
       pasteInto(range ?? singleCellRange(from));
       return true;

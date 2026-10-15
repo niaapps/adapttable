@@ -23,3 +23,4 @@ Keep table state and editing history consistent across async work and framework 
 - Retire obsolete validation and save results across clear/retry transitions, release completed request identities, clear stale errors after synchronous retries, and preserve the original save error if a host formatter throws.
 - Honor zero/sub-unit edit-history depth and snapshot redo descriptors before a host reuses its batch array.
 - Detect a fill series once per source lane instead of recomputing it for every destination cell, keeping large drag-fill gestures responsive.
+- Handle copy/cut/paste/fill/find shortcuts with Caps Lock and report rejected fill parsing without throwing or extending the selected range.
