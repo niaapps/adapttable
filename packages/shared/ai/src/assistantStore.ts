@@ -972,7 +972,11 @@ export function createTableAssistant(
       const fields = changed(index, result);
       if (!fields) continue;
       if (fields.some((field) => (owners.get(field) ?? 0) > 1)) continue;
-      const one = planUndo(before, after, session, settledAt, fields);
+      // A single action owns every change, including query-driven page resets.
+      const one =
+        results.length === 1
+          ? planned
+          : planUndo(before, after, session, settledAt, fields);
       if ("code" in one) continue;
       actionPlans.set(result.idempotencyKey, one);
     }
@@ -1530,6 +1534,9 @@ export function createTableAssistant(
       errorCode = undefined;
       // The offer belonged to a message the reader has just removed.
       undoPlan = null;
+      actionPlans = new Map();
+      resumable = undefined;
+      interrupted = undefined;
       status = live.session && live.transport ? "ready" : status;
       publish();
     },

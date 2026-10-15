@@ -27,6 +27,25 @@ function loadingLineWidth(column: number, total: number): string {
 @Component({
   selector: "adapt-table-skeleton",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: `
+    [data-adapttable-part="loading-cards"] {
+      display: grid;
+      gap: 12px;
+    }
+    [data-adapttable-part="loading-card"] {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+      border-radius: 8px;
+    }
+    [data-adapttable-part="loading-line"] {
+      display: block;
+      height: 12px;
+      border-radius: 4px;
+      background: color-mix(in srgb, currentColor 14%, transparent);
+    }
+  `,
   template: `
     <div aria-busy="true" aria-live="polite" data-adapttable-part="loading">
       @if (variant() === "table") {

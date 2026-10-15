@@ -169,8 +169,8 @@ export class CustomFilter {
 Both factories also exist at `@adapttable/ng-zorro/filters`; use its root
 `AdaptDataTable` together with them and its `/header-filters` feature.
 The custom controls above belong to the native kit; an NG-ZORRO custom
-renderer should use NG-ZORRO controls. Both kits currently require
-workspace setup, as described in [getting started](./getting-started.md).
+renderer should use NG-ZORRO controls. Both example kits are published on npm;
+see [getting started](./getting-started.md) for installation.
 
 The template query is read inside `render`, after the feature is created.
 While it is unavailable, the callback returns `null`, a valid empty display

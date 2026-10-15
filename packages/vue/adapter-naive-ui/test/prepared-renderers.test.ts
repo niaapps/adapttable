@@ -307,6 +307,43 @@ describe("Naive prepared desktop renderer", () => {
 });
 
 describe("Naive prepared mobile cards", () => {
+  it.each([false, true])(
+    "labels unnamed prepared columns by key when custom body is %s",
+    async (custom) => {
+      const row = wire(people[0]!, 0);
+      const paint: TableChromeSlots<Person> = {
+        ...controls,
+        card: custom
+          ? ({ fields }) =>
+              h(
+                "div",
+                fields.map((field) => h("p", [field.label, field.value]))
+              )
+          : undefined,
+      };
+      const { host } = mount(() =>
+        NaiveMobileCards<Person>({
+          model: {
+            attrs: { role: "list" },
+            rows: [
+              {
+                ...row,
+                cells: row.cells.map((cell) => ({
+                  ...cell,
+                  context: { ...cell.context, column: { key: cell.key } },
+                })),
+              },
+            ],
+          },
+          controls: paint,
+        })
+      );
+      await tick();
+      expect(host.textContent).toContain("nameBea");
+      expect(host.textContent).toContain("score2");
+    }
+  );
+
   it("renders extras, groups, pads, detail, actions and a filtered summary", async () => {
     const base = preparedModel();
     const original = base.rows[0];

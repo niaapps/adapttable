@@ -28,7 +28,10 @@ for (const kit of ANGULAR_KITS) {
       const rows = part(page, "card")
         .first()
         .locator('[data-adapttable-part="card-row"]');
-      await expect(rows.first()).toHaveText("Ada Lovelace");
+      await expect(rows.first().locator("strong")).toHaveText("Ada Lovelace");
+      await expect(
+        rows.first().locator('[data-adapttable-part="card-label"]')
+      ).toHaveCount(0);
       await expect(rows.nth(1)).toHaveText(/Team\s*Core/);
       await expect(
         page.getByRole("list", { name: "People", exact: true })
@@ -102,6 +105,7 @@ for (const kit of ANGULAR_KITS) {
       page,
     }) => {
       await page.goto(PAGE);
+      await page.getByRole("button", { name: "Paged", exact: true }).click();
       await expect(part(page, "pager")).toHaveCount(0);
       await expect(part(page, "card")).toHaveCount(8);
       await part(page, "card").last().scrollIntoViewIfNeeded();

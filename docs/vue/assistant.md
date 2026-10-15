@@ -224,8 +224,9 @@ pnpm add @adapttable/ai-vue @adapttable/vue-unstyled vue@^3.5.0
 ```
 
 Add `@adapttable/vue` or `@adapttable/ai` directly when importing their APIs in
-application code. The CLI currently scaffolds
-React and Angular, so Vue integration uses explicit application setup.
+application code. The CLI can scaffold the base table in a plain Vue/Vite
+application; assistant transport, approval callbacks and credentials remain
+explicit application setup. See [getting started](./getting-started.md#scaffold-a-vuevite-table).
 
 The [native assistant showcase](/vue/demo/unstyled/assistant/) mounts the actual
 Vue native table and assistant. Its local transport can select rows, sort names,

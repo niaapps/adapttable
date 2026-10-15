@@ -419,6 +419,7 @@ export const ar: Required<TableLabels> = {
   gridRangePasted: (cells) => `تم لصق ${cells} خلية`,
   gridRangePasteFailed: "تعذّر اللصق",
   gridRangeFilled: (cells) => `تمت تعبئة ${cells} خلية`,
+  gridRangeFillFailed: "تعذّرت التعبئة",
   gridFillHandle: "التعبئة من التحديد",
   selectionCount: "العدد",
   selectionSum: "المجموع",

@@ -1,4 +1,4 @@
-import type { ColumnDef } from "@adapttable/vue";
+import type { ColumnDef, TableRowModel } from "@adapttable/vue";
 import {
   type TableChromeSlots,
   useDataTableShell,
@@ -23,6 +23,53 @@ const controls: TableChromeSlots<Row> = {
 };
 
 describe("Element Plus mobile semantic targets", () => {
+  it.each([false, true])(
+    "labels a prepared column by key when custom body is %s",
+    async (custom) => {
+      const row: TableRowModel<Row> = {
+        key: "a",
+        row: rows[0]!,
+        index: 0,
+        attrs: { "data-adapttable-part": "card" },
+        cells: [
+          {
+            key: "name",
+            attrs: {},
+            context: {
+              row: rows[0]!,
+              rowIndex: 0,
+              column: { key: "name" },
+              value: "Ada",
+            },
+          },
+        ],
+      };
+      const paint: TableChromeSlots<Row> = {
+        ...controls,
+        card: custom
+          ? ({ fields }) =>
+              h(
+                "div",
+                fields.map((field) => h("p", [field.label, field.value]))
+              )
+          : undefined,
+      };
+      const { root } = mount(() =>
+        ElementMobileCards<Row>({
+          model: {
+            attrs: { role: "list" },
+            rows: [row],
+            summary: undefined,
+            bodySlots: undefined,
+          },
+          controls: paint,
+        })
+      );
+      await nextTick();
+      expect(root.textContent).toContain("nameAda");
+    }
+  );
+
   it("forwards row measurement to the real ElCard root and cell refs to native values", async () => {
     const rowRefs: unknown[] = [];
     const cellRefs: unknown[] = [];

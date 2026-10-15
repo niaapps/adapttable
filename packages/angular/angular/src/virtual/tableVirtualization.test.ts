@@ -363,7 +363,9 @@ describe("injectKeyedVirtualizer", () => {
     expect(before.paddingBottom).toBe(6 * 50);
     const entry = document.createElement("div");
     entry.setAttribute("data-index", "1");
+    document.querySelector(".box")!.append(entry);
     before.measureElement!(entry);
+    TestBed.tick();
     await fixture.whenStable();
     // Entry 1 measures 150, so entries 0 and 1 fill the 200px box and the
     // other eight wait below at their estimate.

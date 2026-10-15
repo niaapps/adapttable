@@ -110,7 +110,7 @@ Choose the commit boundary that matches the operation:
 - `batchEditing(onBatchEdit)` from `/batch-editing` sends the pending
   `BatchRowEdit[]` together, with the kit's Save/Discard bar
 
-Both kits supply their own editors and row actions. Do not import batch editing
+All supported kits supply their own editors and row actions. Do not import batch editing
 from `/editing`; its entry is separate. The callbacks still perform every write,
 including undo or a batch save. `dirtyIndicators()` adds visual dirty marks;
 `onDirtyChange` exposes the dirty state and confirmation operations to a host

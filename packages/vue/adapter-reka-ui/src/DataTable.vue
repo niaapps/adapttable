@@ -21,6 +21,7 @@ import {
 import { ConfigProvider } from "reka-ui";
 import {
   computed,
+  h,
   onBeforeUnmount,
   onBeforeUpdate,
   shallowRef,
@@ -89,7 +90,23 @@ const options = computed(() => ({ ...props, classNames: names.value }));
 function controls(): TableChromeSlots<TRow> {
   return {
     SortButton: ({ attrs, content }) => rekaButton(attrs, content),
-    SelectionCheckbox: rekaSelectionCheckbox,
+    SelectionCheckbox: (control) =>
+      shell.table.isMobile.value
+        ? h(
+            "label",
+            {
+              style: {
+                display: "inline-flex",
+                minWidth: "44px",
+                minHeight: "44px",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              },
+            },
+            [rekaSelectionCheckbox(control)]
+          )
+        : rekaSelectionCheckbox(control),
     ColumnGroupToggle: rekaColumnGroupToggle,
     ResizeHandle: rekaResizeHandle,
     RowActions: ({ controls: actions }) => {
@@ -120,6 +137,7 @@ function controls(): TableChromeSlots<TRow> {
         control
       );
     },
+    card: content.card,
     cell: content.cell,
     header: content.header,
     headerActions: content.headerActions,

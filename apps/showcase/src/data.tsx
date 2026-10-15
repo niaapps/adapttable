@@ -254,6 +254,8 @@ export interface LoadCellProps {
   value: number;
   /** Caption rendered under the bar, e.g. `"78% · 4"`. */
   meta: string;
+  /** Localized accessible name for the workload indicator. */
+  label: string;
 }
 
 export interface DemoCells {
@@ -546,7 +548,7 @@ export function makeColumns(
       sortValue: (r) => r.name,
       editable: canEdit,
       editor: "text",
-      editValue: (r) => r.name,
+      editValue: (r) => personName(r, locale),
       // A name adds up to nothing; counting the people in a group does.
       aggregatable: { operations: ["count"] },
       // A rule the reader can trip on purpose: clear the name and commit.
@@ -554,13 +556,16 @@ export function makeColumns(
         String(value).trim() === "" ? s.nameRequired : undefined,
       width: 230,
       accessor: (row) => (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 11 }}>
+        <span
+          className="demo-person-identity"
+          style={{ display: "inline-flex", alignItems: "center", gap: 11 }}
+        >
           <Avatar name={personName(row, locale)} />
-          <span style={cellStack}>
+          <span className="demo-person-identity__details" style={cellStack}>
             <strong style={{ fontWeight: 600 }}>
               {personName(row, locale)}
             </strong>
-            <small style={{ opacity: 0.55, fontSize: "0.8em" }}>
+            <small style={{ fontSize: "0.8em", fontWeight: 400 }}>
               {personRole(row, locale)}
             </small>
           </span>
@@ -649,7 +654,7 @@ export function makeColumns(
       editValue: (r) => localDay(startDate(r)),
       width: 185,
       accessor: (row) => (
-        <span style={cellStack}>
+        <span className="demo-person-identity__details" style={cellStack}>
           <strong style={{ fontWeight: 550 }}>
             {formatDate(startDate(row), locale)}
           </strong>
@@ -704,6 +709,7 @@ export function makeColumns(
       width: 175,
       accessor: (row) => (
         <Load
+          label={s.load}
           value={utilization(row)}
           meta={`${formatPercent(utilization(row), locale)} · ${allocationCount(row)}`}
         />
@@ -742,12 +748,15 @@ export function makeWideColumns(
       sortValue: (r) => r.name,
       editable: canEdit,
       editor: "text",
-      editValue: (r) => r.name,
+      editValue: (r) => personName(r, locale),
       width: 240,
       accessor: (row) => (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 11 }}>
+        <span
+          className="demo-person-identity"
+          style={{ display: "inline-flex", alignItems: "center", gap: 11 }}
+        >
           <Avatar name={personName(row, locale)} />
-          <span style={cellStack}>
+          <span className="demo-person-identity__details" style={cellStack}>
             <strong style={{ fontWeight: 600 }}>
               {personName(row, locale)}
             </strong>
@@ -820,7 +829,7 @@ export function makeWideColumns(
       sortable: true,
       width: 200,
       accessor: (row) => (
-        <span style={cellStack}>
+        <span className="demo-person-identity__details" style={cellStack}>
           <strong style={{ fontWeight: 550 }}>
             {formatDate(startDate(row), locale)}
           </strong>
@@ -859,6 +868,7 @@ export function makeWideColumns(
       width: 190,
       accessor: (row) => (
         <Load
+          label={s.load}
           value={utilization(row)}
           meta={`${formatPercent(utilization(row), locale)} · ${allocationCount(row)}`}
         />

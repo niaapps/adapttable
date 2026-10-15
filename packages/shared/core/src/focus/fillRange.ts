@@ -109,13 +109,13 @@ export interface FillRangeOptions<TRow> {
  * step — guessing `+1` there is the behaviour spreadsheets are cursed for.
  *
  * @param seed - The source values, in fill order.
- * @param step - How far past the seed this value sits, from 1.
- * @returns The value for that position, as the string an editor would hold.
+ * @returns A reader for each position past the seed, starting at 1.
  */
-function continueSeries(seed: readonly string[], step: number): string {
+function continueSeries(seed: readonly string[]): (step: number) => string {
   const delta = arithmeticStep(seed);
-  if (delta === null) return seed[(step - 1) % seed.length] ?? "";
-  return String(Number(seed.at(-1)) + delta * step);
+  if (delta === null) return (step) => seed[(step - 1) % seed.length] ?? "";
+  const last = Number(seed.at(-1));
+  return (step) => String(last + delta * step);
 }
 
 /**
@@ -217,6 +217,7 @@ export function fillRangeEdits<TRow>(
       readCell(axis.at(lane, position), options)
     );
     if (seed.length === 0) continue;
+    const valueAt = continueSeries(seed);
 
     for (let n = 1; n <= axis.distance; n++) {
       const cell = axis.at(lane, axis.edge + n * axis.step);
@@ -225,7 +226,7 @@ export function fillRangeEdits<TRow>(
       if (row === undefined || !column || !isCellEditable(column, row)) {
         continue;
       }
-      const raw = continueSeries(seed, n);
+      const raw = valueAt(n);
       edits.push({
         row,
         columnKey: column.key,

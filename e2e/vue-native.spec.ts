@@ -60,7 +60,10 @@ test("Vue native table has real keyboard, controlled selection, search and pagin
   await expect(table.locator("tbody tr")).toHaveCount(2);
   await expect(
     table.getByRole("checkbox", { name: "Select row", exact: true }).first()
-  ).toBeChecked();
+  ).not.toBeChecked();
+  await expect(page.locator("[data-demo-selection]")).toHaveText(
+    "Selected: none"
+  );
   await testInfo.attach("vue-native-desktop", {
     body: await page.screenshot({ fullPage: true }),
     contentType: "image/png",
@@ -182,9 +185,9 @@ test("Vue native cards load more by keyboard and preserve Arabic RTL controls", 
   await expect(loadMoreEnglish).toHaveCount(0);
   await expect(
     table.getByRole("checkbox", { name: "Select row", exact: true }).first()
-  ).toBeChecked();
+  ).not.toBeChecked();
   await expect(page.locator("[data-demo-selection]")).toHaveText(
-    "Selected: grace"
+    "Selected: none"
   );
   expect(errors).toEqual([]);
 });

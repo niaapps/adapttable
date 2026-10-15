@@ -16,6 +16,7 @@ import { densityChooser } from "@adapttable/element-plus/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/element-plus/editing";
 import { exportCsv } from "@adapttable/element-plus/export";
@@ -35,9 +36,12 @@ import { statusBar } from "@adapttable/element-plus/status-bar";
 import { tree } from "@adapttable/element-plus/tree";
 import { virtualize } from "@adapttable/element-plus/virtualize";
 import {
+  ElAvatar,
   ElButton,
   ElConfigProvider,
+  ElInput,
   ElOption,
+  ElProgress,
   ElSelect,
   ElTag,
 } from "element-plus";
@@ -70,11 +74,46 @@ const Root = defineComponent(
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "element-plus",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h(ElInput, {
+      "aria-label": label,
+      "data-adapttable-part": part,
+      modelValue: value,
+      type,
+      disabled,
+      autocomplete: "off",
+      "onUpdate:modelValue": onChange,
+    }),
   Root,
+  avatar: (initials) =>
+    h(
+      ElAvatar,
+      {
+        size: 40,
+        "aria-hidden": "true",
+        style: {
+          color: "inherit",
+          backgroundColor: "color-mix(in srgb, currentColor 8%, transparent)",
+        },
+      },
+      () => initials
+    ),
+  progress: (value, label) =>
+    h(ElProgress, {
+      percentage: value,
+      showText: false,
+      strokeWidth: 6,
+      "aria-label": label,
+    }),
   status: (tone, label) =>
     h(
       ElTag,
-      { type: TAG_TYPE[tone], size: "small", effect: "light" },
+      {
+        type: TAG_TYPE[tone],
+        size: "small",
+        effect: "light",
+        style: { "--el-tag-text-color": "var(--el-text-color-regular)" },
+      },
       () => label
     ),
   button: ({ label, part, disabled, onClick }) =>
@@ -118,6 +157,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

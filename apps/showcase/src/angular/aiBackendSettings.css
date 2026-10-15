@@ -1,0 +1,22 @@
+.ai-backend {
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-block: 1rem;
+}
+.ai-backend-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 0.75rem;
+}
+.ai-backend-fields > div {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+.ai-backend-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block-start: 0.75rem;
+}

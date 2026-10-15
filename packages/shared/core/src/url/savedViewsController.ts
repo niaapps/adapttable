@@ -378,11 +378,13 @@ function resolveStorage(
  * left it either way, and a rejection becomes `false` rather than an
  * unhandled rejection that takes the page down over one failed save.
  */
-function accepted(write: Promise<unknown>): Promise<boolean> {
-  return write.then(
-    () => true,
-    () => false
-  );
+async function accepted(write: () => Promise<unknown>): Promise<boolean> {
+  try {
+    await write();
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function canReorder(store: SavedViewsStore): store is ReorderingStore {
@@ -396,18 +398,22 @@ function canReorder(store: SavedViewsStore): store is ReorderingStore {
  * have settled: a rename reaches a store as a delete plus a save, and a store
  * hearing the new name first in a reorder has nothing to order yet.
  */
-function writeToStore(store: SavedViewsStore, change: ListChange): void {
+async function writeToStore(
+  store: SavedViewsStore,
+  change: ListChange
+): Promise<void> {
   const { next, writes } = change;
-  const written: Promise<boolean>[] = [];
-  if (writes.removed !== undefined) {
-    written.push(accepted(store.remove(writes.removed)));
-  }
-  for (const view of writes.saved ?? []) {
-    written.push(accepted(store.save(view)));
-  }
+  const saved = await Promise.all(
+    (writes.saved ?? []).map((view) => accepted(() => store.save(view)))
+  );
+  // A rename must retain its original if the replacement cannot be saved.
+  if (saved.some((success) => !success)) return;
+  const removed = writes.removed;
+  if (removed !== undefined && !(await accepted(() => store.remove(removed))))
+    return;
   if (!writes.reordered || !canReorder(store)) return;
   const order = next.map((view) => view.name);
-  void accepted(Promise.all(written).then(() => store.reorder(order)));
+  await accepted(() => store.reorder(order));
 }
 
 /** Whether two lists hold the very same views in the same order. */
@@ -431,7 +437,10 @@ function omitDefault(view: SavedView): SavedView {
 function saveChange(views: readonly SavedView[], view: SavedView): ListChange {
   return {
     next: [...views.filter((v) => v.name !== view.name), view],
-    writes: { saved: [view] },
+    writes: {
+      saved: [view],
+      ...(views.some((v) => v.name === view.name) ? { reordered: true } : {}),
+    },
   };
 }
 
@@ -533,6 +542,9 @@ export function createSavedViewsController(
   // whose ticket is no longer the latest is ignored.
   let ticket = 0;
   const listeners = new Set<() => void>();
+  // A slow save must finish before a later remove or rename can reach the
+  // same store. Keep each configured backend's queue isolated.
+  const pendingWrites = new WeakMap<SavedViewsStore, Promise<void>>();
   // The URL backend when URL sync is off, or under SSR: one per table.
   const memory = createMemoryAdapter();
 
@@ -568,7 +580,11 @@ export function createSavedViewsController(
       );
       return;
     }
-    void store.list().then(
+    const pending = pendingWrites.get(store);
+    const listed = pending
+      ? pending.then(() => store.list())
+      : Promise.resolve().then(() => store.list());
+    void listed.then(
       (remote) => {
         if (current === ticket) show(migrateAll(remote, migrate));
       },
@@ -590,7 +606,14 @@ export function createSavedViewsController(
     try {
       const { store } = options;
       if (store) {
-        writeToStore(store, change);
+        const previous = pendingWrites.get(store);
+        const next = previous
+          ? previous.then(() => writeToStore(store, change))
+          : writeToStore(store, change);
+        pendingWrites.set(store, next);
+        void next.then(() => {
+          if (pendingWrites.get(store) === next) pendingWrites.delete(store);
+        });
         return;
       }
       const storage = resolveStorage(options.storage);
@@ -623,14 +646,13 @@ export function createSavedViewsController(
       if (connected) load();
     },
     save(name) {
-      if (
-        snapshot.views.some(
-          (view) => view.name === name && view.readOnly === true
-        )
-      )
-        return;
-      const visibility = options.visibility ?? "private";
+      const previous = snapshot.views.find((view) => view.name === name);
+      if (previous?.readOnly === true) return;
+      const visibility = previous
+        ? (previous.visibility ?? "private")
+        : (options.visibility ?? "private");
       const view: SavedView = {
+        ...previous,
         name,
         search: captureTableUrlState(urlAdapter().getSearch(), namespace()),
         version: SAVED_VIEW_VERSION,

@@ -12,6 +12,7 @@ import { densityChooser } from "@adapttable/quasar/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/quasar/editing";
 import { exportCsv } from "@adapttable/quasar/export";
@@ -30,7 +31,16 @@ import { savedViews } from "@adapttable/quasar/saved-views";
 import { statusBar } from "@adapttable/quasar/status-bar";
 import { tree } from "@adapttable/quasar/tree";
 import { virtualize } from "@adapttable/quasar/virtualize";
-import { Dark, QBadge, QBtn, QSelect, Quasar } from "quasar";
+import {
+  Dark,
+  QAvatar,
+  QBadge,
+  QBtn,
+  QInput,
+  QLinearProgress,
+  QSelect,
+  Quasar,
+} from "quasar";
 import quasarStyles from "quasar/dist/quasar.rtl.css?inline";
 import ar from "quasar/lang/ar";
 import en from "quasar/lang/en-US";
@@ -52,6 +62,19 @@ const BADGE_COLOR = {
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "quasar",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h(QInput, {
+      "aria-label": label,
+      "data-adapttable-part": part,
+      modelValue: value,
+      type: type ?? "text",
+      disable: disabled,
+      autocomplete: "off",
+      outlined: true,
+      dense: true,
+      "onUpdate:modelValue": (next: string | number | null) =>
+        onChange(String(next ?? "")),
+    }),
   install: (app, appearance) => {
     app.use(Quasar, {
       config: { dark: appearance.dark },
@@ -61,8 +84,31 @@ export const kit: ShowcaseKit = {
   setDark: (dark) => {
     Dark.set(dark);
   },
+  avatar: (initials) =>
+    h(
+      QAvatar,
+      {
+        size: "40px",
+        color: "primary",
+        textColor: "white",
+        "aria-hidden": "true",
+      },
+      () => initials
+    ),
+  progress: (value, label) =>
+    h(QLinearProgress, {
+      value: value / 100,
+      rounded: true,
+      size: "6px",
+      "aria-label": label,
+    }),
   status: (tone, label) =>
-    h(QBadge, { color: BADGE_COLOR[tone], rounded: true, label }),
+    h(QBadge, {
+      color: BADGE_COLOR[tone],
+      textColor: tone === "info" ? "black" : "white",
+      rounded: true,
+      label,
+    }),
   button: ({ label, part, disabled, onClick }) =>
     h(QBtn, {
       "data-adapttable-part": part,
@@ -105,6 +151,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

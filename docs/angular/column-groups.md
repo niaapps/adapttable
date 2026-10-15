@@ -1,7 +1,7 @@
 # Angular grouped and collapsible column headers
 
 Header groups span related columns. They do not group data rows; use
-[Row grouping](./row-grouping.md) for that. Both Angular kits consume the
+[Row grouping](./row-grouping.md) for that. All supported Angular kits consume the
 same `ColumnInput<TRow>` tree.
 
 ## Declare a tree of headers

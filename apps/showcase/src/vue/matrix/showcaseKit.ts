@@ -10,6 +10,7 @@ import type { densityChooser } from "@adapttable/vue-unstyled/density";
 import type {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/vue-unstyled/editing";
 import type { exportCsv } from "@adapttable/vue-unstyled/export";
@@ -58,6 +59,16 @@ export interface ShowcaseSelectProps {
   readonly onChange: (value: string) => void;
 }
 
+/** A kit-owned text field for demo settings. */
+export interface ShowcaseInputProps {
+  readonly label: string;
+  readonly part: string;
+  readonly value: string;
+  readonly type?: "text" | "password";
+  readonly disabled?: boolean;
+  readonly onChange: (value: string) => void;
+}
+
 /** The page's appearance, as a kit's root and plugins read it. */
 export interface ShowcaseAppearance {
   readonly dark: boolean;
@@ -79,8 +90,11 @@ export interface ShowcaseKit {
   readonly TableAssistant: Component;
   /** The status column's cell, drawn as the kit's own tag or badge. */
   readonly status: StatusRenderer;
+  readonly avatar: (initials: string) => VNodeChild;
+  readonly progress: (value: number, label: string) => VNodeChild;
   readonly button: (props: ShowcaseButtonProps) => VNodeChild;
   readonly select: (props: ShowcaseSelectProps) => VNodeChild;
+  readonly input: (props: ShowcaseInputProps) => VNodeChild;
   readonly agentApproval: typeof agentApproval;
   readonly bulkActions: typeof bulkActions;
   readonly cellNavigation: typeof cellNavigation;
@@ -91,6 +105,7 @@ export interface ShowcaseKit {
   readonly densityChooser: typeof densityChooser;
   readonly editHistory: typeof editHistory;
   readonly editing: typeof editing;
+  readonly rowEditing: typeof rowEditing;
   readonly undoRedoButtons: typeof undoRedoButtons;
   readonly exportCsv: typeof exportCsv;
   readonly filters: typeof filters;

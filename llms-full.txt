@@ -37,7 +37,7 @@ Prefer zero install first? Open a live starter in
 [StackBlitz (Mantine)](https://stackblitz.com/github/orwa-mahmoud/adapttable/tree/main/starters/mantine)
 — or [any other kit](#try-it-in-stackblitz).
 
-A plain adapter `DataTable` is 73–80 kB min+gzip (measured 2026-10-10 from
+A plain adapter `DataTable` is 74–80 kB min+gzip (measured 2026-10-15 from
 packed fixtures; React and the kit stay external). The [FAQ](./faq.md#how-big-is-it--is-it-tree-shakeable)
 has the method and the rest of the grid.
 
@@ -760,8 +760,8 @@ it, and a duplicate id warns in development.
 bundle contains the configurable members whether or not you pass their options.
 That is the trade: one import instead of ten.
 
-Measured on MUI, the table alone is 73 kB gzipped and the same table with
-`standardFeatures()` composed is 129 kB.
+Measured on MUI, the table alone is 74 kB gzipped and the same table with
+`standardFeatures()` composed is 130 kB.
 A table counting every byte imports the individual features it uses instead,
 and pays for those alone — `pnpm budget` measures both paths on every run.
 
@@ -2478,7 +2478,7 @@ by identity.
 
 To back a custom source with an engine, build it with `createTableEngine` from
 `@adapttable/core` — see
-[the engine, and why it has no React in it](./concepts.md#the-engine-and-why-it-has-no-react-in-it).
+[the engine, and why it has no React in it](./concepts.md#the-framework-neutral-engine).
 
 ## Notes
 
@@ -5145,14 +5145,14 @@ it already receives — nothing else about the hook changes.
 
 ## Options
 
-| Prop               | Type                                   | Default                  | Description                                                                               |
-| ------------------ | -------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------- |
-| `paginationMode`   | `"paged" \| "infinite" \| "auto"`      | `"auto"`                 | Pagination behaviour; `"auto"` = infinite on mobile, paged on desktop.                    |
-| `defaults`         | `{ page?: number; limit?: number; … }` | `{ page: 1, limit: 25 }` | Initial page/page-size, used while the URL has no value.                                  |
-| `labels`           | `TableLabels`                          | English                  | Override `rowsPerPage`, `loadMore`, and the `showing` range builder.                      |
-| `skeletonRows`     | `number`                               | page size                | Number of skeleton rows shown while loading.                                              |
-| `mobileBreakpoint` | `number`                               | `768`                    | Width at or below which the card layout takes over. `"auto"` pagination does not read it. |
-| `forceMobile`      | `boolean`                              | —                        | Pins the card layout. `"auto"` pagination does not read it.                               |
+| Prop               | Type                                   | Default                  | Description                                                                      |
+| ------------------ | -------------------------------------- | ------------------------ | -------------------------------------------------------------------------------- |
+| `paginationMode`   | `"paged" \| "infinite" \| "auto"`      | `"auto"`                 | Pagination behaviour; `"auto"` = infinite on mobile, paged on desktop.           |
+| `defaults`         | `{ page?: number; limit?: number; … }` | `{ page: 1, limit: 25 }` | Initial page/page-size, used while the URL has no value.                         |
+| `labels`           | `TableLabels`                          | English                  | Override `rowsPerPage`, `loadMore`, and the `showing` range builder.             |
+| `skeletonRows`     | `number`                               | page size                | Number of skeleton rows shown while loading.                                     |
+| `mobileBreakpoint` | `number`                               | `768`                    | Viewport breakpoint for cards and automatic infinite pagination.                 |
+| `forceMobile`      | `boolean`                              | —                        | Pins cards (`true`) or the table (`false`), including automatic pagination mode. |
 
 ## Notes
 
@@ -7687,8 +7687,7 @@ with an empty strip. The second argument accepts the ordinary grouping extras,
 including `groupAggregates`, whose mapper has the **same signature as
 `summaryRow`**. Omit the factory and the table mounts neither grouping headers
 nor panel chrome. Plain `grouping("team")` from `@adapttable/<kit>/grouping` is
-the no-panel path for a host that deliberately fixes grouping in code, and the
-only grouping entry `@adapttable/bootstrap` ships. See
+the no-panel path for a host that deliberately fixes grouping in code. See
 [feature composition](./features.md).
 
 ## The grouping panel
@@ -9075,7 +9074,7 @@ names, ordering and labels live in core; every visible control is a required
 slot the adapter fills with its own kit's component, so a Mantine panel is
 built from Mantine buttons and an antd panel from antd buttons.
 
-Every adapter except `@adapttable/bootstrap` ships it pre-wired as
+Every React adapter ships it pre-wired as
 `PivotPanel`, from the kit root or `@adapttable/<kit>/pivot`, so a host imports
 one component rather than assembling slots:
 
@@ -9434,7 +9433,7 @@ files, a task has subtasks, an account rolls up to a parent. Compose `tree()`
 from `@adapttable/<kit>/tree` with `getChildren` (nested data) or `getParentId`
 (a flat list with a parent column) and the table renders that hierarchy — one
 chevron per parent, one indent step per level, in every adapter that ships the
-subpath (all except `@adapttable/bootstrap`).
+subpath.
 
 ▶ **See it working:** [tree data in Mantine](https://adapttable.orwamahmoud.com/react/demo/mantine/tree/) — the same page exists for MUI, Chakra, antd, Radix, Base UI, shadcn and Tailwind.
 
@@ -10522,6 +10521,19 @@ layouts.
 
 ## Tuning the cards
 
+The built-in body lays fields out in a grid that responds to the **card's own
+width**. Labels sit above their values; unlabeled fields span the full width.
+This keeps an identity block together while short details sit side by side.
+Narrow cards fall back to one field per line, and long values wrap. Each kit
+supplies its own card, typography, controls and theme colors, including dark
+mode. Custom `renderCard` bodies retain their own layout.
+
+Use a column renderer to show meaningful kit elements: an Avatar beside a
+person's name, a Badge for status, or a Progress for workload. The table preserves
+those renderers in cards; it does not infer a status, avatar or action from a
+column's name. Use `mobileLabel: ""` for a self-explanatory identity block, and
+keep labels on measurements and other values that need context.
+
 - **`mobileLabel`** (per column) — the label a card shows for that field;
   falls back to the column's string `header`, then to its key. Set it to `""`
   for a field with no label at all — a bare avatar or title line — rather than
@@ -10565,12 +10577,11 @@ to try the two layouts.
 
 ## Your own card
 
-The built-in card is a stack of labelled fields, which is right for most
-tables and wrong for some: an order wants its total large and its reference
-small; a person wants their avatar beside their name rather than under a
-caption reading "Avatar".
+The built-in card groups labeled fields beneath any unlabeled, full-width
+content. For a different hierarchy, `renderCard` can put an order's total above
+its reference or combine several columns into one identity area.
 
-`renderCard` replaces that stack — and only that stack:
+`renderCard` replaces the field body:
 
 ```tsx
 <DataTable
@@ -10614,7 +10625,7 @@ and editors included. So this is a layout decision, not a re-implementation:
 reuse the values and arrange them your way. `card.selected`, `card.expanded`
 and `card.index` come along for cards that change with their state.
 
-Omit it and the built-in card renders, byte for byte.
+Omit it to use the built-in card body.
 
 ## Where the switch happens
 
@@ -10688,9 +10699,48 @@ sticky header, pinned columns and horizontal scrolling included. The cards
 are the default because thumb-reach beats pinch-zoom for row-by-row work,
 but the choice stays yours per table.
 
+```tsx
+// Automatic cards on phones: omit forceMobile.
+<DataTable data={rows} columns={columns} rowKey={(row) => row.id} />
+
+// Keep the table on phones; wide columns scroll within the table.
+<DataTable
+  data={rows}
+  columns={columns}
+  rowKey={(row) => row.id}
+  forceMobile={false}
+  paginationMode="paged"
+/>
+```
+
+`true` always renders cards; `false` always renders the table; omission follows
+the viewport. These choices also affect `paginationMode="auto"`. Set
+`paginationMode` explicitly when loading behavior must stay the same across
+layouts. A horizontally scrolling table is useful for comparing columns across
+rows; cards are useful for reading and acting on one record at a time.
+
 Related: [Getting started](./getting-started.md) ·
 [API reference](./api.md) ·
 [Live mobile demo](https://adapttable.orwamahmoud.com/react/demo/mantine/mobile-cards/)
+
+## Editing across layouts
+
+Custom framework bindings can call `preserveEditorFocusOnLayoutChange()` from
+`@adapttable/core/binding` immediately before publishing a responsive layout
+change. It captures the active editor and caret, then restores them after the
+DOM replacement. It leaves focus alone if the original control remains mounted,
+the editor inventory changes, or focus moves outside the table. The supplied
+React, Angular and Vue bindings already wire this behavior.
+
+A layout change keeps row drafts, selection, filters and expanded rows in the
+same table state. Native editor focus and text selection follow viewport changes
+when the editor inventory remains unchanged. An explicit layout chooser keeps
+focus on the chooser. Keep stable row keys and render the supplied prepared
+field values in custom cards so native editors remain connected.
+
+Mobile Save/Cancel and hierarchy actions have larger touch targets while desktop
+controls keep their kit sizing. The mobile showcase also exercises bounded
+scrolling and pagination choices.
 
 ---
 
@@ -15807,9 +15857,7 @@ import { Anchor, Button, SegmentedControl } from "@mantine/core";
 | `toolbar`            | `ReactNode` | After search and the mobile sort select, before Filters.       |
 | `toolbarSlots.end`   | `ReactNode` | After every built-in control, before the rows-per-page select. |
 
-`ToolbarSlots` types the object. `@adapttable/bootstrap` ships none of the
-view-control subpaths on this page, and its toolbar does not draw
-`toolbarSlots`.
+`ToolbarSlots` types the object.
 
 ## Density
 
@@ -17529,7 +17577,7 @@ All from `@adapttable/react` unless marked `@adapttable/react/adapter`.
 
 ### The neutral engine
 
-Framework-free — see [concepts](./concepts.md#the-engine-and-why-it-has-no-react-in-it).
+Framework-free — see [concepts](./concepts.md#the-framework-neutral-engine).
 
 - `createTableEngine(options: CreateTableEngineOptions): TableEngine` — build
   an engine over in-memory rows. Filter, sort, page and group run here, with no
@@ -19591,6 +19639,8 @@ handle's document listeners, and makes retained pointer, keyboard and autosize
 callbacks inert. Existing callers can omit the options. Toolbar glue: `SearchInputState` (debounced
 search binding), `FilterTriggerToggle` (popover/drawer trigger
 handlers). Editing/grouping glue: `focusEditorOnMount`,
+`preserveEditorFocusOnLayoutChange` (capture the active editor before a responsive
+DOM replacement and restore its focus and caret after paint),
 `rowEditingSignature`, `HeaderGroupCell`, `HtmlGroupedHeaderCell`, `headerGroupRow` /
 `headerGroupRows` / `htmlGroupedHeaderPlan` / `groupedHeaderChildRule` /
 `groupedHeaderCellStyle` / `groupedHeaderLabelStyle` / `groupedHeaderAlign` / `columnGroupStubStyle` / `COLUMN_GROUP_STUB_WIDTH`, `columnGroupHeaderCaption`. Each adapter mounts `ColumnGroupToggle` /
@@ -20145,7 +20195,7 @@ See [building an Angular adapter](./angular/building-an-adapter.md).
   release their scopes. `tableFeaturesOf` combines injector-provided features
   with the table's own list; a later duplicate id wins for setup, options,
   rendering and mounting alike.
-- Both Angular kits accept live `selectable`, `cellNavigation`, `filtersMode`
+- All supported Angular kits accept live `selectable`, `cellNavigation`, `filtersMode`
   and `closeHeaderFilterOnSelect` inputs. Their controlled `density` input
   overrides the chooser's state; `densityChange` reports requests and waits
   for the host to update the input. Omitting `density` keeps the chooser
@@ -20401,7 +20451,7 @@ See [building an Angular adapter](./angular/building-an-adapter.md).
   `FilterWidgetRenderProps` and `renderRegisteredFilter` are public root exports.
   `renderRegisteredFilter(def, source, labels, registry, className?)` calls
   `FilterTypeSpec.render` with the definition, `FilterFormSource`, resolved
-  labels and class hook. Both kits' `AdaptAutoFilterForm` and
+  labels and class hook. The kits' `AdaptAutoFilterForm` and
   `AdaptFilterHeaderRow` / `AdaptFilterHeaderControl` prefer a returned
   `TemplateRef`, Angular component type (`Type<unknown>`), or truthy string
   or number over the registered widget. Templates receive `def`, `source`,
@@ -20985,7 +21035,7 @@ Applications should use the documented table, feature and provider APIs instead.
   `RTL_LANGUAGES`, `locales` (keyed by `LocaleKey`) and the bundled
   presets (`en`, `ar`, `cs`, `de`, `es`, `fr`, `he`, `it`, `ja`, `pt`, `zh`,
   … including `zhTW`) — see [i18n & RTL](./i18n-rtl.md).
-- `@adapttable/cli` — binary `adapttable init [--force]`; programmatic
+- `@adapttable/cli` — binary `adapttable init [--kit <kit>] [--force]`; programmatic
   `detectFramework`, `detectKit`, `choosePackageManager`, `installCommand`,
   `scaffoldFiles`, `runInit` plus the pieces they compose: `KITS` / `KitInfo` / `SHADCN`
   describe the detectable kits, `packagesFor` and `mergeDependencies`
@@ -20993,15 +21043,17 @@ Applications should use the documented table, feature and provider APIs instead.
   `STARTER_PATH` describe the scaffold, `PackageManager` names the
   supported managers, `InitError` is the typed failure, and
   `InitOptions` / `InitResult` / `InitIO` parameterize `runInit` for
-  testing. `Framework` is `"react" | "angular"`; `detectFramework` requires both
+  testing. `Framework` is `"react" | "angular" | "vue"`; `detectFramework` requires both
   an `@angular/core` dependency and `hasAngularJson: true` to select Angular.
   `detectKit` accepts `framework` alongside the existing shadcn context, and
   `InitResult.framework` reports the choice. Angular scaffolds a standalone
   `PeopleTable` in `src/app/peopleTable.ts`; React keeps `src/PeopleTable.tsx`.
-  `angular-unstyled` and `ng-zorro` are public npm packages. The seven private
-  Angular previews above are also detected: `KitInfo.privatePreview` marks
-  them, and init prints local-linking guidance rather than an npm install
-  command for an unpublished adapter. Init only prints guidance; it does not
+  A declared Vue dependency selects Vue, which scaffolds `src/PeopleTable.vue`
+  and native kit setup for plain Vue/Vite applications. Nuxt projects receive
+  module setup guidance instead of generated Vite files. All nine Angular and
+  eight Vue kits are published. `KitInfo.privatePreview` is optional metadata
+  for unpublished kits; none of the supported kits currently needs it.
+  Init writes starter files and prints install guidance; it does not
   install packages or query registry availability.
 - **React adapter packages** — each exports its `DataTable` with `DataTableProps`,
   `DataTablePropsBase`, `DataTableSlots` and `SavedViewsMenuProps` (plus the
@@ -21175,22 +21227,22 @@ native drawer's explicit stylesheet import.
 | `GroupRowChrome`, `GroupRowChromeProps`                 | Desktop/mobile group structure with required Button and Checkbox slots.                                                                                                                               |
 | `mountGrouping`                                         | `mountGrouping(context: FeatureMountContext<TRow>): void` installs the scoped grouping model; ordinary consumers compose `grouping()`.                                                                |
 | `LazyChildrenVueOptions`                                | Neutral lazy-loading options plus reactive `enabled`; `useLazyChildren` returns computed loading/failure state and `loadIfNeeded`.                                                                    |
-| `TableRowInventory`                                     | Separate loaded rows for edit liveness and visible hierarchy rows for selection/runtime traversal. [Visible versus loaded rows](./vue/features.md#visible-rows-and-loaded-rows).                      |
+| `TableRowInventory`                                     | Separate loaded rows for edit liveness and visible hierarchy rows for selection/runtime traversal. [Visible versus loaded rows](./vue/row-grouping.md#visible-rows-and-loaded-rows).                  |
 | `HeadlessRowsOptions`, `HeadlessBodySlot`               | Span, summary, extra-row, appearance and offset inputs for row projection; alias of the Vue structural body-slot union.                                                                               |
 | `RowMutationAction`, `rowActionControls`                | A host mutation action preserving the persistence result, and a projection to semantic controls with guarded confirmation. [Vue row actions](./vue/features.md#columns-rows-and-actions).             |
 | `ColumnResizeHandleOptions`, `ColumnResizeHandleProps`  | Cancellation/options and semantic pointer/keyboard props for a resize handle; the binding owns its interaction lifetime.                                                                              |
 | `resolveCellSpan`                                       | `resolveCellSpan(args, getCellSpan, remainingCols, remainingRows)` resolves/clamps span geometry for a body projector.                                                                                |
 | `VueComputedColumnSpec`, `computed`                     | The Vue root's `computed(spec)` derives a `ColumnDef` with typed Vue column options; alias it on import when also using Vue's reactive `computed`. [Vue columns](./vue/api.md#columns-and-rendering). |
 
-| URL and view-control export                                                                  | Signature or role                                                                                                                                                            |
-| -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `useUrlSlice`, `UrlSliceOptions`                                                             | Reactive URL adapter/key/sync/SSR seed plus neutral spec/config to a readonly value ref, `set` and `flush`. [Vue state persistence](./vue/features.md#what-a-view-restores). |
-| `DENSITY_URL_WRITE_DEBOUNCE_MS`                                                              | Shared delay used by the density URL slice; call its returned `flush` to finish pending writes.                                                                              |
-| `ViewControlPresentation`, `ViewControlButtonProps`                                          | Resolved labels, direction, optional classes/container; a button receives semantic attrs and label.                                                                          |
-| `DensityControlProps`, `DensityChooserSlots`, `DensityChooserChrome`, `DENSITY_CONTROL`      | Effective density/change action and required Control slot with localized options; installs through `densityChooser()`.                                                       |
-| `FullscreenControlProps`, `FullscreenButtonChrome`, `FULLSCREEN_CONTROL`, `FULLSCREEN_MODEL` | Browser fullscreen state, required Button slot and table-owned model; no control renders when unsupported.                                                                   |
-| `SavedViewsControlProps`, `SAVED_VIEWS_CONTROL`, `SAVED_VIEWS_MODEL`                         | Saved-view model/actions carried by the required native/kit control slot and table state channel.                                                                            |
-| `SavedViewsMenuChrome`, `SavedViewsMenuChromeProps`, `SavedViewsMenuSlots`                   | Disclosure, keyboard and focus structure requiring Trigger/Button/Input/Panel controls. [Vue Saved Views](./vue/features.md#density-fullscreen-and-saved-views).             |
+| URL and view-control export                                                                  | Signature or role                                                                                                                                                               |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useUrlSlice`, `UrlSliceOptions`                                                             | Reactive URL adapter/key/sync/SSR seed plus neutral spec/config to a readonly value ref, `set` and `flush`. [Vue state persistence](./vue/saved-views.md#what-a-view-restores). |
+| `DENSITY_URL_WRITE_DEBOUNCE_MS`                                                              | Shared delay used by the density URL slice; call its returned `flush` to finish pending writes.                                                                                 |
+| `ViewControlPresentation`, `ViewControlButtonProps`                                          | Resolved labels, direction, optional classes/container; a button receives semantic attrs and label.                                                                             |
+| `DensityControlProps`, `DensityChooserSlots`, `DensityChooserChrome`, `DENSITY_CONTROL`      | Effective density/change action and required Control slot with localized options; installs through `densityChooser()`.                                                          |
+| `FullscreenControlProps`, `FullscreenButtonChrome`, `FULLSCREEN_CONTROL`, `FULLSCREEN_MODEL` | Browser fullscreen state, required Button slot and table-owned model; no control renders when unsupported.                                                                      |
+| `SavedViewsControlProps`, `SAVED_VIEWS_CONTROL`, `SAVED_VIEWS_MODEL`                         | Saved-view model/actions carried by the required native/kit control slot and table state channel.                                                                               |
+| `SavedViewsMenuChrome`, `SavedViewsMenuChromeProps`, `SavedViewsMenuSlots`                   | Disclosure, keyboard and focus structure requiring Trigger/Button/Input/Panel controls. [Vue Saved Views](./vue/features.md#density-fullscreen-and-saved-views).                |
 
 The Vue root exports `useColumnLayoutUrlState`,
 `UseColumnLayoutUrlStateOptions` and `UseColumnLayoutUrlStateResult` for a
@@ -21201,13 +21253,13 @@ controlled URL layout: readonly shallow `layout`, `onLayoutChange` and `flush`.
 browser preference with reactive storage/key/defaults. Bind either owner to
 the native prop/event explicitly. For URL-backed Saved Views, pass `flush`
 as `UseSavedViewsOptions.flushViewState` so Save/Apply finishes pending layout
-writes. See [Vue layout persistence](./vue/features.md#persist-column-layout-explicitly)
+writes. See [Vue layout persistence](./vue/saved-views.md#persist-column-layout-explicitly)
 for complete examples and lifecycle behavior.
 
 The Vue table does not opt into column-layout persistence automatically.
 Saved Views restore connected URL slices; controlled props stay authoritative,
 and selection, tree/detail expansion, edit drafts and host data are not captured.
-See [what a view restores](./vue/features.md#what-a-view-restores) before choosing
+See [what a view restores](./vue/saved-views.md#what-a-view-restores) before choosing
 which state your application persists.
 
 ### Vue actions and adapter channels
@@ -21573,14 +21625,14 @@ Every package declares its side effects — none, or only its stylesheet in
 `@adapttable/base-ui` — and ships ESM, so unused code is tree-shaken. You only install the one adapter you use; the headless core has
 zero UI-kit dependencies.
 
-Measured 2026-10-10 from packed fixtures (`pnpm budget`: rolldown, min+gzip,
+Measured 2026-10-15 from packed fixtures (`pnpm budget`: rolldown, min+gzip,
 React and the UI kit external because your app already ships those):
 
 | What you import                            | min+gzip  |
 | ------------------------------------------ | --------- |
 | `useFrontendData` + `useDataTable` (react) | ~25 kB    |
-| every core export                          | ~100 kB   |
-| `DataTable` from an adapter                | ~73–80 kB |
+| every core export                          | ~101 kB   |
+| `DataTable` from an adapter                | ~74–80 kB |
 
 The first row is the one to read: a headless table costs about a quarter of the
 full core, because the parts you never import never arrive. All eight React adapters
@@ -21632,9 +21684,10 @@ a test, a measurement, or a documented decision.
   [inline editing](./cell-editing.md) and
   [Excel (.xlsx) export](./customization.md#export) — but as parts you compose,
   with their prerequisites stated, rather than one spreadsheet product.
-- You need a framework beyond React and Angular. AdaptTable supplies those
-  two bindings; its Angular native and NG-ZORRO kits currently need workspace
-  packages. See [Angular setup](./angular/getting-started.md).
+- You need a framework beyond React, Angular and Vue. Those three bindings
+  and their supported kits are published on npm. See
+  [Angular setup](./angular/getting-started.md) and
+  [Vue setup](./vue/getting-started.md).
 - You want the table to draw its own look rather than your design system's.
   Every AdaptTable adapter renders your UI kit's real components, which is the
   whole point of it — and the wrong trade if you would rather not own the
@@ -21773,8 +21826,7 @@ pass `createMemoryAdapter(search)` so URL state does not touch History.
 `@adapttable/server` and `@adapttable/cli` do not.
 [SSR & RSC](./ssr-rsc.md).
 
-`@adapttable/bootstrap` is private and unpublished. “All eight React adapters”
-means Mantine, MUI, Chakra, Ant Design, Radix Themes, Base UI, shadcn/ui
+The eight React adapters are Mantine, MUI, Chakra, Ant Design, Radix Themes, Base UI, shadcn/ui
 and unstyled.
 
 ## Accessibility
@@ -21860,8 +21912,8 @@ libraries.
 
 <sub>Comparison as of August 2026, based on each project's public documentation; capabilities evolve, so verify against the latest docs. "Open-core" means a free, MIT/community edition plus paid Enterprise/Pro tiers (AG Grid Enterprise; MUI X DataGrid Pro/Premium); the advanced server-side data and infinite-loading features sit in those paid tiers. Verified against their own docs in August 2026: AG Grid puts pivoting, cell-range selection, the fill handle, tree data, clipboard operations and Excel export in Enterprise; MUI X puts pivoting, cell selection, the fill handle, clipboard paste and Excel export in Premium. AdaptTable ships all of them under MIT, with the prerequisites stated: cell-range selection, the fill handle and range copy all need `cellNavigation()`, and paste and fill write through editable columns and the composed `editing()` handler — the channel inline editing uses — unless `onCellPaste` / `onCellFill` take the batch whole; cut reports its range to `onCellCut`. Pivoting is a separate engine plus its own panel rather than a one-line toggle. AG Grid and MUI X remain the more integrated spreadsheet-style products. Spotted something outdated or wrong? Please open an issue — we will correct it promptly.</sub>
 
-A plain AdaptTable adapter `DataTable` is 73–80 kB min+gzip (measured
-2026-10-10 from packed fixtures; React and the kit stay external). Competitor
+A plain AdaptTable adapter `DataTable` is 74–80 kB min+gzip (measured
+2026-10-15 from packed fixtures; React and the kit stay external). Competitor
 bundle sizes are not listed here — they depend on which paid modules you
 licence and are not produced by this repo's fixtures. Method and the rest of
 the grid: [FAQ](./faq.md#how-big-is-it--is-it-tree-shakeable).
@@ -21976,8 +22028,8 @@ matches unstyled feature-for-feature.
   has an interactive grouping panel, pivoting, range selection, the fill
   handle, clipboard and Excel export under MIT, but they are assembled from
   composable features rather than one spreadsheet surface.
-- You're on a framework other than React → **TanStack Table** (multi-
-  framework). AdaptTable is React-only.
+- You need a binding outside React, Angular or Vue. AdaptTable supports those
+  three frameworks; check the alternative's supported frameworks for your stack.
 - You need a spreadsheet-like editing surface today, not a responsive data
   table for application lists.
 
@@ -22382,9 +22434,10 @@ already wired: a filter UI, a toolbar, pagination, URL-synced state, and saved
 views. And when you _don't_ need bespoke markup, an adapter renders native kit
 components so you can delete the table UI entirely.
 
-TanStack is multi-framework (React, Vue, Svelte, Solid, …); AdaptTable is
-React-only. If you're not on React, stay on TanStack. This page is for React
-teams tired of rebuilding the same chrome.
+AdaptTable provides React, Angular and Vue bindings with native UI-kit adapters.
+This migration guide uses React. For the other bindings, see
+[Angular setup](./angular/getting-started.md) and
+[Vue setup](./vue/getting-started.md).
 
 ## What you gain
 
@@ -22531,8 +22584,8 @@ but with filters, pagination, and URL state already handled.
 
 ## Gotchas
 
-- **React only.** On Vue/Svelte/Solid/Angular, keep TanStack — AdaptTable has no
-  adapter for those.
+- **Choose the matching binding.** These examples use React. AdaptTable also
+  supports Angular and Vue; it does not currently provide Svelte or Solid bindings.
 - **`rowKey` is required** (AdaptTable's `getRowId`).
 - **Delete the opt-in row models.** No `getSortedRowModel` /
   `getFilteredRowModel` / `getPaginationRowModel` imports — those run for you.
@@ -26369,7 +26422,7 @@ See [Column groups](./column-groups.md),
 # Angular grouped and collapsible column headers
 
 Header groups span related columns. They do not group data rows; use
-[Row grouping](./row-grouping.md) for that. Both Angular kits consume the
+[Row grouping](./row-grouping.md) for that. All supported Angular kits consume the
 same `ColumnInput<TRow>` tree.
 
 ## Declare a tree of headers
@@ -26668,7 +26721,7 @@ and `defaults.sortDir` apply only while the URL is silent. Sorting resets to
 page 1; the built-in status announcer reports the resulting sort/range after
 the data settles.
 
-On cards, both kits offer a sort-column select instead of relying on a desktop
+On cards, all supported kits offer a sort-column select instead of relying on a desktop
 header. Custom sortable headers must remain real keyboard-operable controls
 and preserve the header's sort semantics.
 
@@ -26783,7 +26836,7 @@ callback.
 These examples use the native kit `@adapttable/angular-unstyled`.
 For NG-ZORRO, import the component and factories from `@adapttable/ng-zorro`
 and its matching subpaths. See [getting started](./getting-started.md) for
-workspace setup.
+installation and kit setup.
 
 ```ts
 import { Component } from "@angular/core";
@@ -26932,8 +26985,9 @@ export class TeamBudget {
 }
 ```
 
-Both Angular kits are workspace packages. Change both kit imports to
-`@adapttable/ng-zorro` and `/filters` for NG-ZORRO controls.
+All supported Angular kits are published on npm. For NG-ZORRO controls, use
+`@adapttable/ng-zorro` and `@adapttable/ng-zorro/filters`. See
+[installation and kit setup](./getting-started.md).
 
 ## Model and source integration
 
@@ -27257,8 +27311,8 @@ export class CustomFilter {
 Both factories also exist at `@adapttable/ng-zorro/filters`; use its root
 `AdaptDataTable` together with them and its `/header-filters` feature.
 The custom controls above belong to the native kit; an NG-ZORRO custom
-renderer should use NG-ZORRO controls. Both kits currently require
-workspace setup, as described in [getting started](./getting-started.md).
+renderer should use NG-ZORRO controls. Both example kits are published on npm;
+see [getting started](./getting-started.md) for installation.
 
 The template query is read inside `render`, after the feature is created.
 While it is unavailable, the callback returns `null`, a valid empty display
@@ -27346,7 +27400,7 @@ makes the intended invalidation clear.
 
 # Angular table pagination: client-side and server-side
 
-Pagination belongs to the source. Both Angular kits render the same source
+Pagination belongs to the source. All supported Angular kits render the same source
 state through their own controls. Pages are one-based, and `total` is the
 count of every matching row, not just the current page.
 
@@ -27639,7 +27693,7 @@ default. To request a dialog for another action, set its `confirm` with
 
 Pass a `ConfirmHandler` through `[confirm]` to use an application dialog.
 It receives the message and an `onConfirm()` callback; call that callback
-only after acceptance. Both Angular shells default to browser confirmation
+only after acceptance. The Angular shells default to browser confirmation
 when no handler is supplied. A dialogless environment cannot implicitly
 approve the action.
 
@@ -27839,8 +27893,8 @@ export class PeopleWithOrders {
 ```
 
 For NG-ZORRO, both table components use `@adapttable/ng-zorro`, with the
-feature from its `/nested-table` entry. Both kits currently require
-[workspace setup](./getting-started.md).
+feature from its `/nested-table` entry. Install the published kit using
+[the setup guide](./getting-started.md).
 
 ## What the defaults mean
 
@@ -27993,7 +28047,7 @@ Choose the commit boundary that matches the operation:
 - `batchEditing(onBatchEdit)` from `/batch-editing` sends the pending
   `BatchRowEdit[]` together, with the kit's Save/Discard bar
 
-Both kits supply their own editors and row actions. Do not import batch editing
+All supported kits supply their own editors and row actions. Do not import batch editing
 from `/editing`; its entry is separate. The callbacks still perform every write,
 including undo or a batch save. `dirtyIndicators()` adds visual dirty marks;
 `onDirtyChange` exposes the dirty state and confirmation operations to a host
@@ -28608,8 +28662,8 @@ export class NotedPeople {
 }
 ```
 
-NG-ZORRO has the matching `/extra-rows` factory and root table. Both kits
-currently use [workspace setup](./getting-started.md).
+NG-ZORRO has the matching `/extra-rows` factory and root table. Both example
+kits are published on npm; see [installation](./getting-started.md).
 
 ## Position and identity
 
@@ -29731,7 +29785,7 @@ export class OrganizationTree {
 ```
 
 NG-ZORRO provides the same feature at `@adapttable/ng-zorro/tree`, paired
-with its root table. Both kits use [workspace setup](./getting-started.md).
+with its root table. Both example kits are published on npm; see [installation](./getting-started.md).
 
 ## Hierarchy and expansion
 
@@ -30097,7 +30151,7 @@ export class LargeInventory {
 }
 ```
 
-Both kits expose `/virtualize`; change the root and feature imports together to
+All supported kits expose `/virtualize`; change the root and feature imports together to
 `@adapttable/ng-zorro` for NG-ZORRO.
 See [getting started](./getting-started.md) for installation
 and first-release status.
@@ -30154,9 +30208,39 @@ cover scroll ownership, measured heights and column windows.
 
 # Angular responsive tables and mobile cards
 
-Both Angular kits switch from a desktop table to a labeled card list on narrow
+All nine supported Angular kits switch from a desktop table to a labeled card list on narrow
 screens. `forceMobile` can choose the layout explicitly. The same source,
 column definitions, host callbacks and optional features drive both layouts.
+
+## Automatic cards or a scrolling table
+
+Omit `forceMobile` for automatic cards below the default 768px viewport
+breakpoint. Set `[forceMobile]="true"` to preview cards at any width, or
+`[forceMobile]="false"` to keep the desktop table with horizontal scrolling on
+phones. No second table instance is needed, so sorting, filtering and selection
+remain with the same table.
+
+```html
+<adapt-data-table
+  [data]="people"
+  [columns]="columns"
+  [rowKey]="rowKey"
+  [forceMobile]="false"
+  paginationMode="paged"
+  tableLabel="People"
+/>
+```
+
+The built-in card body groups fields according to the available card width.
+Labels sit above values, and `mobileLabel: ""` gives a self-explanatory field
+the full width. Native cells remain native: status tags, progress indicators,
+custom components and composed editors still render through their kit.
+Long values wrap, and small containers reduce the number of field columns.
+Custom `renderCard` bodies keep their own layout.
+
+The [mobile demo](/angular/demo/ng-zorro/mobile-cards/) offers Automatic,
+Phone cards and Scrollable table choices. Its preview starts with forced cards
+so desktop visitors can see the phone presentation; the library default is automatic.
 
 ## Customize a card's fields
 
@@ -30277,6 +30361,18 @@ See [Customization](./customization.md), [Pagination](./pagination.md),
 [Cell editing](./cell-editing.md), [Virtualization](./virtualization.md),
 [Accessibility](./accessibility.md) and [Localization](./i18n-rtl.md).
 
+## Editing across layouts
+
+A layout change keeps row drafts, selection, filters and expanded rows in the
+same table state. Native editor focus and text selection follow viewport changes
+when the editor inventory remains unchanged. An explicit layout chooser keeps
+focus on the chooser. Keep stable row keys and render the supplied prepared
+field values in custom cards so native editors remain connected.
+
+Mobile Save/Cancel and hierarchy actions have larger touch targets while desktop
+controls keep their kit sizing. The mobile showcase also exercises bounded
+scrolling and pagination choices.
+
 ---
 
 # Angular table URL state
@@ -30391,7 +30487,7 @@ markup. XLSX and PDF use the same row/column scope contract.
 For trees, page export follows visible expansion; all and selected resolve
 loaded descendants from the full filtered source. Summary callbacks retain the
 original source-shaped rows, including rollup roots. See the shared
-[tree scope and summary contract](../exporting.md#tree-scopes-and-summaries).
+[tree scope and summary contract](/react/exporting/#tree-scopes-and-summaries).
 
 ## Export the current view
 
@@ -30846,7 +30942,7 @@ and [NG-ZORRO](../../packages/angular/adapter-ng-zorro/src/dataTable.hydration.s
 `tableAgent()` from `@adapttable/ai-angular` exposes a live table session to an
 agent integration. It observes the mounted table's rows, view and available
 operations; it does not insert a model SDK into the Angular binding or grant
-writes that the host has not wired. The AI Angular binding and both Angular
+writes that the host has not wired. The AI Angular binding and all nine supported Angular
 kits are public npm packages. See
 [getting started](./getting-started.md) for installation guidance.
 
@@ -31618,7 +31714,7 @@ the shared [localization reference](../i18n-rtl.md).
 
 # Accessible Angular tables and keyboard grids
 
-Both Angular kits preserve semantic table or card-list structure, localized
+All supported Angular kits preserve semantic table or card-list structure, localized
 control names, focus behavior and live announcements. Give every table a
 specific `tableLabel`, especially when a page contains several tables.
 Custom cells and surrounding application controls remain part of the
@@ -32050,7 +32146,7 @@ filters and density. With `urlSync: false`, the fallback table source and
 installed view features share an in-memory backend. Column layout participates when explicitly wired through
 `useColumnLayoutUrlState` and its flush callback; selection, tree/detail
 expansion and edit drafts are not captured. See
-[what a view restores](./features.md#what-a-view-restores).
+[what a view restores](./saved-views.md#what-a-view-restores).
 
 ## Reactive sources and headless use
 
@@ -32853,7 +32949,7 @@ The Vue adapters share the `@adapttable/vue` table model. Add
 optional behavior through the chosen kit's feature factories: the adapter
 contributes its own controls while the binding owns state, validation, row
 projection and lifecycle. The binding, Unstyled kit and seven styled adapters
-are public `0.1.0` packages on npm. See [getting started](./getting-started.md)
+are published on npm with independent package versions. See [getting started](./getting-started.md)
 for installation and UI-kit providers.
 
 ## Choose an entry point
@@ -33402,7 +33498,10 @@ Use the [live demo](/vue/demo/) or [Feature Lab](/vue/demo/all-options/) to swit
 
 Render responsive Vue table cards with native controls, shared columns, editing, selection and RTL across eight adapters.
 
-The native table can render responsive cards below `mobileBreakpoint`. `forceMobile` requests cards explicitly. Columns and query state remain shared across the desktop and card layouts.
+Cards are automatic below `mobileBreakpoint` (768px by default). Omit
+`forceMobile` to follow the viewport, set it to `true` to always show cards, or
+set it to `false` to keep a horizontally scrolling table on phones. Columns,
+selection and query state remain shared across both layouts.
 
 ```vue
 <script setup lang="ts">
@@ -33434,16 +33533,100 @@ const rowKey = (row: Person) => row.id;
     table-label="People"
     url-key="people"
     :mobile-breakpoint="768"
-    :force-mobile="true"
     locale="ar"
     dir="rtl"
   />
 </template>
 ```
 
-Each adapter owns its card presentation and native controls. Sorting, filtering, selection, row actions and composed editing continue to use the same models. Mobile cards use infinite loading instead of desktop pagination.
+Each adapter owns its card presentation and native controls. The built-in field
+body adapts to the card's width, with labels above values and unlabeled fields
+spanning the full width. Set `mobileLabel: ""` on a self-explanatory identity
+column. A column renderer can supply the kit's avatar, status badge or progress
+indicator; cards preserve that renderer instead of converting it to plain text.
+Long values wrap, and narrow containers reduce the number of field columns.
+
+Sorting, filtering, selection, row actions and composed editing continue to use
+the same models. With `paginationMode="auto"`, cards use infinite loading and
+the desktop table uses pages. Set the pagination mode explicitly to keep it
+independent of presentation.
+
+## Keep horizontal scrolling on phones
+
+```vue
+<DataTable
+  :data="rows"
+  :columns="columns"
+  :row-key="rowKey"
+  :force-mobile="false"
+  pagination-mode="paged"
+  table-label="People"
+/>
+```
+
+Wide columns scroll inside the table. This presentation suits comparisons
+across rows; cards suit reading and acting on individual records. The mobile
+demo offers Automatic, Phone cards and Scrollable table choices without
+remounting the table. Its initial forced-card preview does not change the
+library's automatic default.
 
 Use `locale` for translated labels and `dir` for reading direction; changing direction alone does not translate text. `classNames` exposes semantic card parts in the Unstyled adapter, where the host supplies appearance. Follow the chosen kit’s provider and stylesheet setup for styled adapters. See [getting started](./getting-started.md#choose-a-ui-kit) and [editing](./cell-editing.md).
+
+## Custom card bodies
+
+All eight kits accept the `card` slot. It replaces only the fields inside the
+native card; selection, expansion, row actions and Save/Cancel remain owned by
+the table. The context contains `row`, `index`, `selected`, `expanded`, and
+`fields`. Each field provides its `column`, resolved `label`, and prepared
+Vue `value`. Render that value to preserve the column's native cell and editor.
+
+```vue
+<script setup lang="ts">
+import type { VNodeChild } from "vue";
+import { DataTable, type ColumnDef } from "@adapttable/vue-unstyled";
+
+interface Person {
+  id: string;
+  name: string;
+}
+const rows: Person[] = [{ id: "ada", name: "Ada" }];
+const columns: ColumnDef<Person>[] = [{ key: "name", header: "Name" }];
+const rowKey = (row: Person) => row.id;
+const FieldValue = (props: { value: VNodeChild }) => props.value;
+</script>
+
+<template>
+  <DataTable :data="rows" :columns="columns" :row-key="rowKey">
+    <template #card="{ fields }">
+      <div class="profile-fields">
+        <div v-for="field in fields" :key="field.column.key">
+          <strong v-if="field.label">{{ field.label }}</strong>
+          <FieldValue :value="field.value" />
+        </div>
+      </div>
+    </template>
+  </DataTable>
+</template>
+```
+
+Keep field keys stable and allow values to wrap. A custom body should render
+each prepared value once; recreating raw values would bypass its editor.
+
+## Editing and difficult states
+
+Row drafts, selection, filters and expanded rows share the same state across
+cards and tables. Viewport changes restore the active native editor and its
+text selection when the editor inventory stays the same. Choosing a layout
+button explicitly leaves focus on that button. A custom editor must attach its
+provided focus ref to its native input to participate in focus management.
+
+Use `:max-height="360"` (pixels) or `max-height="60vh"` to bound the scroll
+body while keeping toolbar and pagination visible.
+
+The mobile examples offer editing, custom bodies, bounded scrolling, paged or
+infinite presentation, and empty/loading/error scenarios. Use `isLoading` with
+empty `data` for initial loading, `isFetching` while retaining rows for refresh,
+and `error` for a failed request. The host owns recovery and every saved edit.
 
 ## Try the native adapters
 
@@ -34395,7 +34578,7 @@ columns, hierarchy and view controls, then use these contract guides for:
 - [Summaries and footers](./summary-row.md): reactive summary values, desktop
   and mobile projections, footer renderers and structural helpers.
 
-The [root API index](../api.md#vue-actions-and-adapter-channels) also maps these
+The [root API index](/react/api/#vue-actions-and-adapter-channels) also maps these
 Vue exports to their owning entries. Separate formula, pivot, sparkline and
 stream helpers are not automatically loaded by the feature barrel.
 
@@ -34651,7 +34834,7 @@ memory adapter from the request and supply matching state during hydration.
 the neutral store signatures. It omits subscription/configuration methods.
 Actions remain stable when the options or namespace changes; after scope
 disposal they no longer mutate state. Install the native filter/grouping features to add their controls.
-[Additional slices and Saved Views](./features.md#what-a-view-restores) document
+[Additional slices and Saved Views](./saved-views.md#what-a-view-restores) document
 density, pins, explicit group collapse and the state that is not captured.
 
 ## Columns and rendering
@@ -34752,7 +34935,7 @@ For persistence, the root exports `useColumnLayoutUrlState` with
 `UseColumnLayoutStorageStateOptions`/`UseColumnLayoutStorageStateResult`.
 Bind their `layout` ref and `onLayoutChange` to the native prop/event explicitly.
 The URL result also has `flush`; pass it as `UseSavedViewsOptions.flushViewState`
-when using Saved Views. [Layout-persistence examples](./features.md#persist-column-layout-explicitly)
+when using Saved Views. [Layout-persistence examples](./saved-views.md#persist-column-layout-explicitly)
 cover the full options, SSR seed, debounce and storage boundaries.
 
 `useSelection(options: MaybeRefOrGetter<UseSelectionOptions<TRow>>)` returns
@@ -35208,7 +35391,7 @@ base `desktop`/`mobile` models and optional `pinning`; the result must supply
 both models so custom row structure remains coherent on desktop and mobile. The input also
 includes optional grouping, tree, detail, selection and `TableRowInventory`;
 its `loadedRows` preserve editing liveness while `visibleRows` define rendered
-hierarchy traversal and selection. See [hierarchy row semantics](./features.md#visible-rows-and-loaded-rows).
+hierarchy traversal and selection. See [hierarchy row semantics](./row-grouping.md#visible-rows-and-loaded-rows).
 
 `RowActionControlsProjector<TRow>` maps `RowActionControlsInput<TRow>` to readonly
 `RowActionControl<TRow>[]`. Inputs are `row`, `actions`, the adapter `confirm`
@@ -35500,8 +35683,9 @@ pnpm add @adapttable/ai-vue @adapttable/vue-unstyled vue@^3.5.0
 ```
 
 Add `@adapttable/vue` or `@adapttable/ai` directly when importing their APIs in
-application code. The CLI currently scaffolds
-React and Angular, so Vue integration uses explicit application setup.
+application code. The CLI can scaffold the base table in a plain Vue/Vite
+application; assistant transport, approval callbacks and credentials remain
+explicit application setup. See [getting started](./getting-started.md#scaffold-a-vuevite-table).
 
 The [native assistant showcase](/vue/demo/unstyled/assistant/) mounts the actual
 Vue native table and assistant. Its local transport can select rows, sort names,

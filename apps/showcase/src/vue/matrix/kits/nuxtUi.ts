@@ -12,6 +12,7 @@ import { densityChooser } from "@adapttable/nuxt-ui/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/nuxt-ui/editing";
 import { exportCsv } from "@adapttable/nuxt-ui/export";
@@ -31,14 +32,17 @@ import { statusBar } from "@adapttable/nuxt-ui/status-bar";
 import { tree } from "@adapttable/nuxt-ui/tree";
 import { virtualize } from "@adapttable/nuxt-ui/virtualize";
 import UApp from "@nuxt/ui/components/App.vue";
+import UAvatar from "@nuxt/ui/components/Avatar.vue";
 import UBadge from "@nuxt/ui/components/Badge.vue";
 import UButton from "@nuxt/ui/components/Button.vue";
+import UProgress from "@nuxt/ui/components/Progress.vue";
 import USelect from "@nuxt/ui/components/Select.vue";
 import { ar, en } from "@nuxt/ui/locale";
 import ui from "@nuxt/ui/vue-plugin";
 import { defineComponent, h } from "vue";
 
 import type { ShowcaseKit } from "../showcaseKit";
+import NuxtConnectionInput from "./NuxtConnectionInput.vue";
 import DataTable from "./tables/NuxtUiDataTable.vue";
 
 const BADGE_COLOR = {
@@ -63,14 +67,30 @@ const Root = defineComponent(
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "nuxt-ui",
+  input: (props) => h(NuxtConnectionInput, props),
   install: (app) => {
     document.querySelector("#root")?.classList.add("isolate");
     app.use(ui);
   },
   Root,
+  avatar: (initials) =>
+    h(UAvatar, {
+      text: initials,
+      size: "md",
+      "aria-hidden": "true",
+      ui: { fallback: "text-default" },
+    }),
+  progress: (value, label) =>
+    h(UProgress, {
+      modelValue: value,
+      max: 100,
+      size: "sm",
+      "aria-label": label,
+    }),
   status: (tone, label) =>
     h(UBadge, {
       color: BADGE_COLOR[tone],
+      style: { color: "var(--ui-text)" },
       size: "sm",
       variant: "subtle",
       label,
@@ -112,6 +132,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

@@ -1,15 +1,30 @@
 <div class="mx-demo ai-demo" [attr.dir]="direction">
   <p class="hint">
-    This local demo needs no model or API key. Sort salaries, choose a person,
-    or propose Grace's salary as 150. Writes wait for your decision.
+    {{
+      connection()
+        ? "Connected to your backend for free-form requests."
+        : "The scripted demo needs no model or API key. Connect a backend for free-form requests."
+    }}
+    Sort salaries, choose a person, or propose Grace's salary as 150. Writes
+    wait for your decision.
   </p>
   <div class="angular-ai-controls">
     <adapt-showcase-action [props]="showEveryone()" />
+    <adapt-showcase-action [props]="backendSettings()" />
     <div class="angular-ai-choice">
       <span>Approval surface</span>
       <adapt-showcase-choice [props]="surfaceChoice()" />
     </div>
   </div>
+  @if (settingsOpen()) {
+    <adapt-ai-backend-settings
+      [session]="session()"
+      [connection]="connection()"
+      [disabled]="assistant().busy"
+      (connected)="connection.set($event)"
+      (disconnected)="connection.set(undefined)"
+    />
+  }
   <adapt-showcase-table
     [dir]="presentation.dir"
     [labels]="presentation.labels"

@@ -125,6 +125,7 @@ function controls(): TableChromeSlots<TRow> {
         props
       );
     },
+    card: slots.card,
     cell: slots.cell,
     header: slots.header,
     headerActions: slots.headerActions,
@@ -688,5 +689,95 @@ function setScrollElement(element: HTMLElement | null): void {
     min-inline-size: 44px;
     min-block-size: 44px;
   }
+}
+
+/* Card fields use the available card width, including embedded phone previews. */
+.adapttable-element-plus dl:has(> [data-adapttable-part="card-row"]) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr));
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+  min-inline-size: 0;
+}
+.adapttable-element-plus dl > [data-adapttable-part="card-row"] {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.25rem;
+  min-inline-size: 0;
+  padding: 0.625rem;
+  border: 0;
+  border-radius: 0.375rem;
+  background: var(--el-fill-color-light);
+  overflow-wrap: anywhere;
+}
+.adapttable-element-plus
+  dl
+  > [data-adapttable-part="card-row"]:has(
+    > [data-adapttable-part="card-label"]:empty
+  ) {
+  grid-column: 1 / -1;
+  padding: 0;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.adapttable-element-plus
+  dl
+  > [data-adapttable-part="card-row"]
+  > [data-adapttable-part="card-label"] {
+  color: inherit;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+.adapttable-element-plus
+  dl
+  > [data-adapttable-part="card-row"]
+  > [data-adapttable-part="card-value"] {
+  display: block;
+  min-inline-size: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.adapttable-element-plus [data-adapttable-part="card-actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block-start: 0.75rem;
+  padding-block-start: 0.75rem;
+  border-block-start: 1px solid
+    color-mix(in srgb, currentColor 15%, transparent);
+}
+.adapttable-element-plus [data-adapttable-part="card"][data-selected] {
+  outline: 2px solid var(--el-color-primary);
+  outline-offset: -2px;
+}
+
+.adapttable-element-plus
+  [data-adapttable-part="card"]
+  [data-adapttable-part="action-button"],
+.adapttable-element-plus
+  [data-adapttable-part="card"]
+  [data-adapttable-part="row-actions-trigger"] {
+  min-inline-size: 44px;
+  min-block-size: 44px;
+}
+.adapttable-element-plus [data-adapttable-part="card"] .el-checkbox {
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+}
+.adapttable-element-plus
+  [data-adapttable-part="card"]
+  :is(
+    [data-adapttable-part="row-edit-begin"],
+    [data-adapttable-part="row-edit-save"],
+    [data-adapttable-part="row-edit-cancel"],
+    [data-adapttable-part="expand-button"],
+    [data-adapttable-part="tree-toggle"]
+  ) {
+  min-width: 44px;
+  min-height: 44px;
 }
 </style>

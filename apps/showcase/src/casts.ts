@@ -389,7 +389,7 @@ const FILTER_LAYOUT: Partial<ColumnLayoutState> = {
   hidden: ["email", "load"],
 };
 const MOBILE_LAYOUT: Partial<ColumnLayoutState> = {
-  hidden: ["email", "load", "timeline", "budget"],
+  hidden: ["email", "timeline"],
 };
 const FORMULAS_LAYOUT: Partial<ColumnLayoutState> = {
   hidden: ["email", "load", "timeline"],

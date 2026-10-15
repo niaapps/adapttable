@@ -43,8 +43,9 @@ export class TeamBudget {
 }
 ```
 
-Both Angular kits are workspace packages. Change both kit imports to
-`@adapttable/ng-zorro` and `/filters` for NG-ZORRO controls.
+All supported Angular kits are published on npm. For NG-ZORRO controls, use
+`@adapttable/ng-zorro` and `@adapttable/ng-zorro/filters`. See
+[installation and kit setup](./getting-started.md).
 
 ## Model and source integration
 

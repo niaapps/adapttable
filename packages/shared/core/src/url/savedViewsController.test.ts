@@ -344,6 +344,22 @@ describe("saving and applying", () => {
     expect(controller.getSnapshot().views[1]?.search).toContain("t.q=new");
   });
 
+  it("keeps a replaced view's default and sharing settings", () => {
+    const shared = { ...A, isDefault: true, visibility: "team" as const };
+    const storage = memoryStorage({ views: JSON.stringify([shared, B]) });
+    const { controller, adapter } = setup({ storage });
+
+    adapter.setSearch("t.q=updated");
+    controller.save("A");
+
+    expect(controller.getSnapshot().defaultView).toEqual({
+      ...shared,
+      search: "t.q=updated&t.atv=1",
+    });
+    controller.reload();
+    expect(controller.getSnapshot().defaultView?.visibility).toBe("team");
+  });
+
   it("leaves the URL alone when the view is unknown", () => {
     const { controller, adapter } = setup();
 
@@ -497,6 +513,78 @@ describe("managing the list", () => {
 });
 
 describe("a store instead of this browser", () => {
+  it("persists the displayed order when replacing an existing view", async () => {
+    const store = server([A, B]);
+    const { controller } = setup({ store });
+    await settle();
+
+    controller.save("A");
+    expect(names(controller)).toEqual(["B", "A"]);
+    await settle();
+    controller.reload();
+    await settle();
+
+    expect(names(controller)).toEqual(["B", "A"]);
+  });
+
+  it("does not resurrect a view removed while its save is still pending", async () => {
+    const saved = deferred<undefined>();
+    const store = server([A]);
+    store.save.mockImplementationOnce(async (view) => {
+      await saved.promise;
+      store.rows.push({ ...view });
+    });
+    const { controller } = setup({ store });
+    await settle();
+
+    controller.save("Mine");
+    controller.remove("Mine");
+    expect(names(controller)).toEqual(["A"]);
+    saved.resolve(undefined);
+    await settle();
+    controller.reload();
+    await settle();
+
+    expect(names(controller)).toEqual(["A"]);
+    expect(store.rows.map((view) => view.name)).toEqual(["A"]);
+  });
+
+  it("waits for pending writes before an authoritative reload", async () => {
+    const saved = deferred<undefined>();
+    const store = server([A]);
+    store.save.mockImplementationOnce(async (view) => {
+      await saved.promise;
+      store.rows.push({ ...view });
+    });
+    const { controller } = setup({ store });
+    await settle();
+
+    controller.save("Mine");
+    controller.reload();
+    await settle();
+    expect(names(controller)).toEqual(["A", "Mine"]);
+    saved.resolve(undefined);
+    await settle();
+
+    expect(names(controller)).toEqual(["A", "Mine"]);
+    expect(store.list).toHaveBeenCalledTimes(2);
+  });
+
+  it("preserves the stored original if a rename's new name cannot be saved", async () => {
+    const store = server([A, B]);
+    store.save.mockRejectedValueOnce(new Error("offline"));
+    const { controller } = setup({ store });
+    await settle();
+
+    controller.rename("A", "Renamed");
+    await settle();
+
+    expect(names(controller)).toEqual(["Renamed", "B"]);
+    expect(store.rows).toEqual([A, B]);
+    expect(store.remove).not.toHaveBeenCalled();
+    expect(store.reorder).not.toHaveBeenCalled();
+  });
+
   it("lists what the store returns, and writes nothing to storage", async () => {
     const store = server([A]);
     const { controller, storage } = setup({ store });
@@ -615,7 +703,7 @@ describe("a store instead of this browser", () => {
     expect(store.remove).not.toHaveBeenCalled();
   });
 
-  it("orders a rename only once its delete and save have settled", async () => {
+  it("saves a rename before deleting the original, then persists the order", async () => {
     const saved = deferred<undefined>();
     const store = server([A, B]);
     store.save.mockImplementationOnce(() => saved.promise);
@@ -624,12 +712,13 @@ describe("a store instead of this browser", () => {
 
     controller.rename("A", "Renamed");
     await settle();
-    expect(store.remove).toHaveBeenCalledWith("A");
+    expect(store.remove).not.toHaveBeenCalled();
     expect(store.save).toHaveBeenCalledWith({ ...A, name: "Renamed" });
     expect(store.reorder).not.toHaveBeenCalled();
 
     saved.resolve(undefined);
     await settle();
+    expect(store.remove).toHaveBeenCalledWith("A");
     expect(store.reorder).toHaveBeenCalledWith(["Renamed", "B"]);
   });
 
@@ -663,7 +752,9 @@ describe("a store instead of this browser", () => {
     await settle();
 
     expect(names(controller)).toEqual(["Renamed", "Mine"]);
-    expect(store.reorder).toHaveBeenCalledWith(["Renamed", "B", "Mine"]);
+    expect(store.reorder).not.toHaveBeenCalled();
+    expect(store.remove).toHaveBeenCalledExactlyOnceWith("B");
+    expect(store.rows).toEqual([A, B]);
   });
 });
 

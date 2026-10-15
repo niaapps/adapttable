@@ -67,6 +67,7 @@ import {
 import { useId, useRef, useState } from "react";
 
 import { iconForRowEditPart } from "../icons";
+import { useMobileTarget } from "./mobileTarget";
 
 export type {
   AgentApprovalProps,
@@ -339,10 +340,12 @@ function RowEditButton({
   className,
   onClick,
 }: Readonly<RowEditButtonProps>) {
+  const targetStyle = useMobileTarget();
   const glyph = iconForRowEditPart(part, icon);
   if (!glyph) {
     return (
       <Button
+        style={targetStyle}
         type="button"
         size="small"
         data-adapttable-part={part}
@@ -356,6 +359,7 @@ function RowEditButton({
   }
   return (
     <IconButton
+      style={targetStyle}
       type="button"
       size="small"
       data-adapttable-part={part}
@@ -474,8 +478,10 @@ function TreeButton({
   className,
   onClick,
 }: Readonly<TreeToggleButtonProps>) {
+  const targetStyle = useMobileTarget();
   return (
     <IconButton
+      style={targetStyle}
       type="button"
       size="small"
       data-adapttable-part="tree-toggle"

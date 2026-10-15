@@ -8,7 +8,7 @@ markup. XLSX and PDF use the same row/column scope contract.
 For trees, page export follows visible expansion; all and selected resolve
 loaded descendants from the full filtered source. Summary callbacks retain the
 original source-shaped rows, including rollup roots. See the shared
-[tree scope and summary contract](../exporting.md#tree-scopes-and-summaries).
+[tree scope and summary contract](/react/exporting/#tree-scopes-and-summaries).
 
 ## Export the current view
 

@@ -4586,6 +4586,9 @@ export interface PivotZoneProps<TNode = unknown> {
 }
 
 // @public
+export function preserveEditorFocusOnLayoutChange(): void;
+
+// @public
 export function printToolbarProps(wanted: boolean | undefined, onPrint: (() => void) | undefined, labels: Pick<TableLabels, "print">): {
     onPrint?: () => void;
     printLabel?: string;
@@ -6292,6 +6295,7 @@ export interface TableLabels {
     gridRangeCopied?: (cells: number) => string;
     gridRangeCopyFailed?: string;
     gridRangeFilled?: (cells: number) => string;
+    gridRangeFillFailed?: string;
     gridRangePasted?: (cells: number) => string;
     gridRangePasteFailed?: string;
     gridRangeSelection?: (range: {

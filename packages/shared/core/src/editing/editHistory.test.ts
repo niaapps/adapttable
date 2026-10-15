@@ -9,6 +9,7 @@ import {
   recordingCellEdit,
   resolveEditHistory,
 } from "./editHistory";
+import { asBatchGesture, asGesture } from "./editingController";
 
 interface Person {
   id: string;
@@ -80,6 +81,42 @@ describe("createEditHistory", () => {
     history.record([{ row: ADA, columnKey: "name", value: "B" }]);
     expect(history.undo()).toBe(1);
   });
+
+  it.each(["disabled", "without a write handler"] as const)(
+    "does not consume or replay history while %s",
+    (mode) => {
+      const { history, onCellEdit } = setup();
+      history.record([{ row: ADA, columnKey: "name", value: "B" }]);
+      const pause = () =>
+        history.configure({
+          enabled: mode !== "disabled",
+          columns: COLUMNS,
+          onCellEdit: mode === "disabled" ? onCellEdit : undefined,
+        });
+      const resume = () =>
+        history.configure({
+          enabled: true,
+          columns: COLUMNS,
+          onCellEdit,
+        });
+
+      pause();
+      expect(history.undo()).toBe(0);
+      expect(history.getSnapshot().past).toBe(1);
+      expect(onCellEdit).not.toHaveBeenCalled();
+      resume();
+      expect(history.undo()).toBe(1);
+      onCellEdit.mockClear();
+
+      pause();
+      expect(history.redo()).toBe(0);
+      expect(history.getSnapshot().future).toBe(1);
+      expect(onCellEdit).not.toHaveBeenCalled();
+      resume();
+      expect(history.redo()).toBe(1);
+      expect(onCellEdit).toHaveBeenCalledExactlyOnceWith(ADA, "name", "B");
+    }
+  );
 });
 
 describe("resolveEditHistory", () => {
@@ -101,6 +138,84 @@ describe("resolveEditHistory", () => {
 });
 
 describe("recordingCellEdit", () => {
+  it.each(["throw", "reject"] as const)(
+    "preserves redo when a host save fails by %s",
+    async (failure) => {
+      const { history } = setup();
+      history.record([{ row: ADA, columnKey: "name", value: "B" }]);
+      history.undo();
+      const error = new Error("Save rejected");
+      const apply = () => {
+        if (failure === "throw") throw error;
+        return Promise.reject(error);
+      };
+      const channel = recordingCellEdit<Person>(apply, history.record)!;
+      if (failure === "throw")
+        expect(() => channel(ADA, "name", "C")).toThrow(error);
+      else await expect(channel(ADA, "name", "C")).rejects.toBe(error);
+      expect(history.getSnapshot()).toEqual({ past: 0, future: 1 });
+    }
+  );
+
+  it("captures the previous value before an in-place host edit and waits for success", async () => {
+    const row = { ...ADA };
+    const { history, onCellEdit } = setup();
+    let accept!: () => void;
+    const channel = recordingCellEdit<Person>((person, _key, value) => {
+      person.name = String(value);
+      return new Promise<void>((resolve) => {
+        accept = resolve;
+      });
+    }, history.record)!;
+    const saved = channel(row, "name", "B");
+    expect(history.getSnapshot().past).toBe(0);
+    accept();
+    await saved;
+    expect(history.undo()).toBe(1);
+    expect(onCellEdit).toHaveBeenCalledWith(row, "name", "Ada");
+  });
+
+  it.each(["clear", "disable"] as const)(
+    "does not revive pending history after %s",
+    async (mode) => {
+      const { history, onCellEdit } = setup();
+      let accept!: () => void;
+      const channel = recordingCellEdit<Person>(
+        () =>
+          new Promise<void>((resolve) => {
+            accept = resolve;
+          }),
+        history.record
+      )!;
+      const saved = channel(ADA, "name", "B");
+      if (mode === "clear") history.clear();
+      else {
+        history.configure({ enabled: false, columns: COLUMNS, onCellEdit });
+        history.configure({ enabled: true, columns: COLUMNS, onCellEdit });
+      }
+      accept();
+      await saved;
+      expect(history.getSnapshot()).toEqual({ past: 0, future: 0 });
+    }
+  );
+
+  it("keeps failed paste and batch saves out of history", async () => {
+    const { history } = setup();
+    const error = new Error("Rejected gesture");
+    const apply = () => Promise.reject(error);
+    const paste = asGesture<Person>(() => {
+      throw error;
+    }, history.record)!;
+    const batch = asBatchGesture<Person>(apply, history.record)!;
+    expect(() => paste([{ row: ADA, columnKey: "name", value: "B" }])).toThrow(
+      error
+    );
+    await expect(
+      batch([{ row: ADA, rowId: ADA.id, patch: { name: "C" } }])
+    ).rejects.toBe(error);
+    expect(history.getSnapshot()).toEqual({ past: 0, future: 0 });
+  });
+
   it("is absent without a channel", () => {
     expect(recordingCellEdit(undefined, vi.fn())).toBeUndefined();
   });

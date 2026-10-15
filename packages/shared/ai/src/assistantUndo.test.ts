@@ -88,6 +88,37 @@ function view(
 }
 
 describe("working out how to put a turn back", () => {
+  it("restores pagination after a search restores the result set", async () => {
+    let page = 4;
+    let search = "";
+    let revision = 1;
+    const live = createAgentSession({
+      observe: () => observation({ page, search, viewRevision: revision }),
+      apply: {
+        setPage: (next) => {
+          page = next;
+          revision += 1;
+        },
+        setSearch: (next) => {
+          search = next;
+          page = 1;
+          revision += 1;
+        },
+      },
+    });
+    const before = view({ page, search });
+    await live.execute("view.setSearch", { query: "Ada" }, revision, "search");
+    const after = view({ page, search, revision });
+    const planned = planUndo(before, after, live, revision);
+    if (isUndoBlock(planned)) throw new Error(planned.code);
+
+    const results = await runUndo(live, planned, "undo-search");
+
+    expect(results.every((result) => result.ok)).toBe(true);
+    expect(search).toBe("");
+    expect(page).toBe(4);
+  });
+
   it("says there is nothing to undo when the view did not move", () => {
     const planned = planUndo(view(), view(), session(), 1);
 

@@ -1761,11 +1761,11 @@ const rowKey = (row: Person) => row.id;
     },
     intros: {
       angular: [
-        "Below the mobile breakpoint every row becomes a card — same columns, same row content, same query state. This page forces the card layout inside a phone-width frame.",
+        "Below the mobile breakpoint every row becomes a card — same columns, same row content, same query state. Use Automatic, Phone cards or Scrollable table to compare the same data without remounting.",
         "Per column, `mobileLabel` and `hideOnMobile` tune what a card shows, and on a phone the pager gives way to infinite scroll: the next rows load as the list reaches its end. There is no second layout to build.",
       ],
       "ng-zorro": [
-        "Below the mobile breakpoint every row becomes a card — same columns, same row content, same query state. This page forces the card layout inside a phone-width frame.",
+        "Below the mobile breakpoint every row becomes a card — same columns, same row content, same query state. Use Automatic, Phone cards or Scrollable table to compare the same data without remounting.",
         "Per column, `mobileLabel` and `hideOnMobile` tune what a card shows, and on a phone the pager gives way to infinite scroll: the next rows load as the list reaches its end. There is no second layout to build.",
       ],
     },
@@ -1773,11 +1773,11 @@ const rowKey = (row: Person) => row.id;
     h1: "Mobile cards in {kit}",
     title: "{kit} responsive table and mobile cards — AdaptTable",
     description:
-      "A {kit} data table that becomes cards on phones — automatic below the mobile breakpoint, same filters and URL state, infinite scroll instead of a pager.",
+      "Responsive {kit} tables with automatic mobile cards or horizontal scrolling, native kit cells, readable field groups and shared selection and query state.",
     intro: [
       "Below the mobile breakpoint every row becomes a {kit} card. Same columns, same row content, same query state — there is nothing to configure and no second layout to build.",
       '`paginationMode="auto"` resolves to infinite scroll on phones and a pager on desktop. Per column, `mobileLabel` and `hideOnMobile` tune what a card shows.',
-      "`renderCard` replaces the card's body with your own layout while the shell keeps selection, row actions and expansion — so a custom card is a layout decision, not a rewrite.",
+      "Unlabeled identity fields span the card; labeled details share the available width. Column renderers keep native avatars, badges and progress indicators. Set `forceMobile` to false to keep a horizontally scrolling table on phones.",
     ],
     card: "Every row becomes a card on phones. Automatically, with the same state.",
     snippet: `import { DataTable } from "{pkg}";
@@ -1790,9 +1790,6 @@ export function People({ rows, columns }) {
       rowKey={(row) => row.id}
       paginationMode="auto"
       mobileBreakpoint={768}
-      renderCard={(row, card) => (
-        <MyCard row={row} {...card} />
-      )}
     />
   );
 }`,
@@ -2107,12 +2104,12 @@ const features = [filters<Person>([], { mode: "popover" }), headerFilters()];
     heads: {
       angular: {
         description:
-          "Try {kit} {framework} table filters: text, ranges, multi-selects, a yes/no choice and an AND/OR tree, in a popover, a drawer or header funnels, shared through the URL.",
+          "Try {kit} table filters: text, ranges, checklists and nested AND/OR groups. Use a popover, drawer or header controls with URL-synced state.",
         card: "Ranges, selects, an AND/OR tree and chips — all in the URL.",
       },
       "ng-zorro": {
         description:
-          "Try {kit} {framework} table filters: text, ranges, multi-selects, a yes/no choice and an AND/OR tree, in a popover, a drawer or header funnels, shared through the URL.",
+          "Try {kit} table filters: text, ranges, checklists and nested AND/OR groups. Use a popover, drawer or header controls with URL-synced state.",
         card: "Ranges, selects, an AND/OR tree and chips — all in the URL.",
       },
     },
@@ -2402,11 +2399,11 @@ const features = [
     heads: {
       angular: {
         description:
-          "Select {kit} {framework} table rows with native checkboxes and run bulk actions through your own handler. The selection is a set of row ids that survives paging.",
+          "Select {kit} table rows with native checkboxes and host-controlled bulk actions. Keep selected row IDs across pages and select all matching rows.",
       },
       "ng-zorro": {
         description:
-          "Select {kit} {framework} table rows with NG-ZORRO checkboxes and run bulk actions through your own handler. The selection is a set of row ids that survives paging.",
+          "Select {kit} rows with NG-ZORRO checkboxes and host-controlled bulk actions. Preserve selection across pages and select all matching rows.",
       },
     },
     intros: {
@@ -2538,12 +2535,12 @@ const features = [groupingPanel(["team", "status"])];
     heads: {
       angular: {
         description:
-          "Group rows in a {kit} {framework} data table by dragging headers or from a select, reorder levels by keyboard, fold each group and read its totals in the header.",
+          "Group {kit} table rows by dragging headers or choosing fields. Reorder levels by keyboard, collapse groups and read aggregate totals.",
         card: "Drag, select or keyboard grouping, with totals in the headers.",
       },
       "ng-zorro": {
         description:
-          "Group rows in a {kit} {framework} data table by dragging headers or from a select, reorder levels by keyboard, fold each group and read its totals in the header.",
+          "Group {kit} table rows by dragging headers or choosing fields. Reorder levels by keyboard, collapse groups and read aggregate totals.",
         card: "Drag, select or keyboard grouping, with totals in the headers.",
       },
     },
@@ -2857,7 +2854,7 @@ const features = [
     h1: "Right-to-left {kit} data table",
     title: "{kit} RTL data table — AdaptTable",
     description:
-      "Try an Arabic RTL data table in {kit}: mirrored layout, logical column pinning, translated controls and filter popovers that open on the correct side.",
+      "Try an Arabic RTL table in {kit}: mirrored layout, logical column pinning, translated controls and correctly positioned filter popovers.",
     intro: [
       "An Arabic table mirrors the entire layout — search, sort arrows, pinned columns and the pager. Not just translated strings: a genuinely flipped axis.",
       "The filters popover anchors and flips from the correct edge; that is the part only a real RTL page can show.",
@@ -3103,13 +3100,13 @@ const features = [rowPinning(), cellSpan(spanTeam), rowActions<Person>([])];
       angular: {
         title: "{kit} table row pinning and cell spanning — AdaptTable",
         description:
-          "Try {kit} {framework} table row pinning and merged cells: keep rows at the top or bottom from each row's menu, and write a team that runs down the page once.",
+          "Try {kit} table row pinning and merged cells. Keep rows at the top or bottom using row menus, and span repeated values across adjacent rows.",
         card: "Pin rows from a 3-dot menu, and merge a team that runs down the page.",
       },
       "ng-zorro": {
         title: "{kit} table row pinning and cell spanning — AdaptTable",
         description:
-          "Try {kit} {framework} table row pinning and merged cells: keep rows at the top or bottom from each row's menu, and write a team that runs down the page once.",
+          "Try {kit} table row pinning and merged cells. Keep rows at the top or bottom using row menus, and span repeated values across adjacent rows.",
         card: "Pin rows from a 3-dot menu, and merge a team that runs down the page.",
       },
     },
@@ -3696,30 +3693,30 @@ export function Sales({ rows, columns, teamTotal, grandTotal }) {
         h1: "AI table assistant in {kit} {framework}",
         title: "{kit} {framework} AI table assistant demo — AdaptTable",
         description:
-          "Try a local {kit} {framework} table assistant: sort salaries, answer a filtering question and approve or reject a proposed edit. No model or API key required.",
+          "Try the {kit} table assistant: sort, filter and approve edits. Use scripted prompts without a key, or connect your AI backend for free-form requests.",
         card: "Local sort, questions and approved edits with real table outcomes.",
       },
       "ng-zorro": {
         h1: "AI table assistant in {kit} {framework}",
         title: "{kit} {framework} AI table assistant demo — AdaptTable",
         description:
-          "Try a local {kit} {framework} table assistant: sort salaries, answer a filtering question and approve or reject a proposed edit. No model or API key required.",
+          "Try the {kit} table assistant: sort, filter and approve edits. Use scripted prompts without a key, or connect your AI backend for free-form requests.",
         card: "Local sort, questions and approved edits with real table outcomes.",
       },
     },
     intros: {
       vue: [
-        "This deterministic local demo mounts a real {kit} {framework} table and its {kit} assistant. Ask to sort salaries, choose a person, or propose Grace's salary as 150. No language model or API key is needed.",
+        "This demo mounts a real {kit} {framework} table and its {kit} assistant. Start with scripted sorting, questions and approved edits, or connect your HTTP backend for free-form AI requests. The scripted mode needs no model or API key.",
         "A question filters the table only after you answer. A proposed edit waits for your approval in the assistant, the table or a dialog; an approved write updates the host's data and its status line. Rejecting leaves the data unchanged, and the conversation records the execution result.",
         "`tableAgent` and `useTableAssistant` from `@adapttable/ai-vue` share the mounted table's session. The snippet below shows a minimal local sorting transport; the demo also includes questions and governed edits. JSON, OpenAI, HTTP, MCP, MCP Apps, WebMCP, AG-UI and AI SDK helpers can use the same session in your application.",
       ],
       angular: [
-        "This deterministic local demo mounts a real {kit} {framework} table and its {kit} assistant. Ask to sort salaries, choose a person, or propose Grace's salary as 150. No language model or API key is needed.",
+        "This demo mounts a real {kit} {framework} table and its {kit} assistant. Start with scripted sorting, questions and approved edits, or connect your HTTP backend for free-form AI requests. The scripted mode needs no model or API key.",
         "A question filters the table only after you answer. A proposed edit waits for your approval in the assistant, the table or a dialog; an approved write updates the host's data and its status line. Rejecting leaves the data unchanged, and the conversation records the execution result.",
         "`tableAgent` and `injectTableAssistant` from `@adapttable/ai-angular` share the mounted table's session. The snippet below shows a minimal local sorting transport; the demo also includes questions and governed edits. JSON, OpenAI, HTTP, MCP, MCP Apps, WebMCP, AG-UI and AI SDK helpers can use the same session in your application.",
       ],
       "ng-zorro": [
-        "This deterministic local demo mounts a real {kit} {framework} table and its NG-ZORRO assistant. Ask to sort salaries, choose a person, or propose Grace's salary as 150. No language model or API key is needed.",
+        "This demo mounts a real {kit} {framework} table and its NG-ZORRO assistant. Start with scripted sorting, questions and approved edits, or connect your HTTP backend for free-form AI requests. The scripted mode needs no model or API key.",
         "A question filters the table only after you answer. A proposed edit waits for your approval in the assistant, the table or a dialog; an approved write updates the host's data and its status line. Rejecting leaves the data unchanged, and the conversation records the execution result.",
         "`tableAgent` and `injectTableAssistant` from `@adapttable/ai-angular` share the mounted table's session. The snippet below shows a minimal local sorting transport; the demo also includes questions and governed edits. JSON, OpenAI, HTTP, MCP, MCP Apps, WebMCP, AG-UI and AI SDK helpers can use the same session in your application.",
       ],
@@ -3928,7 +3925,7 @@ const features = [tableAgent({
     },
     notes: {
       unstyled:
-        "The assistant, question choices and approval controls are native HTML. This page runs a local script only; the host status line records approved writes, and the approval-surface selector chooses assistant, table or dialog review.",
+        "The assistant, question choices and approval controls are native HTML. Start with the local script or connect your HTTP backend. The host status line records approved writes, and the approval-surface selector chooses assistant, table or dialog review.",
       mantine:
         "The optional assistant, filters and approval controls use Mantine. Import the assistant separately, or build your own conversation UI on the headless controller.",
       mui: "The optional assistant uses MUI controls alongside the Material table and approval strip. Its separate import keeps chat UI out of tables that do not need it.",
@@ -4068,6 +4065,15 @@ const otherKitsPhrase = (adapter) => {
  */
 export const fillTemplate = (text, adapter, framework = frameworkOf(adapter)) =>
   text
+    .replaceAll(
+      "{kit} {framework}",
+      adapter.label
+        .toLowerCase()
+        .split(/[\s-]+/u)
+        .includes(framework.label.toLowerCase())
+        ? adapter.label
+        : `${adapter.label} ${framework.label}`
+    )
     .replaceAll("{tagline}", adapter.tagline)
     .replaceAll("{surface}", adapter.surface)
     .replaceAll("{kit}", adapter.label)

@@ -31,6 +31,20 @@ const ANGULAR_MODES = new Map([
   ],
 ]);
 
+const HTML_ENTITIES = new Map([
+  ["&amp;", "&"],
+  ["&quot;", '"'],
+  ["&#39;", "'"],
+  ["&lt;", "<"],
+  ["&gt;", ">"],
+]);
+
+function decodeHtmlText(text) {
+  return text.replace(/&(?:amp|quot|#39|lt|gt);/g, (entity) =>
+    HTML_ENTITIES.get(entity)
+  );
+}
+
 /**
  * The showcase's generated HTML is what is on disk.
  *
@@ -45,6 +59,13 @@ const ANGULAR_MODES = new Map([
  */
 describe("the generated showcase pages", () => {
   const files = showcaseHtmlFiles();
+
+  it("decodes writer entities once without decoding the resulting text again", () => {
+    assert.equal(
+      decodeHtmlText("&amp;quot; &quot; &#39; &lt; &gt; &amp;"),
+      "&quot; \" ' < > &"
+    );
+  });
 
   it("writes one page per matrix entry and per replaced address", () => {
     // Twenty-two pages per React adapter — a landing plus twenty-one
@@ -349,6 +370,9 @@ describe("the generated showcase pages", () => {
     assert.equal(new Set(descriptions).size, live.length);
     for (const description of descriptions) {
       assert.ok(description && description.length > 40, description);
+      // Decode the entities the HTML writer uses before applying the snippet budget.
+      const text = decodeHtmlText(description);
+      assert.ok(text.length <= 160, `${text.length} characters: ${text}`);
     }
   });
 
@@ -395,7 +419,7 @@ describe("the generated showcase pages", () => {
       assert.match(file.html, /tableAgent/);
       assert.match(file.html, /@adapttable\/ai-vue/);
       assert.match(file.html, /session\.execute/);
-      assert.match(file.html, /No language model or API key is needed/);
+      assert.match(file.html, /The scripted mode needs no model or API key/);
       assert.doesNotMatch(file.html, /ai-angular|injectTableAssistant/);
     }
     const angularDirs = new Set(
@@ -419,7 +443,7 @@ describe("the generated showcase pages", () => {
       assert.match(file.html, /injectTableAssistant/);
       assert.match(file.html, /tableAgent/);
       assert.match(file.html, /session\.execute/);
-      assert.match(file.html, /No language model or API key is needed/);
+      assert.match(file.html, /The scripted mode needs no model or API key/);
       assert.match(file.html, /approved write updates the host/);
       assert.doesNotMatch(file.html, /Connect backend/);
     }

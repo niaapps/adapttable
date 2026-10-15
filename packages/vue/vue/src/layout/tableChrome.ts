@@ -33,6 +33,7 @@ import {
   type SelectionCheckboxControl,
   selectionCheckboxControl,
 } from "../selection/checkboxControl";
+import type { DataTableSlots } from "../tableAdapterContracts";
 import type { RowActionControl } from "./modelChannels";
 import type {
   DesktopTableModel,
@@ -151,6 +152,7 @@ export interface SelectionCheckboxProps extends SelectionCheckboxControl {
   readonly header: boolean;
 }
 export interface TableChromeSlots<TRow> {
+  readonly card?: NonNullable<DataTableSlots<TRow>["card"]>;
   readonly SortButton: (props: SortButtonProps<TRow>) => VNodeChild;
   readonly SelectionCheckbox: (props: SelectionCheckboxProps) => VNodeChild;
   readonly RowActions?: (props: {
@@ -754,46 +756,61 @@ export function MobileCardsChrome<TRow>(props: {
             )
           : null,
         row.reorder?.(true),
-        h(
-          "dl",
-          {
-            class: classNames.cardFields,
-          },
-          row.cells.map((cell) =>
-            h(
-              "div",
-              {
-                key: cell.key,
-                class: classNames.cardRow,
-                "data-adapttable-part": "card-row",
-              },
-              [
-                h(
-                  "dt",
-                  {
-                    key: `${cell.key}-label`,
-                    class: classNames.cardLabel,
-                    "data-adapttable-part": "card-label",
-                  },
+        slots.card
+          ? slots.card({
+              row: row.row,
+              index: row.index,
+              selected: row.checkboxAttrs?.checked === true,
+              expanded: row.detail?.expanded === true,
+              fields: row.cells.map((cell) => ({
+                column: cell.context.column,
+                label:
                   cell.context.column.mobileLabel ??
-                    cell.context.column.header ??
-                    cell.key
-                ),
+                  cell.context.column.header ??
+                  cell.key,
+                value: cellContent(cell, row, slots, classNames, true),
+              })),
+            })
+          : h(
+              "dl",
+              {
+                class: classNames.cardFields,
+              },
+              row.cells.map((cell) =>
                 h(
-                  "dd",
+                  "div",
                   {
-                    ...mergeVueAttrs(cell.attrs, {
-                      class: classNames.cardValue,
-                    }),
                     key: cell.key,
-                    "data-adapttable-part": "card-value",
+                    class: classNames.cardRow,
+                    "data-adapttable-part": "card-row",
                   },
-                  [cellContent(cell, row, slots, classNames, true)]
-                ),
-              ]
-            )
-          )
-        ),
+                  [
+                    h(
+                      "dt",
+                      {
+                        key: `${cell.key}-label`,
+                        class: classNames.cardLabel,
+                        "data-adapttable-part": "card-label",
+                      },
+                      cell.context.column.mobileLabel ??
+                        cell.context.column.header ??
+                        cell.key
+                    ),
+                    h(
+                      "dd",
+                      {
+                        ...mergeVueAttrs(cell.attrs, {
+                          class: classNames.cardValue,
+                        }),
+                        key: cell.key,
+                        "data-adapttable-part": "card-value",
+                      },
+                      [cellContent(cell, row, slots, classNames, true)]
+                    ),
+                  ]
+                )
+              )
+            ),
         row.detail?.expanded
           ? h(
               "div",

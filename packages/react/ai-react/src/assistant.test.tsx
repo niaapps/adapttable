@@ -23,7 +23,7 @@ import {
   FeatureStateScope,
 } from "@adapttable/react/adapter";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { type ReactNode, useRef } from "react";
+import { type ReactNode, StrictMode, useRef } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { useTableAssistant } from "./assistant";
@@ -124,6 +124,34 @@ const okResult = (key: string): ExecuteResult => ({
 });
 
 describe("connection", () => {
+  it("keeps the assistant connected and usable through Strict Mode effect replay", async () => {
+    const connect = vi.fn();
+    const disconnect = vi.fn();
+    const transport: AssistantTransport = {
+      connect,
+      disconnect,
+      send: () => Promise.resolve({ text: "Ready to help." }),
+    };
+    const { result, rerender, unmount } = renderHook(
+      () => useTableAssistant({ session: useHeldSession(), transport }),
+      { wrapper: StrictMode }
+    );
+
+    await waitFor(() => expect(result.current.status).toBe("ready"));
+    act(() => result.current.setDraft("hello"));
+    rerender();
+    expect(result.current.draft).toBe("hello");
+    await act(async () => result.current.send());
+    expect(result.current.messages.map((message) => message.text)).toEqual([
+      "hello",
+      "Ready to help.",
+    ]);
+    expect(connect).toHaveBeenCalledTimes(2);
+    expect(disconnect).toHaveBeenCalledTimes(1);
+    unmount();
+    expect(disconnect).toHaveBeenCalledTimes(2);
+  });
+
   it("is disconnected without a transport", () => {
     const { result } = renderHook(() =>
       useTableAssistant({ session: useHeldSession() })
@@ -171,6 +199,53 @@ describe("connection", () => {
     unmount();
 
     expect(disconnect).toHaveBeenCalled();
+  });
+
+  it("hands durable work to the host when unmounting during a turn", async () => {
+    const onDetach = vi.fn();
+    const disconnect = vi.fn();
+    let settle: ((reply: AssistantTransportReply) => void) | undefined;
+    const transport: AssistantTransport = {
+      disconnect,
+      send: ({ onResumable }) => {
+        onResumable?.("job-1");
+        return new Promise((resolve) => {
+          settle = resolve;
+        });
+      },
+    };
+    const { result, unmount } = renderHook(() =>
+      useTableAssistant({ session: useHeldSession(), transport, onDetach })
+    );
+    let turn: Promise<void> | undefined;
+    act(() => {
+      turn = result.current.send("count everything");
+    });
+    await waitFor(() => expect(result.current.resumable?.token).toBe("job-1"));
+    unmount();
+
+    expect(onDetach).toHaveBeenCalledExactlyOnceWith({
+      text: "count everything",
+      token: "job-1",
+    });
+    expect(disconnect).toHaveBeenCalledOnce();
+    settle?.({ text: "Late reply" });
+    await turn;
+    expect(
+      result.current.messages.some((message) => message.text === "Late reply")
+    ).toBe(false);
+  });
+
+  it("retires retained send callbacks after unmount", async () => {
+    const send = vi.fn(() => Promise.resolve({ text: "done" }));
+    const { result, unmount } = renderHook(() =>
+      useTableAssistant({ session: useHeldSession(), transport: { send } })
+    );
+    const retainedSend = result.current.send;
+    unmount();
+    await Promise.resolve();
+    await retainedSend("must not run");
+    expect(send).not.toHaveBeenCalled();
   });
 });
 

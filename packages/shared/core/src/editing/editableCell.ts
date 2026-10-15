@@ -763,5 +763,30 @@ export function stopCellEditKeyboard(event: {
  * @public
  */
 export function focusEditorOnMount(node: { focus: () => void } | null): void {
+  const element = editorRefElement(node);
+  if (element) {
+    const root = element.closest('[data-adapttable-part="root"]');
+    const active = element.ownerDocument.activeElement;
+    // Remounting a row must not take focus from an explicit layout chooser.
+    if (
+      root &&
+      active &&
+      active !== element.ownerDocument.body &&
+      !root.contains(active)
+    )
+      return;
+  }
   node?.focus();
+}
+
+/** Kits can expose the actual input through an imperative focus handle. */
+function editorRefElement(
+  node: { focus(): void } | null
+): HTMLElement | undefined {
+  if (typeof HTMLElement === "undefined" || !node) return undefined;
+  if (node instanceof HTMLElement) return node;
+  if ("input" in node && node.input instanceof HTMLElement) return node.input;
+  if ("nativeElement" in node && node.nativeElement instanceof HTMLElement)
+    return node.nativeElement;
+  return undefined;
 }

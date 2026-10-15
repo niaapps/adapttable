@@ -8,7 +8,7 @@ callback.
 These examples use the native kit `@adapttable/angular-unstyled`.
 For NG-ZORRO, import the component and factories from `@adapttable/ng-zorro`
 and its matching subpaths. See [getting started](./getting-started.md) for
-workspace setup.
+installation and kit setup.
 
 ```ts
 import { Component } from "@angular/core";

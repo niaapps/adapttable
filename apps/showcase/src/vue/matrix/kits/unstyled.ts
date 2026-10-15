@@ -15,6 +15,7 @@ import { densityChooser } from "@adapttable/vue-unstyled/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/vue-unstyled/editing";
 import { exportCsv } from "@adapttable/vue-unstyled/export";
@@ -41,6 +42,28 @@ import DataTable from "./tables/UnstyledDataTable.vue";
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "vue-unstyled",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h("input", {
+      "aria-label": label,
+      "data-adapttable-part": part,
+      value,
+      type: type ?? "text",
+      disabled,
+      autocomplete: "off",
+      onInput: (event: Event) => {
+        if (event.target instanceof HTMLInputElement)
+          onChange(event.target.value);
+      },
+    }),
+  avatar: (initials) =>
+    h("span", { class: "demo-mobile-avatar", "aria-hidden": "true" }, initials),
+  progress: (value, label) =>
+    h("progress", {
+      value,
+      max: 100,
+      "aria-label": label,
+      style: { width: "100%" },
+    }),
   status: (tone, label) =>
     h("span", { class: "mx-status", "data-status-tone": tone }, label),
   button: ({ label, part, disabled, onClick }) =>
@@ -79,6 +102,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

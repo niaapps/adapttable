@@ -19,8 +19,10 @@ import {
   rowWindow,
 } from "@adapttable/core/binding";
 import {
+  afterNextRender,
   assertInInjectionContext,
   computed,
+  DestroyRef,
   effect,
   inject,
   Injector,
@@ -45,6 +47,38 @@ function asItemMeta(item: VirtualItem): VirtualItemMeta {
     size: item.size,
     key: item.key,
     lane: item.lane,
+  };
+}
+
+/** Measure after child cells and styles have rendered, once per attached row. */
+function measureAfterRender(
+  virtualizer: () => ActiveVirtualizer
+): (node: Element | null) => void {
+  const injector = inject(Injector);
+  const lifetime = inject(DestroyRef);
+  const pending = new Set<Element | null>();
+  let scheduled = false;
+  lifetime.onDestroy(() => pending.clear());
+  return (node) => {
+    if (lifetime.destroyed) return;
+    pending.add(node);
+    if (scheduled) return;
+    scheduled = true;
+    afterNextRender(
+      {
+        earlyRead: () => {
+          scheduled = false;
+          const nodes = [...pending];
+          pending.clear();
+          const current = virtualizer();
+          for (const element of nodes) {
+            if (element === null || element.isConnected)
+              current.measureElement(element);
+          }
+        },
+      },
+      { injector }
+    );
   };
 }
 
@@ -201,6 +235,7 @@ export function injectTableVirtualizer<TRow>(
     const activeVirtualizer = (): ActiveVirtualizer =>
       pickVirtualizer(elementMode, elementVirtualizer, windowVirtualizer);
 
+    const measureElement = measureAfterRender(activeVirtualizer);
     const endLatch = new EndReachedLatch();
     effect(() => {
       const items = activeVirtualizer().getVirtualItems();
@@ -233,9 +268,7 @@ export function injectTableVirtualizer<TRow>(
         count: rows.length,
         virtualizer: {
           getTotalSize: () => vz.getTotalSize(),
-          measureElement: (node) => {
-            vz.measureElement(node);
-          },
+          measureElement,
           options: { scrollMargin: scrollMargin() },
         },
         items: active ? items : [],
@@ -343,6 +376,7 @@ export function injectKeyedVirtualizer(options: KeyedVirtualizationOptions): {
     const activeVirtualizer = (): ActiveVirtualizer =>
       pickVirtualizer(elementMode, elementVirtualizer, windowVirtualizer);
 
+    const measureElement = measureAfterRender(activeVirtualizer);
     const endLatch = new EndReachedLatch();
     effect(() => {
       const items = activeVirtualizer().getVirtualItems();
@@ -361,9 +395,7 @@ export function injectKeyedVirtualizer(options: KeyedVirtualizationOptions): {
         count: options.keys().length,
         virtualizer: {
           getTotalSize: () => vz.getTotalSize(),
-          measureElement: (node) => {
-            vz.measureElement(node);
-          },
+          measureElement,
           options: { scrollMargin: scrollMargin() },
         },
         items: on && items.length > 0 ? items : [],

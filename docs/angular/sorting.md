@@ -90,7 +90,7 @@ and `defaults.sortDir` apply only while the URL is silent. Sorting resets to
 page 1; the built-in status announcer reports the resulting sort/range after
 the data settles.
 
-On cards, both kits offer a sort-column select instead of relying on a desktop
+On cards, all supported kits offer a sort-column select instead of relying on a desktop
 header. Custom sortable headers must remain real keyboard-operable controls
 and preserve the header's sort semantics.
 

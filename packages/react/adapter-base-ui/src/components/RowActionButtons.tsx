@@ -19,6 +19,7 @@ import { Tooltip } from "./primitives";
 
 interface RowActionButtonsProps<TRow> {
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   labels: Required<TableLabels>;
@@ -29,12 +30,14 @@ interface RowActionButtonsProps<TRow> {
 
 function ActionStrip<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   cancelLabel,
   accentColor,
 }: Readonly<{
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   cancelLabel: string;
@@ -61,6 +64,7 @@ function ActionStrip<TRow>({
               color={accentColor ?? "gray"}
               disabled={disabled}
               aria-label={action.label}
+              style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
               data-adapttable-part="action-button"
               onClick={handleClick}
             >
@@ -74,6 +78,7 @@ function ActionStrip<TRow>({
               variant="ghost"
               color={accentColor}
               disabled={disabled}
+              style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
               data-adapttable-part="action-button"
               onClick={handleClick}
             >
@@ -88,11 +93,13 @@ function ActionStrip<TRow>({
 
 function ActionMenu<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   labels,
 }: Readonly<{
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   labels: Required<TableLabels>;
@@ -106,6 +113,7 @@ function ActionMenu<TRow>({
             variant="ghost"
             color="gray"
             aria-label={labels.rowActionsMenu}
+            style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
             data-adapttable-part="row-actions-trigger"
             onClick={(event) => event.stopPropagation()}
           >
@@ -142,6 +150,8 @@ function ActionMenu<TRow>({
                     runRowAction(action, row, confirm, labels.cancel)
                   }
                   style={{
+                    minWidth: minTargetSize,
+                    minHeight: minTargetSize,
                     display: "flex",
                     gap: 8,
                     alignItems: "center",
@@ -164,6 +174,7 @@ function ActionMenu<TRow>({
 
 export function RowActionButtons<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   labels,
@@ -180,6 +191,7 @@ export function RowActionButtons<TRow>({
       layout === "menu" ? (
         <ActionMenu
           row={row}
+          minTargetSize={minTargetSize}
           actions={visible}
           confirm={confirm}
           labels={labels}
@@ -187,6 +199,7 @@ export function RowActionButtons<TRow>({
       ) : (
         <ActionStrip
           row={row}
+          minTargetSize={minTargetSize}
           actions={visible}
           confirm={confirm}
           cancelLabel={labels.cancel}

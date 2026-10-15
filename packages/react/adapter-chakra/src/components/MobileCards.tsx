@@ -48,6 +48,7 @@ import {
   OptionalRowReorderButtons,
   OptionalTreeToggle,
 } from "./featureSlots";
+import { MobileTarget } from "./mobileTarget";
 import { Checkbox } from "./primitives";
 import { RowActionButtons } from "./RowActionButtons";
 
@@ -263,132 +264,156 @@ function MobileCardBase<TRow>({
     id
   );
   const rowConflict = rowEditConflict(editing, id);
+  const fieldPadding = compact ? "0.375rem" : "0.5rem";
   return (
-    <Card.Root
-      ref={measureElement}
-      data-index={index}
-      // A windowed list has only a slice of its items in the DOM, so each
-      // one states where it sits and how many there are; a complete list
-      // needs neither, because assistive tech can simply count.
-      aria-posinset={setSize > rowCount ? windowStart + index + 1 : undefined}
-      aria-setsize={setSize > rowCount ? setSize : undefined}
-      data-adapttable-part={part ?? "card"}
-      data-stagger=""
-      data-selected={selected ? "" : undefined}
-      aria-label={ariaLabel}
-      data-dirty={rowIsDirty(editing, id) ? "" : undefined}
-      variant="outline"
-      role="listitem"
-      className={className}
-      {...rowClickProps(row, onRowClick, index)}
-      style={{
-        minHeight: "max-content",
-        ...treeCardStyle(treeEntry?.level ?? 0),
-        ...style,
-      }}
-    >
-      <Card.Body p={compact ? 3 : undefined}>
-        {treeEntry && (
-          <OptionalTreeToggle
-            entry={treeEntry}
-            labels={labels}
-            onToggle={onToggleTree ?? (() => undefined)}
-          />
-        )}
-        {onToggleSelect && (
-          <Checkbox
-            aria-label={labels.selectRow}
-            checked={selected}
-            onToggle={() => onToggleSelect(id)}
-            mb={2}
-          />
-        )}
-        {onToggleExpand && (
-          <Box mb={2}>
-            <OptionalExpandToggle
-              id={id}
-              expanded={Boolean(expanded)}
-              onToggle={onToggleExpand}
-              dir={dir}
-              expandLabel={labels.expandRow}
-              collapseLabel={labels.collapseRow}
+    <MobileTarget.Provider value={true}>
+      <Card.Root
+        ref={measureElement}
+        data-index={index}
+        // A windowed list has only a slice of its items in the DOM, so each
+        // one states where it sits and how many there are; a complete list
+        // needs neither, because assistive tech can simply count.
+        aria-posinset={setSize > rowCount ? windowStart + index + 1 : undefined}
+        aria-setsize={setSize > rowCount ? setSize : undefined}
+        data-adapttable-part={part ?? "card"}
+        data-stagger=""
+        data-selected={selected ? "" : undefined}
+        aria-label={ariaLabel}
+        data-dirty={rowIsDirty(editing, id) ? "" : undefined}
+        variant="outline"
+        role="listitem"
+        className={className}
+        {...rowClickProps(row, onRowClick, index)}
+        style={{
+          minHeight: "max-content",
+          ...treeCardStyle(treeEntry?.level ?? 0),
+          ...style,
+        }}
+      >
+        <Card.Body p={compact ? 3 : 4}>
+          {treeEntry && (
+            <OptionalTreeToggle
+              entry={treeEntry}
+              labels={labels}
+              onToggle={onToggleTree ?? (() => undefined)}
             />
-          </Box>
-        )}
-        {renderCard
-          ? renderCard(row, {
+          )}
+          {onToggleSelect && (
+            <Checkbox
+              aria-label={labels.selectRow}
+              checked={selected}
+              onToggle={() => onToggleSelect(id)}
+              mb={2}
+            />
+          )}
+          {onToggleExpand && (
+            <Box mb={2}>
+              <OptionalExpandToggle
+                id={id}
+                expanded={Boolean(expanded)}
+                onToggle={onToggleExpand}
+                dir={dir}
+                expandLabel={labels.expandRow}
+                collapseLabel={labels.collapseRow}
+              />
+            </Box>
+          )}
+          {renderCard ? (
+            renderCard(row, {
               index,
               fields,
               selected,
               expanded,
             })
-          : fields.map(({ column, label, value }) => (
-              <Box
-                key={column.key}
-                data-adapttable-part="card-row"
-                mb={compact ? 1 : 2}
-              >
-                {label && (
-                  <Text
-                    data-adapttable-part="card-label"
-                    fontSize="xs"
-                    {...subtleText}
-                    textTransform="uppercase"
-                  >
-                    {label}
-                  </Text>
-                )}
-                <Text
-                  as="div"
-                  fontSize="sm"
-                  data-adapttable-part="card-value"
-                  data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
+          ) : (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(min(100%, 7rem), 1fr))",
+                gap: compact ? "0.5rem" : "0.75rem",
+                minWidth: 0,
+              }}
+            >
+              {fields.map(({ column, label, value }) => (
+                <Box
+                  key={column.key}
+                  data-adapttable-part="card-row"
+                  style={{
+                    minWidth: 0,
+                    overflowWrap: "anywhere",
+                    gridColumn: label ? undefined : "1 / -1",
+                    background: label
+                      ? "var(--chakra-colors-bg-muted)"
+                      : undefined,
+                    borderRadius: "var(--chakra-radii-md)",
+                    padding: label ? fieldPadding : undefined,
+                  }}
                 >
-                  {value}
-                </Text>
-              </Box>
-            ))}
-        {rowReorder && (
-          <OptionalRowReorderButtons
-            reorder={rowReorder}
-            labels={labels}
-            localIndex={index}
-            row={row}
-            windowStart={windowStart}
-            rowCount={rowCount}
-          />
-        )}
-        {expanded && (
-          <Box data-adapttable-part="card-detail" pt={1}>
-            {renderDetail?.(row)}
-          </Box>
-        )}
-        {editing?.rowEditing && (
-          <OptionalRowEditActions
-            rowEditing={editing.rowEditing}
-            row={row}
-            rowId={id}
-            showBegin={rowEdit.showBegin}
-            icons={editing.rowEditIcons}
-            conflict={rowConflict}
-            labels={labels}
-          />
-        )}
-        {rowEdit.actions.length > 0 && (
-          <Box data-adapttable-part="card-actions">
-            <RowActionButtons
-              row={row}
-              actions={rowEdit.actions}
-              confirm={confirm}
+                  {label && (
+                    <Text
+                      data-adapttable-part="card-label"
+                      fontSize="xs"
+                      {...subtleText}
+                    >
+                      {label}
+                    </Text>
+                  )}
+                  <Text
+                    as="div"
+                    fontSize="sm"
+                    data-adapttable-part="card-value"
+                    data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
+                  >
+                    {value}
+                  </Text>
+                </Box>
+              ))}
+            </div>
+          )}
+          {rowReorder && (
+            <OptionalRowReorderButtons
+              reorder={rowReorder}
               labels={labels}
-              layout={rowActionsLayout}
-              render={renderRowActions}
-              accentColor={accentColor}
+              localIndex={index}
+              row={row}
+              windowStart={windowStart}
+              rowCount={rowCount}
             />
-          </Box>
-        )}
-      </Card.Body>
-    </Card.Root>
+          )}
+          {expanded && (
+            <Box data-adapttable-part="card-detail" pt={1}>
+              {renderDetail?.(row)}
+            </Box>
+          )}
+          {editing?.rowEditing && (
+            <OptionalRowEditActions
+              rowEditing={editing.rowEditing}
+              row={row}
+              rowId={id}
+              showBegin={rowEdit.showBegin}
+              icons={editing.rowEditIcons}
+              conflict={rowConflict}
+              labels={labels}
+            />
+          )}
+          {rowEdit.actions.length > 0 && (
+            <Box data-adapttable-part="card-actions">
+              <RowActionButtons
+                minTargetSize={44}
+                row={row}
+                actions={rowEdit.actions}
+                confirm={confirm}
+                labels={labels}
+                layout={rowActionsLayout}
+                render={renderRowActions}
+                accentColor={accentColor}
+              />
+            </Box>
+          )}
+        </Card.Body>
+      </Card.Root>
+    </MobileTarget.Provider>
   );
 }
 
@@ -614,7 +639,7 @@ export function MobileCards<TRow>({
             role="listitem"
             className={className}
           >
-            <Card.Body p={compact ? 3 : undefined}>
+            <Card.Body p={compact ? 3 : 4}>
               {columns.map((column) => {
                 const value = summary[column.key];
                 // Columns absent from the summary are skipped — a card has no

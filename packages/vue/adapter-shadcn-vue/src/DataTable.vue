@@ -20,6 +20,7 @@ import {
 import { ConfigProvider } from "reka-ui";
 import {
   computed,
+  h,
   onBeforeUnmount,
   onBeforeUpdate,
   shallowRef,
@@ -27,6 +28,7 @@ import {
 } from "vue";
 
 import { resolveShadcnClassNames } from "./classNames";
+import { shadcnSelectionCheckbox } from "./controls";
 import { provideShadcnPortalContainer } from "./lib/portal";
 import { ROW_ACTIONS_CONTROL, rowActionsControlKey } from "./rows/slot";
 import { shadcnSurfaceControls } from "./surfaceControls";
@@ -77,6 +79,23 @@ provideShadcnPortalContainer(() => fullscreen.value?.container);
 function controls(): TableChromeSlots<TRow> {
   return {
     ...shadcnTableControls<TRow>(),
+    SelectionCheckbox: (control) =>
+      shell.table.isMobile.value
+        ? h(
+            "label",
+            {
+              style: {
+                display: "inline-flex",
+                minWidth: "44px",
+                minHeight: "44px",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              },
+            },
+            [shadcnSelectionCheckbox(control)]
+          )
+        : shadcnSelectionCheckbox(control),
     RowActions: ({ controls }) => {
       if (!shell.slotFills.value.get(ROW_ACTIONS_CONTROL.id)?.length)
         throw new Error(
@@ -104,6 +123,7 @@ function controls(): TableChromeSlots<TRow> {
         group
       );
     },
+    card: slots.card,
     cell: slots.cell,
     header: slots.header,
     headerActions: slots.headerActions,

@@ -216,6 +216,24 @@ describe("Vue filter models", () => {
   });
 });
 describe("Vue editing lifecycle", () => {
+  it("does not offer undo for a rejected inline save", async () => {
+    const scope = effectScope();
+    const error = new Error("Save rejected");
+    const model = scope.run(() =>
+      useTableEditing<Row>({
+        rows,
+        columns,
+        rowKey: (row) => row.id,
+        editHistory: true,
+        onCellEdit: () => Promise.reject(error),
+      })
+    )!;
+    await expect(
+      model.bundle.value.onCellEdit?.(rows[0]!, "name", "Unsaved")
+    ).rejects.toBe(error);
+    expect(model.history.value.canUndo).toBe(false);
+    scope.stop();
+  });
   it("commits to the replaced host callback without changing the row", () => {
     const first = vi.fn();
     const second = vi.fn();

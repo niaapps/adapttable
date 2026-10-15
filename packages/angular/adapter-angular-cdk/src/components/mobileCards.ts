@@ -37,6 +37,7 @@ import { AdaptRowActions } from "./rowActionButtons";
     NgTemplateOutlet,
   ],
   templateUrl: "./mobileCards.html",
+  styleUrl: "./mobileCards.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
 })

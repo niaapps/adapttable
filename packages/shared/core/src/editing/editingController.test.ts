@@ -277,6 +277,70 @@ describe("createCellSaveStore", () => {
     expect(defaultSaveErrorMessage("")).toBe("Could not save");
     expect(defaultSaveErrorMessage(42)).toBe("Could not save");
   });
+
+  it("a successful synchronous save retires an older pending failure", async () => {
+    const onEditError = vi.fn();
+    const store = createCellSaveStore<Row>({ onEditError });
+    const base = {
+      rowId: "1",
+      columnKey: "name",
+      previous: ada,
+      attempted: "A",
+    };
+    let reject!: (error: Error) => void;
+    const pending = store.track({
+      ...base,
+      result: new Promise((_, fail) => {
+        reject = fail;
+      }),
+    });
+    await expect(
+      store.track({ ...base, attempted: "B", result: undefined })
+    ).resolves.toBe(true);
+    expect(cellSaveStatus(store.getSnapshot(), "1", "name")).toBeUndefined();
+    reject(new Error("Obsolete failure"));
+    await expect(pending).resolves.toBe(false);
+    expect(cellSaveFailure(store.getSnapshot(), "1", "name")).toBeUndefined();
+    expect(onEditError).not.toHaveBeenCalled();
+  });
+
+  it("a synchronous retry clears a previous save error", async () => {
+    const store = createCellSaveStore<Row>();
+    const base = {
+      rowId: "1",
+      columnKey: "name",
+      previous: ada,
+      attempted: "A",
+    };
+    await store.track({
+      ...base,
+      result: Promise.reject(new Error("Offline")),
+    });
+    expect(cellSaveStatus(store.getSnapshot(), "1", "name")).toBe("failed");
+    await store.track({ ...base, result: undefined });
+    expect(cellSaveStatus(store.getSnapshot(), "1", "name")).toBeUndefined();
+  });
+
+  it("keeps the save failure visible if the host's error formatter throws", async () => {
+    const store = createCellSaveStore<Row>({
+      formatError: () => {
+        throw new Error("Formatter error");
+      },
+    });
+    await expect(
+      store.track({
+        rowId: "1",
+        columnKey: "name",
+        previous: ada,
+        attempted: "A",
+        result: Promise.reject(new Error("Offline")),
+      })
+    ).resolves.toBe(false);
+    expect(cellSaveFailure(store.getSnapshot(), "1", "name")?.message).toBe(
+      "Offline"
+    );
+    expect(store.getSnapshot().saving.size).toBe(0);
+  });
 });
 
 describe("createEditValidationStore", () => {
@@ -343,6 +407,57 @@ describe("createEditValidationStore", () => {
     ).resolves.toEqual({ allowed: true });
   });
 
+  it("replaces row-validator field errors while preserving independent cell errors", async () => {
+    const store = createEditValidationStore<Row>({
+      validateRow: () => ({
+        start: "Before end",
+        end: "After start",
+        role: "Row role error",
+      }),
+    });
+    await store.check({ target, value: "x", row: ada });
+    await store.check({
+      target: { rowId: "1", columnKey: "role" },
+      value: "",
+      row: ada,
+      validateCell: () => "Role required",
+    });
+    store.configure({ validateRow: () => ({ end: "Still invalid" }) });
+    await store.check({ target, value: "x", row: ada });
+    expect(
+      validationErrorFor(store.getSnapshot(), "1", "start")
+    ).toBeUndefined();
+    expect(validationErrorFor(store.getSnapshot(), "1", "end")).toBe(
+      "Still invalid"
+    );
+    store.configure({ validateRow: () => undefined });
+    await store.check({ target, value: "x", row: ada });
+    expect(validationErrorFor(store.getSnapshot(), "1", "end")).toBeUndefined();
+    expect(validationErrorFor(store.getSnapshot(), "1", "role")).toBe(
+      "Role required"
+    );
+    store.clear("1", "role");
+    expect(rowHasValidationError(store.getSnapshot(), "1")).toBe(false);
+  });
+
+  it("clears row field messages without reviving them on a later check", async () => {
+    const store = createEditValidationStore<Row>({
+      validateRow: () => ({ name: "Row name error", role: "Row role error" }),
+    });
+    await store.check({ target, value: "x", row: ada });
+    store.clear("1", "name");
+    expect(
+      validationErrorFor(store.getSnapshot(), "1", "name")
+    ).toBeUndefined();
+    expect(validationErrorFor(store.getSnapshot(), "1", "role")).toBe(
+      "Row role error"
+    );
+    store.clearAll();
+    store.configure({});
+    await store.check({ target, value: "x", row: ada });
+    expect(store.getSnapshot().cellErrors.size).toBe(0);
+  });
+
   it("ignores a superseded check and clears what it marked", async () => {
     let resolveFirst!: (value: string | undefined) => void;
     const store = createEditValidationStore<Row>();
@@ -389,10 +504,86 @@ describe("createEditValidationStore", () => {
     store.clearAll();
     expect(store.getSnapshot().cellErrors.size).toBe(0);
   });
+
+  it("does not revive a cleared check when the same cell starts validating again", async () => {
+    const store = createEditValidationStore<Row>();
+    let finishFirst!: (message: string | undefined) => void;
+    let finishSecond!: (message: string | undefined) => void;
+    const first = store.check({
+      target,
+      value: "first",
+      row: ada,
+      validateCell: () =>
+        new Promise((resolve) => {
+          finishFirst = resolve;
+        }),
+    });
+    store.clearAll();
+    const second = store.check({
+      target,
+      value: "second",
+      row: ada,
+      validateCell: () =>
+        new Promise((resolve) => {
+          finishSecond = resolve;
+        }),
+    });
+    finishFirst("Obsolete error");
+    await expect(first).resolves.toEqual({ allowed: false });
+    expect(store.getSnapshot().cellErrors.size).toBe(0);
+    expect(store.getSnapshot().validating.size).toBe(1);
+    finishSecond(undefined);
+    await expect(second).resolves.toEqual({ allowed: true });
+    expect(store.getSnapshot().validating.size).toBe(0);
+  });
+
+  it("retires pending checks when validation is removed from a cell", async () => {
+    const store = createEditValidationStore<Row>();
+    let finish!: (message: string | undefined) => void;
+    const pending = store.check({
+      target,
+      value: "before",
+      row: ada,
+      validateCell: () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    });
+    await expect(
+      store.check({ target, value: "after", row: ada })
+    ).resolves.toEqual({ allowed: true });
+    expect(store.getSnapshot().validating.size).toBe(0);
+    finish("Obsolete error");
+    await expect(pending).resolves.toEqual({ allowed: false });
+    expect(store.getSnapshot().cellErrors.size).toBe(0);
+  });
 });
 
 describe("undo and redo", () => {
   const edit = { row: ada, columnKey: "name", value: "A" };
+
+  it.each([0, -1, 0.5, Number.NaN])(
+    "retains no gestures for a nonpositive whole depth: %s",
+    (depth) => {
+      const stack = createEditHistoryStack<Row>();
+      stack.record({ redo: [edit], undo: [] }, 2);
+      stack.undo();
+      stack.record({ redo: [edit], undo: [] }, depth);
+      expect(stack.getSnapshot()).toEqual({ past: 0, future: 0 });
+      expect(stack.undo()).toBeUndefined();
+      expect(stack.redo()).toBeUndefined();
+    }
+  );
+
+  it("captures gesture descriptors before a host reuses its batch", () => {
+    const edits = [{ ...edit }];
+    const entry = editHistoryEntry(edits, () => ({ value: "Ada" }));
+    edits[0]!.value = "Changed later";
+    edits[0]!.columnKey = "role";
+    edits.length = 0;
+    expect(entry.redo).toEqual([edit]);
+    expect(entry.undo).toEqual([{ ...edit, value: "Ada" }]);
+  });
 
   it("keeps at most the depth, drops redo on a new gesture, and clears", () => {
     const stack = createEditHistoryStack<Row>();

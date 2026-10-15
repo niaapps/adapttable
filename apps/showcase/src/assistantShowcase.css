@@ -160,7 +160,6 @@
 }
 .mx-assistant-layout [data-adapttable-part="assistant-receipt-detail-text"] {
   font-size: 12px;
-  opacity: 0.7;
 }
 .mx-assistant-layout [data-adapttable-part="assistant-message-trailing"] {
   display: inline-flex;
@@ -205,7 +204,7 @@
   border-radius: 999px;
   padding: 4px 8px;
   background: color-mix(in srgb, currentColor 6%, transparent);
-  color: var(--ink-3);
+  color: var(--ink-2);
 }
 .mx-native-assistant [data-adapttable-part="assistant-conversation"] {
   padding-block: 12px;

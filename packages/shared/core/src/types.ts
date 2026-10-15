@@ -1025,6 +1025,8 @@ export interface TableLabels {
   gridRangePasteFailed?: string;
   /** Announced after a fill: given the cell count, what was written. */
   gridRangeFilled?: (cells: number) => string;
+  /** Announced when the host rejects a fill. */
+  gridRangeFillFailed?: string;
   /** Accessible name of the fill handle on the selection's corner. */
   gridFillHandle?: string;
   /** Leads the selected-cell count in the statistics strip. */

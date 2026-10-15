@@ -90,6 +90,34 @@ it("does not revive an async cut after a disable and reconnect", async () => {
   await settle();
   expect(onCut).not.toHaveBeenCalled();
 });
+it.each(["paste", "cut"] as const)(
+  "retires a pending %s when the grid detaches and remounts",
+  async (gesture) => {
+    const pending = deferred<string>();
+    Object.assign(navigator, {
+      clipboard: {
+        readText: () => pending.promise,
+        writeText: () => pending.promise.then(() => undefined),
+      },
+    });
+    const onPaste = vi.fn();
+    const onCut = vi.fn();
+    const controller = createGridFocusController({ ...base, onPaste, onCut });
+    controller.attach(document.createElement("div"));
+    controller.selectRange(range);
+    if (gesture === "paste") controller.keyDown(key());
+    else controller.copyCells(undefined, true);
+    controller.attach(null);
+    controller.attach(document.createElement("div"));
+    const announcement = controller.getSnapshot().announcement;
+    pending.resolve("changed");
+    await settle();
+    await settle();
+    expect(onPaste).not.toHaveBeenCalled();
+    expect(onCut).not.toHaveBeenCalled();
+    expect(controller.getSnapshot().announcement).toBe(announcement);
+  }
+);
 it("drops an async cut when the original row object is replaced", async () => {
   const pending = deferred<void>();
   Object.assign(navigator, { clipboard: { writeText: () => pending.promise } });

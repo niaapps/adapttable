@@ -1010,6 +1010,7 @@ export type {
   EditCommitValidationOptions,
 } from "./editing/editCommitLifecycle";
 export type { RowValidator } from "./editing/editContracts";
+export { preserveEditorFocusOnLayoutChange } from "./editing/layoutFocus";
 export type { ChecklistWindow } from "./filters/checklistModel";
 export type { HighlightedCell } from "./rows/highlightStore";
 export type { RowPatchEvent } from "./rows/patch";

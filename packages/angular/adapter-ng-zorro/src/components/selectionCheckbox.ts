@@ -16,6 +16,15 @@ import { NzCheckboxComponent, NzCheckboxModule } from "ng-zorro-antd/checkbox";
   imports: [AdaptAttrs, NzCheckboxModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
+  styles: `
+    :host-context([data-adapttable-part="card"]) label {
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  `,
   template: `
     <label
       nz-checkbox

@@ -53,14 +53,13 @@ test("malformed reports and plain text stay unchanged", () => {
     assert.equal(canonicalLiteralUnions(value), value);
   }
 });
-test("the reported shadcn release failure differs only in literal union order", () => {
+test("the committed shadcn props compare identically when their literal union is reordered", () => {
   const committed = readFileSync(
     new URL("../etc/adapter-shadcn-vue-column-menu.api.md", import.meta.url),
     "utf8"
   );
-  const reordered = committed.replace(
-    /"classNames" \| "dir"|"dir" \| "classNames"/,
-    (members) => members.split(" | ").reverse().join(" | ")
+  const reordered = committed.replace(/"[\w-]+"(?: \| "[\w-]+")+/, (members) =>
+    members.split(" | ").reverse().join(" | ")
   );
   assert.notEqual(committed, reordered);
   assert.equal(

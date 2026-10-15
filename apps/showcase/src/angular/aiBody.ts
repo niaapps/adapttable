@@ -1,4 +1,4 @@
-/** A deterministic local agent over the real Angular table and the selected kit UI. */
+/** Scripted and connected conversations over the real Angular table. */
 import {
   type AgentContextInputs,
   type AgentSession,
@@ -15,11 +15,13 @@ import type {
 } from "@adapttable/angular/adapter";
 import { Component, computed, inject, signal } from "@angular/core";
 
+import type { ShowcaseBackendConnection } from "../aiBackendConnection";
 import {
   AGENT_FILTERS,
   AGENT_PEOPLE as INITIAL,
   type AgentPerson,
 } from "../aiPeople";
+import { AiBackendSettings } from "./aiBackendSettings";
 import { SHOWCASE_PRESENTATION } from "./data";
 import {
   AdaptShowcaseAction,
@@ -61,6 +63,7 @@ const SUGGESTIONS: readonly AssistantSuggestion[] = [
     AdaptShowcaseAssistant,
     AdaptShowcaseAction,
     AdaptShowcaseChoice,
+    AiBackendSettings,
   ],
   styleUrl: "./aiBody.css",
   templateUrl: "./aiBody.html",
@@ -86,6 +89,10 @@ export class AiBody {
   readonly session = signal<AgentSession | undefined>(undefined);
   readonly pending = signal<AgentApprovalPending | null>(null);
   readonly open = signal(false);
+  readonly connection = signal<ShowcaseBackendConnection | undefined>(
+    undefined
+  );
+  readonly settingsOpen = signal(false);
   readonly approvalSurface = signal<"widget" | "table" | "modal">("widget");
   readonly log = signal("No host writes yet");
   readonly direction = this.presentation.dir;
@@ -167,8 +174,8 @@ export class AiBody {
   readonly assistant = injectTableAssistant(
     computed(() => ({
       session: this.session(),
-      transport: this.transport,
-      transportKey: "angular-local-script",
+      transport: this.connection()?.transport ?? this.transport,
+      transportKey: this.connection()?.key ?? "angular-local-script",
       suggestions: SUGGESTIONS,
       open: this.open(),
       onOpenChange: (open: boolean) => this.open.set(open),
@@ -189,6 +196,7 @@ export class AiBody {
     dir: this.direction,
     labels: this.presentation.labels,
     greeting: "",
+    onSettings: () => this.settingsOpen.set(true),
   }));
 
   readonly features = [
@@ -254,6 +262,15 @@ export class AiBody {
     variant: "secondary",
     disabled: this.assistant().busy || !this.session(),
     onClick: () => this.send("Show everyone"),
+  }));
+
+  readonly backendSettings = computed((): TableAssistantButtonProps => ({
+    label: this.settingsOpen()
+      ? "Hide connection settings"
+      : "Connect a backend",
+    part: "demo-ai-settings",
+    variant: "secondary",
+    onClick: () => this.settingsOpen.update((open) => !open),
   }));
 
   readonly surfaceChoice = computed((): TableAssistantLanguageChipProps => ({

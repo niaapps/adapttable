@@ -8,6 +8,8 @@
  * batch knowing it exists, and there is never a second half-maintained
  * editing route to keep in step.
  */
+import { isThenable } from "../editing/storePlumbing";
+
 /**
  * One cell written — exactly what an inline commit writes.
  *
@@ -40,12 +42,29 @@ export interface CellEdit<TRow> {
  * @public
  */
 export function batchEditHandler<TRow>(
-  batch: ((edits: CellEdit<TRow>[]) => void) | undefined,
-  onCellEdit: ((row: TRow, key: string, nextValue: unknown) => void) | undefined
-): ((edits: CellEdit<TRow>[]) => void) | undefined {
+  batch: ((edits: CellEdit<TRow>[]) => unknown) | undefined,
+  onCellEdit:
+    ((row: TRow, key: string, nextValue: unknown) => unknown) | undefined
+): ((edits: CellEdit<TRow>[]) => unknown) | undefined {
   if (batch) return batch;
   if (!onCellEdit) return undefined;
   return (edits) => {
-    for (const edit of edits) onCellEdit(edit.row, edit.columnKey, edit.value);
+    const pending: Promise<unknown>[] = [];
+    try {
+      for (const edit of edits) {
+        const result: unknown = onCellEdit(
+          edit.row,
+          edit.columnKey,
+          edit.value
+        );
+        if (isThenable(result)) pending.push(Promise.resolve(result));
+      }
+    } catch (error) {
+      // Earlier cells may already be saving when a later callback throws.
+      // Observe their outcomes while preserving the synchronous failure.
+      void Promise.allSettled(pending);
+      throw error;
+    }
+    if (pending.length > 0) return Promise.all(pending).then(() => undefined);
   };
 }

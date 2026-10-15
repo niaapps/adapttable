@@ -12,6 +12,7 @@ import {
 } from "react";
 
 import { KitPortal } from "./kitPortal";
+import { useMobileTarget } from "./mobileTarget";
 
 /**
  * Checkbox wrapper recomposing Chakra v3's compound `Checkbox.*` into the v2
@@ -60,6 +61,7 @@ export function Checkbox({
 }>) {
   return (
     <ChakraCheckbox.Root
+      style={useMobileTarget()}
       id={id}
       value={value}
       size={size}

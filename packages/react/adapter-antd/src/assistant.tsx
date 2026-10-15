@@ -22,6 +22,7 @@ import {
   Input,
   Select,
   Tag,
+  theme,
   Tooltip,
   Typography,
 } from "antd";
@@ -54,6 +55,7 @@ function AssistantButton({
   tooltip,
   variant = "secondary",
 }: Readonly<TableAssistantButtonProps>) {
+  const { token } = theme.useToken();
   const launcher = part === "assistant-launcher";
   if (iconOnly) {
     const control = (
@@ -80,6 +82,11 @@ function AssistantButton({
       htmlType="button"
       size="small"
       type={KIT_VARIANT[variant]}
+      style={
+        variant === "primary" && !disabled
+          ? { backgroundColor: token.colorPrimaryActive }
+          : undefined
+      }
       aria-label={label}
       aria-expanded={expanded}
       data-adapttable-part={part}
@@ -126,9 +133,11 @@ function AssistantBadge({
   className,
   tone,
 }: Readonly<TableAssistantBadgeProps>) {
+  const { token } = theme.useToken();
   return (
     <Tag
       color={TAG_COLOR[tone]}
+      style={tone === "warning" ? { color: token.colorText } : undefined}
       data-adapttable-part={part}
       data-tone={tone}
       className={className}

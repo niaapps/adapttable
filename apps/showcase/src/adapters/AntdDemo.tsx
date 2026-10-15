@@ -139,7 +139,7 @@ const ANTD_CELLS: DemoCells = {
       size={36}
       style={{
         backgroundColor: `hsl(${nameHue(name)} 60% 88%)`,
-        color: `hsl(${nameHue(name)} 45% 35%)`,
+        color: `hsl(${nameHue(name)} 45% 25%)`,
         fontWeight: 700,
       }}
     >
@@ -151,12 +151,15 @@ const ANTD_CELLS: DemoCells = {
       {label}
     </Tag>
   ),
-  Load: ({ value, meta }: LoadCellProps) => (
+  Load: ({ value, meta, label }: LoadCellProps) => (
     <div style={{ minWidth: 90 }}>
-      <Progress percent={value} showInfo={false} size="small" />
-      <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-        {meta}
-      </Typography.Text>
+      <Progress
+        aria-label={label}
+        percent={value}
+        showInfo={false}
+        size="small"
+      />
+      <Typography.Text style={{ fontSize: 12 }}>{meta}</Typography.Text>
     </div>
   ),
 };

@@ -15,6 +15,7 @@ import {
   REORDER_COLUMN_KEY,
   resolveUrlAdapter,
   type RowAction,
+  stableKey,
   type TableDensity,
   type TableSource,
   withRowPinActions,
@@ -87,6 +88,10 @@ import {
   renderFeatureSlot,
 } from "./features/tableFeature";
 import { createFeatureState, provideFeatureState } from "./featureState";
+import {
+  filterTreeSnapshot,
+  sameFilterTree,
+} from "./filters/filterTreeSnapshot";
 import {
   groupingModelKey,
   rowDetailModelKey,
@@ -168,6 +173,8 @@ export interface UseDataTableShellOptions<TRow>
       "data" | keyof UseDataTableOptions<TRow>
     > {
   readonly source?: MaybeRefOrGetterOptional<TableSource<TRow>>;
+  /** Bound the rendered scroll body; CSS lengths are measured after mount. */
+  readonly maxHeight?: number | string;
   readonly data?: MaybeRefOrGetter<readonly TRow[]>;
   readonly features?: MaybeRefOrGetterOptional<
     readonly ComposedFeature<NoInfer<TRow>>[]
@@ -187,8 +194,8 @@ export interface UseDataTableShellOptions<TRow>
   readonly selectedIds?: MaybeRefOrGetterOptional<readonly string[]>;
   readonly defaultSelectedIds?: readonly string[];
   readonly onSelectionChange?: (ids: string[]) => void;
-  readonly onCellPaste?: (edits: CellEdit<TRow>[]) => void;
-  readonly onCellFill?: (edits: CellEdit<TRow>[]) => void;
+  readonly onCellPaste?: (edits: CellEdit<TRow>[]) => unknown;
+  readonly onCellFill?: (edits: CellEdit<TRow>[]) => unknown;
   readonly onCellCut?: (range: CellRange) => void;
   readonly runtimeChannels?: MaybeRefOrGetter<
     Pick<
@@ -225,8 +232,8 @@ export interface ResolvedTableOptions<TRow>
   readonly statusBar?: boolean;
   readonly onCellRangeChange?: (range: CellRange | null) => void;
   readonly onCellCut?: (range: CellRange) => void;
-  readonly onCellPaste?: (edits: CellEdit<TRow>[]) => void;
-  readonly onCellFill?: (edits: CellEdit<TRow>[]) => void;
+  readonly onCellPaste?: (edits: CellEdit<TRow>[]) => unknown;
+  readonly onCellFill?: (edits: CellEdit<TRow>[]) => unknown;
   readonly rowActions?: readonly RowAction<TRow>[];
   readonly bulkActions?: readonly BulkAction[];
   readonly [key: string]: unknown;
@@ -389,6 +396,39 @@ export function useDataTableShell<TRow>(
     source: viewSource,
     selection: selection.value,
   }));
+  watch(
+    () => {
+      const current = source.value;
+      return {
+        key: stableKey([current.search, current.extra, current.groupBy]),
+        tree: current.filterTree,
+        snapshot: current.filterTree
+          ? filterTreeSnapshot(current.filterTree)
+          : undefined,
+        selectedIds: toValue(resolved.value.selectedIds),
+      };
+    },
+    (current, previous) => {
+      const sameTree = current.tree
+        ? sameFilterTree(current.tree, previous.snapshot)
+        : previous.snapshot === undefined;
+      if (current.key === previous.key && sameTree) return;
+      // An explicit host selection arriving with a restored query owns that
+      // scope. Ordinary query edits keep the same controlled value until reset.
+      if (
+        current.selectedIds !== undefined &&
+        current.selectedIds !== previous.selectedIds
+      )
+        return;
+      // Query changes start a new selection scope; page and sort changes do not.
+      if (
+        selectionState.selectedCount.value > 0 ||
+        selectionState.allMatching.value
+      )
+        selectionState.clear();
+    },
+    { flush: "post" }
+  );
   const editHistory = state.get(editHistoryModelKey<TRow>());
   const gridFocus = state.get(GRID_FOCUS_MODEL);
   const find = state.get(FIND_MODEL);

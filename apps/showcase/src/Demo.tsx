@@ -78,6 +78,7 @@ import {
   TEAMS,
   utilization,
 } from "./data";
+import { initialDemoLocale } from "./demoPresentation";
 import { fetchPeople, type PeoplePage, type PeopleParams } from "./mockApi";
 import { usePatchSink } from "./patchSink";
 import { summaryPerson } from "./people";
@@ -476,7 +477,7 @@ function columnChanges(
 ): Partial<Person> {
   const changes: Partial<Person> = {};
   for (const [key, value] of Object.entries(patch)) {
-    const field = EDIT_FIELD[key] ?? (key as keyof Person);
+    const field = editField(key);
     (changes as Record<string, unknown>)[field] = value;
   }
   return changes;
@@ -506,6 +507,12 @@ const EDIT_FIELD: Record<string, keyof Person> = {
   // The timeline cell shows a range; its editor edits the start it sorts by.
   timeline: "start",
 };
+
+/** Writes target the same localized name field the visible editor reads. */
+function editField(columnKey: string): keyof Person {
+  if (columnKey === "person" && initialDemoLocale() === "ar") return "nameAr";
+  return EDIT_FIELD[columnKey] ?? (columnKey as keyof Person);
+}
 
 /**
  * A patch records the row field that moved; the table asks about the
@@ -542,12 +549,14 @@ function incomingToken(): string {
  * actually replaces the draft instead of writing the same string back.
  */
 function incomingEditValue(row: Person, columnKey: string): unknown {
-  const field = EDIT_FIELD[columnKey] ?? (columnKey as keyof Person);
+  const field = editField(columnKey);
   switch (field) {
     case "email":
       return `incoming.${incomingToken()}@example.com`;
     case "name":
       return `Incoming ${row.name}`;
+    case "nameAr":
+      return `تحديث ${row.nameAr}`;
     case "team":
       return pickOther(TEAMS, row.team);
     case "status":
@@ -998,7 +1007,7 @@ function Frontend({
   const flash = useHighlight(highlight === true || realtime === true);
   const onCellEdit = useCallback(
     (row: Person, key: string, nextValue: unknown) => {
-      const field = EDIT_FIELD[key] ?? (key as keyof Person);
+      const field = editField(key);
       writePatches([updateRow(row.id, { [field]: nextValue as never })]);
       flash.flashRow(row.id);
     },
@@ -1099,7 +1108,7 @@ function Frontend({
       revision: (row.revision ?? 0) + 1,
     };
     for (const columnKey of incomingColumns(touched)) {
-      const field = EDIT_FIELD[columnKey] ?? (columnKey as keyof Person);
+      const field = editField(columnKey);
       changes[field] = incomingEditValue(row, columnKey);
     }
     writePatches([updateRow(rowId, changes as Partial<Person>)]);

@@ -425,6 +425,7 @@ export const tr: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} hücre yapıştırıldı`,
   gridRangePasteFailed: "Yapıştırma başarısız",
   gridRangeFilled: (cells) => `${cells} hücre dolduruldu`,
+  gridRangeFillFailed: "Doldurma başarısız",
   gridFillHandle: "Seçimden doldur",
   selectionCount: "Sayı",
   selectionSum: "Toplam",

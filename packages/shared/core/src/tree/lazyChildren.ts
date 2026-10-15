@@ -98,6 +98,7 @@ export function createLazyChildrenController<TRow>(
   // after one that returned nothing — does not ask again.
   const asked = new Set<string>();
   let alive = true;
+  let generation = 0;
   const listeners = new Set<() => void>();
 
   const commit = (next: LazyChildrenSnapshot): void => {
@@ -112,8 +113,13 @@ export function createLazyChildrenController<TRow>(
     return next;
   };
 
-  const settle = (row: TRow, id: string, failed: boolean): void => {
-    if (!alive) return;
+  const settle = (
+    row: TRow,
+    id: string,
+    failed: boolean,
+    owner: number
+  ): void => {
+    if (!alive || owner !== generation) return;
     if (!failed) {
       commit({ ...snapshot, loadingIds: without(snapshot.loadingIds, id) });
       return;
@@ -128,7 +134,8 @@ export function createLazyChildrenController<TRow>(
 
   const loadIfNeeded = (row: TRow): void => {
     const { onLoadChildren, hasLoadedChildren, getRowId } = options;
-    if (!onLoadChildren) return;
+    if (!alive || !onLoadChildren) return;
+    const owner = generation;
     const id = getRowId(row);
     if (hasLoadedChildren(row) || asked.has(id)) return;
     asked.add(id);
@@ -143,14 +150,14 @@ export function createLazyChildrenController<TRow>(
     try {
       void Promise.resolve(onLoadChildren(row)).then(
         () => {
-          settle(row, id, false);
+          settle(row, id, false, owner);
         },
         () => {
-          settle(row, id, true);
+          settle(row, id, true, owner);
         }
       );
     } catch {
-      settle(row, id, true);
+      settle(row, id, true, owner);
     }
   };
 
@@ -166,9 +173,18 @@ export function createLazyChildrenController<TRow>(
       options = next;
     },
     connect: () => {
+      if (!alive && snapshot.loadingIds.size > 0) {
+        // Abandoned loads cannot settle in this lifetime. Let a reopened
+        // node retry instead of keeping a spinner and its fetch-once marker.
+        for (const id of snapshot.loadingIds) asked.delete(id);
+        commit({ ...snapshot, loadingIds: EMPTY });
+      }
       alive = true;
+      const owner = generation;
       return () => {
+        if (owner !== generation) return;
         alive = false;
+        generation += 1;
       };
     },
     loadIfNeeded,

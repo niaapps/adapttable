@@ -17,7 +17,7 @@ import { Check, Monitor, Phone } from "./sectionIcons";
  * A bounded list demonstrates the table's own keyboard-scrollable body.
  */
 export function MobileDemo({ dark, adapter }: Readonly<FeatureBodyProps>) {
-  const [phone, setPhone] = useState(true);
+  const [phone, setPhone] = useState<boolean | undefined>(true);
   const [pageMode, setPageMode] = useState<PageMode>("infinite");
   const [customCard, setCustomCard] = useState(false);
   const [bounded, setBounded] = useState(false);
@@ -28,6 +28,14 @@ export function MobileDemo({ dark, adapter }: Readonly<FeatureBodyProps>) {
         <div className="seg" role="group" aria-label="Layout">
           <button
             type="button"
+            className={`seg__btn${phone === undefined ? " is-on" : ""}`}
+            aria-pressed={phone === undefined}
+            onClick={() => setPhone(undefined)}
+          >
+            Automatic
+          </button>
+          <button
+            type="button"
             className={`seg__btn${phone ? " is-on" : ""}`}
             aria-pressed={phone}
             onClick={() => setPhone(true)}
@@ -36,11 +44,11 @@ export function MobileDemo({ dark, adapter }: Readonly<FeatureBodyProps>) {
           </button>
           <button
             type="button"
-            className={`seg__btn${phone ? "" : " is-on"}`}
-            aria-pressed={!phone}
+            className={`seg__btn${phone === false ? " is-on" : ""}`}
+            aria-pressed={phone === false}
             onClick={() => setPhone(false)}
           >
-            <Monitor size={12} /> Desktop table
+            <Monitor size={12} /> Scrollable table
           </button>
         </div>
         <div className="seg" role="group" aria-label="Pagination">
@@ -97,6 +105,7 @@ export function MobileDemo({ dark, adapter }: Readonly<FeatureBodyProps>) {
             <Suspense fallback={<DemoFallback />}>
               <DemoScenarioProvider value="mobile">
                 <Demo
+                  focused
                   mode="frontend"
                   locale={initialDemoLocale()}
                   dark={dark}
@@ -105,7 +114,10 @@ export function MobileDemo({ dark, adapter }: Readonly<FeatureBodyProps>) {
                   maxHeight={bounded ? 240 : undefined}
                   pageMode={pageMode}
                   customCard={customCard}
-                  focused
+                  rowMode
+                  editing
+                  columnMenu={false}
+                  filterControls={false}
                 />
               </DemoScenarioProvider>
             </Suspense>

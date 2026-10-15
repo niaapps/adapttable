@@ -27,7 +27,7 @@ import {
   type StreamSocket,
 } from "@adapttable/core";
 import type { RowPatchStreamState } from "@adapttable/core/binding";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 export type { RowPatchStreamState } from "@adapttable/core/binding";
 
 /**
@@ -100,10 +100,17 @@ export function useRowPatchStream<TRow>(
     websocket,
     eventSource,
     event,
-    protocols,
+    protocols: suppliedProtocols,
     enabled = true,
     reconnect,
   } = options;
+  // Hosts commonly supply this list inline. A status update must not close
+  // the socket merely because the next render allocates an equivalent list.
+  const protocolsKey = JSON.stringify(suppliedProtocols ?? null);
+  const protocols = useMemo(
+    () => (JSON.parse(protocolsKey) as string | string[] | null) ?? undefined,
+    [protocolsKey]
+  );
   const hasWebSocketFactory = options.createWebSocket !== undefined;
   const hasEventSourceFactory = options.createEventSource !== undefined;
   const delayMs = reconnect?.delayMs;

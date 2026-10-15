@@ -149,9 +149,16 @@ const TAILWIND_CELLS: DemoCells = {
       {label}
     </span>
   ),
-  Load: ({ value, meta }: LoadCellProps) => (
+  Load: ({ value, meta, label }: LoadCellProps) => (
     <div className="min-w-[90px]">
-      <div className="h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700">
+      <div
+        role="progressbar"
+        aria-label={label}
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        className="h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700"
+      >
         <div
           className="h-full rounded-full bg-blue-500"
           style={{ width: `${value}%` }}

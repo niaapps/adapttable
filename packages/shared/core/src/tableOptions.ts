@@ -187,7 +187,7 @@ export interface TableOptions<TRow, TNode = unknown> {
    * Cells landing outside the loaded rows or the rendered columns are dropped
    * rather than invented, and a column that is not `editable` is skipped.
    */
-  onCellPaste?: (edits: CellEdit<TRow>[]) => void;
+  onCellPaste?: (edits: CellEdit<TRow>[]) => unknown;
   /**
    * Fill — the handle dragged from the selection's corner, or Ctrl/Cmd+D.
    * Requires `cellNavigation`.
@@ -195,7 +195,7 @@ export interface TableOptions<TRow, TNode = unknown> {
    * Same contract as `onCellPaste`: omit it and every edit goes through the
    * composed `editing()` handler. Provide it to take the batch whole.
    */
-  onCellFill?: (edits: CellEdit<TRow>[]) => void;
+  onCellFill?: (edits: CellEdit<TRow>[]) => unknown;
   /**
    * Mark cells a patch just changed — `data-flash` on the cell and on the
    * matching card value. Pair with the binding's changed-cell flash —

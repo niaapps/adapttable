@@ -25,6 +25,13 @@ import {
   imports: [AdaptIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
+  styles: `
+    :host-context([data-adapttable-part="card"]) button {
+      min-width: 44px;
+      min-height: 44px;
+      flex-shrink: 0;
+    }
+  `,
   template: `
     @let p = props();
     <button

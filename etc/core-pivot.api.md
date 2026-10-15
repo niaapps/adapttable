@@ -495,6 +495,7 @@ export interface TableLabels {
     gridRangeCopied?: (cells: number) => string;
     gridRangeCopyFailed?: string;
     gridRangeFilled?: (cells: number) => string;
+    gridRangeFillFailed?: string;
     gridRangePasted?: (cells: number) => string;
     gridRangePasteFailed?: string;
     gridRangeSelection?: (range: {

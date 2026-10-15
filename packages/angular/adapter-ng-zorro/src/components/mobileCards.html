@@ -108,41 +108,47 @@
                 [ngComponentOutletInputs]="card.content.inputs"
               />
             } @else {
-              @for (field of card.context.fields; track field.column.key) {
-                <nz-descriptions
-                  nzSize="small"
-                  [nzColumn]="1"
-                  [nzColon]="false"
-                  data-adapttable-part="card-row"
-                  [class]="classes.cardRow"
-                >
-                  <ng-template #fieldLabel>
-                    @if (field.label; as label) {
+              <div class="adapt-card-fields">
+                @for (field of card.context.fields; track field.column.key) {
+                  <nz-descriptions
+                    nzSize="small"
+                    nzLayout="vertical"
+                    [nzColumn]="1"
+                    [nzColon]="false"
+                    data-adapttable-part="card-row"
+                    [style.grid-column]="field.label ? null : '1 / -1'"
+                    [attr.data-card-identity]="field.label ? null : ''"
+                    [class]="classes.cardRow"
+                  >
+                    <ng-template #fieldLabel>
+                      @if (field.label; as label) {
+                        <span
+                          data-adapttable-part="card-label"
+                          [class]="classes.cardLabel"
+                          >{{ label }}</span
+                        >
+                      }
+                    </ng-template>
+                    <nz-descriptions-item [nzTitle]="fieldLabel">
                       <span
-                        data-adapttable-part="card-label"
-                        [class]="classes.cardLabel"
-                        >{{ label }}</span
+                        data-adapttable-part="card-value"
+                        [class]="classes.cardValue"
+                        [attr.data-flash]="
+                          !summary &&
+                          v.isCellFlashing(entry.id, field.column.key)
+                            ? ''
+                            : null
+                        "
                       >
-                    }
-                  </ng-template>
-                  <nz-descriptions-item [nzTitle]="fieldLabel">
-                    <span
-                      data-adapttable-part="card-value"
-                      [class]="classes.cardValue"
-                      [attr.data-flash]="
-                        !summary && v.isCellFlashing(entry.id, field.column.key)
-                          ? ''
-                          : null
-                      "
-                    >
-                      <ng-container
-                        [ngTemplateOutlet]="field.value"
-                        [ngTemplateOutletContext]="field.context"
-                      />
-                    </span>
-                  </nz-descriptions-item>
-                </nz-descriptions>
-              }
+                        <ng-container
+                          [ngTemplateOutlet]="field.value"
+                          [ngTemplateOutletContext]="field.context"
+                        />
+                      </span>
+                    </nz-descriptions-item>
+                  </nz-descriptions>
+                }
+              </div>
             }
             @if (!summary && v.reorder; as reorder) {
               <ng-container
@@ -168,6 +174,7 @@
                 }
                 @if (actionsCell.actions.length > 0) {
                   <adapt-row-actions
+                    [minTargetSize]="44"
                     [row]="entry.row"
                     [actions]="actionsCell.actions"
                     [confirm]="v.confirm"

@@ -31,6 +31,7 @@ import {
 } from "@adapttable/angular/pivot";
 import { applyRowPatches, applyRowReorder, updateRow } from "@adapttable/core";
 import { xlsxWriter } from "@adapttable/core/xlsx";
+import { NgTemplateOutlet } from "@angular/common";
 import {
   afterNextRender,
   Component,
@@ -649,20 +650,106 @@ class ScaleBody {
 /** Mobile cards: the same table, every row a card, in a phone-width frame. */
 @Component({
   selector: "adapt-showcase-mobile-cards",
-  imports: [AdaptShowcaseTable],
+  imports: [AdaptShowcaseTable, NgTemplateOutlet],
   template: `
     <div class="mx-demo">
-      <div class="mx-demo__body mx-phone">
+      <div class="hint-row" role="group" aria-label="Layout">
+        <button
+          type="button"
+          class="seg__btn"
+          [attr.aria-pressed]="mobile() === undefined"
+          (click)="mobile.set(undefined)"
+        >
+          Automatic
+        </button>
+        <button
+          type="button"
+          class="seg__btn"
+          [attr.aria-pressed]="mobile() === true"
+          (click)="mobile.set(true)"
+        >
+          Phone cards
+        </button>
+        <button
+          type="button"
+          class="seg__btn"
+          [attr.aria-pressed]="mobile() === false"
+          (click)="mobile.set(false)"
+        >
+          Scrollable table
+        </button>
+      </div>
+      <div class="hint-row" role="group" aria-label="Card options">
+        <button
+          type="button"
+          class="seg__btn"
+          [attr.aria-pressed]="customCard()"
+          (click)="customCard.set(!customCard())"
+        >
+          Custom card
+        </button>
+        <button
+          type="button"
+          class="seg__btn"
+          [attr.aria-pressed]="bounded()"
+          (click)="bounded.set(!bounded())"
+        >
+          Bounded scrolling
+        </button>
+        <button
+          type="button"
+          class="seg__btn"
+          [attr.aria-pressed]="paged()"
+          (click)="paged.set(!paged())"
+        >
+          {{ paged() ? "Paged" : "Infinite scroll" }}
+        </button>
+        @for (state of scenarios; track state) {
+          <button
+            type="button"
+            class="seg__btn"
+            [attr.aria-pressed]="scenario() === state"
+            (click)="scenario.set(state)"
+          >
+            {{ state }}
+          </button>
+        }
+      </div>
+      <ng-template #cardBody let-fields="fields">
+        <div class="mx-custom-card" data-demo-custom-card>
+          @for (field of fields; track field.column.key) {
+            <div [class.mx-custom-card__identity]="!field.label">
+              @if (field.label) {
+                <span class="mx-custom-card__label">{{ field.label }}</span>
+              }
+              <ng-container
+                [ngTemplateOutlet]="field.value"
+                [ngTemplateOutletContext]="field.context"
+              />
+            </div>
+          }
+        </div>
+      </ng-template>
+      <div class="mx-demo__body" [class.mx-phone]="mobile() === true">
         <adapt-showcase-table
           [dir]="presentation.dir"
           [labels]="presentation.labels"
           [attr.lang]="presentation.locale"
           tableLabel="People"
+          mode="frontend"
           [urlSync]="false"
-          [forceMobile]="true"
+          [forceMobile]="mobile()"
           [selectable]="true"
+          [features]="features"
           [onRowClick]="activateRow"
-          [data]="rows"
+          [data]="
+            scenario() === 'empty' || scenario() === 'loading' ? [] : rows()
+          "
+          [renderCard]="customCard() ? cardBody : undefined"
+          [maxHeight]="bounded() ? 360 : undefined"
+          [paginationMode]="paged() ? 'paged' : 'infinite'"
+          [loading]="scenario() === 'loading'"
+          [error]="scenario() === 'error' ? demoError : null"
           [columns]="columns"
           [rowKey]="rowKey"
           [defaults]="{ limit: 8 }"
@@ -673,13 +760,47 @@ class ScaleBody {
   `,
 })
 class MobileCardsBody {
+  readonly mobile = signal<boolean | undefined>(true);
   readonly presentation = SHOWCASE_PRESENTATION;
   readonly log = signal("Activate a person to see the host callback.");
   readonly activateRow = (row: Person): void =>
     this.log.set(`Activated ${row.name}`);
-  readonly rows = PEOPLE;
-  readonly columns = COLUMNS;
+  readonly rows = signal<readonly Person[]>(peopleRows());
+  readonly customCard = signal(false);
+  readonly bounded = signal(false);
+  readonly paged = signal(true);
+  readonly scenarios = ["ready", "empty", "loading", "error"];
+  readonly scenario = signal("ready");
+  readonly demoError = new Error(
+    "The directory could not be loaded. Try again."
+  );
+  private readonly kit = inject(SHOWCASE_KIT);
+  readonly columns = peopleColumns({ editable: true }).map((column) => {
+    if (column.key === "person")
+      return { ...column, cell: this.kit.personCell };
+    if (column.key === "load") return { ...column, cell: this.kit.loadCell };
+    return column;
+  });
   readonly rowKey = rowKey;
+  readonly features = [
+    this.kit.rowEditing<Person>((row, patch) => {
+      this.rows.update((rows) =>
+        Object.entries(patch).reduce(
+          (next, [key, value]) => applyPersonEdit(next, row, key, value),
+          rows
+        )
+      );
+      this.log.set(`Saved ${row.name}`);
+    }),
+    this.kit.filters(FILTER_DEFS),
+    this.kit.nestedTable<Person>((row) => ({
+      label: `Orders for ${row.name}`,
+      table: OrdersTable,
+    })),
+    this.kit.rowActions<Person>([
+      { key: "profile", label: "View profile", onClick: this.activateRow },
+    ]),
+  ];
 }
 
 /** Saved views: name the table's state and pick it again from the menu. */

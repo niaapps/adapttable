@@ -429,6 +429,7 @@ export const defaultLabels: Required<TableLabels> = {
   gridRangePasteFailed: "Paste failed",
   gridRangeFilled: (cells) =>
     `${cells} ${cells === 1 ? "cell" : "cells"} filled`,
+  gridRangeFillFailed: "Fill failed",
   gridFillHandle: "Fill from selection",
   selectionCount: "Count",
   selectionSum: "Sum",

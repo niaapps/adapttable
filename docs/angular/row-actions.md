@@ -85,7 +85,7 @@ default. To request a dialog for another action, set its `confirm` with
 
 Pass a `ConfirmHandler` through `[confirm]` to use an application dialog.
 It receives the message and an `onConfirm()` callback; call that callback
-only after acceptance. Both Angular shells default to browser confirmation
+only after acceptance. The Angular shells default to browser confirmation
 when no handler is supplied. A dialogless environment cannot implicitly
 approve the action.
 

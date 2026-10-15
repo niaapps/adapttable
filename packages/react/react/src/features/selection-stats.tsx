@@ -1,8 +1,8 @@
 /**
  * Selection aggregates — `@adapttable/<kit>/status-bar` / `selectionStats()`.
  *
- * The figures import the export writer. Computing them in the shell gate
- * pulled that writer into every table. The compute mounts in-tree through
+ * The figures share export value resolution. Computing them mounts only
+ * when requested, in-tree through
  * {@link SELECTION_STATS_LIVE}.
  */
 import { selectionStats as compute } from "@adapttable/core";

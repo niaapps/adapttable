@@ -74,6 +74,7 @@ import { createPortal } from "react-dom";
 
 import { FiltersIcon, iconForRowEditPart } from "../icons";
 import { AutoFilterForm } from "./AutoFilterForm";
+import { useMobileTarget } from "./mobileTarget";
 
 export type {
   AgentApprovalProps,
@@ -440,9 +441,11 @@ function RowEditButton({
   className,
   onClick,
 }: Readonly<RowEditButtonProps>) {
+  const targetStyle = useMobileTarget();
   const glyph = iconForRowEditPart(part, icon);
   return (
     <Button
+      style={targetStyle}
       type="text"
       size="small"
       data-adapttable-part={part}
@@ -561,8 +564,10 @@ function TreeButton({
   className,
   onClick,
 }: Readonly<TreeToggleButtonProps>) {
+  const targetStyle = useMobileTarget();
   return (
     <Button
+      style={targetStyle}
       type="text"
       size="small"
       data-adapttable-part="tree-toggle"

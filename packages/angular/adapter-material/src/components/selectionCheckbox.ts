@@ -17,6 +17,11 @@ import { MatCheckbox, MatCheckboxModule } from "@angular/material/checkbox";
   imports: [AdaptAttrs, MatCheckboxModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
+  styles: `
+    :host-context([data-adapttable-part="card"]) mat-checkbox {
+      --mat-checkbox-state-layer-size: 44px;
+    }
+  `,
   template: `
     <mat-checkbox
       [checked]="attrs().checked === true"

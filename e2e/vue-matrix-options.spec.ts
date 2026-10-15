@@ -420,7 +420,11 @@ for (const kit of builtAdapters("vue")) {
         const firstId = await rows.first().getAttribute("data-row-id");
         const scroll = part(page, "scroll-box");
         await scroll.evaluate((element) => {
-          element.scrollTop = 2000;
+          const card = element.querySelector('[data-adapttable-part="card"]');
+          element.scrollTop = Math.max(
+            2000,
+            (card?.getBoundingClientRect().height ?? 0) * 10
+          );
         });
         await expect(rows.first()).not.toHaveAttribute("data-row-id", firstId!);
         expect(await rows.count()).toBeLessThan(50);
@@ -628,6 +632,7 @@ for (const kit of builtAdapters("vue")) {
     }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(route("mobile-cards"));
+      await page.getByRole("button", { name: "Paged", exact: true }).click();
       const cards = part(page, "card");
       await expect(cards).toHaveCount(8);
       await toggle(cards.first().getByRole("checkbox"));

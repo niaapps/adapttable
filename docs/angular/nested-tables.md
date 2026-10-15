@@ -76,8 +76,8 @@ export class PeopleWithOrders {
 ```
 
 For NG-ZORRO, both table components use `@adapttable/ng-zorro`, with the
-feature from its `/nested-table` entry. Both kits currently require
-[workspace setup](./getting-started.md).
+feature from its `/nested-table` entry. Install the published kit using
+[the setup guide](./getting-started.md).
 
 ## What the defaults mean
 

@@ -211,7 +211,8 @@ pnpm add @adapttable/vue-unstyled vue@^3.5.0
 It installs the matching binding and core automatically. The
 [Vue getting-started guide](https://adapttable.orwamahmoud.com/vue/getting-started/)
 includes a first table and installation commands for all eight kits. The CLI
-currently scaffolds React and Angular; Vue setup is manual.
+also scaffolds plain Vue/Vite applications with `npx @adapttable/cli init`,
+detecting the installed kit or accepting an explicit `--kit` choice.
 
 **Try it first, no install:** [open a live starter in StackBlitz](https://stackblitz.com/github/orwa-mahmoud/adapttable/tree/main/starters/mantine) (Mantine) — or [any other kit](https://adapttable.orwamahmoud.com/react/getting-started/#try-it-in-stackblitz).
 

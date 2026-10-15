@@ -26,6 +26,7 @@
  */
 import type { ColumnMetadata } from "../columnModel";
 import { columnText } from "../columns/columnText";
+import { isThenable } from "../editing/storePlumbing";
 import { defaultLabels } from "../labels";
 import type { Direction, TableLabels } from "../types";
 import type { CellEdit } from "./cellEdits";
@@ -164,14 +165,14 @@ export interface GridFocusControllerOptions<TRow> {
    * without paste knowing. Applying them stays the host's job — the table never
    * writes to data it does not own.
    */
-  onPaste?: (edits: CellEdit<TRow>[]) => void;
+  onPaste?: (edits: CellEdit<TRow>[]) => unknown;
   /**
    * A fill — the handle dragged from the selection's corner, or Ctrl/Cmd+D —
    * already turned into ordinary cell edits. Same shape and same contract as
    * {@link GridFocusControllerOptions.onPaste}: the table proposes, the host
    * writes.
    */
-  onFill?: (edits: CellEdit<TRow>[]) => void;
+  onFill?: (edits: CellEdit<TRow>[]) => unknown;
   /**
    * Ctrl/Cmd+Z. Returns how many cells came back, so the grid can say — zero
    * means the history was empty, which is worth announcing rather than
@@ -361,6 +362,7 @@ export function createGridFocusController<TRow>(
 ): GridFocusController<TRow> {
   let options = { ...initial };
   let clipboardVersion = 0;
+  let gestureVersion = 0;
   let clipboardRows = [...initial.rows];
   let clipboardRowIds = initial.rows.map((row) => initial.getRowId?.(row));
   const columnIdentity = (column: ColumnMetadata<TRow>) => ({
@@ -515,40 +517,76 @@ export function createGridFocusController<TRow>(
     write({});
   };
 
+  /** Announce writes only after the host accepts them, and observe rejections. */
+  const applyGesture = (
+    apply: () => unknown,
+    done: () => void,
+    failed: string
+  ): void => {
+    const version = ++gestureVersion;
+    const complete = (callback: () => void): void => {
+      if (options.enabled && version === gestureVersion) callback();
+    };
+    try {
+      const result = apply();
+      if (isThenable(result)) {
+        void Promise.resolve(result).then(
+          () => complete(done),
+          () => complete(() => say(failed))
+        );
+      } else complete(done);
+    } catch {
+      complete(() => say(failed));
+    }
+  };
+
   const commitFill = (to: GridCell): void => {
     const { range } = snapshot;
     const { onFill } = options;
     if (!range || !onFill) return;
-    const edits = fillRangeEdits({
-      source: range,
-      to,
-      rows: options.rows,
-      columns: options.columns,
-      firstRowIndex: firstRow(),
-    });
-    if (edits.length === 0) return;
-    onFill(edits);
+    let count = 0;
     // The filled rectangle stays selected, as it does in a spreadsheet: the
     // next fill continues from what was just written.
-    batch(() => {
-      write({ range: fillTargetRange(range, to) });
-      say(
-        (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(
-          edits.length
-        )
-      );
-    });
+    applyGesture(
+      () => {
+        const edits = fillRangeEdits({
+          source: range,
+          to,
+          rows: options.rows,
+          columns: options.columns,
+          firstRowIndex: firstRow(),
+        });
+        count = edits.length;
+        return count > 0 ? onFill(edits) : undefined;
+      },
+      () =>
+        batch(() => {
+          if (count === 0) return;
+          if (snapshot.range === range)
+            write({ range: fillTargetRange(range, to) });
+          say(
+            (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(count)
+          );
+        }),
+      labels()?.gridRangeFillFailed ?? defaultLabels.gridRangeFillFailed
+    );
   };
 
   /** Ctrl/Cmd+C and Ctrl/Cmd+X — the rectangle, as a spreadsheet reads it. */
   const copySelection = (selection: CellRange, cut: boolean): void => {
     const version = clipboardVersion;
-    const text = clipboardRangeText({
-      range: selection,
-      rows: options.rows,
-      columns: options.columns,
-      firstRowIndex: firstRow(),
-    });
+    let text: string;
+    try {
+      text = clipboardRangeText({
+        range: selection,
+        rows: options.rows,
+        columns: options.columns,
+        firstRowIndex: firstRow(),
+      });
+    } catch {
+      say(labels()?.gridRangeCopyFailed ?? defaultLabels.gridRangeCopyFailed);
+      return;
+    }
     void writeClipboardText(text).then((ok) => {
       if (!options.enabled || version !== clipboardVersion) return;
       say(
@@ -567,19 +605,27 @@ export function createGridFocusController<TRow>(
   /** Ctrl/Cmd+D — the selection's top row carries into the rest of it. */
   const fillDown = (selection: CellRange): void => {
     const b = cellRangeBounds(selection);
-    const edits = fillRangeEdits({
-      source: {
-        anchor: { row: b.fromRow, col: b.fromCol },
-        head: { row: b.fromRow, col: b.toCol },
+    let count = 0;
+    applyGesture(
+      () => {
+        const edits = fillRangeEdits({
+          source: {
+            anchor: { row: b.fromRow, col: b.fromCol },
+            head: { row: b.fromRow, col: b.toCol },
+          },
+          to: { row: b.toRow, col: b.toCol },
+          rows: options.rows,
+          columns: options.columns,
+          firstRowIndex: firstRow(),
+        });
+        count = edits.length;
+        return options.onFill?.(edits);
       },
-      to: { row: b.toRow, col: b.toCol },
-      rows: options.rows,
-      columns: options.columns,
-      firstRowIndex: firstRow(),
-    });
-    options.onFill?.(edits);
-    say(
-      (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(edits.length)
+      () =>
+        say(
+          (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(count)
+        ),
+      labels()?.gridRangeFillFailed ?? defaultLabels.gridRangeFillFailed
     );
   };
 
@@ -594,18 +640,24 @@ export function createGridFocusController<TRow>(
         );
         return;
       }
-      const edits = pasteRangeEdits({
-        text,
-        range: target,
-        rows: options.rows,
-        columns: options.columns,
-        firstRowIndex: firstRow(),
-      });
-      options.onPaste?.(edits);
-      say(
-        (labels()?.gridRangePasted ?? defaultLabels.gridRangePasted)(
-          edits.length
-        )
+      let count = 0;
+      applyGesture(
+        () => {
+          const edits = pasteRangeEdits({
+            text,
+            range: target,
+            rows: options.rows,
+            columns: options.columns,
+            firstRowIndex: firstRow(),
+          });
+          count = edits.length;
+          return options.onPaste?.(edits);
+        },
+        () =>
+          say(
+            (labels()?.gridRangePasted ?? defaultLabels.gridRangePasted)(count)
+          ),
+        labels()?.gridRangePasteFailed ?? defaultLabels.gridRangePasteFailed
       );
     });
   };
@@ -652,21 +704,22 @@ export function createGridFocusController<TRow>(
     }
     const { range } = snapshot;
     const { onFind, onFill, onPaste } = options;
+    const key = event.key.toLowerCase();
     // Ctrl/Cmd+F belongs to the table only when the table has a find bar to
     // open; otherwise the browser's own find is the right answer.
-    if (event.key === "f" && onFind) {
+    if (key === "f" && onFind) {
       event.preventDefault();
       onFind();
       return true;
     }
-    if ((event.key === "c" || event.key === "x") && range) {
+    if ((key === "c" || key === "x") && range) {
       event.preventDefault();
-      copySelection(range, event.key === "x");
+      copySelection(range, key === "x");
       return true;
     }
     // Nothing to carry into a one-row selection, so the key stays the
     // browser's there.
-    if (event.key === "d" && onFill && range && !isSingleRowRange(range)) {
+    if (key === "d" && onFill && range && !isSingleRowRange(range)) {
       event.preventDefault();
       fillDown(range);
       return true;
@@ -675,7 +728,7 @@ export function createGridFocusController<TRow>(
     // the focused cell and lets the clipboard's own shape decide the rest, so
     // this takes the same `from` the movement keys take rather than demanding
     // a selection first.
-    if (event.key === "v" && onPaste) {
+    if (key === "v" && onPaste) {
       event.preventDefault();
       pasteInto(range ?? singleCellRange(from));
       return true;
@@ -788,6 +841,11 @@ export function createGridFocusController<TRow>(
       };
     },
     configure(next) {
+      if (
+        next.enabled !== options.enabled ||
+        (next.firstRowIndex ?? 0) !== firstRow()
+      )
+        gestureVersion++;
       // A pending request owns its original address space. Keep copied
       // identities: hosts may replace/reorder entries in the same array.
       const changed =
@@ -823,6 +881,10 @@ export function createGridFocusController<TRow>(
       options = { ...next };
     },
     attach(node) {
+      if (node === null) {
+        gestureVersion++;
+        clipboardVersion++;
+      }
       container = node;
     },
     syncFocus,

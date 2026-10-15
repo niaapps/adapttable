@@ -27,19 +27,51 @@ function loadingLineWidth(column: number, total: number): string {
 @Component({
   selector: "adapt-table-skeleton",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: `
+    [data-adapttable-part="loading-cards"] {
+      display: grid;
+      gap: 12px;
+    }
+    [data-adapttable-part="loading-card"] {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+      border-radius: 8px;
+    }
+    [data-adapttable-part="loading-line"] {
+      display: block;
+      height: 12px;
+      border-radius: 4px;
+      background: color-mix(in srgb, currentColor 14%, transparent);
+    }
+  `,
   template: `
-    <div aria-busy="true" aria-live="polite" data-ng-bootstrap-part="loading">
+    <div
+      aria-busy="true"
+      aria-live="polite"
+      data-ng-bootstrap-part="loading"
+      data-adapttable-part="loading"
+    >
       @if (variant() === "table") {
         <table
           class="table table-hover align-middle"
           data-ng-bootstrap-part="loading-table"
+          data-adapttable-part="loading-table"
         >
           <thead>
-            <tr data-ng-bootstrap-part="loading-header-row">
+            <tr
+              data-ng-bootstrap-part="loading-header-row"
+              data-adapttable-part="loading-header-row"
+            >
               @for (column of columnKeys(); track column) {
-                <th data-ng-bootstrap-part="loading-header-cell">
+                <th
+                  data-ng-bootstrap-part="loading-header-cell"
+                  data-adapttable-part="loading-header-cell"
+                >
                   <span
                     data-ng-bootstrap-part="loading-line"
+                    data-adapttable-part="loading-line"
                     [style.width]="lineWidth(column)"
                   ></span>
                 </th>
@@ -48,11 +80,18 @@ function loadingLineWidth(column: number, total: number): string {
           </thead>
           <tbody>
             @for (row of rowKeys(); track row) {
-              <tr data-ng-bootstrap-part="loading-row">
+              <tr
+                data-ng-bootstrap-part="loading-row"
+                data-adapttable-part="loading-row"
+              >
                 @for (column of columnKeys(); track column) {
-                  <td data-ng-bootstrap-part="loading-cell">
+                  <td
+                    data-ng-bootstrap-part="loading-cell"
+                    data-adapttable-part="loading-cell"
+                  >
                     <span
                       data-ng-bootstrap-part="loading-line"
+                      data-adapttable-part="loading-line"
                       [style.width]="lineWidth(column)"
                     ></span>
                   </td>
@@ -62,12 +101,19 @@ function loadingLineWidth(column: number, total: number): string {
           </tbody>
         </table>
       } @else {
-        <div data-ng-bootstrap-part="loading-cards">
+        <div
+          data-ng-bootstrap-part="loading-cards"
+          data-adapttable-part="loading-cards"
+        >
           @for (row of rowKeys(); track row) {
-            <div data-ng-bootstrap-part="loading-card">
+            <div
+              data-ng-bootstrap-part="loading-card"
+              data-adapttable-part="loading-card"
+            >
               @for (column of cardColumns(); track column) {
                 <span
                   data-ng-bootstrap-part="loading-line"
+                  data-adapttable-part="loading-line"
                   [style.width]="lineWidth(column)"
                 ></span>
               }

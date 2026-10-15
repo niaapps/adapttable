@@ -151,8 +151,8 @@ describe("api-entrypoints derives from each manifest", () => {
 
   it("marks a private package unpublished instead of dropping it", () => {
     const root = tempRoot();
-    fixturePackage(root, "bootstrap", {
-      name: "@adapttable/bootstrap",
+    fixturePackage(root, "private-fixture", {
+      name: "@adapttable/private-fixture",
       private: true,
       exports: { ".": { types: "./dist/index.d.ts" } },
     });

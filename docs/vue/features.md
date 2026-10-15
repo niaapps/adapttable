@@ -4,7 +4,7 @@ The Vue adapters share the `@adapttable/vue` table model. Add
 optional behavior through the chosen kit's feature factories: the adapter
 contributes its own controls while the binding owns state, validation, row
 projection and lifecycle. The binding, Unstyled kit and seven styled adapters
-are public `0.1.0` packages on npm. See [getting started](./getting-started.md)
+are published on npm with independent package versions. See [getting started](./getting-started.md)
 for installation and UI-kit providers.
 
 ## Choose an entry point

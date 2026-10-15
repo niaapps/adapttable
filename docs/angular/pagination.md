@@ -1,6 +1,6 @@
 # Angular table pagination: client-side and server-side
 
-Pagination belongs to the source. Both Angular kits render the same source
+Pagination belongs to the source. All supported Angular kits render the same source
 state through their own controls. Pages are one-based, and `total` is the
 count of every matching row, not just the current page.
 

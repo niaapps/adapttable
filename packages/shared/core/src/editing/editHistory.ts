@@ -21,6 +21,7 @@ import {
   type EditHistorySnapshot,
   readCellValue,
 } from "./editingController";
+import { PREPARE_RECORDING, recordedGesture } from "./recordedGesture";
 
 /**
  * The host's commit channel — what an undo replays through.
@@ -131,6 +132,25 @@ export function createEditHistory<TRow>(
 ): EditHistoryController<TRow> {
   let current = options;
   const stack = createEditHistoryStack<TRow>();
+  let generation = 0;
+  const prepare = (edits: readonly CellEdit<TRow>[]): (() => void) => {
+    if (!current.enabled || edits.length === 0) return () => undefined;
+    const version = generation;
+    const entry = editHistoryEntry(edits, (edit) => {
+      const column = current.columns.find(
+        (item) => item.key === edit.columnKey
+      );
+      return column ? { value: readCellValue(edit.row, column) } : undefined;
+    });
+    return () => {
+      if (version !== generation || !current.enabled) return;
+      stack.record(entry, current.depth ?? DEFAULT_EDIT_HISTORY_DEPTH);
+    };
+  };
+  const record = Object.assign(
+    (edits: readonly CellEdit<TRow>[]) => prepare(edits)(),
+    { [PREPARE_RECORDING]: prepare }
+  );
 
   // An undo does not rewrite the host's data: it COMMITS the previous value
   // back through the host's own channel, so whatever wraps editing runs on
@@ -146,31 +166,24 @@ export function createEditHistory<TRow>(
     getSnapshot: stack.getSnapshot,
     subscribe: stack.subscribe,
     configure(next) {
+      if (current.enabled && !next.enabled) generation++;
       current = next;
     },
-    record(edits) {
-      if (!current.enabled || edits.length === 0) return;
-      stack.record(
-        editHistoryEntry(edits, (edit) => {
-          const column = current.columns.find(
-            (entry) => entry.key === edit.columnKey
-          );
-          return column
-            ? { value: readCellValue(edit.row, column) }
-            : undefined;
-        }),
-        current.depth ?? DEFAULT_EDIT_HISTORY_DEPTH
-      );
-    },
+    record,
     undo() {
+      if (!current.enabled || !current.onCellEdit) return 0;
       const entry = stack.undo();
       return entry ? replay(entry.undo) : 0;
     },
     redo() {
+      if (!current.enabled || !current.onCellEdit) return 0;
       const entry = stack.redo();
       return entry ? replay(entry.redo) : 0;
     },
-    clear: stack.clear,
+    clear: () => {
+      generation++;
+      stack.clear();
+    },
   };
 }
 
@@ -218,8 +231,8 @@ export function resolveEditHistory(
 }
 
 /**
- * The commit channel to hand the chrome: each inline commit is recorded as a
- * one-cell gesture before it is passed on.
+ * The commit channel to hand the chrome: each successful inline commit is a
+ * one-cell gesture. History captures the previous value before the host runs.
  *
  * Batch routes (paste, fill) must NOT go through it — they record themselves
  * through `asGesture`, so that two hundred pasted cells undo in one press
@@ -236,11 +249,8 @@ export function recordingCellEdit<TRow>(
   record: (edits: readonly CellEdit<TRow>[]) => void
 ): CellEditHandler<TRow> | undefined {
   if (!onCellEdit) return undefined;
-  return (row, key, nextValue) => {
-    record([{ row, columnKey: key, value: nextValue }]);
-    // Hand back whatever the host returned: a promise is how a cell knows the
-    // value is still on its way somewhere, and swallowing it here would make
-    // every save look instant.
-    return onCellEdit(row, key, nextValue);
-  };
+  return (row, key, nextValue) =>
+    recordedGesture(record, [{ row, columnKey: key, value: nextValue }], () =>
+      onCellEdit(row, key, nextValue)
+    );
 }

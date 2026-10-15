@@ -219,7 +219,7 @@ names, ordering and labels live in core; every visible control is a required
 slot the adapter fills with its own kit's component, so a Mantine panel is
 built from Mantine buttons and an antd panel from antd buttons.
 
-Every adapter except `@adapttable/bootstrap` ships it pre-wired as
+Every React adapter ships it pre-wired as
 `PivotPanel`, from the kit root or `@adapttable/<kit>/pivot`, so a host imports
 one component rather than assembling slots:
 

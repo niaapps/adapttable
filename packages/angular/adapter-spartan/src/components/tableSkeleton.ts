@@ -27,16 +27,50 @@ function loadingLineWidth(column: number, total: number): string {
 @Component({
   selector: "adapt-table-skeleton",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: `
+    [data-adapttable-part="loading-cards"] {
+      display: grid;
+      gap: 12px;
+    }
+    [data-adapttable-part="loading-card"] {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+      border-radius: 8px;
+    }
+    [data-adapttable-part="loading-line"] {
+      display: block;
+      height: 12px;
+      border-radius: 4px;
+      background: color-mix(in srgb, currentColor 14%, transparent);
+    }
+  `,
   template: `
-    <div aria-busy="true" aria-live="polite" data-spartan-part="loading">
+    <div
+      aria-busy="true"
+      aria-live="polite"
+      data-spartan-part="loading"
+      data-adapttable-part="loading"
+    >
       @if (variant() === "table") {
-        <table data-spartan-part="loading-table">
+        <table
+          data-spartan-part="loading-table"
+          data-adapttable-part="loading-table"
+        >
           <thead>
-            <tr data-spartan-part="loading-header-row">
+            <tr
+              data-spartan-part="loading-header-row"
+              data-adapttable-part="loading-header-row"
+            >
               @for (column of columnKeys(); track column) {
-                <th data-spartan-part="loading-header-cell">
+                <th
+                  data-spartan-part="loading-header-cell"
+                  data-adapttable-part="loading-header-cell"
+                >
                   <span
                     data-spartan-part="loading-line"
+                    data-adapttable-part="loading-line"
                     [style.width]="lineWidth(column)"
                   ></span>
                 </th>
@@ -45,11 +79,18 @@ function loadingLineWidth(column: number, total: number): string {
           </thead>
           <tbody>
             @for (row of rowKeys(); track row) {
-              <tr data-spartan-part="loading-row">
+              <tr
+                data-spartan-part="loading-row"
+                data-adapttable-part="loading-row"
+              >
                 @for (column of columnKeys(); track column) {
-                  <td data-spartan-part="loading-cell">
+                  <td
+                    data-spartan-part="loading-cell"
+                    data-adapttable-part="loading-cell"
+                  >
                     <span
                       data-spartan-part="loading-line"
+                      data-adapttable-part="loading-line"
                       [style.width]="lineWidth(column)"
                     ></span>
                   </td>
@@ -59,12 +100,19 @@ function loadingLineWidth(column: number, total: number): string {
           </tbody>
         </table>
       } @else {
-        <div data-spartan-part="loading-cards">
+        <div
+          data-spartan-part="loading-cards"
+          data-adapttable-part="loading-cards"
+        >
           @for (row of rowKeys(); track row) {
-            <div data-spartan-part="loading-card">
+            <div
+              data-spartan-part="loading-card"
+              data-adapttable-part="loading-card"
+            >
               @for (column of cardColumns(); track column) {
                 <span
                   data-spartan-part="loading-line"
+                  data-adapttable-part="loading-line"
                   [style.width]="lineWidth(column)"
                 ></span>
               }

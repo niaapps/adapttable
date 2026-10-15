@@ -846,6 +846,7 @@ export interface GridFocusOptions<TRow> {
     readonly onRedo?: () => number;
     readonly onUndo?: () => number;
     readonly recordEdits?: (edits: readonly CellEdit<TRow>[]) => void;
+    readonly scrollToRow?: (rowIndex: number) => void;
     readonly table: DataTable<TRow>;
 }
 

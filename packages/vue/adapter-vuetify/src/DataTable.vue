@@ -122,6 +122,7 @@ function controls(): TableChromeSlots<TRow> {
         group
       );
     },
+    card: slots.card,
     cell: slots.cell,
     header: slots.header,
     headerActions: slots.headerActions,

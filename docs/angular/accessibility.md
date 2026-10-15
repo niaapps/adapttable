@@ -1,6 +1,6 @@
 # Accessible Angular tables and keyboard grids
 
-Both Angular kits preserve semantic table or card-list structure, localized
+All supported Angular kits preserve semantic table or card-list structure, localized
 control names, focus behavior and live announcements. Give every table a
 specific `tableLabel`, especially when a page contains several tables.
 Custom cells and surrounding application controls remain part of the

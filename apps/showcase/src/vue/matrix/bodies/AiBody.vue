@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** A deterministic local agent over the real Vue table and the selected kit UI. */
+/** Scripted and connected conversations over the real table and selected kit. */
 import "../../../assistantShowcase.css";
 
 import {
@@ -13,6 +13,7 @@ import { tableAgent, useTableAssistant } from "@adapttable/ai-vue";
 import type { AgentApprovalPending, ColumnDef } from "@adapttable/vue";
 import { computed, shallowRef } from "vue";
 
+import type { ShowcaseBackendConnection } from "../../../aiBackendConnection";
 import {
   AGENT_FILTERS,
   AGENT_PEOPLE as INITIAL,
@@ -20,6 +21,7 @@ import {
 } from "../../../aiPeople";
 import { SHOWCASE_PRESENTATION, TABLE_PRESENTATION } from "../data";
 import { useShowcaseKit } from "../showcaseKit";
+import AiBackendSettings from "./AiBackendSettings.vue";
 
 const SUGGESTIONS: readonly AssistantSuggestion[] = [
   {
@@ -64,6 +66,8 @@ const columns: readonly ColumnDef<AgentPerson>[] = [
 const session = shallowRef<AgentSession>();
 const pending = shallowRef<AgentApprovalPending | null>(null);
 const open = shallowRef(false);
+const connection = shallowRef<ShowcaseBackendConnection>();
+const settingsOpen = shallowRef(false);
 const approvalSurface = shallowRef<"widget" | "table" | "modal">("widget");
 const log = shallowRef("No host writes yet");
 let readView: (() => AgentContextInputs) | undefined;
@@ -164,8 +168,8 @@ const transport: AssistantTransport = {
 
 const assistant = useTableAssistant(() => ({
   session: session.value,
-  transport,
-  transportKey: "vue-local-script",
+  transport: connection.value?.transport ?? transport,
+  transportKey: connection.value?.key ?? "vue-local-script",
   suggestions: SUGGESTIONS,
   approval: pending.value,
   open: open.value,
@@ -262,21 +266,45 @@ const surfaceChoice = computed(() =>
 );
 const ShowEveryone = () => showEveryone.value;
 const SurfaceChoice = () => surfaceChoice.value;
+const BackendSettings = () =>
+  kit.button({
+    label: settingsOpen.value
+      ? "Hide connection settings"
+      : "Connect a backend",
+    part: "demo-ai-settings",
+    onClick: () => {
+      settingsOpen.value = !settingsOpen.value;
+    },
+  });
 </script>
 
 <template>
   <div class="mx-demo ai-demo" :dir="SHOWCASE_PRESENTATION.dir">
     <p class="hint">
-      This local demo needs no model or API key. Sort salaries, choose a person,
-      or propose Grace's salary as 150. Writes wait for your decision.
+      {{
+        connection
+          ? "Connected to your backend for free-form requests."
+          : "The scripted demo needs no model or API key. Connect a backend for free-form requests."
+      }}
+      Sort salaries, choose a person, or propose Grace's salary as 150. Writes
+      wait for your decision.
     </p>
     <div class="angular-ai-controls">
       <ShowEveryone />
+      <BackendSettings />
       <div class="angular-ai-choice">
         <span>Approval surface</span>
         <SurfaceChoice />
       </div>
     </div>
+    <AiBackendSettings
+      v-if="settingsOpen"
+      :session="session"
+      :connection="connection"
+      :disabled="assistant.busy.value"
+      @connected="connection = $event"
+      @disconnect="connection = undefined"
+    />
     <component
       :is="kit.DataTable"
       v-bind="TABLE_PRESENTATION"
@@ -305,6 +333,11 @@ const SurfaceChoice = () => surfaceChoice.value;
       :dir="SHOWCASE_PRESENTATION.dir"
       :labels="SHOWCASE_PRESENTATION.labels"
       greeting=""
+      :on-settings="
+        () => {
+          settingsOpen = true;
+        }
+      "
     />
   </div>
 </template>

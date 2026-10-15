@@ -155,6 +155,31 @@ describe("useRangeFilterWidget", () => {
     expect(result.current.op).toBe("eq");
   });
 
+  it("restores the operator and both bounds when an open filter receives a saved view", () => {
+    const initialProps: { extra: ExtraFilters } = {
+      extra: { budgetMin: "10", budgetOp: "gte" },
+    };
+    const { result, rerender } = renderHook(
+      ({ extra }: { extra: ExtraFilters }) =>
+        useRangeFilterWidget(def, makeSource(extra).source),
+      { initialProps }
+    );
+    act(() => result.current.setOp("lte"));
+    rerender({ extra: { budgetMin: "10", budgetOp: "gte", unrelated: "x" } });
+    expect(result.current.op).toBe("lte");
+
+    rerender({
+      extra: { budgetMin: "2", budgetMax: "6", budgetOp: "between" },
+    });
+    expect(result.current.op).toBe("between");
+    expect(result.current.arity).toBe("two");
+    expect([result.current.a, result.current.b]).toEqual(["2", "6"]);
+
+    rerender({ extra: {} });
+    expect(result.current.op).toBeUndefined();
+    expect([result.current.a, result.current.b]).toEqual(["", ""]);
+  });
+
   it("reports arity and input type for list and empty operators", () => {
     const { result } = renderHook(() =>
       useRangeFilterWidget(

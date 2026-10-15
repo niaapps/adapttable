@@ -576,7 +576,7 @@ All from `@adapttable/react` unless marked `@adapttable/react/adapter`.
 
 ### The neutral engine
 
-Framework-free — see [concepts](./concepts.md#the-engine-and-why-it-has-no-react-in-it).
+Framework-free — see [concepts](./concepts.md#the-framework-neutral-engine).
 
 - `createTableEngine(options: CreateTableEngineOptions): TableEngine` — build
   an engine over in-memory rows. Filter, sort, page and group run here, with no
@@ -2638,6 +2638,8 @@ handle's document listeners, and makes retained pointer, keyboard and autosize
 callbacks inert. Existing callers can omit the options. Toolbar glue: `SearchInputState` (debounced
 search binding), `FilterTriggerToggle` (popover/drawer trigger
 handlers). Editing/grouping glue: `focusEditorOnMount`,
+`preserveEditorFocusOnLayoutChange` (capture the active editor before a responsive
+DOM replacement and restore its focus and caret after paint),
 `rowEditingSignature`, `HeaderGroupCell`, `HtmlGroupedHeaderCell`, `headerGroupRow` /
 `headerGroupRows` / `htmlGroupedHeaderPlan` / `groupedHeaderChildRule` /
 `groupedHeaderCellStyle` / `groupedHeaderLabelStyle` / `groupedHeaderAlign` / `columnGroupStubStyle` / `COLUMN_GROUP_STUB_WIDTH`, `columnGroupHeaderCaption`. Each adapter mounts `ColumnGroupToggle` /
@@ -3192,7 +3194,7 @@ See [building an Angular adapter](./angular/building-an-adapter.md).
   release their scopes. `tableFeaturesOf` combines injector-provided features
   with the table's own list; a later duplicate id wins for setup, options,
   rendering and mounting alike.
-- Both Angular kits accept live `selectable`, `cellNavigation`, `filtersMode`
+- All supported Angular kits accept live `selectable`, `cellNavigation`, `filtersMode`
   and `closeHeaderFilterOnSelect` inputs. Their controlled `density` input
   overrides the chooser's state; `densityChange` reports requests and waits
   for the host to update the input. Omitting `density` keeps the chooser
@@ -3448,7 +3450,7 @@ See [building an Angular adapter](./angular/building-an-adapter.md).
   `FilterWidgetRenderProps` and `renderRegisteredFilter` are public root exports.
   `renderRegisteredFilter(def, source, labels, registry, className?)` calls
   `FilterTypeSpec.render` with the definition, `FilterFormSource`, resolved
-  labels and class hook. Both kits' `AdaptAutoFilterForm` and
+  labels and class hook. The kits' `AdaptAutoFilterForm` and
   `AdaptFilterHeaderRow` / `AdaptFilterHeaderControl` prefer a returned
   `TemplateRef`, Angular component type (`Type<unknown>`), or truthy string
   or number over the registered widget. Templates receive `def`, `source`,
@@ -4032,7 +4034,7 @@ Applications should use the documented table, feature and provider APIs instead.
   `RTL_LANGUAGES`, `locales` (keyed by `LocaleKey`) and the bundled
   presets (`en`, `ar`, `cs`, `de`, `es`, `fr`, `he`, `it`, `ja`, `pt`, `zh`,
   … including `zhTW`) — see [i18n & RTL](./i18n-rtl.md).
-- `@adapttable/cli` — binary `adapttable init [--force]`; programmatic
+- `@adapttable/cli` — binary `adapttable init [--kit <kit>] [--force]`; programmatic
   `detectFramework`, `detectKit`, `choosePackageManager`, `installCommand`,
   `scaffoldFiles`, `runInit` plus the pieces they compose: `KITS` / `KitInfo` / `SHADCN`
   describe the detectable kits, `packagesFor` and `mergeDependencies`
@@ -4040,15 +4042,17 @@ Applications should use the documented table, feature and provider APIs instead.
   `STARTER_PATH` describe the scaffold, `PackageManager` names the
   supported managers, `InitError` is the typed failure, and
   `InitOptions` / `InitResult` / `InitIO` parameterize `runInit` for
-  testing. `Framework` is `"react" | "angular"`; `detectFramework` requires both
+  testing. `Framework` is `"react" | "angular" | "vue"`; `detectFramework` requires both
   an `@angular/core` dependency and `hasAngularJson: true` to select Angular.
   `detectKit` accepts `framework` alongside the existing shadcn context, and
   `InitResult.framework` reports the choice. Angular scaffolds a standalone
   `PeopleTable` in `src/app/peopleTable.ts`; React keeps `src/PeopleTable.tsx`.
-  `angular-unstyled` and `ng-zorro` are public npm packages. The seven private
-  Angular previews above are also detected: `KitInfo.privatePreview` marks
-  them, and init prints local-linking guidance rather than an npm install
-  command for an unpublished adapter. Init only prints guidance; it does not
+  A declared Vue dependency selects Vue, which scaffolds `src/PeopleTable.vue`
+  and native kit setup for plain Vue/Vite applications. Nuxt projects receive
+  module setup guidance instead of generated Vite files. All nine Angular and
+  eight Vue kits are published. `KitInfo.privatePreview` is optional metadata
+  for unpublished kits; none of the supported kits currently needs it.
+  Init writes starter files and prints install guidance; it does not
   install packages or query registry availability.
 - **React adapter packages** — each exports its `DataTable` with `DataTableProps`,
   `DataTablePropsBase`, `DataTableSlots` and `SavedViewsMenuProps` (plus the
@@ -4222,22 +4226,22 @@ native drawer's explicit stylesheet import.
 | `GroupRowChrome`, `GroupRowChromeProps`                 | Desktop/mobile group structure with required Button and Checkbox slots.                                                                                                                               |
 | `mountGrouping`                                         | `mountGrouping(context: FeatureMountContext<TRow>): void` installs the scoped grouping model; ordinary consumers compose `grouping()`.                                                                |
 | `LazyChildrenVueOptions`                                | Neutral lazy-loading options plus reactive `enabled`; `useLazyChildren` returns computed loading/failure state and `loadIfNeeded`.                                                                    |
-| `TableRowInventory`                                     | Separate loaded rows for edit liveness and visible hierarchy rows for selection/runtime traversal. [Visible versus loaded rows](./vue/features.md#visible-rows-and-loaded-rows).                      |
+| `TableRowInventory`                                     | Separate loaded rows for edit liveness and visible hierarchy rows for selection/runtime traversal. [Visible versus loaded rows](./vue/row-grouping.md#visible-rows-and-loaded-rows).                  |
 | `HeadlessRowsOptions`, `HeadlessBodySlot`               | Span, summary, extra-row, appearance and offset inputs for row projection; alias of the Vue structural body-slot union.                                                                               |
 | `RowMutationAction`, `rowActionControls`                | A host mutation action preserving the persistence result, and a projection to semantic controls with guarded confirmation. [Vue row actions](./vue/features.md#columns-rows-and-actions).             |
 | `ColumnResizeHandleOptions`, `ColumnResizeHandleProps`  | Cancellation/options and semantic pointer/keyboard props for a resize handle; the binding owns its interaction lifetime.                                                                              |
 | `resolveCellSpan`                                       | `resolveCellSpan(args, getCellSpan, remainingCols, remainingRows)` resolves/clamps span geometry for a body projector.                                                                                |
 | `VueComputedColumnSpec`, `computed`                     | The Vue root's `computed(spec)` derives a `ColumnDef` with typed Vue column options; alias it on import when also using Vue's reactive `computed`. [Vue columns](./vue/api.md#columns-and-rendering). |
 
-| URL and view-control export                                                                  | Signature or role                                                                                                                                                            |
-| -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `useUrlSlice`, `UrlSliceOptions`                                                             | Reactive URL adapter/key/sync/SSR seed plus neutral spec/config to a readonly value ref, `set` and `flush`. [Vue state persistence](./vue/features.md#what-a-view-restores). |
-| `DENSITY_URL_WRITE_DEBOUNCE_MS`                                                              | Shared delay used by the density URL slice; call its returned `flush` to finish pending writes.                                                                              |
-| `ViewControlPresentation`, `ViewControlButtonProps`                                          | Resolved labels, direction, optional classes/container; a button receives semantic attrs and label.                                                                          |
-| `DensityControlProps`, `DensityChooserSlots`, `DensityChooserChrome`, `DENSITY_CONTROL`      | Effective density/change action and required Control slot with localized options; installs through `densityChooser()`.                                                       |
-| `FullscreenControlProps`, `FullscreenButtonChrome`, `FULLSCREEN_CONTROL`, `FULLSCREEN_MODEL` | Browser fullscreen state, required Button slot and table-owned model; no control renders when unsupported.                                                                   |
-| `SavedViewsControlProps`, `SAVED_VIEWS_CONTROL`, `SAVED_VIEWS_MODEL`                         | Saved-view model/actions carried by the required native/kit control slot and table state channel.                                                                            |
-| `SavedViewsMenuChrome`, `SavedViewsMenuChromeProps`, `SavedViewsMenuSlots`                   | Disclosure, keyboard and focus structure requiring Trigger/Button/Input/Panel controls. [Vue Saved Views](./vue/features.md#density-fullscreen-and-saved-views).             |
+| URL and view-control export                                                                  | Signature or role                                                                                                                                                               |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useUrlSlice`, `UrlSliceOptions`                                                             | Reactive URL adapter/key/sync/SSR seed plus neutral spec/config to a readonly value ref, `set` and `flush`. [Vue state persistence](./vue/saved-views.md#what-a-view-restores). |
+| `DENSITY_URL_WRITE_DEBOUNCE_MS`                                                              | Shared delay used by the density URL slice; call its returned `flush` to finish pending writes.                                                                                 |
+| `ViewControlPresentation`, `ViewControlButtonProps`                                          | Resolved labels, direction, optional classes/container; a button receives semantic attrs and label.                                                                             |
+| `DensityControlProps`, `DensityChooserSlots`, `DensityChooserChrome`, `DENSITY_CONTROL`      | Effective density/change action and required Control slot with localized options; installs through `densityChooser()`.                                                          |
+| `FullscreenControlProps`, `FullscreenButtonChrome`, `FULLSCREEN_CONTROL`, `FULLSCREEN_MODEL` | Browser fullscreen state, required Button slot and table-owned model; no control renders when unsupported.                                                                      |
+| `SavedViewsControlProps`, `SAVED_VIEWS_CONTROL`, `SAVED_VIEWS_MODEL`                         | Saved-view model/actions carried by the required native/kit control slot and table state channel.                                                                               |
+| `SavedViewsMenuChrome`, `SavedViewsMenuChromeProps`, `SavedViewsMenuSlots`                   | Disclosure, keyboard and focus structure requiring Trigger/Button/Input/Panel controls. [Vue Saved Views](./vue/features.md#density-fullscreen-and-saved-views).                |
 
 The Vue root exports `useColumnLayoutUrlState`,
 `UseColumnLayoutUrlStateOptions` and `UseColumnLayoutUrlStateResult` for a
@@ -4248,13 +4252,13 @@ controlled URL layout: readonly shallow `layout`, `onLayoutChange` and `flush`.
 browser preference with reactive storage/key/defaults. Bind either owner to
 the native prop/event explicitly. For URL-backed Saved Views, pass `flush`
 as `UseSavedViewsOptions.flushViewState` so Save/Apply finishes pending layout
-writes. See [Vue layout persistence](./vue/features.md#persist-column-layout-explicitly)
+writes. See [Vue layout persistence](./vue/saved-views.md#persist-column-layout-explicitly)
 for complete examples and lifecycle behavior.
 
 The Vue table does not opt into column-layout persistence automatically.
 Saved Views restore connected URL slices; controlled props stay authoritative,
 and selection, tree/detail expansion, edit drafts and host data are not captured.
-See [what a view restores](./vue/features.md#what-a-view-restores) before choosing
+See [what a view restores](./vue/saved-views.md#what-a-view-restores) before choosing
 which state your application persists.
 
 ### Vue actions and adapter channels

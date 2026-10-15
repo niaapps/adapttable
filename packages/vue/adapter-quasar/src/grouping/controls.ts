@@ -90,6 +90,10 @@ export function quasarGroupingSlots(
       ),
     Select: ({ label, value, options, onChange, disabled, ...attrs }) =>
       h(QuasarSelect, {
+        className:
+          attrs["data-adapttable-part"] === "grouping-add"
+            ? "adapttable-quasar-grouping-add-select"
+            : "adapttable-quasar-grouping-operation-select",
         control: {
           label,
           value,

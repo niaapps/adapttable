@@ -78,10 +78,6 @@ export const FRAMEWORKS = Object.freeze({
 /**
  * Every kit, in the order the guards report them.
  *
- * `adapter-bootstrap` is the private minimal reference: it is listed so the
- * registry covers every kit on disk, and its role keeps it out of the parts
- * contract, feature parity and every other kit contract.
- *
  * @type {readonly Kit[]}
  */
 export const KITS = Object.freeze([
@@ -98,7 +94,6 @@ export const KITS = Object.freeze([
     role: "derived",
     base: "adapter-unstyled",
   },
-  { name: "adapter-bootstrap", framework: "react", role: "private" },
   // Contract participation is independent of publication: a finished kit can
   // remain private until the owner chooses its first release.
   { name: "adapter-angular-unstyled", framework: "angular", role: "native" },
@@ -111,8 +106,6 @@ export const KITS = Object.freeze([
   { name: "adapter-angular-aria", framework: "angular", role: "native" },
   { name: "adapter-ngx-bootstrap", framework: "angular", role: "shell" },
   { name: "adapter-angular-cdk", framework: "angular", role: "native" },
-  // PrimeNG remains an unimplemented private placeholder.
-  { name: "adapter-primeng", framework: "angular", role: "private" },
   { name: "adapter-ng-zorro", framework: "angular", role: "shell" },
   { name: "adapter-vue-unstyled", framework: "vue", role: "native" },
   { name: "adapter-element-plus", framework: "vue", role: "shell" },

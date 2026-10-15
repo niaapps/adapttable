@@ -126,17 +126,17 @@ import {
 /** Mantine-native cell visuals (Avatar · Badge · Progress). */
 const MANTINE_CELLS: DemoCells = {
   Avatar: ({ name }: AvatarCellProps) => (
-    <Avatar name={name} color="initials" radius="xl" size={36} />
+    <Avatar name={name} color="blue.8" variant="filled" radius="xl" size={36} />
   ),
   Status: ({ status, label }: StatusCellProps) => (
     <Badge color={statusTone(status)} variant="light" radius="sm">
       {label}
     </Badge>
   ),
-  Load: ({ value, meta }: LoadCellProps) => (
+  Load: ({ value, meta, label }: LoadCellProps) => (
     <Stack gap={4} miw={90}>
-      <Progress value={value} size="sm" radius="xl" />
-      <Text size="xs" c="dimmed">
+      <Progress aria-label={label} value={value} size="sm" radius="xl" />
+      <Text size="xs" c="var(--mantine-color-text)">
         {meta}
       </Text>
     </Stack>

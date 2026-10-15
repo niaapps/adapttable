@@ -72,23 +72,38 @@ export function QuasarMobile<TRow>({
             )
           : null,
         row.reorder?.(true),
-        part(
-          "section",
-          {
-            tag: "dl",
-            class: ["adapttable-quasar-card-fields", names.cardFields],
-          },
-          row.cells.map((cell) =>
-            field(
-              cell.key,
-              cell.context.column.mobileLabel ??
-                cell.context.column.header ??
-                cell.key,
-              quasarCellContent(cell, row, slots, names, true),
-              cell.attrs
-            )
-          )
-        ),
+        slots.card
+          ? slots.card?.({
+              row: row.row,
+              index: row.index,
+              selected: row.checkboxAttrs?.checked === true,
+              expanded: row.detail?.expanded === true,
+              fields: row.cells.map((cell) => ({
+                column: cell.context.column,
+                label:
+                  cell.context.column.mobileLabel ??
+                  cell.context.column.header ??
+                  cell.key,
+                value: quasarCellContent(cell, row, slots, names, true),
+              })),
+            })
+          : part(
+              "section",
+              {
+                tag: "dl",
+                class: ["adapttable-quasar-card-fields", names.cardFields],
+              },
+              row.cells.map((cell) =>
+                field(
+                  cell.key,
+                  cell.context.column.mobileLabel ??
+                    cell.context.column.header ??
+                    cell.key,
+                  quasarCellContent(cell, row, slots, names, true),
+                  cell.attrs
+                )
+              )
+            ),
         row.detail?.expanded
           ? part(
               "section",

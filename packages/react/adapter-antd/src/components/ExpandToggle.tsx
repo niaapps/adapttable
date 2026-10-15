@@ -3,6 +3,7 @@ import { Button } from "antd";
 import type { MouseEventHandler } from "react";
 
 import { ChevronRightIcon } from "../icons";
+import { useMobileTarget } from "./mobileTarget";
 
 /**
  * The chevron that opens/closes a row's detail panel — shared by the desktop
@@ -20,8 +21,10 @@ export function ExpandToggle({
   labels: Pick<Required<TableLabels>, "expandRow" | "collapseRow">;
   onClick: MouseEventHandler<HTMLElement>;
 }>) {
+  const targetStyle = useMobileTarget();
   return (
     <Button
+      style={targetStyle}
       type="text"
       size="small"
       aria-expanded={expanded}

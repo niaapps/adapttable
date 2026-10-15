@@ -210,7 +210,7 @@ describe("the allowance is restricted to the seven exact source files", () => {
     "packages/react/adapter-unstyled/src/components/MobileCards.test.tsx",
     "packages/react/adapter-unstyled/src/nested/components/MobileCards.tsx",
     "packages/react/adapter-shadcn/src/components/MobileCards.tsx",
-    "packages/react/adapter-bootstrap/src/components/MobileCards.tsx",
+    "packages/react/adapter-private-fixture/src/components/MobileCards.tsx",
     "packages/react/react/src/components/MobileCards.tsx",
     "apps/showcase/src/components/MobileCards.tsx",
   ];

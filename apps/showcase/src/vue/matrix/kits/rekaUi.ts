@@ -12,6 +12,7 @@ import { densityChooser } from "@adapttable/reka-ui/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/reka-ui/editing";
 import { exportCsv } from "@adapttable/reka-ui/export";
@@ -30,7 +31,15 @@ import { savedViews } from "@adapttable/reka-ui/saved-views";
 import { statusBar } from "@adapttable/reka-ui/status-bar";
 import { tree } from "@adapttable/reka-ui/tree";
 import { virtualize } from "@adapttable/reka-ui/virtualize";
-import { Primitive, ToggleGroupItem, ToggleGroupRoot } from "reka-ui";
+import {
+  AvatarFallback,
+  AvatarRoot,
+  Primitive,
+  ProgressIndicator,
+  ProgressRoot,
+  ToggleGroupItem,
+  ToggleGroupRoot,
+} from "reka-ui";
 import { h } from "vue";
 
 import type { ShowcaseKit } from "../showcaseKit";
@@ -39,6 +48,36 @@ import DataTable from "./tables/RekaUiDataTable.vue";
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "reka-ui",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h(Primitive, {
+      as: "input",
+      "aria-label": label,
+      "data-adapttable-part": part,
+      class: "mx-kit-input",
+      value,
+      type: type ?? "text",
+      disabled,
+      autocomplete: "off",
+      onInput: (event: Event) => {
+        if (event.target instanceof HTMLInputElement)
+          onChange(event.target.value);
+      },
+    }),
+  avatar: (initials) =>
+    h(AvatarRoot, { class: "demo-mobile-avatar", "aria-hidden": "true" }, () =>
+      h(AvatarFallback, null, () => initials)
+    ),
+  progress: (value, label) =>
+    h(
+      ProgressRoot,
+      {
+        modelValue: value,
+        max: 100,
+        class: "demo-mobile-progress",
+        "aria-label": label,
+      },
+      () => h(ProgressIndicator, { style: { width: `${value}%` } })
+    ),
   status: (tone, label) =>
     h(
       Primitive,
@@ -94,6 +133,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

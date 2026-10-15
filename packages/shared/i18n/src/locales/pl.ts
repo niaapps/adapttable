@@ -430,6 +430,7 @@ export const pl: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} komórek wklejonych`,
   gridRangePasteFailed: "Błąd wklejania",
   gridRangeFilled: (cells) => `${cells} komórek wypełnionych`,
+  gridRangeFillFailed: "Wypełnianie nie powiodło się",
   gridFillHandle: "Wypełnij z zaznaczenia",
   selectionCount: "Liczba",
   selectionSum: "Suma",

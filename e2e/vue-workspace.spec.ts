@@ -1650,7 +1650,7 @@ for (const scenario of [
       .getByRole("button", { name: "Dispatch shortlist", exact: true })
       .click();
     await expect(record("ORD-1043")).toContainText("Sam Rivera");
-    await expect(record("ORD-1043").getByRole("checkbox")).toBeChecked();
+    await expect(record("ORD-1043").getByRole("checkbox")).not.toBeChecked();
     await expect(record("ORD-1046")).toBeVisible();
     await expect(record("ORD-1042")).toHaveCount(0);
     await expect(orders).toHaveAttribute("data-density", "compact");

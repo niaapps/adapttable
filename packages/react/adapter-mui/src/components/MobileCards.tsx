@@ -60,6 +60,7 @@ import {
   OptionalRowReorderButtons,
   OptionalTreeToggle,
 } from "./featureSlots";
+import { MobileTarget } from "./mobileTarget";
 import { RowActionButtons } from "./RowActionButtons";
 
 /** Drop row-interaction props on pinned summary cards. */
@@ -265,133 +266,156 @@ function MobileCardBase<TRow>({
   );
   const rowConflict = rowEditConflict(editing, id);
   return (
-    <Card
-      ref={measureElement}
-      data-index={index}
-      // A windowed list has only a slice of its items in the DOM, so each
-      // one states where it sits and how many there are; a complete list
-      // needs neither, because assistive tech can simply count.
-      aria-posinset={setSize > rowCount ? windowStart + index + 1 : undefined}
-      aria-setsize={setSize > rowCount ? setSize : undefined}
-      data-adapttable-part={part ?? "card"}
-      data-stagger=""
-      data-selected={selected ? "" : undefined}
-      data-dirty={rowIsDirty(editing, id) ? "" : undefined}
-      variant="outlined"
-      role="listitem"
-      aria-label={ariaLabel}
-      className={className}
-      {...rowClickProps(row, onRowClick, index)}
-      style={{
-        minHeight: "max-content",
-        ...treeCardStyle(treeEntry?.level ?? 0),
-        ...style,
-      }}
-    >
-      <CardContent
-        sx={compact ? { p: 1.25, "&:last-child": { pb: 1.25 } } : undefined}
+    <MobileTarget.Provider value={true}>
+      <Card
+        ref={measureElement}
+        data-index={index}
+        // A windowed list has only a slice of its items in the DOM, so each
+        // one states where it sits and how many there are; a complete list
+        // needs neither, because assistive tech can simply count.
+        aria-posinset={setSize > rowCount ? windowStart + index + 1 : undefined}
+        aria-setsize={setSize > rowCount ? setSize : undefined}
+        data-adapttable-part={part ?? "card"}
+        data-stagger=""
+        data-selected={selected ? "" : undefined}
+        data-dirty={rowIsDirty(editing, id) ? "" : undefined}
+        variant="outlined"
+        role="listitem"
+        aria-label={ariaLabel}
+        className={className}
+        {...rowClickProps(row, onRowClick, index)}
+        style={{
+          minHeight: "max-content",
+          ...treeCardStyle(treeEntry?.level ?? 0),
+          ...style,
+        }}
       >
-        {treeEntry && (
-          <OptionalTreeToggle
-            entry={treeEntry}
-            labels={labels}
-            onToggle={onToggleTree ?? (() => undefined)}
-          />
-        )}
-        {onToggleSelect && (
-          <Checkbox
-            slotProps={{ input: { "aria-label": labels.selectRow } }}
-            checked={selected}
-            onChange={() => onToggleSelect(id)}
-          />
-        )}
-        {onToggleExpand && (
-          <OptionalExpandToggle
-            id={id}
-            expanded={expanded}
-            onToggle={onToggleExpand}
-            dir={dir}
-            expandLabel={labels.expandRow}
-            collapseLabel={labels.collapseRow}
-          />
-        )}
-        {renderCard
-          ? renderCard(row, {
+        <CardContent
+          sx={compact ? { p: 1.25, "&:last-child": { pb: 1.25 } } : undefined}
+        >
+          {treeEntry && (
+            <OptionalTreeToggle
+              entry={treeEntry}
+              labels={labels}
+              onToggle={onToggleTree ?? (() => undefined)}
+            />
+          )}
+          {onToggleSelect && (
+            <Checkbox
+              style={{ minWidth: 44, minHeight: 44, alignItems: "center" }}
+              slotProps={{ input: { "aria-label": labels.selectRow } }}
+              checked={selected}
+              onChange={() => onToggleSelect(id)}
+            />
+          )}
+          {onToggleExpand && (
+            <OptionalExpandToggle
+              id={id}
+              expanded={expanded}
+              onToggle={onToggleExpand}
+              dir={dir}
+              expandLabel={labels.expandRow}
+              collapseLabel={labels.collapseRow}
+            />
+          )}
+          {renderCard ? (
+            renderCard(row, {
               index,
               fields,
               selected,
               expanded,
             })
-          : fields.map(({ column, label, value }) => (
-              <Box
-                key={column.key}
-                data-adapttable-part="card-row"
-                sx={{ mb: compact ? 0.5 : 1 }}
-              >
-                {label && (
-                  <Typography
-                    data-adapttable-part="card-label"
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ display: "block" }}
-                  >
-                    {label}
-                  </Typography>
-                )}
-                {/* Cells are arbitrary ReactNode (often block elements) —
-                a <p> wrapper would be invalid HTML. */}
-                <Typography
-                  component="div"
-                  variant="body2"
-                  data-adapttable-part="card-value"
-                  data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
+          ) : (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(min(100%, 7rem), 1fr))",
+                gap: "0.75rem",
+                minWidth: 0,
+              }}
+            >
+              {fields.map(({ column, label, value }) => (
+                <Box
+                  key={column.key}
+                  data-adapttable-part="card-row"
+                  sx={{
+                    minWidth: 0,
+                    overflowWrap: "anywhere",
+                    gridColumn: label ? undefined : "1 / -1",
+                    backgroundColor: label ? "action.hover" : undefined,
+                    borderRadius: 1,
+                    p: label ? 1 : 0,
+                  }}
                 >
-                  {value}
-                </Typography>
-              </Box>
-            ))}
-        {rowReorder && (
-          <OptionalRowReorderButtons
-            reorder={rowReorder}
-            labels={labels}
-            localIndex={index}
-            row={row}
-            windowStart={windowStart}
-            rowCount={rowCount}
-          />
-        )}
-        {editing?.rowEditing && (
-          <OptionalRowEditActions
-            rowEditing={editing.rowEditing}
-            row={row}
-            rowId={id}
-            showBegin={rowEdit.showBegin}
-            icons={editing.rowEditIcons}
-            conflict={rowConflict}
-            labels={labels}
-          />
-        )}
-        {rowEdit.actions.length > 0 && (
-          <div data-adapttable-part="card-actions">
-            <RowActionButtons
-              row={row}
-              actions={rowEdit.actions}
-              confirm={confirm}
+                  {label && (
+                    <Typography
+                      data-adapttable-part="card-label"
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ display: "block" }}
+                    >
+                      {label}
+                    </Typography>
+                  )}
+                  {/* Cells are arbitrary ReactNode (often block elements) —
+                a <p> wrapper would be invalid HTML. */}
+                  <Typography
+                    component="div"
+                    variant="body2"
+                    data-adapttable-part="card-value"
+                    data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
+                  >
+                    {value}
+                  </Typography>
+                </Box>
+              ))}
+            </div>
+          )}
+          {rowReorder && (
+            <OptionalRowReorderButtons
+              reorder={rowReorder}
               labels={labels}
-              layout={rowActionsLayout}
-              render={renderRowActions}
+              localIndex={index}
+              row={row}
+              windowStart={windowStart}
+              rowCount={rowCount}
             />
-          </div>
-        )}
-        {expanded && renderDetail && (
-          // Inside the card — and therefore inside the measured element —
-          // so virtualization keeps accurate card heights.
-          <Box data-adapttable-part="card-detail" sx={{ mt: 1 }}>
-            {renderDetail(row)}
-          </Box>
-        )}
-      </CardContent>
-    </Card>
+          )}
+          {editing?.rowEditing && (
+            <OptionalRowEditActions
+              rowEditing={editing.rowEditing}
+              row={row}
+              rowId={id}
+              showBegin={rowEdit.showBegin}
+              icons={editing.rowEditIcons}
+              conflict={rowConflict}
+              labels={labels}
+            />
+          )}
+          {rowEdit.actions.length > 0 && (
+            <div data-adapttable-part="card-actions">
+              <RowActionButtons
+                minTargetSize={44}
+                row={row}
+                actions={rowEdit.actions}
+                confirm={confirm}
+                labels={labels}
+                layout={rowActionsLayout}
+                render={renderRowActions}
+              />
+            </div>
+          )}
+          {expanded && renderDetail && (
+            // Inside the card — and therefore inside the measured element —
+            // so virtualization keeps accurate card heights.
+            <Box data-adapttable-part="card-detail" sx={{ mt: 1 }}>
+              {renderDetail(row)}
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+    </MobileTarget.Provider>
   );
 }
 

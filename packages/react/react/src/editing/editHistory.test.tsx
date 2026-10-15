@@ -217,6 +217,24 @@ describe("asBatchGesture", () => {
 });
 
 describe("useTableEditHistory", () => {
+  it("does not offer undo for a rejected inline save", async () => {
+    const failure = new Error("Save rejected");
+    const onCellEdit = vi.fn(() => Promise.reject(failure));
+    const { result } = renderHook(() =>
+      useTableEditHistory<Row>({
+        editHistory: true,
+        columns: COLUMNS,
+        onCellEdit,
+      })
+    );
+    await act(async () => {
+      await expect(
+        result.current.onCellEdit?.(ADA, "name", "Unsaved")
+      ).rejects.toBe(failure);
+    });
+    expect(result.current.history.canUndo).toBe(false);
+  });
+
   it("records an inline commit so undo restores the previous value", () => {
     const onCellEdit = vi.fn();
     const { result } = renderHook(() =>

@@ -575,9 +575,15 @@ function builtInAggregator(name: AggregateName): Aggregator {
       case "avg":
         return sum(numbers) / numbers.length;
       case "min":
-        return Math.min(...numbers);
+        return numbers.reduce(
+          (lowest, value) => Math.min(lowest, value),
+          Infinity
+        );
       case "max":
-        return Math.max(...numbers);
+        return numbers.reduce(
+          (highest, value) => Math.max(highest, value),
+          -Infinity
+        );
     }
   };
 }

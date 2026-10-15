@@ -1,3 +1,4 @@
+import { preserveEditorFocusOnLayoutChange } from "@adapttable/core/binding";
 /**
  * Whether a CSS media query matches, as a signal that follows the viewport.
  */
@@ -34,6 +35,7 @@ export function injectMediaQuery(
   const list = globalThis.matchMedia(query);
   const matches = signal(list.matches);
   const onChange = (event: MediaQueryListEvent): void => {
+    preserveEditorFocusOnLayoutChange();
     matches.set(event.matches);
   };
   list.addEventListener("change", onChange);

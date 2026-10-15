@@ -16,6 +16,7 @@ import { iconForRowAction, MoreVerticalIcon } from "./icons";
 
 interface RowActionButtonsProps<TRow> {
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   labels: Required<TableLabels>;
@@ -27,6 +28,7 @@ interface RowActionButtonsProps<TRow> {
 interface ActionItemProps<TRow> {
   action: RowAction<TRow>;
   row: TRow;
+  minTargetSize?: number;
   confirm: ConfirmHandler;
   cancelLabel: string;
   className: string | undefined;
@@ -37,6 +39,7 @@ interface ActionItemProps<TRow> {
 function ActionItem<TRow>({
   action,
   row,
+  minTargetSize,
   confirm,
   cancelLabel,
   className,
@@ -58,6 +61,7 @@ function ActionItem<TRow>({
       disabled={disabled}
       title={reason ?? (icon ? action.label : undefined)}
       aria-label={action.label}
+      style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
       data-adapttable-part="action-button"
       data-color={action.color}
       className={className}
@@ -70,12 +74,14 @@ function ActionItem<TRow>({
 
 function ActionStrip<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   cancelLabel,
   className,
 }: Readonly<{
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   cancelLabel: string;
@@ -88,6 +94,7 @@ function ActionStrip<TRow>({
           key={action.key}
           action={action}
           row={row}
+          minTargetSize={minTargetSize}
           confirm={confirm}
           cancelLabel={cancelLabel}
           className={className}
@@ -99,12 +106,14 @@ function ActionStrip<TRow>({
 
 function ActionMenu<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   labels,
   classNames,
 }: Readonly<{
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   labels: Required<TableLabels>;
@@ -119,6 +128,7 @@ function ActionMenu<TRow>({
       onPointerDown={(event) => event.stopPropagation()}
     >
       <summary
+        style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
         data-adapttable-part="row-actions-trigger"
         className={classNames.rowActionsTrigger}
         aria-label={labels.rowActionsMenu}
@@ -131,6 +141,7 @@ function ActionMenu<TRow>({
           key={action.key}
           action={action}
           row={row}
+          minTargetSize={minTargetSize}
           confirm={confirm}
           cancelLabel={labels.cancel}
           className={classNames.actionButton}
@@ -143,6 +154,7 @@ function ActionMenu<TRow>({
 
 export function RowActionButtons<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   labels,
@@ -159,6 +171,7 @@ export function RowActionButtons<TRow>({
       layout === "menu" ? (
         <ActionMenu
           row={row}
+          minTargetSize={minTargetSize}
           actions={visible}
           confirm={confirm}
           labels={labels}
@@ -167,6 +180,7 @@ export function RowActionButtons<TRow>({
       ) : (
         <ActionStrip
           row={row}
+          minTargetSize={minTargetSize}
           actions={visible}
           confirm={confirm}
           cancelLabel={labels.cancel}

@@ -12,6 +12,7 @@ import { densityChooser } from "@adapttable/vuetify/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/vuetify/editing";
 import { exportCsv } from "@adapttable/vuetify/export";
@@ -32,9 +33,12 @@ import { tree } from "@adapttable/vuetify/tree";
 import { virtualize } from "@adapttable/vuetify/virtualize";
 import { defineComponent, h } from "vue";
 import { VApp } from "vuetify/components/VApp";
+import { VAvatar } from "vuetify/components/VAvatar";
 import { VBtn } from "vuetify/components/VBtn";
 import { VChip } from "vuetify/components/VChip";
+import { VProgressLinear } from "vuetify/components/VProgressLinear";
 import { VSelect } from "vuetify/components/VSelect";
+import { VTextField } from "vuetify/components/VTextField";
 import { createVuetify } from "vuetify/framework";
 import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
 import { ar, en } from "vuetify/locale";
@@ -66,6 +70,19 @@ const Root = defineComponent(
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "vuetify",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h(VTextField, {
+      "aria-label": label,
+      "data-adapttable-part": part,
+      modelValue: value,
+      type,
+      disabled,
+      autocomplete: "off",
+      hideDetails: true,
+      density: "compact",
+      variant: "outlined",
+      "onUpdate:modelValue": onChange,
+    }),
   install: (app, appearance) => {
     vuetify = createVuetify({
       theme: { defaultTheme: appearance.dark ? "dark" : "light" },
@@ -82,6 +99,20 @@ export const kit: ShowcaseKit = {
   setDark: (dark) => {
     void vuetify?.theme.change(dark ? "dark" : "light");
   },
+  avatar: (initials) =>
+    h(
+      VAvatar,
+      { size: 40, color: "primary", variant: "tonal", "aria-hidden": "true" },
+      () => initials
+    ),
+  progress: (value, label) =>
+    h(VProgressLinear, {
+      modelValue: value,
+      color: "primary",
+      height: 6,
+      rounded: true,
+      "aria-label": label,
+    }),
   status: (tone, label) =>
     h(
       VChip,
@@ -124,6 +155,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

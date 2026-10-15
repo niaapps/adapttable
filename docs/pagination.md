@@ -181,14 +181,14 @@ it already receives — nothing else about the hook changes.
 
 ## Options
 
-| Prop               | Type                                   | Default                  | Description                                                                               |
-| ------------------ | -------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------- |
-| `paginationMode`   | `"paged" \| "infinite" \| "auto"`      | `"auto"`                 | Pagination behaviour; `"auto"` = infinite on mobile, paged on desktop.                    |
-| `defaults`         | `{ page?: number; limit?: number; … }` | `{ page: 1, limit: 25 }` | Initial page/page-size, used while the URL has no value.                                  |
-| `labels`           | `TableLabels`                          | English                  | Override `rowsPerPage`, `loadMore`, and the `showing` range builder.                      |
-| `skeletonRows`     | `number`                               | page size                | Number of skeleton rows shown while loading.                                              |
-| `mobileBreakpoint` | `number`                               | `768`                    | Width at or below which the card layout takes over. `"auto"` pagination does not read it. |
-| `forceMobile`      | `boolean`                              | —                        | Pins the card layout. `"auto"` pagination does not read it.                               |
+| Prop               | Type                                   | Default                  | Description                                                                      |
+| ------------------ | -------------------------------------- | ------------------------ | -------------------------------------------------------------------------------- |
+| `paginationMode`   | `"paged" \| "infinite" \| "auto"`      | `"auto"`                 | Pagination behaviour; `"auto"` = infinite on mobile, paged on desktop.           |
+| `defaults`         | `{ page?: number; limit?: number; … }` | `{ page: 1, limit: 25 }` | Initial page/page-size, used while the URL has no value.                         |
+| `labels`           | `TableLabels`                          | English                  | Override `rowsPerPage`, `loadMore`, and the `showing` range builder.             |
+| `skeletonRows`     | `number`                               | page size                | Number of skeleton rows shown while loading.                                     |
+| `mobileBreakpoint` | `number`                               | `768`                    | Viewport breakpoint for cards and automatic infinite pagination.                 |
+| `forceMobile`      | `boolean`                              | —                        | Pins cards (`true`) or the table (`false`), including automatic pagination mode. |
 
 ## Notes
 

@@ -436,6 +436,7 @@ export const de: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} Zellen eingefügt`,
   gridRangePasteFailed: "Einfügen fehlgeschlagen",
   gridRangeFilled: (cells) => `${cells} Zellen ausgefüllt`,
+  gridRangeFillFailed: "Ausfüllen fehlgeschlagen",
   gridFillHandle: "Aus Auswahl ausfüllen",
   selectionCount: "Anzahl",
   selectionSum: "Summe",

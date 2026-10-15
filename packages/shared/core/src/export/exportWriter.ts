@@ -27,8 +27,8 @@ import {
   spanningArmed,
 } from "../rows/cellSpan";
 import { isBrowser } from "../utils/env";
-import { getPath } from "../utils/path";
-import { defaultCsvValue, matrixToCsv } from "./csv";
+import { exportCellValue } from "./cellValue";
+import { matrixToCsv } from "./csv";
 
 /**
  * What a structured export row is: a data leaf, a group header, or a
@@ -138,22 +138,6 @@ export interface ExportWriter {
   extension: string;
   /** Build the file from the resolved values. */
   build: (context: ExportWriteContext) => ExportPayload;
-}
-
-/**
- * A column's own `exportValue` wins, because it exists precisely to say the
- * file should carry something other than the screen. Without one, the default
- * display-value resolution stands.
- */
-function exportCellValue<TRow>(
-  row: TRow,
-  column: ColumnMetadata<TRow>
-): unknown {
-  if (column.exportValue) return column.exportValue(row);
-  const value = defaultCsvValue(row, column);
-  if (value !== "") return value;
-  const path = getPath(row, column.key);
-  return path instanceof Date && !Number.isNaN(path.getTime()) ? path : value;
 }
 
 /** Character width a spreadsheet can use, from a column's own `width`. */

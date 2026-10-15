@@ -32,8 +32,7 @@ with an empty strip. The second argument accepts the ordinary grouping extras,
 including `groupAggregates`, whose mapper has the **same signature as
 `summaryRow`**. Omit the factory and the table mounts neither grouping headers
 nor panel chrome. Plain `grouping("team")` from `@adapttable/<kit>/grouping` is
-the no-panel path for a host that deliberately fixes grouping in code, and the
-only grouping entry `@adapttable/bootstrap` ships. See
+the no-panel path for a host that deliberately fixes grouping in code. See
 [feature composition](./features.md).
 
 ## The grouping panel

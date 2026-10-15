@@ -561,7 +561,7 @@ export const angularModePage = (lab = false) => {
     ? "Angular Feature Lab — AdaptTable"
     : "Angular live demo — AdaptTable";
   const description = lab
-    ? "Compose Angular data table filters, cell editing, selection, grouping and row controls. Switch nine native UI kits and test responsive cards, RTL and saved views."
+    ? "Compose Angular table filters, editing, selection, grouping and row controls. Try nine native UI kits with mobile cards, RTL and saved views."
     : "Explore an Angular data table with nine native UI kits: filters, sorting, editable cells, selection, saved views and CSV export, with responsive cards and RTL.";
   return {
     dir,

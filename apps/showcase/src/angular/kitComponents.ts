@@ -10,6 +10,7 @@ import type {
   Direction,
   EditConflictPolicy,
   ExtraFilters,
+  MobileCardRenderer,
   PaginationMode,
   SummaryRowFn,
   TableAssistantProps,
@@ -38,6 +39,7 @@ import {
   ViewContainerRef,
 } from "@angular/core";
 
+import type { ConnectionFieldProps } from "./connectionField";
 import { SHOWCASE_DARK, SHOWCASE_KIT } from "./showcaseKit";
 
 /** The demo's table inputs, forwarded reactively to its actual kit table. */
@@ -54,6 +56,7 @@ export class AdaptShowcaseTable<TRow> implements OnInit {
 
   readonly data = input<readonly TRow[]>();
   readonly source = input<Signal<TableSource<TRow>> | TableSource<TRow>>();
+  readonly mode = input<"frontend" | "server">();
   readonly loading = input<boolean>();
   readonly error = input<Error | null>();
   readonly skeletonRows = input<number>();
@@ -83,6 +86,7 @@ export class AdaptShowcaseTable<TRow> implements OnInit {
     Partial<TableQueryParams> & { extra?: ExtraFilters }
   >();
   readonly paginationMode = input<PaginationMode>();
+  readonly renderCard = input<MobileCardRenderer<TRow>>();
   readonly maxHeight = input<number | string>();
   readonly filtersMode = input<"popover" | "drawer">("popover");
   readonly forceMobile = input<boolean>();
@@ -107,6 +111,7 @@ export class AdaptShowcaseTable<TRow> implements OnInit {
           : []),
         inputBinding("data", this.data),
         inputBinding("source", this.source),
+        inputBinding("mode", this.mode),
         inputBinding("loading", this.loading),
         inputBinding("error", this.error),
         inputBinding("skeletonRows", this.skeletonRows),
@@ -120,6 +125,7 @@ export class AdaptShowcaseTable<TRow> implements OnInit {
         inputBinding("defaults", this.defaults),
         inputBinding("paginationMode", this.paginationMode),
         inputBinding("maxHeight", this.maxHeight),
+        inputBinding("renderCard", this.renderCard),
         inputBinding("filtersMode", this.filtersMode),
         inputBinding("forceMobile", this.forceMobile),
         inputBinding("selectable", this.selectable),
@@ -212,5 +218,20 @@ export class AdaptShowcaseAction {
 export class AdaptShowcaseChoice {
   protected readonly kit = inject(SHOWCASE_KIT);
   readonly props = input.required<TableAssistantLanguageChipProps>();
+  protected readonly inputs = computed(() => ({ props: this.props() }));
+}
+
+/** Endpoint and token fields are rendered by the active kit. */
+@Component({
+  selector: "adapt-showcase-connection-field",
+  imports: [NgComponentOutlet],
+  template: `<ng-container
+    [ngComponentOutlet]="kit.connectionField"
+    [ngComponentOutletInputs]="inputs()"
+  />`,
+})
+export class AdaptShowcaseConnectionField {
+  protected readonly kit = inject(SHOWCASE_KIT);
+  readonly props = input.required<ConnectionFieldProps>();
   protected readonly inputs = computed(() => ({ props: this.props() }));
 }

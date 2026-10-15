@@ -422,6 +422,7 @@ export const ur: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} خانے چسپاں ہوئے`,
   gridRangePasteFailed: "چسپاں کرنا ناکام",
   gridRangeFilled: (cells) => `${cells} خانے بھرے گئے`,
+  gridRangeFillFailed: "بھرنا ناکام ہوا",
   gridFillHandle: "انتخاب سے بھریں",
   selectionCount: "تعداد",
   selectionSum: "مجموعہ",

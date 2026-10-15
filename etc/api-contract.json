@@ -1,5 +1,5 @@
 {
-  "$comment": "The public API contract: what each participating entry point commits to, checked both ways by scripts/check-api-contract.mjs. Bootstrapped from origin/main's committed reports plus the additions this branch made deliberately, each audited before this file was written — never read back from the current reports, because a list derived from its own output approves whatever drift produced it. Edit by hand, with a changeset saying what moved. Every surface is filed under one framework in `frameworks`: `neutral` for the packages under packages/shared, one key per binding folder under packages/ — an entry point names only surfaces of its own package's framework.",
+  "$comment": "The public API contract: what each participating entry point commits to, checked both ways by scripts/check-api-contract.mjs. Bootstrapped from origin/main's committed reports plus the additions this branch made deliberately, each audited before this file was written \u2014 never read back from the current reports, because a list derived from its own output approves whatever drift produced it. Edit by hand, with a changeset saying what moved. Every surface is filed under one framework in `frameworks`: `neutral` for the packages under packages/shared, one key per binding folder under packages/ \u2014 an entry point names only surfaces of its own package's framework.",
   "frameworks": {
     "neutral": [
       "ai",
@@ -416,7 +416,6 @@
       "adapter-base-ui-assistant",
       "adapter-base-ui-grouping-panel",
       "adapter-base-ui-pivot",
-      "adapter-bootstrap",
       "adapter-chakra",
       "adapter-chakra-assistant",
       "adapter-chakra-grouping-panel",
@@ -459,18 +458,11 @@
       "base-ui/fullscreen",
       "base-ui/preset",
       "base-ui/print",
-      "bootstrap/cell-navigation",
-      "bootstrap/column-menu",
-      "bootstrap/editing",
-      "bootstrap/grouping",
-      "bootstrap/row-reorder",
-      "bootstrap/saved-views",
       "chakra/density",
       "chakra/export",
       "chakra/fullscreen",
       "chakra/preset",
       "chakra/print",
-      "forwards @adapttable/react/pivot",
       "forwards @adapttable/unstyled/batch-editing",
       "forwards @adapttable/unstyled/bulk-actions",
       "forwards @adapttable/unstyled/cell-navigation",
@@ -1630,13 +1622,6 @@
     ],
     "adapter-base-ui-pivot": [
       "PivotPanel"
-    ],
-    "adapter-bootstrap": [
-      "DataTable",
-      "DataTableClassNames",
-      "DataTableProps",
-      "DataTablePropsBase",
-      "DataTableSlots"
     ],
     "adapter-chakra": [
       "AgentApproval",
@@ -3010,24 +2995,6 @@
     ],
     "base-ui/print": [
       "print"
-    ],
-    "bootstrap/cell-navigation": [
-      "cellNavigation"
-    ],
-    "bootstrap/column-menu": [
-      "columnMenu"
-    ],
-    "bootstrap/editing": [
-      "editing"
-    ],
-    "bootstrap/grouping": [
-      "grouping"
-    ],
-    "bootstrap/row-reorder": [
-      "rowReorder"
-    ],
-    "bootstrap/saved-views": [
-      "savedViews"
     ],
     "chakra/density": [
       "densityChooser"
@@ -4901,9 +4868,6 @@
       "FilterType",
       "SortableValue",
       "xlsxWriter"
-    ],
-    "forwards @adapttable/react/pivot": [
-      "@adapttable/react/pivot"
     ],
     "forwards @adapttable/unstyled/batch-editing": [
       "@adapttable/unstyled/batch-editing"
@@ -6988,6 +6952,7 @@
       "PivotPanelSurfaceProps",
       "PivotZone",
       "PivotZoneProps",
+      "preserveEditorFocusOnLayoutChange",
       "printToolbarProps",
       "QueryAggregate",
       "QueryCondition",
@@ -14534,37 +14499,6 @@
     },
     "adapter-base-ui.api.md": {
       "surface": "adapter-base-ui"
-    },
-    "adapter-bootstrap-cell-navigation.api.md": {
-      "reexport": "bootstrap/cell-navigation"
-    },
-    "adapter-bootstrap-column-menu.api.md": {
-      "reexport": "bootstrap/column-menu"
-    },
-    "adapter-bootstrap-editing.api.md": {
-      "reexport": "bootstrap/editing"
-    },
-    "adapter-bootstrap-features.api.md": {
-      "reexport": "kit/features",
-      "from": "@adapttable/react/features"
-    },
-    "adapter-bootstrap-grouping.api.md": {
-      "reexport": "bootstrap/grouping"
-    },
-    "adapter-bootstrap-pivot.api.md": {
-      "reexport": "forwards @adapttable/react/pivot"
-    },
-    "adapter-bootstrap-row-reorder.api.md": {
-      "reexport": "bootstrap/row-reorder"
-    },
-    "adapter-bootstrap-saved-views.api.md": {
-      "reexport": "bootstrap/saved-views"
-    },
-    "adapter-bootstrap-virtualize.api.md": {
-      "reexport": "kit/virtualize"
-    },
-    "adapter-bootstrap.api.md": {
-      "surface": "adapter-bootstrap"
     },
     "adapter-chakra-assistant.api.md": {
       "surface": "adapter-chakra-assistant"

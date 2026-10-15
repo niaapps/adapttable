@@ -16,6 +16,7 @@ import { iconForRowAction, MoreVerticalIcon } from "../icons";
 
 interface RowActionButtonsProps<TRow> {
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   labels: Required<TableLabels>;
@@ -25,11 +26,13 @@ interface RowActionButtonsProps<TRow> {
 
 function ActionControls<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   cancelLabel,
 }: Readonly<{
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   cancelLabel: string;
@@ -60,6 +63,7 @@ function ActionControls<TRow>({
               size="sm"
               disabled={disabled}
               aria-label={action.label}
+              style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
               data-adapttable-part="action-button"
               onClick={handleClick}
             >
@@ -73,6 +77,7 @@ function ActionControls<TRow>({
             color={action.color}
             size="compact-sm"
             disabled={disabled}
+            style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
             data-adapttable-part="action-button"
             onClick={handleClick}
           >
@@ -86,11 +91,13 @@ function ActionControls<TRow>({
 
 function ActionMenu<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   labels,
 }: Readonly<{
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   labels: Required<TableLabels>;
@@ -102,6 +109,7 @@ function ActionMenu<TRow>({
           variant="subtle"
           size="sm"
           aria-label={labels.rowActionsMenu}
+          style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
           data-adapttable-part="row-actions-trigger"
           onClick={(event) => event.stopPropagation()}
         >
@@ -122,6 +130,7 @@ function ActionMenu<TRow>({
               disabled={disabled}
               color={action.color}
               leftSection={iconForRowAction(action)}
+              style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
               data-adapttable-part="action-button"
               title={reason}
               onClick={() => runRowAction(action, row, confirm, labels.cancel)}
@@ -137,6 +146,7 @@ function ActionMenu<TRow>({
 
 export function RowActionButtons<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   labels,
@@ -152,6 +162,7 @@ export function RowActionButtons<TRow>({
       layout === "menu" ? (
         <ActionMenu
           row={row}
+          minTargetSize={minTargetSize}
           actions={visible}
           confirm={confirm}
           labels={labels}
@@ -159,6 +170,7 @@ export function RowActionButtons<TRow>({
       ) : (
         <ActionControls
           row={row}
+          minTargetSize={minTargetSize}
           actions={visible}
           confirm={confirm}
           cancelLabel={labels.cancel}

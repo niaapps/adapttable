@@ -74,7 +74,7 @@ columns, hierarchy and view controls, then use these contract guides for:
 - [Summaries and footers](./summary-row.md): reactive summary values, desktop
   and mobile projections, footer renderers and structural helpers.
 
-The [root API index](../api.md#vue-actions-and-adapter-channels) also maps these
+The [root API index](/react/api/#vue-actions-and-adapter-channels) also maps these
 Vue exports to their owning entries. Separate formula, pivot, sparkline and
 stream helpers are not automatically loaded by the feature barrel.
 
@@ -330,7 +330,7 @@ memory adapter from the request and supply matching state during hydration.
 the neutral store signatures. It omits subscription/configuration methods.
 Actions remain stable when the options or namespace changes; after scope
 disposal they no longer mutate state. Install the native filter/grouping features to add their controls.
-[Additional slices and Saved Views](./features.md#what-a-view-restores) document
+[Additional slices and Saved Views](./saved-views.md#what-a-view-restores) document
 density, pins, explicit group collapse and the state that is not captured.
 
 ## Columns and rendering
@@ -431,7 +431,7 @@ For persistence, the root exports `useColumnLayoutUrlState` with
 `UseColumnLayoutStorageStateOptions`/`UseColumnLayoutStorageStateResult`.
 Bind their `layout` ref and `onLayoutChange` to the native prop/event explicitly.
 The URL result also has `flush`; pass it as `UseSavedViewsOptions.flushViewState`
-when using Saved Views. [Layout-persistence examples](./features.md#persist-column-layout-explicitly)
+when using Saved Views. [Layout-persistence examples](./saved-views.md#persist-column-layout-explicitly)
 cover the full options, SSR seed, debounce and storage boundaries.
 
 `useSelection(options: MaybeRefOrGetter<UseSelectionOptions<TRow>>)` returns
@@ -887,7 +887,7 @@ base `desktop`/`mobile` models and optional `pinning`; the result must supply
 both models so custom row structure remains coherent on desktop and mobile. The input also
 includes optional grouping, tree, detail, selection and `TableRowInventory`;
 its `loadedRows` preserve editing liveness while `visibleRows` define rendered
-hierarchy traversal and selection. See [hierarchy row semantics](./features.md#visible-rows-and-loaded-rows).
+hierarchy traversal and selection. See [hierarchy row semantics](./row-grouping.md#visible-rows-and-loaded-rows).
 
 `RowActionControlsProjector<TRow>` maps `RowActionControlsInput<TRow>` to readonly
 `RowActionControl<TRow>[]`. Inputs are `row`, `actions`, the adapter `confirm`

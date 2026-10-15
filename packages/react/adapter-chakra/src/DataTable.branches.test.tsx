@@ -293,25 +293,30 @@ describe("tables.tsx branches", () => {
   });
 
   it("tightens mobile card spacing in compact density (compact arms)", () => {
-    // density="compact" maps to size "sm", switching MobileCards to the
-    // tighter stack/body/field spacing scale. A genuine change shows up as
-    // different emotion classes vs the comfortable render (same pattern as
-    // the desktop density suite).
-    const classesFor = (density: "compact" | "comfortable") => {
+    const spacingFor = (density: "compact" | "comfortable") => {
       const { container, unmount } = mount({ density }, "", {
         isMobile: true,
       });
       const body = container.querySelector(".chakra-card__body")!;
-      const field = body.querySelector("div")!;
-      const classes = { body: body.className, field: field.className };
+      const field = body.querySelector<HTMLElement>(
+        '[data-adapttable-part="card-row"]'
+      )!;
+      const spacing = {
+        body: body.className,
+        field: field.style.padding,
+        gap: field.parentElement!.style.gap,
+      };
       unmount();
-      return classes;
+      return spacing;
     };
-    const compact = classesFor("compact");
-    const comfortable = classesFor("comfortable");
+    const compact = spacingFor("compact");
+    const comfortable = spacingFor("comfortable");
     expect(compact.body).not.toBe("");
     expect(compact.body).not.toBe(comfortable.body);
-    expect(compact.field).not.toBe(comfortable.field);
+    expect(compact.field).toBe("0.375rem");
+    expect(comfortable.field).toBe("0.5rem");
+    expect(compact.gap).toBe("0.5rem");
+    expect(comfortable.gap).toBe("0.75rem");
   });
 
   it("renders trailing padding in virtualized mobile cards (paddingBottom > 0 true branch)", () => {

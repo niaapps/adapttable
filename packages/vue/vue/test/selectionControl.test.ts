@@ -44,6 +44,7 @@ function checkbox(root: ParentNode, selector: string): HTMLInputElement {
 }
 interface FixtureOptions {
   readonly mobile?: boolean;
+  readonly card?: NonNullable<TableChromeSlots<Row>["card"]>;
   readonly controlled?: readonly string[];
   readonly accept?: boolean;
   readonly defaultSelectedIds?: readonly string[];
@@ -75,6 +76,7 @@ function mount(options: FixtureOptions = {}) {
           },
         }));
         const slots: TableChromeSlots<Row> = {
+          card: options.card,
           SortButton: ({ attrs, content }) => h("button", attrs, [content]),
           SelectionCheckbox: (props) => {
             controls.push(props);
@@ -118,6 +120,60 @@ function mount(options: FixtureOptions = {}) {
 }
 
 describe("semantic selection control projection", () => {
+  it.each(["search", "extra", "tree", "group"] as const)(
+    "clears selection and all-matching when the %s query changes",
+    async (query) => {
+      const view = mount({ defaultSelectedIds: ["a", "off-page"] });
+      view.shell.selection.value!.selectAllMatching();
+      expect(view.shell.selection.value!.allMatching.value).toBe(true);
+      const source = view.shell.source.value;
+      if (query === "search") source.setSearch("Bea");
+      if (query === "extra") source.setExtra("name", "Bea");
+      if (query === "tree")
+        source.setFilterTree?.({
+          combinator: "and",
+          conditions: [{ key: "name", op: "eq", value: "Bea" }],
+        });
+      if (query === "group") source.setGroupBy?.("name");
+      await nextTick();
+      expect(view.shell.selection.value!.allMatching.value).toBe(false);
+      expect(view.shell.selection.value!.selectedCount.value).toBe(0);
+      expect(view.updates).toEqual([[]]);
+    }
+  );
+
+  it("requests a query reset once while preserving a controlled host refusal", async () => {
+    const view = mount({ controlled: ["a"] });
+    view.shell.source.value.setSearch("Bea");
+    await nextTick();
+    expect(view.updates).toEqual([[]]);
+    expect([...view.shell.selection.value!.selectedIds.value]).toEqual(["a"]);
+  });
+
+  it("retains an explicit host selection restored alongside a new query", async () => {
+    const view = mount({ controlled: ["a"], accept: true });
+    view.shell.source.value.setSearch("Bea");
+    view.selectedIds.value = ["b"];
+    await nextTick();
+    expect([...view.shell.selection.value!.selectedIds.value]).toEqual(["b"]);
+    expect(view.updates).toEqual([]);
+  });
+
+  it("keeps selection through paging and sorting, and avoids empty query-reset callbacks", async () => {
+    const view = mount();
+    view.shell.source.value.setSearch("a");
+    await nextTick();
+    expect(view.updates).toEqual([]);
+    view.shell.selection.value!.toggle("a");
+    view.shell.selection.value!.selectAllMatching();
+    view.shell.source.value.setSort("name", "desc");
+    view.shell.source.value.setPage(2);
+    await nextTick();
+    expect(view.updates).toEqual([["a"]]);
+    expect(view.shell.selection.value!.allMatching.value).toBe(true);
+    expect([...view.shell.selection.value!.selectedIds.value]).toEqual(["a"]);
+  });
+
   it("aliases the actual state/action and retains full native attrs unchanged", () => {
     const onChange = vi.fn();
     const attrs: SelectionCheckboxAttrs = {
@@ -355,4 +411,31 @@ describe("semantic selection control projection", () => {
     expect(updates).toEqual([["off-page"]]);
     expect([...selection.selectedIds.value]).toEqual(["off-page"]);
   });
+});
+
+it("lets a custom card reuse prepared native values while selection remains outside its body", async () => {
+  const card = vi.fn(
+    (context: Parameters<NonNullable<TableChromeSlots<Row>["card"]>>[0]) =>
+      h(
+        "section",
+        { "data-custom-body": context.row.id },
+        context.fields.map((field) =>
+          h("div", { key: field.column.key }, [field.value])
+        )
+      )
+  );
+  const { root } = mount({ mobile: true, card });
+  await nextTick();
+  expect(root.querySelector('[data-custom-body="a"]')?.textContent).toBe("Ada");
+  expect(
+    root.querySelectorAll('[data-adapttable-part="card"] input')
+  ).toHaveLength(2);
+  expect(card).toHaveBeenCalledWith(
+    expect.objectContaining({
+      row: data[0],
+      index: 0,
+      selected: false,
+      expanded: false,
+    })
+  );
 });

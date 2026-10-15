@@ -265,10 +265,11 @@ export function createExportController(
   ): ExportAllControls => ({
     signal: abort.signal,
     setProgress: (next) => {
-      if (activeRun === runId) write({ progress: clampProgress(next) });
+      if (activeRun === runId && inFlight === abort)
+        write({ progress: clampProgress(next) });
     },
     setMessage: (next) => {
-      if (activeRun === runId) write({ message: next });
+      if (activeRun === runId && inFlight === abort) write({ message: next });
     },
   });
 

@@ -60,9 +60,12 @@ export interface ShowcaseKit {
   readonly providers: readonly (Provider | EnvironmentProviders)[];
   readonly table: Type<unknown>;
   readonly statusCell: Type<unknown>;
+  readonly personCell: Type<unknown>;
+  readonly loadCell: Type<unknown>;
   readonly pivotPanel: Type<unknown>;
   readonly assistant: Type<unknown>;
   readonly assistantButton: Type<unknown>;
+  readonly connectionField: Type<unknown>;
   readonly assistantSelect: Type<unknown>;
   readonly savedViewsPanel: Type<unknown>;
   readonly bulkActions: typeof bulkActions;

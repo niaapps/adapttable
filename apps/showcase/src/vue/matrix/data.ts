@@ -9,7 +9,7 @@
 import { applyRowPatches, updateRow } from "@adapttable/core";
 import { type Direction, getDirection, getLabels } from "@adapttable/i18n";
 import type { ColumnDef, ColumnInput } from "@adapttable/vue";
-import type { VNodeChild } from "vue";
+import { h, type VNodeChild } from "vue";
 
 import {
   budget,
@@ -23,6 +23,7 @@ import {
   PEOPLE,
   type Person,
   personName,
+  personRole,
   personStatus,
   startDate,
   STATUS_LABELS,
@@ -131,6 +132,8 @@ export function peopleColumns(
   options: {
     readonly editable?: boolean;
     readonly status?: StatusRenderer;
+    readonly avatar?: (initials: string) => VNodeChild;
+    readonly progress?: (value: number, label: string) => VNodeChild;
   } = {}
 ): ColumnDef<Person>[] {
   const dataLocale = currentDataLocale();
@@ -149,6 +152,25 @@ export function peopleColumns(
         String(value).trim() === "" ? s.nameRequired : undefined,
       width: 200,
       mobileLabel: "",
+      ...(options.avatar
+        ? {
+            cell: ({ row }: { row: Person }) => {
+              const name = personName(row, dataLocale);
+              const initials = name
+                .split(/\s+/u)
+                .slice(0, 2)
+                .map((part) => [...part][0] ?? "")
+                .join("");
+              return h("div", { class: "demo-mobile-person" }, [
+                options.avatar?.(initials),
+                h("div", { style: { minWidth: 0 } }, [
+                  h("strong", name),
+                  h("small", personRole(row, dataLocale)),
+                ]),
+              ]);
+            },
+          }
+        : {}),
     },
     {
       key: "team",
@@ -235,6 +257,15 @@ export function peopleColumns(
       sortable: true,
       width: 100,
       mobileLabel: s.load,
+      ...(options.progress
+        ? {
+            cell: ({ row }: { row: Person }) =>
+              h("div", { class: "demo-mobile-load" }, [
+                options.progress?.(utilization(row), s.load),
+                h("small", formatPercent(utilization(row), dataLocale)),
+              ]),
+          }
+        : {}),
     },
   ];
 }

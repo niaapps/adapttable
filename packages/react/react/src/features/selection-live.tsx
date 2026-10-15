@@ -14,7 +14,12 @@ function LiveSelection({
   children,
 }: ChromeExtraSlotProps<never>): ReactNode {
   const getId = chrome.getRowId;
-  const resetKey = `${chrome.source.search}|${stableKey(chrome.source.extra)}|${chrome.source.groupBy ?? ""}`;
+  const resetKey = stableKey([
+    chrome.source.search,
+    chrome.source.extra,
+    chrome.source.filterTree,
+    chrome.source.groupBy,
+  ]);
   const selection = useSelection({
     rows: chrome.source.rows,
     getId,

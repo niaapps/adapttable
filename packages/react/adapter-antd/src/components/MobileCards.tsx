@@ -47,6 +47,7 @@ import {
   ConfigProvider,
   Descriptions,
   Space,
+  theme,
   Typography,
 } from "antd";
 import {
@@ -66,17 +67,23 @@ import {
   OptionalTreeToggle,
 } from "./featureSlots";
 import { ADAPTTABLE_GROUP, type AdaptTableGroupRow } from "./grouping";
+import { MobileTarget } from "./mobileTarget";
 import { RowActionButtons } from "./RowActionButtons";
 
 /** Name the real kit-owned field rows and label spans, without extra markup. */
-function CardDescriptions({ children }: Readonly<{ children: ReactNode }>) {
+function CardDescriptions({
+  children,
+  vertical = false,
+}: Readonly<{ children: ReactNode; vertical?: boolean }>) {
   const { getPrefixCls } = useContext(ConfigProvider.ConfigContext);
   const prefix = getPrefixCls("descriptions");
   return (
     <Descriptions
       column={1}
+      layout={vertical ? "vertical" : "horizontal"}
       size="small"
       colon={false}
+      styles={{ label: { color: "inherit" } }}
       ref={(descriptions) => {
         const root = descriptions?.nativeElement;
         if (!root) return;
@@ -282,6 +289,7 @@ function CardItemBase<TRow>(props: Readonly<CardItemProps<TRow>>) {
   const actions = rowEdit.actions.length > 0 ? rowEdit.actions : null;
   // Built once and used by both paths, so a custom card shows the very same
   // value node the built-in would have — cell renderers and editors included.
+  const { token } = theme.useToken();
   const fields = columns.map((column) => ({
     column,
     label: resolveMobileLabel(column),
@@ -304,112 +312,137 @@ function CardItemBase<TRow>(props: Readonly<CardItemProps<TRow>>) {
     ),
   }));
   return (
-    <Card
-      size="small"
-      className={className}
-      style={{
-        ...style,
-        // Ant Design's block card cannot use an intrinsic min-height to
-        // override a fixed desktop row height. Keep that height as a floor.
-        height: style?.height === undefined ? undefined : "auto",
-        minHeight: style?.height ?? style?.minHeight,
-      }}
-      data-stagger=""
-      data-selected={selected ? "" : undefined}
-      data-dirty={rowIsDirty(editing, id) ? "" : undefined}
-      {...rowClickProps(row, onRowClick, rowIndex)}
-      onMouseEnter={prefetch ? () => prefetch(row) : undefined}
-      title={
-        (treeEntry ?? onToggleSelect) ? (
-          <Space size="small">
-            {treeEntry && (
-              <OptionalTreeToggle
-                entry={treeEntry}
-                labels={labels}
-                onToggle={onToggleTree ?? (() => undefined)}
-              />
-            )}
-            {onToggleSelect && (
-              <Checkbox
-                checked={selected}
-                aria-label={labels.selectRow}
-                onChange={() => onToggleSelect(id)}
-              />
-            )}
-          </Space>
-        ) : undefined
-      }
-      extra={
-        (onToggleExpand ?? actions ?? editing?.rowEditing) ? (
-          <Space size="small" data-adapttable-part="card-actions">
-            {onToggleExpand && (
-              <OptionalExpandToggle
-                id={id}
-                expanded={Boolean(expanded)}
-                onToggle={onToggleExpand}
-                expandLabel={labels.expandRow}
-                collapseLabel={labels.collapseRow}
-              />
-            )}
-            {editing?.rowEditing && (
-              <OptionalRowEditActions
-                rowEditing={editing.rowEditing}
-                row={row}
-                rowId={id}
-                showBegin={rowEdit.showBegin}
-                icons={editing.rowEditIcons}
-                conflict={rowConflict}
-                labels={labels}
-              />
-            )}
-            {actions && (
-              <RowActionButtons
-                row={row}
-                actions={actions}
-                confirm={confirm}
-                labels={labels}
-                layout={rowActionsLayout}
-                render={renderRowActions}
-              />
-            )}
-          </Space>
-        ) : undefined
-      }
-    >
-      {renderCard ? (
-        renderCard(row, { index: rowIndex, fields, selected, expanded })
-      ) : (
-        // The whole `Descriptions` goes, not just its items: a
-        // `Descriptions.Item` only means anything inside one.
-        <CardDescriptions>
-          {fields.map(({ column, label, value }) => (
-            <Descriptions.Item key={column.key} label={label}>
-              <span
-                data-adapttable-part="card-value"
-                data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
+    <MobileTarget.Provider value={true}>
+      <Card
+        size="small"
+        className={className}
+        style={{
+          ...style,
+          // Ant Design's block card cannot use an intrinsic min-height to
+          // override a fixed desktop row height. Keep that height as a floor.
+          height: style?.height === undefined ? undefined : "auto",
+          minHeight: style?.height ?? style?.minHeight,
+        }}
+        data-stagger=""
+        data-selected={selected ? "" : undefined}
+        data-dirty={rowIsDirty(editing, id) ? "" : undefined}
+        {...rowClickProps(row, onRowClick, rowIndex)}
+        onMouseEnter={prefetch ? () => prefetch(row) : undefined}
+        title={
+          (treeEntry ?? onToggleSelect) ? (
+            <Space size="small">
+              {treeEntry && (
+                <OptionalTreeToggle
+                  entry={treeEntry}
+                  labels={labels}
+                  onToggle={onToggleTree ?? (() => undefined)}
+                />
+              )}
+              {onToggleSelect && (
+                <Checkbox
+                  style={{ minWidth: 44, minHeight: 44, alignItems: "center" }}
+                  checked={selected}
+                  aria-label={labels.selectRow}
+                  onChange={() => onToggleSelect(id)}
+                />
+              )}
+            </Space>
+          ) : undefined
+        }
+        extra={
+          (onToggleExpand ?? actions ?? editing?.rowEditing) ? (
+            <Space size="small" data-adapttable-part="card-actions">
+              {onToggleExpand && (
+                <OptionalExpandToggle
+                  id={id}
+                  expanded={Boolean(expanded)}
+                  onToggle={onToggleExpand}
+                  expandLabel={labels.expandRow}
+                  collapseLabel={labels.collapseRow}
+                />
+              )}
+              {editing?.rowEditing && (
+                <OptionalRowEditActions
+                  rowEditing={editing.rowEditing}
+                  row={row}
+                  rowId={id}
+                  showBegin={rowEdit.showBegin}
+                  icons={editing.rowEditIcons}
+                  conflict={rowConflict}
+                  labels={labels}
+                />
+              )}
+              {actions && (
+                <RowActionButtons
+                  minTargetSize={44}
+                  row={row}
+                  actions={actions}
+                  confirm={confirm}
+                  labels={labels}
+                  layout={rowActionsLayout}
+                  render={renderRowActions}
+                />
+              )}
+            </Space>
+          ) : undefined
+        }
+      >
+        {renderCard ? (
+          renderCard(row, { index: rowIndex, fields, selected, expanded })
+        ) : (
+          // The whole `Descriptions` goes, not just its items: a
+          // `Descriptions.Item` only means anything inside one.
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit, minmax(min(100%, 7rem), 1fr))",
+              gap: 12,
+            }}
+          >
+            {fields.map(({ column, label, value }) => (
+              <div
+                key={column.key}
+                style={{
+                  minWidth: 0,
+                  overflowWrap: "anywhere",
+                  gridColumn: label ? undefined : "1 / -1",
+                  padding: label ? 8 : 0,
+                  background: label ? token.colorFillQuaternary : undefined,
+                  borderRadius: token.borderRadiusSM,
+                }}
               >
-                {value}
-              </span>
-            </Descriptions.Item>
-          ))}
-        </CardDescriptions>
-      )}
-      {rowReorder && (
-        <OptionalRowReorderButtons
-          reorder={rowReorder}
-          labels={labels}
-          localIndex={rowIndex}
-          row={row}
-          windowStart={windowStart}
-          rowCount={rowCount}
-        />
-      )}
-      {expanded && renderDetail ? (
-        <div data-adapttable-part="card-detail" style={{ marginTop: 8 }}>
-          {renderDetail(row)}
-        </div>
-      ) : null}
-    </Card>
+                <CardDescriptions vertical>
+                  <Descriptions.Item label={label}>
+                    <div
+                      data-adapttable-part="card-value"
+                      data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
+                    >
+                      {value}
+                    </div>
+                  </Descriptions.Item>
+                </CardDescriptions>
+              </div>
+            ))}
+          </div>
+        )}
+        {rowReorder && (
+          <OptionalRowReorderButtons
+            reorder={rowReorder}
+            labels={labels}
+            localIndex={rowIndex}
+            row={row}
+            windowStart={windowStart}
+            rowCount={rowCount}
+          />
+        )}
+        {expanded && renderDetail ? (
+          <div data-adapttable-part="card-detail" style={{ marginTop: 8 }}>
+            {renderDetail(row)}
+          </div>
+        ) : null}
+      </Card>
+    </MobileTarget.Provider>
   );
 }
 

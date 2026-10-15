@@ -50,47 +50,49 @@ const BLOCKING = new Set(["serious", "critical"]);
 /**
  * Scan `selector` (the kit demo surface) and return blocking axe findings.
  *
- * `color-contrast` stays off, same as every adapter's jsdom axe suite: kit
- * dimmed tokens (pagination captions, secondary meta) fail WCAG on purpose
- * in several libraries, and this audit is the name/role/state net, not a
- * token redesign.
+ * The existing table audits cover names, roles and states. Targeted surface
+ * audits can also enable contrast, which needs real browser rendering.
  */
 export async function scanAxe(
   page: Page,
-  selector: string
+  selector: string,
+  options: { readonly colorContrast?: boolean } = {}
 ): Promise<AxeViolation[]> {
   await page.addScriptTag({ path: AXE_SOURCE });
-  const results = await page.evaluate(async (rootSelector) => {
-    const root = document.querySelector(rootSelector);
-    if (!root) {
-      throw new Error(`axe: no element matches ${rootSelector}`);
-    }
-    const axe = (
-      window as unknown as {
-        axe: {
-          run: (
-            context: { include: Element[]; exclude: string[][] },
-            options: {
-              reporter: string;
-              rules: { "color-contrast": { enabled: boolean } };
-            }
-          ) => Promise<AxeResults>;
-        };
+  const results = await page.evaluate(
+    async ({ rootSelector, colorContrast }) => {
+      const root = document.querySelector(rootSelector);
+      if (!root) {
+        throw new Error(`axe: no element matches ${rootSelector}`);
       }
-    ).axe;
-    return axe.run(
-      {
-        include: [root],
-        // antd injects an aria-hidden measure row with focusable descendants
-        // so it can size columns. That node is the kit's, not ours.
-        exclude: [[".ant-table-measure-row"]],
-      },
-      {
-        reporter: "v2",
-        rules: { "color-contrast": { enabled: false } },
-      }
-    );
-  }, selector);
+      const axe = (
+        window as unknown as {
+          axe: {
+            run: (
+              context: { include: Element[]; exclude: string[][] },
+              options: {
+                reporter: string;
+                rules: { "color-contrast": { enabled: boolean } };
+              }
+            ) => Promise<AxeResults>;
+          };
+        }
+      ).axe;
+      return axe.run(
+        {
+          include: [root],
+          // antd injects an aria-hidden measure row with focusable descendants
+          // so it can size columns. That node is the kit's, not ours.
+          exclude: [[".ant-table-measure-row"]],
+        },
+        {
+          reporter: "v2",
+          rules: { "color-contrast": { enabled: colorContrast } },
+        }
+      );
+    },
+    { rootSelector: selector, colorContrast: options.colorContrast === true }
+  );
   return results.violations.filter((violation) =>
     BLOCKING.has(violation.impact ?? "")
   );
@@ -99,9 +101,10 @@ export async function scanAxe(
 /** Fail the spec when axe reports a serious or critical violation. */
 export async function expectNoBlockingAxe(
   page: Page,
-  selector: string
+  selector: string,
+  options: { readonly colorContrast?: boolean } = {}
 ): Promise<void> {
-  const blocking = await scanAxe(page, selector);
+  const blocking = await scanAxe(page, selector, options);
   const summary = blocking.map(
     (violation) =>
       `[${violation.impact}] ${violation.id}: ${violation.help} (${violation.nodes

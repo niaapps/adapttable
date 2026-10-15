@@ -36,6 +36,19 @@ layouts.
 
 ## Tuning the cards
 
+The built-in body lays fields out in a grid that responds to the **card's own
+width**. Labels sit above their values; unlabeled fields span the full width.
+This keeps an identity block together while short details sit side by side.
+Narrow cards fall back to one field per line, and long values wrap. Each kit
+supplies its own card, typography, controls and theme colors, including dark
+mode. Custom `renderCard` bodies retain their own layout.
+
+Use a column renderer to show meaningful kit elements: an Avatar beside a
+person's name, a Badge for status, or a Progress for workload. The table preserves
+those renderers in cards; it does not infer a status, avatar or action from a
+column's name. Use `mobileLabel: ""` for a self-explanatory identity block, and
+keep labels on measurements and other values that need context.
+
 - **`mobileLabel`** (per column) — the label a card shows for that field;
   falls back to the column's string `header`, then to its key. Set it to `""`
   for a field with no label at all — a bare avatar or title line — rather than
@@ -79,12 +92,11 @@ to try the two layouts.
 
 ## Your own card
 
-The built-in card is a stack of labelled fields, which is right for most
-tables and wrong for some: an order wants its total large and its reference
-small; a person wants their avatar beside their name rather than under a
-caption reading "Avatar".
+The built-in card groups labeled fields beneath any unlabeled, full-width
+content. For a different hierarchy, `renderCard` can put an order's total above
+its reference or combine several columns into one identity area.
 
-`renderCard` replaces that stack — and only that stack:
+`renderCard` replaces the field body:
 
 ```tsx
 <DataTable
@@ -128,7 +140,7 @@ and editors included. So this is a layout decision, not a re-implementation:
 reuse the values and arrange them your way. `card.selected`, `card.expanded`
 and `card.index` come along for cards that change with their state.
 
-Omit it and the built-in card renders, byte for byte.
+Omit it to use the built-in card body.
 
 ## Where the switch happens
 
@@ -202,6 +214,45 @@ sticky header, pinned columns and horizontal scrolling included. The cards
 are the default because thumb-reach beats pinch-zoom for row-by-row work,
 but the choice stays yours per table.
 
+```tsx
+// Automatic cards on phones: omit forceMobile.
+<DataTable data={rows} columns={columns} rowKey={(row) => row.id} />
+
+// Keep the table on phones; wide columns scroll within the table.
+<DataTable
+  data={rows}
+  columns={columns}
+  rowKey={(row) => row.id}
+  forceMobile={false}
+  paginationMode="paged"
+/>
+```
+
+`true` always renders cards; `false` always renders the table; omission follows
+the viewport. These choices also affect `paginationMode="auto"`. Set
+`paginationMode` explicitly when loading behavior must stay the same across
+layouts. A horizontally scrolling table is useful for comparing columns across
+rows; cards are useful for reading and acting on one record at a time.
+
 Related: [Getting started](./getting-started.md) ·
 [API reference](./api.md) ·
 [Live mobile demo](https://adapttable.orwamahmoud.com/react/demo/mantine/mobile-cards/)
+
+## Editing across layouts
+
+Custom framework bindings can call `preserveEditorFocusOnLayoutChange()` from
+`@adapttable/core/binding` immediately before publishing a responsive layout
+change. It captures the active editor and caret, then restores them after the
+DOM replacement. It leaves focus alone if the original control remains mounted,
+the editor inventory changes, or focus moves outside the table. The supplied
+React, Angular and Vue bindings already wire this behavior.
+
+A layout change keeps row drafts, selection, filters and expanded rows in the
+same table state. Native editor focus and text selection follow viewport changes
+when the editor inventory remains unchanged. An explicit layout chooser keeps
+focus on the chooser. Keep stable row keys and render the supplied prepared
+field values in custom cards so native editors remain connected.
+
+Mobile Save/Cancel and hierarchy actions have larger touch targets while desktop
+controls keep their kit sizing. The mobile showcase also exercises bounded
+scrolling and pagination choices.

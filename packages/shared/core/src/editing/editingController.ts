@@ -25,6 +25,7 @@ import type {
   RowValidator,
   ValidationTarget,
 } from "./editContracts";
+import { recordedGesture } from "./recordedGesture";
 import { isThenable, listenerSet } from "./storePlumbing";
 
 /* ── Observers ─────────────────────────────────────────────────────── */
@@ -463,7 +464,7 @@ export function createCellSaveStore<TRow>(
     saving: new Set(),
     failures: new Map(),
   };
-  const tokens = new Map<string, number>();
+  const tokens = new Map<string, symbol>();
   const { subscribe, notify } = listenerSet();
 
   const markSaving = (key: string, busy: boolean): void => {
@@ -496,9 +497,14 @@ export function createCellSaveStore<TRow>(
     async track(input) {
       const { rowId, columnKey, previous, attempted, previousValue, result } =
         input;
-      if (!isThenable(result)) return true;
       const key = cellSaveKey(rowId, columnKey);
-      const token = (tokens.get(key) ?? 0) + 1;
+      if (!isThenable(result)) {
+        tokens.delete(key);
+        setFailure(key, undefined);
+        markSaving(key, false);
+        return true;
+      }
+      const token = Symbol();
       tokens.set(key, token);
       const live = (): boolean => tokens.get(key) === token;
       setFailure(key, undefined);
@@ -509,7 +515,12 @@ export function createCellSaveStore<TRow>(
         return true;
       } catch (error) {
         if (!live()) return false;
-        const message = (current.formatError ?? defaultSaveErrorMessage)(error);
+        let message: string;
+        try {
+          message = (current.formatError ?? defaultSaveErrorMessage)(error);
+        } catch {
+          message = defaultSaveErrorMessage(error);
+        }
         setFailure(key, { previous, attempted, message });
         observeEdit(current.onEditError, {
           row: previous,
@@ -522,7 +533,10 @@ export function createCellSaveStore<TRow>(
         });
         return false;
       } finally {
-        if (live()) markSaving(key, false);
+        if (live()) {
+          tokens.delete(key);
+          markSaving(key, false);
+        }
       }
     },
     rollback(rowId, columnKey) {
@@ -690,7 +704,10 @@ export function createEditValidationStore<TRow>(
     rowErrors: new Map(),
     validating: new Set(),
   };
-  const tokens = new Map<string, number>();
+  const cellMessages = new Map<string, string>();
+  const rowFieldMessages = new Map<string, string>();
+  const rowFields = new Map<string, Set<string>>();
+  const tokens = new Map<string, symbol>();
   const { subscribe, notify } = listenerSet();
 
   const setMap = (
@@ -706,10 +723,36 @@ export function createEditValidationStore<TRow>(
     snapshot = { ...snapshot, [field]: next };
     notify();
   };
-  const setCellError = (key: string, message?: string): void =>
-    setMap("cellErrors", key, message);
+  const publishCellError = (key: string): void =>
+    setMap(
+      "cellErrors",
+      key,
+      cellMessages.get(key) ?? rowFieldMessages.get(key)
+    );
+  const setCellError = (key: string, message?: string): void => {
+    if (message === undefined) cellMessages.delete(key);
+    else cellMessages.set(key, message);
+    publishCellError(key);
+  };
   const setRowError = (rowId: string, message?: string): void =>
     setMap("rowErrors", rowId, message);
+
+  const replaceRowFields = (
+    rowId: string,
+    verdict?: Record<string, string>
+  ): void => {
+    const previous = rowFields.get(rowId) ?? new Set<string>();
+    for (const key of previous) rowFieldMessages.delete(key);
+    const next = new Set<string>();
+    for (const [columnKey, message] of Object.entries(verdict ?? {})) {
+      const key = validationKey(rowId, columnKey);
+      next.add(key);
+      rowFieldMessages.set(key, message);
+    }
+    if (next.size > 0) rowFields.set(rowId, next);
+    else rowFields.delete(rowId);
+    for (const key of new Set([...previous, ...next])) publishCellError(key);
+  };
 
   const markValidating = (key: string, busy: boolean): void => {
     if (snapshot.validating.has(key) === busy) return;
@@ -725,20 +768,20 @@ export function createEditValidationStore<TRow>(
     target: ValidationTarget
   ): ValidationCheckResult => {
     const key = validationKey(target.rowId, target.columnKey);
+    replaceRowFields(
+      target.rowId,
+      typeof verdict === "object" ? verdict : undefined
+    );
+    setCellError(key);
     if (verdict === undefined) {
-      setCellError(key);
       setRowError(target.rowId);
       return { allowed: true };
     }
     if (typeof verdict === "string") {
-      setCellError(key);
       setRowError(target.rowId, verdict);
       return { allowed: false, error: verdict };
     }
     setRowError(target.rowId);
-    for (const [columnKey, message] of Object.entries(verdict)) {
-      setCellError(validationKey(target.rowId, columnKey), message);
-    }
     const firstKey = Object.keys(verdict)[0];
     if (firstKey === undefined) return { allowed: true };
     return {
@@ -756,9 +799,13 @@ export function createEditValidationStore<TRow>(
     async check(input) {
       const { target, value, row, validateCell } = input;
       const { validateRow, applyEdit = shallowApplyEdit } = current;
-      if (!validateCell && !validateRow) return { allowed: true };
       const key = validationKey(target.rowId, target.columnKey);
-      const token = (tokens.get(key) ?? 0) + 1;
+      if (!validateCell && !validateRow) {
+        tokens.delete(key);
+        markValidating(key, false);
+        return settle(undefined, target);
+      }
+      const token = Symbol();
       tokens.set(key, token);
       const live = (): boolean => tokens.get(key) === token;
       markValidating(key, true);
@@ -776,18 +823,28 @@ export function createEditValidationStore<TRow>(
         if (!live()) return { allowed: false };
         return settle(rowVerdict, target);
       } finally {
-        if (live()) markValidating(key, false);
+        if (live()) {
+          tokens.delete(key);
+          markValidating(key, false);
+        }
       }
     },
     clear(rowId, columnKey) {
       const key = validationKey(rowId, columnKey);
-      tokens.set(key, (tokens.get(key) ?? 0) + 1);
+      tokens.delete(key);
+      rowFieldMessages.delete(key);
+      const fields = rowFields.get(rowId);
+      fields?.delete(key);
+      if (fields?.size === 0) rowFields.delete(rowId);
       setCellError(key);
       setRowError(rowId);
       markValidating(key, false);
     },
     clearAll() {
       tokens.clear();
+      cellMessages.clear();
+      rowFieldMessages.clear();
+      rowFields.clear();
       snapshot = {
         cellErrors: new Map(),
         rowErrors: new Map(),
@@ -870,7 +927,8 @@ export function createEditHistoryStack<TRow>(): EditHistoryStack<TRow> {
     getSnapshot: () => snapshot,
     subscribe,
     record(entry, depth) {
-      past = [...past, entry].slice(-depth);
+      const limit = Math.max(0, Math.trunc(depth));
+      past = limit > 0 ? [...past, entry].slice(-limit) : [];
       future = [];
       sync();
     },
@@ -933,7 +991,7 @@ export function editHistoryEntry<TRow>(
       ? [{ row: edit.row, columnKey: edit.columnKey, value: read.value }]
       : [];
   });
-  return { redo: edits, undo };
+  return { redo: edits.map((edit) => ({ ...edit })), undo };
 }
 
 /**
@@ -942,14 +1000,11 @@ export function editHistoryEntry<TRow>(
  * @public
  */
 export function asGesture<TRow>(
-  apply: ((edits: CellEdit<TRow>[]) => void) | undefined,
+  apply: ((edits: CellEdit<TRow>[]) => unknown) | undefined,
   record: (edits: readonly CellEdit<TRow>[]) => void
-): ((edits: CellEdit<TRow>[]) => void) | undefined {
+): ((edits: CellEdit<TRow>[]) => unknown) | undefined {
   if (!apply) return undefined;
-  return (edits) => {
-    record(edits);
-    apply(edits);
-  };
+  return (edits) => recordedGesture(record, edits, () => apply(edits));
 }
 
 /**
@@ -979,8 +1034,6 @@ export function asBatchGesture<TRow>(
   record: (edits: readonly CellEdit<TRow>[]) => void
 ): ((edits: readonly BatchRowEdit<TRow>[]) => unknown) | undefined {
   if (!apply) return undefined;
-  return (edits) => {
-    record(cellsOfBatch(edits));
-    return apply(edits);
-  };
+  return (edits) =>
+    recordedGesture(record, cellsOfBatch(edits), () => apply(edits));
 }

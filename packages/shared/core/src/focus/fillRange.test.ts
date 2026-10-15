@@ -99,6 +99,24 @@ describe("fillRangeEdits", () => {
     expect(edits.map((edit) => edit.value)).toEqual([3, 4]);
   });
 
+  it("extends a large source series across a large destination", () => {
+    const rows = Array.from({ length: 20_000 }, (_, score) => ({
+      id: String(score),
+      name: "",
+      score,
+    }));
+    const edits = fillRangeEdits({
+      source: rect(0, 1, 9_999, 1),
+      to: { row: 19_999, col: 1 },
+      rows,
+      columns: COLUMNS,
+    });
+    expect(edits).toHaveLength(10_000);
+    expect(edits.every((edit, index) => edit.value === index + 10_000)).toBe(
+      true
+    );
+  });
+
   it("repeats rather than guessing a step from one number", () => {
     const edits = fill(rect(2, 1, 2, 1), { row: 4, col: 1 });
     expect(edits.map((edit) => edit.value)).toEqual([9, 9]);

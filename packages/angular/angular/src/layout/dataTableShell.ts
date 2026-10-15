@@ -1449,6 +1449,7 @@ export abstract class AdaptDataTableShell<TRow> implements OnInit {
   private readonly filtersForm = viewChild<TemplateRef<unknown>>("filtersForm");
   private readonly filtersTrigger =
     viewChild<TemplateRef<unknown>>("filtersTrigger");
+  private scrollToGridRow: ((rowIndex: number) => void) | undefined;
   private readonly injector = inject(Injector);
   private readonly root = viewChild<ElementRef<HTMLElement>>("root");
 
@@ -1822,6 +1823,7 @@ export abstract class AdaptDataTableShell<TRow> implements OnInit {
           ? injectGridFocus({
               table,
               enabled: true,
+              scrollToRow: (index) => this.scrollToGridRow?.(index),
               find,
               onActivate: (cell) => {
                 const rows = table.rows();
@@ -2269,6 +2271,19 @@ export abstract class AdaptDataTableShell<TRow> implements OnInit {
           injector,
         })
     );
+    this.scrollToGridRow = (index) => {
+      const row = table.rows()[index - table.windowStart()];
+      if (row === undefined) return;
+      const rows = pinnedRows()?.scroll ?? table.source().rows;
+      const localIndex = rows.indexOf(row);
+      const window = bodyWindow();
+      if (
+        localIndex < 0 ||
+        window.virtualization.rows.some((entry) => entry.row === row)
+      )
+        return;
+      window.scrollToRowIndex?.(localIndex);
+    };
     resources.use("find-window", [find, bodyWindow], (injector) =>
       scrollFindWindow({
         find,
@@ -2630,8 +2645,29 @@ export abstract class AdaptDataTableShell<TRow> implements OnInit {
             : undefined,
       };
     };
+    const currentVirtualization = resources.use("view-virtualization", [], () =>
+      signal(virtualization)
+    );
+    currentVirtualization.set(virtualization);
+    const viewTable = resources.use("view-table", [table], () => {
+      // Feature capabilities remain live getters on this stable view identity.
+      const model = Object.defineProperties(
+        { ...table },
+        Object.getOwnPropertyDescriptors(table)
+      );
+      // A page sentinel below a bounded virtual body never leaves view.
+      // The virtualizer requests more rows only at its own scroll end.
+      Object.defineProperty(model, "canLoadMore", {
+        value: computed(
+          () =>
+            table.canLoadMore() &&
+            !(this.maxHeight() != null && currentVirtualization()().enabled)
+        ),
+      });
+      return model;
+    });
     this.view.set({
-      table,
+      table: viewTable,
       classNames: this.classNames,
       renderCard: this.renderCard,
       renderRowActions: this.renderRowActions,

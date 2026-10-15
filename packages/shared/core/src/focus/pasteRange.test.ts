@@ -199,6 +199,26 @@ describe("cellPasteHandler", () => {
     expect(onCellEdit).toHaveBeenLastCalledWith(ROWS[1], "budget", 5);
   });
 
+  it("propagates rejected inline saves and observes earlier work if a later cell throws", async () => {
+    const error = new Error("Save refused");
+    const edits = [
+      { row: ROWS[0]!, columnKey: "name", value: "A" },
+      { row: ROWS[1]!, columnKey: "name", value: "B" },
+    ];
+    const rejected = cellPasteHandler<Row>({
+      onCellEdit: () => Promise.reject(error),
+    })!;
+    await expect(rejected(edits)).rejects.toBe(error);
+    const mixed = cellPasteHandler<Row>({
+      onCellEdit: (_row, _key, value) => {
+        if (value === "B") throw error;
+        return Promise.reject(error);
+      },
+    })!;
+    expect(() => mixed(edits)).toThrow(error);
+    await Promise.resolve();
+  });
+
   it("hands the batch whole to a host that asked for it", () => {
     const onCellPaste = vi.fn();
     const onCellEdit = vi.fn();

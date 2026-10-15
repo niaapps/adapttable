@@ -4,23 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
-    <meta name="description" content="Try a local Taiga UI Angular table assistant: sort salaries, answer a filtering question and approve or reject a proposed edit. No model or API key required." />
+    <meta name="description" content="Try the Taiga UI table assistant: sort, filter and approve edits. Use scripted prompts without a key, or connect your AI backend for free-form requests." />
     <link rel="canonical" href="https://adapttable.orwamahmoud.com/angular/demo/taiga-ui/ai/" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="AdaptTable" />
     <meta property="og:title" content="Taiga UI Angular AI table assistant demo — AdaptTable" />
-    <meta property="og:description" content="Try a local Taiga UI Angular table assistant: sort salaries, answer a filtering question and approve or reject a proposed edit. No model or API key required." />
+    <meta property="og:description" content="Try the Taiga UI table assistant: sort, filter and approve edits. Use scripted prompts without a key, or connect your AI backend for free-form requests." />
     <meta property="og:url" content="https://adapttable.orwamahmoud.com/angular/demo/taiga-ui/ai/" />
     <meta property="og:image" content="https://adapttable.orwamahmoud.com/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Taiga UI Angular AI table assistant demo — AdaptTable" />
-    <meta name="twitter:description" content="Try a local Taiga UI Angular table assistant: sort salaries, answer a filtering question and approve or reject a proposed edit. No model or API key required." />
+    <meta name="twitter:description" content="Try the Taiga UI table assistant: sort, filter and approve edits. Use scripted prompts without a key, or connect your AI backend for free-form requests." />
     <meta name="twitter:image" content="https://adapttable.orwamahmoud.com/og.png" />
     <script type="application/ld+json">
-      {"@context":"https://schema.org","@type":"SoftwareApplication","name":"AdaptTable","description":"Try a local Taiga UI Angular table assistant: sort salaries, answer a filtering question and approve or reject a proposed edit. No model or API key required.","url":"https://adapttable.orwamahmoud.com/angular/demo/taiga-ui/ai/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","license":"https://opensource.org/license/mit","programmingLanguage":"TypeScript","codeRepository":"https://github.com/orwa-mahmoud/adapttable","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+      {"@context":"https://schema.org","@type":"SoftwareApplication","name":"AdaptTable","description":"Try the Taiga UI table assistant: sort, filter and approve edits. Use scripted prompts without a key, or connect your AI backend for free-form requests.","url":"https://adapttable.orwamahmoud.com/angular/demo/taiga-ui/ai/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","license":"https://opensource.org/license/mit","programmingLanguage":"TypeScript","codeRepository":"https://github.com/orwa-mahmoud/adapttable","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
     </script>
     <!-- Cloudflare Web Analytics — cookieless, no consent banner needed.
          Injected only off localhost, so a dev server files no session. -->
@@ -173,7 +173,7 @@
       <main class="at-fallback">
         <p class="at-fallback__kicker">AdaptTable for Taiga UI</p>
         <h1>AI table assistant in Taiga UI Angular</h1>
-        <p>This deterministic local demo mounts a real Taiga UI Angular table and its Taiga UI assistant. Ask to sort salaries, choose a person, or propose Grace's salary as 150. No language model or API key is needed.</p>
+        <p>This demo mounts a real Taiga UI Angular table and its Taiga UI assistant. Start with scripted sorting, questions and approved edits, or connect your HTTP backend for free-form AI requests. The scripted mode needs no model or API key.</p>
         <p>A question filters the table only after you answer. A proposed edit waits for your approval in the assistant, the table or a dialog; an approved write updates the host's data and its status line. Rejecting leaves the data unchanged, and the conversation records the execution result.</p>
         <p><code>tableAgent</code> and <code>injectTableAssistant</code> from <code>@adapttable/ai-angular</code> share the mounted table's session. The snippet below shows a minimal local sorting transport; the demo also includes questions and governed edits. JSON, OpenAI, HTTP, MCP, MCP Apps, WebMCP, AG-UI and AI SDK helpers can use the same session in your application.</p>
         <h2>The code</h2>
@@ -253,11 +253,11 @@ pnpm add @adapttable/taiga-ui @adapttable/angular @taiga-ui/core@5.26.0 @taiga-u
         <ul>
           <li><a href="../../unstyled/ai/">AI table assistant in Unstyled Angular</a> — Native elements — your own CSS</li>
           <li><a href="../../ng-zorro/ai/">AI table assistant in NG-ZORRO Angular</a> — Ant Design components for Angular</li>
-          <li><a href="../../material/ai/">AI table assistant in Angular Material Angular</a> — Material surfaces, native controls</li>
+          <li><a href="../../material/ai/">AI table assistant in Angular Material</a> — Material surfaces, native controls</li>
           <li><a href="../../ng-bootstrap/ai/">AI table assistant in ng-bootstrap Angular</a> — Bootstrap styling, Angular overlays</li>
-          <li><a href="../../aria/ai/">AI table assistant in Angular Aria Angular</a> — Accessible behavior, precise styling</li>
+          <li><a href="../../aria/ai/">AI table assistant in Angular Aria</a> — Accessible behavior, precise styling</li>
           <li><a href="../../ngx-bootstrap/ai/">AI table assistant in ngx-bootstrap Angular</a> — Bootstrap controls and overlays</li>
-          <li><a href="../../angular-cdk/ai/">AI table assistant in Angular CDK Angular</a> — CDK behavior, a neutral theme</li>
+          <li><a href="../../angular-cdk/ai/">AI table assistant in Angular CDK</a> — CDK behavior, a neutral theme</li>
           <li><a href="../../spartan/ai/">AI table assistant in Spartan Angular</a> — Sharp borders, subtle elevation</li>
         </ul>
         <h2>More Taiga UI features</h2>

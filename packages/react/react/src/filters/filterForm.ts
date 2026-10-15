@@ -12,7 +12,7 @@ import {
   type TextOp,
 } from "@adapttable/core";
 import type { FilterFormSource } from "@adapttable/core/binding";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export type {
   BooleanChoice,
@@ -53,9 +53,15 @@ export function useRangeFilterWidget<TRow>(
   def: FilterDef<TRow>,
   source: FilterFormSource<TRow>
 ): RangeFieldWidget {
-  const [op, setOp] = useState<RangeOp | undefined>(() =>
-    initialRangeFilterOp(def, source.extra)
-  );
+  const storedOp = initialRangeFilterOp(def, source.extra);
+  const stored = rangeFilterWidget(def, source, storedOp);
+  const [op, setOp] = useState<RangeOp | undefined>(storedOp);
+  // A mounted filter also receives URL, Saved View and AI changes. Re-seed
+  // from its own persisted values without erasing an unfinished operator
+  // choice when an unrelated filter changes or the host merely rerenders.
+  useEffect(() => {
+    setOp(storedOp);
+  }, [def.key, def.type, storedOp, stored.a, stored.b]);
   return { ...rangeFilterWidget(def, source, op), setOp };
 }
 

@@ -569,6 +569,53 @@ function movingTable(): {
 }
 
 describe("putting one action of a turn back", () => {
+  it("restores a single search action's pagination side effect from its card", async () => {
+    let page = 4;
+    let search = "";
+    let revision = 1;
+    const session = createAgentSession({
+      observe: () =>
+        observation({ page, search, viewRevision: revision, hasSearch: true }),
+      apply: {
+        setPage: (value) => {
+          page = value;
+          revision += 1;
+        },
+        setSearch: (value) => {
+          search = value;
+          page = 1;
+          revision += 1;
+        },
+      },
+    });
+    const store = createTableAssistant({
+      session,
+      contextInputs: () => ({ view: { page, search, limit: 10 } }),
+      transport: {
+        send: async ({ session: live }) => ({
+          text: "Showing Ada",
+          keys: ["view.setSearch"],
+          results: [
+            await live.execute(
+              "view.setSearch",
+              { query: "Ada" },
+              revision,
+              "search-once"
+            ),
+          ],
+        }),
+      },
+    });
+    store.connect();
+    await store.send("Show Ada");
+    expect(page).toBe(1);
+
+    await store.undoAction("search-once");
+
+    expect(search).toBe("");
+    expect(page).toBe(4);
+  });
+
   /** A table whose page and search both move, and report where they landed. */
   function twoWayTable(): {
     readonly session: AgentSession;
@@ -650,6 +697,20 @@ describe("putting one action of a turn back", () => {
 
     // The search is back; the page the other action moved is untouched.
     expect(table.search()).toBe("");
+    expect(table.page()).toBe(4);
+  });
+
+  it("retires action undo commands when their conversation is cleared", async () => {
+    const table = twoWayTable();
+    const store = storeFor(table);
+    await store.send("page and search");
+
+    store.clear();
+    await store.undoAction("two-2");
+    await store.undoAction("two-1");
+
+    expect(store.getState().messages).toEqual([]);
+    expect(table.search()).toBe("ada");
     expect(table.page()).toBe(4);
   });
 
@@ -1886,6 +1947,27 @@ describe("stop, disconnect and resume are three different things", () => {
     expect(store.getState().interrupted).toBe("stopped");
     expect(store.getState().resumable).toBeUndefined();
     expect(store.getState().busy).toBe(false);
+  });
+
+  it("forgets resumable work when the reader clears the conversation", async () => {
+    const backend = detachable();
+    const store = createTableAssistant({
+      session: tableSession(),
+      transport: backend.transport,
+    });
+    store.connect();
+    void store.send("count everything");
+    await vi.waitFor(() => expect(store.getState().resumable).toBeDefined());
+    store.disconnect();
+    expect(store.getState().interrupted).toBe("detached");
+
+    store.clear();
+    await store.resume();
+
+    expect(store.getState().messages).toEqual([]);
+    expect(store.getState().resumable).toBeUndefined();
+    expect(store.getState().interrupted).toBeUndefined();
+    expect(backend.resumes).toEqual([]);
   });
 
   it("leaves the work running when the connection goes", async () => {

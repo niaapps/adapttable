@@ -18,6 +18,7 @@ import { Tooltip } from "./primitives";
 
 interface RowActionButtonsProps<TRow> {
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   labels: Required<TableLabels>;
@@ -28,12 +29,14 @@ interface RowActionButtonsProps<TRow> {
 
 function ActionStrip<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   cancelLabel,
   accentColor,
 }: Readonly<{
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   cancelLabel: string;
@@ -60,6 +63,7 @@ function ActionStrip<TRow>({
               colorPalette={action.color ?? accentColor}
               disabled={disabled}
               aria-label={action.label}
+              style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
               data-adapttable-part="action-button"
               onClick={handleClick}
             >
@@ -73,6 +77,7 @@ function ActionStrip<TRow>({
               variant="ghost"
               colorPalette={action.color ?? accentColor}
               disabled={disabled}
+              style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
               data-adapttable-part="action-button"
               onClick={handleClick}
             >
@@ -87,12 +92,14 @@ function ActionStrip<TRow>({
 
 function ActionMenu<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   labels,
   accentColor,
 }: Readonly<{
   row: TRow;
+  minTargetSize?: number;
   actions: readonly RowAction<TRow>[];
   confirm: ConfirmHandler;
   labels: Required<TableLabels>;
@@ -106,6 +113,7 @@ function ActionMenu<TRow>({
           variant="ghost"
           colorPalette={accentColor}
           aria-label={labels.rowActionsMenu}
+          style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
           data-adapttable-part="row-actions-trigger"
           onClick={(event) => event.stopPropagation()}
         >
@@ -130,6 +138,7 @@ function ActionMenu<TRow>({
                   value={action.key}
                   disabled={disabled}
                   colorPalette={action.color ?? accentColor}
+                  style={{ minWidth: minTargetSize, minHeight: minTargetSize }}
                   data-adapttable-part="action-button"
                   title={reason}
                   onClick={() =>
@@ -150,6 +159,7 @@ function ActionMenu<TRow>({
 
 export function RowActionButtons<TRow>({
   row,
+  minTargetSize,
   actions,
   confirm,
   labels,
@@ -166,6 +176,7 @@ export function RowActionButtons<TRow>({
       layout === "menu" ? (
         <ActionMenu
           row={row}
+          minTargetSize={minTargetSize}
           actions={visible}
           confirm={confirm}
           labels={labels}
@@ -174,6 +185,7 @@ export function RowActionButtons<TRow>({
       ) : (
         <ActionStrip
           row={row}
+          minTargetSize={minTargetSize}
           actions={visible}
           confirm={confirm}
           cancelLabel={labels.cancel}

@@ -334,7 +334,7 @@ export interface ApprovalReviewItem {
 export function asBatchGesture<TRow>(apply: ((edits: readonly BatchRowEdit<TRow>[]) => unknown) | undefined, record: (edits: readonly CellEdit<TRow>[]) => void): ((edits: readonly BatchRowEdit<TRow>[]) => unknown) | undefined;
 
 // @public
-export function asGesture<TRow>(apply: ((edits: CellEdit<TRow>[]) => void) | undefined, record: (edits: readonly CellEdit<TRow>[]) => void): ((edits: CellEdit<TRow>[]) => void) | undefined;
+export function asGesture<TRow>(apply: ((edits: CellEdit<TRow>[]) => unknown) | undefined, record: (edits: readonly CellEdit<TRow>[]) => void): ((edits: CellEdit<TRow>[]) => unknown) | undefined;
 
 // @public
 export interface AssemblyFns<TRow = unknown> {
@@ -407,7 +407,7 @@ export interface BatchEditEntry {
 export function batchEditErrorId(rowId: string, columnKey: string): string;
 
 // @public
-export function batchEditHandler<TRow>(batch: ((edits: CellEdit<TRow>[]) => void) | undefined, onCellEdit: ((row: TRow, key: string, nextValue: unknown) => void) | undefined): ((edits: CellEdit<TRow>[]) => void) | undefined;
+export function batchEditHandler<TRow>(batch: ((edits: CellEdit<TRow>[]) => unknown) | undefined, onCellEdit: ((row: TRow, key: string, nextValue: unknown) => unknown) | undefined): ((edits: CellEdit<TRow>[]) => unknown) | undefined;
 
 // @public
 export interface BatchEditingState<TRow> {
@@ -859,12 +859,12 @@ export interface CellEditTarget {
 }
 
 // @public
-export function cellFillHandler<TRow>(options: CellFillHandlerOptions<TRow>): ((edits: CellEdit<TRow>[]) => void) | undefined;
+export function cellFillHandler<TRow>(options: CellFillHandlerOptions<TRow>): ((edits: CellEdit<TRow>[]) => unknown) | undefined;
 
 // @public
 export interface CellFillHandlerOptions<TRow> {
-    onCellEdit?: (row: TRow, key: string, nextValue: unknown) => void;
-    onCellFill?: (edits: CellEdit<TRow>[]) => void;
+    onCellEdit?: (row: TRow, key: string, nextValue: unknown) => unknown;
+    onCellFill?: (edits: CellEdit<TRow>[]) => unknown;
 }
 
 // @public
@@ -888,12 +888,12 @@ export interface CellNavigationChannelsOptions<TRow> {
 }
 
 // @public
-export function cellPasteHandler<TRow>(options: CellPasteHandlerOptions<TRow>): ((edits: CellEdit<TRow>[]) => void) | undefined;
+export function cellPasteHandler<TRow>(options: CellPasteHandlerOptions<TRow>): ((edits: CellEdit<TRow>[]) => unknown) | undefined;
 
 // @public
 export interface CellPasteHandlerOptions<TRow> {
-    onCellEdit?: (row: TRow, key: string, nextValue: unknown) => void;
-    onCellPaste?: (edits: CellEdit<TRow>[]) => void;
+    onCellEdit?: (row: TRow, key: string, nextValue: unknown) => unknown;
+    onCellPaste?: (edits: CellEdit<TRow>[]) => unknown;
 }
 
 // @public
@@ -4192,9 +4192,9 @@ export interface GridFocusControllerOptions<TRow> {
     matchKeys?: ReadonlySet<string>;
     onActivate?: (cell: GridCell) => void;
     onCut?: (range: CellRange) => void;
-    onFill?: (edits: CellEdit<TRow>[]) => void;
+    onFill?: (edits: CellEdit<TRow>[]) => unknown;
     onFind?: () => void;
-    onPaste?: (edits: CellEdit<TRow>[]) => void;
+    onPaste?: (edits: CellEdit<TRow>[]) => unknown;
     onRangeChange?: (range: CellRange | null) => void;
     onRedo?: () => number;
     onUndo?: () => number;
@@ -8195,6 +8195,7 @@ export interface TableLabels {
     gridRangeCopied?: (cells: number) => string;
     gridRangeCopyFailed?: string;
     gridRangeFilled?: (cells: number) => string;
+    gridRangeFillFailed?: string;
     gridRangePasted?: (cells: number) => string;
     gridRangePasteFailed?: string;
     gridRangeSelection?: (range: {
@@ -8480,8 +8481,8 @@ export interface TableOptions<TRow, TNode = unknown> {
     // @deprecated
     mobileIdentityColumns?: number;
     onCellCut?: (range: CellRange) => void;
-    onCellFill?: (edits: CellEdit<TRow>[]) => void;
-    onCellPaste?: (edits: CellEdit<TRow>[]) => void;
+    onCellFill?: (edits: CellEdit<TRow>[]) => unknown;
+    onCellPaste?: (edits: CellEdit<TRow>[]) => unknown;
     onClearFilters?: () => void;
     onCollapsedGroupIdsChange?: (ids: string[]) => void;
     onColumnLayoutChange?: (next: ColumnLayoutState) => void;

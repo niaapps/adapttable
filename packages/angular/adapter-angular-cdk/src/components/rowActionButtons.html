@@ -22,6 +22,8 @@
       [cdkMenuTriggerFor]="menuContent"
       adaptCdkMenuDirection
       data-adapttable-part="row-actions-trigger"
+      [style.min-width.px]="minTargetSize()"
+      [style.min-height.px]="minTargetSize()"
       [class]="classNames().rowActionsTrigger"
       [attr.aria-label]="labels().rowActionsMenu"
       (click)="$event.stopPropagation()"
@@ -42,6 +44,8 @@
             cdkMenuItem
             [cdkMenuItemDisabled]="item.disabled"
             data-adapttable-part="action-button"
+            [style.min-width.px]="minTargetSize()"
+            [style.min-height.px]="minTargetSize()"
             [class]="classNames().actionButton"
             [attr.aria-label]="item.action.label"
             [attr.title]="item.reason ?? null"
@@ -62,6 +66,8 @@
       data-adapttable-cdk-control
       type="button"
       data-adapttable-part="action-button"
+      [style.min-width.px]="minTargetSize()"
+      [style.min-height.px]="minTargetSize()"
       [class]="classNames().actionButton"
       [attr.aria-label]="item.action.label"
       [attr.title]="item.reason ?? null"

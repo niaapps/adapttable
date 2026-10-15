@@ -10,6 +10,7 @@ import { densityChooser } from "@adapttable/naive-ui/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/naive-ui/editing";
 import { exportCsv } from "@adapttable/naive-ui/export";
@@ -32,8 +33,11 @@ import {
   arDZ,
   darkTheme,
   enUS,
+  NAvatar,
   NButton,
   NConfigProvider,
+  NInput,
+  NProgress,
   NSelect,
   NTag,
 } from "naive-ui";
@@ -109,11 +113,48 @@ const Select = defineComponent(
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "naive-ui",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h(NInput, {
+      inputProps: { "aria-label": label },
+      "data-adapttable-part": part,
+      value,
+      type: type ?? "text",
+      disabled,
+      autocomplete: "off",
+      onUpdateValue: onChange,
+    }),
   Root,
+  avatar: (initials) =>
+    h(
+      NAvatar,
+      {
+        round: true,
+        size: 40,
+        "aria-hidden": "true",
+        style: {
+          color: "inherit",
+          backgroundColor: "color-mix(in srgb, currentColor 8%, transparent)",
+        },
+      },
+      () => initials
+    ),
+  progress: (value, label) =>
+    h(NProgress, {
+      type: "line",
+      percentage: value,
+      showIndicator: false,
+      "aria-label": label,
+    }),
   status: (tone, label) =>
     h(
       NTag,
-      { type: TAG_TYPE[tone], size: "small", round: true, bordered: false },
+      {
+        type: TAG_TYPE[tone],
+        size: "small",
+        round: true,
+        bordered: false,
+        style: { color: "inherit" },
+      },
       () => label
     ),
   button: ({ label, part, disabled, onClick }) =>
@@ -136,6 +177,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

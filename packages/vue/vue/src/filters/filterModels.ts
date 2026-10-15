@@ -10,6 +10,7 @@ import {
   type FilterDef,
   type FilterFormSource,
   type FilterOption,
+  filterStateKeys,
   filterTreeEditorActions,
   type FilterTypeRegistry,
   initialRangeFilterOp,
@@ -20,6 +21,7 @@ import {
   rangeFilterWidget,
   type RangeOp,
   searchChecklistItems,
+  stableKey,
   type TableSource,
   type TextFieldWidget,
   textFilterWidget,
@@ -72,10 +74,23 @@ export function useRangeFilter<TRow>(
   requireScope("useRangeFilter");
   const owner = useFilterActionOwner(definition, input);
   const chosen = shallowRef<RangeOp | null>();
+  // A local choice can have empty operands and therefore no persisted token.
+  // Only outside updates should replace that preview with the stored range.
+  let writing = false;
   watch(
-    () => toValue(definition).key,
+    [
+      () => toValue(definition).key,
+      () => toValue(definition).type,
+      () => {
+        const def = toValue(definition);
+        const extra = toValue(input).extra;
+        return stableKey(
+          filterStateKeys(def, defaultFilterRegistry).map((key) => extra[key])
+        );
+      },
+    ],
     () => {
-      chosen.value = undefined;
+      if (!writing) chosen.value = undefined;
     },
     { flush: "sync" }
   );
@@ -87,8 +102,17 @@ export function useRangeFilter<TRow>(
       chosen.value === undefined
         ? initialRangeFilterOp(def, source.extra)
         : (chosen.value ?? undefined);
+    const widget = rangeFilterWidget(def, source, op);
     return {
-      ...rangeFilterWidget(def, source, op),
+      ...widget,
+      write: (nextOp, a, b) => {
+        writing = true;
+        try {
+          widget.write(nextOp, a, b);
+        } finally {
+          writing = false;
+        }
+      },
       setOp: (next: RangeOp | undefined) => {
         if (own.allowed()) chosen.value = next ?? null;
       },

@@ -84,13 +84,24 @@
             />
           }
           @if (!summary && v.selection; as selection) {
-            <input
-              [attr.aria-label]="v.table.labels().selectRow"
-              class="form-check-input"
-              data-ngx-bootstrap-part="checkbox"
-              [class]="classes.checkbox"
-              [adaptAttrs]="selection.rowCheckboxAttrs(rowId(entry.row))"
-            />
+            <label
+              style="
+                display: inline-flex;
+                min-width: 44px;
+                min-height: 44px;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+              "
+            >
+              <input
+                [attr.aria-label]="v.table.labels().selectRow"
+                class="form-check-input"
+                data-ngx-bootstrap-part="checkbox"
+                [class]="classes.checkbox"
+                [adaptAttrs]="selection.rowCheckboxAttrs(rowId(entry.row))"
+              />
+            </label>
           }
           @if (v.rowDetail && !summary) {
             <ng-container
@@ -110,31 +121,38 @@
               [ngComponentOutletInputs]="card.content.inputs"
             />
           } @else {
-            @for (field of card.context.fields; track field.column.key) {
-              <div data-adapttable-part="card-row" [class]="classes.cardRow">
-                @if (field.label; as label) {
-                  <span
-                    data-adapttable-part="card-label"
-                    [class]="classes.cardLabel"
-                    >{{ label }}</span
-                  >
-                }
-                <span
-                  data-adapttable-part="card-value"
-                  [class]="classes.cardValue"
-                  [attr.data-flash]="
-                    !summary && v.isCellFlashing(entry.id, field.column.key)
-                      ? ''
-                      : null
-                  "
+            <div class="adapt-card-fields">
+              @for (field of card.context.fields; track field.column.key) {
+                <div
+                  data-adapttable-part="card-row"
+                  [style.grid-column]="field.label ? null : '1 / -1'"
+                  [attr.data-card-identity]="field.label ? null : ''"
+                  [class]="classes.cardRow"
                 >
-                  <ng-container
-                    [ngTemplateOutlet]="field.value"
-                    [ngTemplateOutletContext]="field.context"
-                  />
-                </span>
-              </div>
-            }
+                  @if (field.label; as label) {
+                    <span
+                      data-adapttable-part="card-label"
+                      [class]="classes.cardLabel"
+                      >{{ label }}</span
+                    >
+                  }
+                  <span
+                    data-adapttable-part="card-value"
+                    [class]="classes.cardValue"
+                    [attr.data-flash]="
+                      !summary && v.isCellFlashing(entry.id, field.column.key)
+                        ? ''
+                        : null
+                    "
+                  >
+                    <ng-container
+                      [ngTemplateOutlet]="field.value"
+                      [ngTemplateOutletContext]="field.context"
+                    />
+                  </span>
+                </div>
+              }
+            </div>
           }
           @if (!summary && v.reorder; as reorder) {
             <ng-container
@@ -160,6 +178,7 @@
               }
               @if (actionsCell.actions.length > 0) {
                 <adapt-row-actions
+                  [minTargetSize]="44"
                   [row]="entry.row"
                   [actions]="actionsCell.actions"
                   [confirm]="v.confirm"

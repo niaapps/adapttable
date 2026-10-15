@@ -89,6 +89,32 @@ const part = (name: string) =>
   document.querySelector<HTMLElement>(`[data-adapttable-part="${name}"]`);
 
 describe("RowEditCell", () => {
+  it("passes only this field's row validation error to the native editor", () => {
+    const result = openRow();
+    const renderEditor = vi.fn(editorFor);
+    render(
+      <RowEditCell
+        rowEditing={{
+          ...result.current,
+          commit: {
+            phase: "failed",
+            validation: [
+              { rowId: "1", columnKey: "title", message: "Title required" },
+            ],
+          },
+        }}
+        column={COLUMNS[0]!}
+        display="Ship"
+        editLabel="Edit cell"
+        takesFocus
+        renderEditor={renderEditor}
+      />
+    );
+    expect(renderEditor).toHaveBeenCalledWith(
+      expect.objectContaining({ error: "Title required", validating: false })
+    );
+  });
+
   it("renders the kit's editor for an editable column, seeded from the row", () => {
     const result = openRow();
     render(

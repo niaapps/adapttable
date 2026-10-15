@@ -7,6 +7,7 @@ import {
   type EditingBundle,
   editorKeyRestoresFocus,
   editorValidationProps,
+  focusEditorOnMount,
   isEditActivateKey,
   stopEditKeys,
 } from "@adapttable/core";
@@ -140,7 +141,7 @@ export function useEditableCellModel<TRow>(
       if ("isConnected" in editorNode && editorNode.isConnected === false)
         return;
       focusPending = false;
-      editorNode.focus();
+      focusEditorOnMount(editorNode);
     }
   };
   const editorRef = (node: { focus(): void } | null) => {

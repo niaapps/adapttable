@@ -1,6 +1,7 @@
 import { ActionIcon } from "@mantine/core";
 
 import { ChevronRightIcon } from "../icons";
+import { useMobileTarget } from "./mobileTarget";
 
 /** Props for {@link ExpandToggle}. */
 export interface ExpandToggleProps {
@@ -26,8 +27,10 @@ export function ExpandToggle({
   collapseLabel,
   onToggle,
 }: Readonly<ExpandToggleProps>) {
+  const targetStyle = useMobileTarget();
   return (
     <ActionIcon
+      style={targetStyle}
       variant="subtle"
       color="gray"
       size="sm"

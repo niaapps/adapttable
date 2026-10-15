@@ -146,7 +146,9 @@ describe("live saved-view options", () => {
     await Promise.resolve();
     first.resolve([{ name: "Stale", search: "q=stale" }]);
     await Promise.resolve();
-    expect(views.views().map((view) => view.name)).toEqual(["Current"]);
+    await vi.waitFor(() =>
+      expect(views.views().map((view) => view.name)).toEqual(["Current"])
+    );
     views.save("Saved here");
     expect(next.store.save).toHaveBeenCalledWith(
       expect.objectContaining({ name: "Saved here" })

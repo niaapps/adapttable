@@ -85,6 +85,7 @@ function AssistantButton({
       startIcon={icon}
       size="small"
       variant={KIT_VARIANT[variant]}
+      color={variant === "primary" ? "primary" : "inherit"}
       aria-label={label}
       aria-expanded={expanded}
       data-adapttable-part={part}
@@ -145,6 +146,7 @@ function AssistantBadge({
       size="small"
       variant="outlined"
       color={CHIP_COLOR[tone]}
+      sx={tone === "warning" ? { color: "text.primary" } : undefined}
       label={label}
       data-adapttable-part={part}
       data-tone={tone}

@@ -416,6 +416,7 @@ export const he: Required<TableLabels> = {
   gridRangePasted: (cells) => `הודבקו ${cells} תאים`,
   gridRangePasteFailed: "ההדבקה נכשלה",
   gridRangeFilled: (cells) => `מולאו ${cells} תאים`,
+  gridRangeFillFailed: "המילוי נכשל",
   gridFillHandle: "מילוי מהבחירה",
   selectionCount: "כמות",
   selectionSum: "סכום",

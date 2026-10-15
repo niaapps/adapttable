@@ -85,6 +85,8 @@ import nativeLightTheme from "ng-zorro-antd/ng-zorro-antd.min.css?url";
 
 import { SHOWCASE_PRESENTATION } from "../data";
 import { SHOWCASE_DARK, type ShowcaseKit } from "../showcaseKit";
+import { ShowcaseConnectionField } from "./ngZorroConnectionField";
+import { ShowcaseLoad, ShowcasePerson } from "./ngZorroMobileCells";
 import { ShowcaseStatus } from "./ngZorroStatus";
 
 /** Match NG-ZORRO's own widget text to every bundled AdaptTable locale. */
@@ -154,9 +156,12 @@ export const kit = {
   ],
   table: AdaptDataTable,
   statusCell: ShowcaseStatus,
+  personCell: ShowcasePerson,
+  loadCell: ShowcaseLoad,
   pivotPanel: AdaptPivotPanel,
   assistant: AdaptTableAssistant,
   assistantButton: AdaptAssistantButton,
+  connectionField: ShowcaseConnectionField,
   assistantSelect: AdaptAssistantLanguageChip,
   savedViewsPanel: AdaptSavedViewsPanel,
   bulkActions,

@@ -385,7 +385,7 @@ props can turn on every feature it has, and a bundler follows imports rather
 than prop values — so it carries them all whether or not you switch one on. To
 pay for what you use, name it: compose with `features` from the kit's subpath,
 or build on the headless hooks in row one. [Feature
-composition](/v2/react/features/#no-bundle-savings-yet) has the detail; v3 is where
+composition](/v2/react/features/#no-bundle-savings-from-features) has the detail; v3 is where
 the props stop holding the imports open.
 
 These are not estimates. `pnpm budget` bundles each of those imports for real

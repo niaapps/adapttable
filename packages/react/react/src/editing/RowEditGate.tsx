@@ -22,13 +22,14 @@ import {
   rowEditErrorId,
   rowEditSaveBlocked,
 } from "@adapttable/core";
-import type {
-  BatchEditBarProps,
-  BatchEditBarSlots as NeutralBatchEditBarSlots,
-  RowEditActionsProps,
-  RowEditActionsSlots as NeutralRowEditActionsSlots,
+import {
+  type BatchEditBarProps,
+  type BatchEditBarSlots as NeutralBatchEditBarSlots,
+  preserveEditorFocusOnLayoutChange,
+  type RowEditActionsProps,
+  type RowEditActionsSlots as NeutralRowEditActionsSlots,
 } from "@adapttable/core/binding";
-import type { ReactElement, ReactNode } from "react";
+import { type ReactElement, type ReactNode, useCallback, useRef } from "react";
 
 import type { BatchEditingState } from "./batchEditing";
 import {
@@ -148,9 +149,23 @@ export function RowEditCell<TRow>({
   errorClassName,
   slots,
 }: Readonly<RowEditCellProps<TRow>>): ReactElement {
+  const focused = useRef(false);
+  const focusRef = useCallback(
+    (node: { focus(): void } | null) => {
+      if (!node) {
+        preserveEditorFocusOnLayoutChange();
+        return;
+      }
+      // Kit imperative refs may be reissued after any render. Enter the form once.
+      if (takesFocus && !focused.current) {
+        focused.current = true;
+        focusEditorOnMount(node);
+      }
+    },
+    [takesFocus]
+  );
   const editor = resolveCellEditor(column, rowEditing.featureHost);
   if (!editor) return <>{display}</>;
-  const focusRef = takesFocus ? focusEditorOnMount : () => undefined;
   const errorId = rowEditErrorId(column.key);
   // The row's question, not this field's: every route that saves the row is
   // gated by the same answer.
@@ -170,7 +185,12 @@ export function RowEditCell<TRow>({
     commitOnBlur: () => undefined,
     editor,
     selectOptions: editorSelectOptions(editor),
-    validating: false,
+    error: rowEditing.commit?.validation?.find(
+      (failure) =>
+        failure.rowId === rowEditing.activeRowId &&
+        (failure.columnKey === undefined || failure.columnKey === column.key)
+    )?.message,
+    validating: rowEditing.commit?.phase === "validating",
     conflict: ask !== undefined,
     errorId,
     focusRef,
@@ -191,7 +211,8 @@ export function RowEditCell<TRow>({
             onBlur: ctrl.commitOnBlur,
             focusRef,
             label: editLabel,
-            validating: false,
+            error: ctrl.error,
+            validating: ctrl.validating,
             errorId: ctrl.errorId,
             conflict: customEditorConflict(ask),
           }) as ReactElement

@@ -1957,15 +1957,31 @@ a {
 /* ---------- a host's own mobile card ---------- */
 /* What `renderCard` replaces the built-in stack with: the identity as a
    headline, the rest as a compact grid. */
+.demo-person-card,
+.demo-person-card__name,
+.demo-person-card__grid > div,
+.demo-person-card__grid dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .demo-person-card__name {
   margin: 0 0 8px;
   font-weight: 600;
   font-size: 1rem;
 }
+[data-adapttable-part="card"] .demo-person-identity {
+  flex-wrap: wrap;
+  min-width: 0;
+}
+[data-adapttable-part="card"] .demo-person-identity__details {
+  flex: 1 1 8rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .demo-person-card__grid {
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr));
   gap: 8px 12px;
 }
 .demo-person-card__grid dt {
@@ -2578,5 +2594,25 @@ a {
     flex: 0 0 auto;
     min-width: 118px;
     max-width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* A wrapped toolbar must scroll away so enlarged text leaves room for cards. */
+  .phone-frame [data-adapttable-part="toolbar"] {
+    position: static !important;
+  }
+  .mx-demo__body:has(.phone-frame) {
+    padding-inline: 8px;
+  }
+  .phone-frame {
+    padding-inline: 0;
+    border-inline: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .phone-frame::before,
+  .phone-frame::after {
+    display: none;
   }
 }

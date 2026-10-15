@@ -655,7 +655,6 @@ describe("Angular kit first-public-release discovery", () => {
   it.each([
     { signal: "@clr/angular", adapter: "@adapttable/clarity" },
     { signal: "@nebular/theme", adapter: "@adapttable/nebular" },
-    { signal: "primeng", adapter: "@adapttable/primeng" },
   ])("does not register the excluded $signal kit", ({ signal, adapter }) => {
     expect(KITS.flatMap((info) => info.signals)).not.toContain(signal);
     expect(KITS.map((info) => info.adapter)).not.toContain(adapter);

@@ -412,6 +412,7 @@ export const zh: Required<TableLabels> = {
   gridRangePasted: (cells) => `已粘贴 ${cells} 个单元格`,
   gridRangePasteFailed: "粘贴失败",
   gridRangeFilled: (cells) => `已填充 ${cells} 个单元格`,
+  gridRangeFillFailed: "填充失败",
   gridFillHandle: "从选区填充",
   selectionCount: "计数",
   selectionSum: "求和",

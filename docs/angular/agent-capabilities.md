@@ -3,7 +3,7 @@
 `tableAgent()` from `@adapttable/ai-angular` exposes a live table session to an
 agent integration. It observes the mounted table's rows, view and available
 operations; it does not insert a model SDK into the Angular binding or grant
-writes that the host has not wired. The AI Angular binding and both Angular
+writes that the host has not wired. The AI Angular binding and all nine supported Angular
 kits are public npm packages. See
 [getting started](./getting-started.md) for installation guidance.
 
