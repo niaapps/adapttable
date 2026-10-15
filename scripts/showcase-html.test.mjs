@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
 import {
@@ -14,11 +15,13 @@ import {
   VUE_NATIVE_BASELINE,
   VUE_NATIVE_PAGES,
 } from "../apps/showcase/matrix.mjs";
+import { SHOWCASE_PAGES } from "../apps/showcase/pages.mjs";
 import {
   featurePage,
   landingPage,
   nativeVuePage,
   readShowcaseHtml,
+  showcaseBreadcrumbs,
   showcaseHtmlFiles,
 } from "./build-showcase-html.mjs";
 import { demoRoute, docsReferenceRoute, docsRoute, siteUrl } from "./site.mjs";
@@ -373,6 +376,61 @@ describe("the generated showcase pages", () => {
       // Decode the entities the HTML writer uses before applying the snippet budget.
       const text = decodeHtmlText(description);
       assert.ok(text.length <= 160, `${text.length} characters: ${text}`);
+    }
+  });
+
+  it("ships complete breadcrumb data and bounded titles on every indexable demo", () => {
+    for (const page of SHOWCASE_PAGES.filter((entry) => entry.indexable)) {
+      const html = readFileSync(
+        new URL(`../apps/showcase/${page.html}`, import.meta.url),
+        "utf8"
+      );
+      const title = decodeHtmlText(
+        /<title>([^<]+)<\/title>/.exec(html)?.[1] ?? ""
+      );
+      assert.ok(
+        title.length > 0 && title.length <= 60,
+        `${page.route}: ${title}`
+      );
+      const schemas = [
+        ...html.matchAll(
+          /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g
+        ),
+      ].map((match) => JSON.parse(match[1]));
+      const crumbs = schemas.filter(
+        (schema) => schema["@type"] === "BreadcrumbList"
+      );
+      assert.equal(crumbs.length, 1, page.route);
+      const items = crumbs[0].itemListElement;
+      assert.ok(items.length >= 2, page.route);
+      assert.equal(items[0].item, siteUrl("/"), page.route);
+      assert.equal(items.at(-1).item, siteUrl(page.route), page.route);
+      assert.equal(
+        new Set(items.map((item) => item.item)).size,
+        items.length,
+        page.route
+      );
+      for (const [index, item] of items.entries()) {
+        assert.equal(item.position, index + 1, page.route);
+        assert.equal(item["@type"], "ListItem", page.route);
+        assert.ok(item.name && item.item.startsWith(siteUrl("/")), page.route);
+      }
+    }
+  });
+
+  it("uses the kit's real framework and display name in its breadcrumbs", () => {
+    for (const [route, label] of [
+      ["/react/demo/mantine/columns/", "Mantine"],
+      ["/angular/demo/material/columns/", "Angular Material"],
+      ["/vue/demo/element-plus/columns/", "Element Plus"],
+    ]) {
+      const crumbs = showcaseBreadcrumbs(
+        route,
+        "Column management — AdaptTable"
+      );
+      assert.equal(crumbs.itemListElement[2].name, label);
+      assert.equal(crumbs.itemListElement[3].name, "Column management");
+      assert.equal(crumbs.itemListElement[3].item, siteUrl(route));
     }
   });
 

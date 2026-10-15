@@ -1,0 +1,40 @@
+---
+import { getCollection } from "astro:content";
+import { Icon } from "@astrojs/starlight/components";
+import { docsVersionTarget } from "../../../../scripts/docs-version-navigation.mjs";
+import { CURRENT_VERSION_LABEL, DOCS_VERSIONS } from "../../versions.mjs";
+
+const entries = await getCollection("docs");
+const routes = new Set(entries.map(({ id }) => `/${id.replace(/(?:\/index)?\/?$/, "")}/`));
+const currentVersion = DOCS_VERSIONS.find(({ slug }) => Astro.url.pathname.startsWith(`/${slug}/`))?.slug;
+const versions = [{ slug: undefined, label: CURRENT_VERSION_LABEL }, ...DOCS_VERSIONS];
+const options = versions.map((version) => ({ ...version, target: docsVersionTarget(Astro.url.pathname, version.slug, routes) }));
+---
+
+<label class="docs-version-picker">
+  <Icon name="seti:clock" />
+  <span class="sr-only">{Astro.locals.t("starlightVersions.select.accessibleLabel")}</span>
+  <select data-docs-version-select autocomplete="off">
+    {options.map(({ slug, label, target }) => <option value={target.href} selected={slug === currentVersion}>{label}{target.samePage ? "" : " — overview"}</option>)}
+  </select>
+</label>
+
+<style>
+  .docs-version-picker { display: inline-flex; align-items: center; gap: .25rem; color: var(--sl-color-gray-1); font-size: var(--sl-text-sm); }
+  select { height: 2rem; max-width: 10rem; border: 0; border-radius: .3rem; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+  select:focus-visible { outline: 2px solid var(--sl-color-text-accent); outline-offset: 2px; }
+  option { color: var(--sl-color-text); background: var(--sl-color-bg); }
+</style>
+
+<script>
+  function initializeVersions() {
+    document.querySelectorAll<HTMLSelectElement>("[data-docs-version-select]").forEach((select) => {
+      const current = [...select.options].find((option) => option.defaultSelected);
+      if (current) select.value = current.value;
+      select.onchange = () => location.assign(select.value);
+    });
+  }
+  initializeVersions();
+  document.addEventListener("astro:page-load", initializeVersions);
+  window.addEventListener("pageshow", initializeVersions);
+</script>

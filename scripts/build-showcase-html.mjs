@@ -79,6 +79,40 @@ const paragraph = (text) =>
 /** `../` repeated far enough to climb back to the showcase root. */
 const upTo = (dir) => "../".repeat(dir.split("/").length);
 
+/** The actual framework and kit hierarchy of a demo's canonical address. */
+export function showcaseBreadcrumbs(route, title) {
+  const [framework, , kitPath] = route.split("/").filter(Boolean);
+  const label = { react: "React", angular: "Angular", vue: "Vue" }[framework];
+  const items = [
+    { name: "AdaptTable", item: siteUrl("/") },
+    { name: `${label} demos`, item: siteUrl(demoRoute("", framework)) },
+  ];
+  const adapter = SHOWCASE_ADAPTERS.find(
+    (kit) => kit.framework === framework && pathOf(kit) === kitPath
+  );
+  if (adapter) {
+    items.push({
+      name: adapter.label,
+      item: siteUrl(demoRoute(pathOf(adapter), framework)),
+    });
+  }
+  if (items.at(-1).item !== siteUrl(route)) {
+    items.push({
+      name: title.replace(/ — AdaptTable$/, ""),
+      item: siteUrl(route),
+    });
+  }
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      ...item,
+    })),
+  };
+}
+
 /**
  * The head every demo page shares: fonts, analytics, the theme bootstrap, and
  * the pre-mount stylesheet. Identical on all of them by design — the parts that
@@ -126,6 +160,9 @@ const head = ({
           priceCurrency: "USD",
         },
       })}
+    </script>
+    <script type="application/ld+json">
+      ${JSON.stringify(showcaseBreadcrumbs(route, title))}
     </script>
     <!-- Cloudflare Web Analytics — cookieless, no consent banner needed.
          Injected only off localhost, so a dev server files no session. -->
