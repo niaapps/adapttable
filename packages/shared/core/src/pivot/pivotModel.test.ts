@@ -39,6 +39,23 @@ const line = (result: ReturnType<typeof pivot>, key: string) =>
   result.rows.find((row) => row.key === key);
 
 describe("pivot", () => {
+  it("computes min and max for groups larger than the engine's argument limit", () => {
+    const rows = Array.from({ length: 200_000 }, (_, amount) => ({
+      amount: amount - 100_000,
+    }));
+    const result = pivot(rows, {
+      rows: [],
+      columns: [],
+      measures: [
+        { key: "amount", agg: "min" },
+        { key: "amount", agg: "max" },
+      ],
+    });
+    expect(line(result, PIVOT_GRAND_TOTAL_KEY)?.cells).toEqual([
+      -100_000, 99_999,
+    ]);
+  });
+
   it("turns a dimension into columns", () => {
     const result = pivot(SALES, base);
 
