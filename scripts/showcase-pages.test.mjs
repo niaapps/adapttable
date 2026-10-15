@@ -388,8 +388,8 @@ describe("the showcase page manifest", () => {
         assert.ok(routes.has(route), route);
       }
     }
-    assert.equal(routes.has(demoRoute("bootstrap/row-reordering")), false);
-    assert.equal(routes.has(demoRoute("bootstrap/aggregation")), false);
+    assert.equal(routes.has(demoRoute("unregistered-kit/row-reordering")), false);
+    assert.equal(routes.has(demoRoute("unregistered-kit/aggregation")), false);
   });
 
   it("gives every page its own key and its own route", () => {

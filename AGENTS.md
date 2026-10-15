@@ -83,12 +83,6 @@ Unify the **model**, never the **pixels**. The standing pattern is
 - Everything is opt-in: omitting a prop renders nothing and costs nothing.
 - The table never owns the data. Every write — edits, adds, deletes,
   reorders — is a callback to the host; the table asks, the host does.
-- `packages/react/adapter-bootstrap` is private and unfinished. It is not
-  published, and its `private` role in the kit registry (`scripts/kits.mjs`)
-  keeps it out of the kit contracts — the parts-parity check, the
-  conformance suite and feature parity. Its gaps are known: do not raise
-  them as findings, add it to those contracts or bring it to parity unless a
-  task names it.
 
 ## Process
 

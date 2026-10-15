@@ -129,8 +129,7 @@ pass `createMemoryAdapter(search)` so URL state does not touch History.
 `@adapttable/server` and `@adapttable/cli` do not.
 [SSR & RSC](./ssr-rsc.md).
 
-`@adapttable/bootstrap` is private and unpublished. “All eight React adapters”
-means Mantine, MUI, Chakra, Ant Design, Radix Themes, Base UI, shadcn/ui
+The eight supported React adapters are Mantine, MUI, Chakra, Ant Design, Radix Themes, Base UI, shadcn/ui
 and unstyled.
 
 ## Accessibility

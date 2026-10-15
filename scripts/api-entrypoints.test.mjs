@@ -78,7 +78,7 @@ describe("entrypoints", () => {
     const unpublished = [
       ...new Set(ENTRIES.filter((e) => !e.published).map((e) => e.dir)),
     ];
-    assert.deepEqual(unpublished, ["adapter-bootstrap"]);
+    assert.deepEqual(unpublished, []);
     // Publication is a manifest decision, separate from kit participation.
     // Check every subpath so one correct root cannot hide a misfiled feature.
     for (const entry of ENTRIES) {
@@ -131,12 +131,6 @@ describe("entrypoints", () => {
           `${dir} exposes ${subpath}`
         );
     }
-  });
-
-  it("leaves the unimplemented PrimeNG placeholder without typed entries", () => {
-    assert.equal(packageJson("adapter-primeng").private, true);
-    assert.deepEqual(packageJson("adapter-primeng").exports, {});
-    assert.ok(!ENTRIES.some((entry) => entry.dir === "adapter-primeng"));
   });
 
   it("names a committed report for every entry point", () => {

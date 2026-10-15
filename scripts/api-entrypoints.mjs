@@ -60,8 +60,8 @@ function typesTarget(value) {
  * packages under `packages/shared`, the group folder's name for a binding's —
  * which the contract holds each entry point's surface to.
  *
- * `published` is false for a workspace-private package (`@adapttable/bootstrap`
- * is `private: true`): its parity is still worth reporting, but it carries no
+ * `published` is false for a workspace-private package: its parity is
+ * still worth reporting, but it carries no
  * SemVer promise, which is a distinction the contract checks depend on.
  */
 export function entrypoints(root = REPO_ROOT) {

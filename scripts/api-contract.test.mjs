@@ -244,7 +244,11 @@ describe("the manifest's own shape", () => {
     const errors = checkContract({
       manifest: { surfaces: {}, entrypoints: {} },
       entrypoints: [
-        { ...ENTRY, published: false, report: "adapter-bootstrap.api.md" },
+        {
+          ...ENTRY,
+          published: false,
+          report: "adapter-private-fixture.api.md",
+        },
       ],
       reports: {},
     });

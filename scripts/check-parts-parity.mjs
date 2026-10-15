@@ -1426,8 +1426,7 @@ export function checkPartsParity({
     // The kits the contract binds: the themed shells plus each
     // framework's native kit, which builds the same shell out of native
     // elements. adapter-shadcn renders adapter-unstyled and inherits every
-    // name from it, and adapter-bootstrap is the private minimal reference —
-    // it has no toolbar at all. Both roles sit outside the contract in
+    // name from it. Derived kits inherit their base contract in
     // `scripts/kits.mjs`.
     contractKits: contractKits(kits),
   };

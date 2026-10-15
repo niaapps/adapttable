@@ -140,9 +140,7 @@ import { Anchor, Button, SegmentedControl } from "@mantine/core";
 | `toolbar`            | `ReactNode` | After search and the mobile sort select, before Filters.       |
 | `toolbarSlots.end`   | `ReactNode` | After every built-in control, before the rows-per-page select. |
 
-`ToolbarSlots` types the object. `@adapttable/bootstrap` ships none of the
-view-control subpaths on this page, and its toolbar does not draw
-`toolbarSlots`.
+`ToolbarSlots` types the object.
 
 ## Density
 

@@ -5,7 +5,7 @@ files, a task has subtasks, an account rolls up to a parent. Compose `tree()`
 from `@adapttable/<kit>/tree` with `getChildren` (nested data) or `getParentId`
 (a flat list with a parent column) and the table renders that hierarchy — one
 chevron per parent, one indent step per level, in every adapter that ships the
-subpath (all except `@adapttable/bootstrap`).
+subpath.
 
 ▶ **See it working:** [tree data in Mantine](https://adapttable.orwamahmoud.com/react/demo/mantine/tree/) — the same page exists for MUI, Chakra, antd, Radix, Base UI, shadcn and Tailwind.
 

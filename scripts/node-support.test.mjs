@@ -110,7 +110,7 @@ function packageManifests() {
 describe("supported Node contract", () => {
   it("declares the baseline floor and every Angular 22 native kit floor", () => {
     const manifests = [join(ROOT, "package.json"), ...packageManifests()];
-    assert.equal(manifests.length, 39);
+    assert.equal(manifests.length, 37);
     for (const manifest of manifests) {
       const pkg = json(manifest);
       const floor = ANGULAR_22_KITS.has(pkg.name) ? ANGULAR_22_FLOOR : FLOOR;
@@ -160,8 +160,8 @@ describe("supported Node contract", () => {
     const names = publishedPackageNames();
     assert.deepEqual(names, PUBLISHED_SNAPSHOT);
     assert.equal(names.length, 36);
-    assert.ok(!names.includes("@adapttable/bootstrap"));
-    assert.ok(!names.includes("@adapttable/primeng"));
+    assert.ok(!names.includes("@adapttable/private-fixture"));
+    assert.ok(!names.includes("@adapttable/unregistered-fixture"));
     for (const name of VUE_PUBLIC_PACKAGES) assert.ok(names.includes(name));
   });
 
@@ -176,10 +176,10 @@ describe("supported Node contract", () => {
   });
 
   it("fails a planted extra package with the name involved", () => {
-    const packed = [...PUBLISHED_SNAPSHOT, "@adapttable/bootstrap"];
+    const packed = [...PUBLISHED_SNAPSHOT, "@adapttable/private-fixture"];
     assert.throws(
       () => assertPackedMatchesExpected(packed, publishedPackageNames()),
-      /unexpected packed package\(s\): @adapttable\/bootstrap/
+      /unexpected packed package\(s\): @adapttable\/private-fixture/
     );
   });
 
@@ -195,7 +195,10 @@ describe("supported Node contract", () => {
         { message: `missing published package(s): ${name}` }
       );
     }
-    for (const name of ["@adapttable/bootstrap", "@adapttable/primeng"]) {
+    for (const name of [
+      "@adapttable/private-fixture",
+      "@adapttable/unregistered-fixture",
+    ]) {
       assert.throws(
         () =>
           assertPackedMatchesExpected([...PUBLISHED_SNAPSHOT, name], expected),
