@@ -1,5 +1,15 @@
 # @adapttable/ai-vue
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies [b33a9ee]
+- Updated dependencies [426d44f]
+- Updated dependencies [2bdf4e3]
+  - @adapttable/ai@0.6.3
+  - @adapttable/vue@0.2.0
+
 ## 0.1.4
 
 ### Patch Changes

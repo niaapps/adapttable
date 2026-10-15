@@ -1,5 +1,15 @@
 # @adapttable/angular-material
 
+## 0.2.5
+
+### Patch Changes
+
+- 07b4440: Improve mobile cards with responsive field tiles, clearer identity and action sections, native kit surfaces, larger mobile action targets, and readable light and dark theme labels. Preserve automatic mobile cards and the explicit horizontal table option. Fix horizontal table scrolling in Reka UI and mobile action contrast in Taiga UI. Mobile selection, Save/Cancel and hierarchy controls also receive comfortable native touch surfaces. Restore visible loading placeholders and shared loading parts across Angular kits.
+- Updated dependencies [b33a9ee]
+- Updated dependencies [426d44f]
+  - @adapttable/core@3.11.0
+  - @adapttable/angular@0.6.1
+
 ## 0.2.4
 
 ### Patch Changes
