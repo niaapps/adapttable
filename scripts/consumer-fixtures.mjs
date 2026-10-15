@@ -137,7 +137,10 @@ const CORE_FIXTURES = [
     // of the React binding into core, so every binding drives the same state
     // machines (#497). The weight moved rather than grew: a headless table
     // still costs ~25 KB, and this fixture imports everything at once.
-    budgetKB: 100,
+    // Async edit/save lifetimes, row validation and bounded clipboard/fill work
+    // bring the complete export surface to 100.9 KB (2026-10-15). The simple
+    // core table and the hard 80 KB plain-adapter ceilings stay unchanged.
+    budgetKB: 101,
     code: `export * from "PKG";`,
     absent: ["useRowPatchStream", "grouping-drop-zone"],
   },
