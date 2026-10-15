@@ -120,4 +120,57 @@ describe("createLazyChildrenController", () => {
     expect([...controller.getSnapshot().loadingIds]).toEqual(["a"]);
     unsubscribe();
   });
+
+  it("does not start another fetch through an unmounted tree's retained action", () => {
+    const onLoadChildren = vi.fn();
+    const controller = createLazyChildrenController<Node>({
+      getRowId,
+      hasLoadedChildren,
+      onLoadChildren,
+    });
+    const disconnect = controller.connect();
+    disconnect();
+
+    controller.loadIfNeeded({ id: "a" });
+
+    expect(onLoadChildren).not.toHaveBeenCalled();
+    expect(controller.getSnapshot().loadingIds.size).toBe(0);
+  });
+
+  it.each(["resolve", "reject"] as const)(
+    "retries after reconnect and ignores an earlier request that later %ss",
+    async (outcome) => {
+      const first = deferred();
+      const second = deferred();
+      const onLoadChildren = vi
+        .fn()
+        .mockReturnValueOnce(first.promise)
+        .mockReturnValueOnce(second.promise);
+      const onLoadFailed = vi.fn();
+      const controller = createLazyChildrenController<Node>({
+        getRowId,
+        hasLoadedChildren,
+        onLoadChildren,
+        onLoadFailed,
+      });
+      const disconnect = controller.connect();
+      controller.loadIfNeeded({ id: "a" });
+      disconnect();
+      controller.connect();
+      expect(controller.getSnapshot().loadingIds.size).toBe(0);
+      controller.loadIfNeeded({ id: "a" });
+
+      if (outcome === "resolve") first.resolve();
+      else first.reject(new Error("retired request"));
+      await first.promise.catch(() => undefined);
+      await Promise.resolve();
+
+      expect(onLoadChildren).toHaveBeenCalledTimes(2);
+      expect([...controller.getSnapshot().loadingIds]).toEqual(["a"]);
+      expect(onLoadFailed).not.toHaveBeenCalled();
+      second.resolve();
+      await second.promise;
+      expect(controller.getSnapshot().loadingIds.size).toBe(0);
+    }
+  );
 });
