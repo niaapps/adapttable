@@ -459,7 +459,9 @@ export const DataTableSurfaceChrome = /* @__PURE__ */ Object.assign(
                     style: {
                       display: "flex",
                       alignItems: "center",
+                      flexWrap: "wrap",
                       gap: "0.5rem",
+                      minWidth: 0,
                     },
                   },
                   [

@@ -274,6 +274,9 @@ for (const framework of ["react", "angular", "vue"] as const) {
         await page
           .getByRole("button", { name: "Infinite scroll", exact: true })
           .click();
+        await expect(
+          page.getByRole("button", { name: "Paged", exact: true })
+        ).toHaveAttribute("aria-pressed", "true");
         await page.addStyleTag({
           content: "html { font-size: 200% !important; }",
         });
