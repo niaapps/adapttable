@@ -114,44 +114,46 @@
               [ngTemplateOutlet]="template"
               [ngTemplateOutletContext]="card.context"
             />
-          } @else if (card.content?.component; as component) {
-            <ng-container
-              [ngComponentOutlet]="component"
-              [ngComponentOutletInputs]="card.content.inputs"
-            />
           } @else {
-            <div class="adapt-card-fields">
-              @for (field of card.context.fields; track field.column.key) {
-                <div
-                  data-adapttable-part="card-row"
-                  [style.grid-column]="field.label ? null : '1 / -1'"
-                  [attr.data-card-identity]="field.label ? null : ''"
-                  [class]="classes.cardRow"
-                >
-                  @if (field.label; as label) {
-                    <span
-                      data-adapttable-part="card-label"
-                      [class]="classes.cardLabel"
-                      >{{ label }}</span
-                    >
-                  }
-                  <span
-                    data-adapttable-part="card-value"
-                    [class]="classes.cardValue"
-                    [attr.data-flash]="
-                      !summary && v.isCellFlashing(entry.id, field.column.key)
-                        ? ''
-                        : null
-                    "
+            @if (card.content?.component; as component) {
+              <ng-container
+                [ngComponentOutlet]="component"
+                [ngComponentOutletInputs]="card.content.inputs"
+              />
+            } @else {
+              <div class="adapt-card-fields">
+                @for (field of card.context.fields; track field.column.key) {
+                  <div
+                    data-adapttable-part="card-row"
+                    [style.grid-column]="field.label ? null : '1 / -1'"
+                    [attr.data-card-identity]="field.label ? null : ''"
+                    [class]="classes.cardRow"
                   >
-                    <ng-container
-                      [ngTemplateOutlet]="field.value"
-                      [ngTemplateOutletContext]="field.context"
-                    />
-                  </span>
-                </div>
-              }
-            </div>
+                    @if (field.label; as label) {
+                      <span
+                        data-adapttable-part="card-label"
+                        [class]="classes.cardLabel"
+                        >{{ label }}</span
+                      >
+                    }
+                    <span
+                      data-adapttable-part="card-value"
+                      [class]="classes.cardValue"
+                      [attr.data-flash]="
+                        !summary && v.isCellFlashing(entry.id, field.column.key)
+                          ? ''
+                          : null
+                      "
+                    >
+                      <ng-container
+                        [ngTemplateOutlet]="field.value"
+                        [ngTemplateOutletContext]="field.context"
+                      />
+                    </span>
+                  </div>
+                }
+              </div>
+            }
           }
           @if (!summary && v.reorder; as reorder) {
             <ng-container

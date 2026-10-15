@@ -24208,8 +24208,8 @@ styling and assets. Their local showcase routes are `/material/`,
   for any Angular kit or your own renderer
 
 The Angular binding, all nine kits and the optional AI binding are available
-on npm. Features described for the upcoming 0.5 binding require that release;
-see the migration guide before upgrading an existing installation.
+on npm. When upgrading from before the 0.5 import reorganization, follow the
+[migration guide](./migrating-to-0-5.md) for the canonical entry points.
 Package versions are independent; each kit declares its compatible binding and
 engine dependencies. Do not force core, binding and kit to share a version.
 
@@ -24527,6 +24527,13 @@ The initial integration targets Angular **22**, Angular Material **22.2.1**
 and CDK **22.2.1**. Material requires the same CDK version. Keep Material and
 CDK together; AdaptTable packages have independent versions. Node.js must meet
 Angular 22's supported floor: 22.22.3+, 24.15.0+, or Node 26+.
+
+Use Angular **22.1 or newer** with Material 22.2.1. In the 2026-10-15
+packed-consumer audit, Angular 22.0.0 failed because Material imports
+`isFieldTree` from `@angular/forms/signals`, which that Forms version does not
+export. The same application built successfully with Angular 22.1.0 and
+22.2.0. Keep the application's Angular framework packages on matching versions;
+the declared peer ranges alone do not exclude this incompatible combination.
 
 Install in an existing Angular 22 application:
 
@@ -32647,6 +32654,28 @@ const people = [{ id: "ada", name: "Ada", team: "Core" }];
   />
 </template>
 ```
+
+## Nuxt SSR setup
+
+In a Nuxt application, register the Nuxt UI module and transpile the AdaptTable
+adapter so its imported Nuxt UI components pass through Nuxt's Vue compiler:
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ["@nuxt/ui"],
+  build: { transpile: ["@adapttable/nuxt-ui"] },
+  ui: { prose: true },
+  css: ["~/assets/css/main.css", "@adapttable/nuxt-ui/styles.css"],
+});
+```
+
+The application's `main.css` imports Tailwind and Nuxt UI as shown above. Wrap
+the application in `UApp`. Do not install the plain-Vue plugin in Nuxt.
+Without adapter transpilation, a production build can succeed but its server
+can fail on the first request with `ERR_UNKNOWN_FILE_EXTENSION` for a Nuxt UI
+`.vue` component. Verify the built server's rendered HTML and hydration, as
+well as the build command's exit status.
 
 ## Kit components
 

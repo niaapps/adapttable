@@ -98,6 +98,28 @@ const people = [{ id: "ada", name: "Ada", team: "Core" }];
 </template>
 ```
 
+## Nuxt SSR setup
+
+In a Nuxt application, register the Nuxt UI module and transpile the AdaptTable
+adapter so its imported Nuxt UI components pass through Nuxt's Vue compiler:
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ["@nuxt/ui"],
+  build: { transpile: ["@adapttable/nuxt-ui"] },
+  ui: { prose: true },
+  css: ["~/assets/css/main.css", "@adapttable/nuxt-ui/styles.css"],
+});
+```
+
+The application's `main.css` imports Tailwind and Nuxt UI as shown above. Wrap
+the application in `UApp`. Do not install the plain-Vue plugin in Nuxt.
+Without adapter transpilation, a production build can succeed but its server
+can fail on the first request with `ERR_UNKNOWN_FILE_EXTENSION` for a Nuxt UI
+`.vue` component. Verify the built server's rendered HTML and hydration, as
+well as the build command's exit status.
+
 ## Kit components
 
 | Component            | Entry points      | Renders                                               |

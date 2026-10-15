@@ -315,53 +315,60 @@ export class AdaptRangeFilterField<
           [ngTemplateOutlet]="template"
           [ngTemplateOutletContext]="field.context"
         />
-      } @else if (field.renderer?.component; as component) {
-        <ng-container
-          [ngComponentOutlet]="component"
-          [ngComponentOutletInputs]="field.renderer.inputs"
-        />
-      } @else if (field.text; as text) {
-        {{ text }}
       } @else {
-        @switch (kindOf(def)) {
-          @case ("text") {
-            <adapt-text-filter-field
-              [def]="def"
-              [source]="source()"
-              [labels]="labels()"
-            />
-          }
-          @case ("boolean") {
-            <adapt-boolean-filter-field
-              [def]="def"
-              [source]="source()"
-              [labels]="labels()"
-            />
-          }
-          @case ("select") {
-            <adapt-select-filter-field
-              [def]="def"
-              [source]="source()"
-              [labels]="labels()"
-            />
-          }
-          @case ("multiSelect") {
-            <adapt-multi-select-filter-field [def]="def" [source]="source()" />
-          }
-          @case ("checklist") {
-            <adapt-checklist-chrome
-              [def]="def"
-              [source]="source()"
-              [labels]="labels()"
-              [slots]="checklistSlots"
-            />
-          }
-          @case ("range") {
-            <adapt-range-filter-field
-              [def]="def"
-              [source]="source()"
-              [labels]="labels()"
-            />
+        @if (field.renderer?.component; as component) {
+          <ng-container
+            [ngComponentOutlet]="component"
+            [ngComponentOutletInputs]="field.renderer.inputs"
+          />
+        } @else {
+          @if (field.text; as text) {
+            {{ text }}
+          } @else {
+            @switch (kindOf(def)) {
+              @case ("text") {
+                <adapt-text-filter-field
+                  [def]="def"
+                  [source]="source()"
+                  [labels]="labels()"
+                />
+              }
+              @case ("boolean") {
+                <adapt-boolean-filter-field
+                  [def]="def"
+                  [source]="source()"
+                  [labels]="labels()"
+                />
+              }
+              @case ("select") {
+                <adapt-select-filter-field
+                  [def]="def"
+                  [source]="source()"
+                  [labels]="labels()"
+                />
+              }
+              @case ("multiSelect") {
+                <adapt-multi-select-filter-field
+                  [def]="def"
+                  [source]="source()"
+                />
+              }
+              @case ("checklist") {
+                <adapt-checklist-chrome
+                  [def]="def"
+                  [source]="source()"
+                  [labels]="labels()"
+                  [slots]="checklistSlots"
+                />
+              }
+              @case ("range") {
+                <adapt-range-filter-field
+                  [def]="def"
+                  [source]="source()"
+                  [labels]="labels()"
+                />
+              }
+            }
           }
         }
       }

@@ -41,24 +41,30 @@ import { resolveRenderer } from "../cell";
             [ngTemplateOutlet]="template"
             [ngTemplateOutletContext]="view.context"
           />
-        } @else if (view.content?.component; as component) {
-          <ng-container
-            [ngComponentOutlet]="component"
-            [ngComponentOutletInputs]="view.content.inputs"
-          />
+        } @else {
+          @if (view.content?.component; as component) {
+            <ng-container
+              [ngComponentOutlet]="component"
+              [ngComponentOutletInputs]="view.content.inputs"
+            />
+          }
         }
       </section>
-    } @else if (ownView(); as own) {
-      @if (own.template; as template) {
-        <ng-container
-          [ngTemplateOutlet]="template"
-          [ngTemplateOutletContext]="ownContext()"
-        />
-      } @else if (own.component; as component) {
-        <ng-container
-          [ngComponentOutlet]="component"
-          [ngComponentOutletInputs]="own.inputs"
-        />
+    } @else {
+      @if (ownView(); as own) {
+        @if (own.template; as template) {
+          <ng-container
+            [ngTemplateOutlet]="template"
+            [ngTemplateOutletContext]="ownContext()"
+          />
+        } @else {
+          @if (own.component; as component) {
+            <ng-container
+              [ngComponentOutlet]="component"
+              [ngComponentOutletInputs]="own.inputs"
+            />
+          }
+        }
       }
     }
   `,

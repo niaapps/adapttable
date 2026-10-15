@@ -15,6 +15,12 @@ The initial integration targets Angular **22**, Angular Material **22.2.1**
 and CDK **22.2.1**. Material requires the same CDK version. Keep Material and
 CDK together; AdaptTable packages have independent versions.
 
+For Material 22.2.1, use Angular **22.1 or newer**. Angular 22.0.0 lacks the
+`isFieldTree` export that Material imports from `@angular/forms/signals`;
+the packed application passed with Angular 22.1.0 and 22.2.0. Keep the Angular
+framework packages on matching versions. The current peer ranges do not reject
+this incompatible Angular 22.0 combination during installation.
+
 Install the kit and its native peers in an Angular 22 app:
 
 ```sh

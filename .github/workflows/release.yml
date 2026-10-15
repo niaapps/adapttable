@@ -6,7 +6,11 @@ on:
   # Manual recovery when GitHub drops a push event.
   workflow_dispatch:
 
-concurrency: release-${{ github.ref }}
+# Serialize releases; the detect job skips commits already released by an
+# earlier successful run. Never cancel a run partway through publishing.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 # Nothing at this level: a token declared here reaches every job, including
 # ones that only read. Each job below asks for what it needs.
@@ -18,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      actions: read
     outputs:
       needVersion: ${{ steps.flags.outputs.needVersion }}
       needPublish: ${{ steps.flags.outputs.needPublish }}
@@ -26,6 +31,8 @@ jobs:
       - id: flags
         name: Classify version vs publish vs skip
         run: node scripts/release-detect.mjs >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   version:
     needs: detect

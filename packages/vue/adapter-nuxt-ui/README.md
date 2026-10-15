@@ -176,6 +176,26 @@ for remaining vendor declaration errors with full dependency checking enabled.
 adapter. Import controls from documented `@nuxt/ui/components/*.vue` paths;
 `@nuxt/ui` itself is the Nuxt module entry, not a component barrel.
 
+## Nuxt SSR setup
+
+Use the Nuxt UI module and transpile this adapter in a Nuxt application:
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ["@nuxt/ui"],
+  build: { transpile: ["@adapttable/nuxt-ui"] },
+  ui: { prose: true },
+  css: ["~/assets/css/main.css", "@adapttable/nuxt-ui/styles.css"],
+});
+```
+
+Import Tailwind and Nuxt UI in `main.css` and wrap the application in `UApp`.
+The transpile entry lets Nuxt compile the vendor SFCs imported by the adapter;
+otherwise a successful production build can still serve HTTP 500 with
+`ERR_UNKNOWN_FILE_EXTENSION` for a `.vue` file. Test a request to the built
+server and browser hydration. Nuxt does not need the plain-Vue plugin.
+
 ## Table rendering
 
 ```vue
