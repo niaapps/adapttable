@@ -864,6 +864,7 @@ export interface UseDataTableShellOptions<TRow> extends Omit<UseDataTableOptions
     // (undocumented)
     readonly features?: MaybeRefOrGetterOptional<readonly ComposedFeature<NoInfer<TRow>>[]>;
     readonly footer?: (context: FooterContext<TRow>) => VNodeChild;
+    readonly maxHeight?: number | string;
     // (undocumented)
     readonly onCellCut?: (range: CellRange) => void;
     // (undocumented)

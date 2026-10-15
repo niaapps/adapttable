@@ -74,7 +74,7 @@ export interface DataTableSurfaceChromeProps<TRow> {
   readonly model: UseDataTableShellResult<TRow>;
   readonly options: Pick<
     DataTableProps<TRow>,
-    "searchable" | "skeletonRows" | "classNames"
+    "searchable" | "skeletonRows" | "classNames" | "maxHeight"
   >;
   readonly slots: DataTableSurfaceSlots<TRow>;
   readonly content: DataTableSlots<TRow>;
@@ -311,6 +311,7 @@ export const DataTableSurfaceChrome = /* @__PURE__ */ Object.assign(
     const labels = table.labels.value;
     const source = shell.source.value;
     const pagination = table.pagination.value;
+    const maxHeight = options.maxHeight ?? shell.featureOptions.value.maxHeight;
     const button = (attrs: Attrs, child: VNodeChild) =>
       slots.Button({ attrs, content: child });
     const scroll = () =>
@@ -318,12 +319,15 @@ export const DataTableSurfaceChrome = /* @__PURE__ */ Object.assign(
         "div",
         {
           ref: elementRef(props.scrollRef),
-          tabindex: "-1",
+          tabindex: maxHeight == null ? "-1" : "0",
           "data-adapttable-part": "scroll-box",
           style:
-            typeof shell.featureOptions.value.maxHeight === "number"
+            typeof maxHeight === "number" || typeof maxHeight === "string"
               ? {
-                  maxHeight: `${shell.featureOptions.value.maxHeight}px`,
+                  maxHeight:
+                    typeof maxHeight === "number"
+                      ? `${maxHeight}px`
+                      : maxHeight,
                   overflow: "auto",
                 }
               : undefined,

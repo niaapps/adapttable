@@ -16,6 +16,7 @@ import { densityChooser } from "@adapttable/element-plus/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/element-plus/editing";
 import { exportCsv } from "@adapttable/element-plus/export";
@@ -156,6 +157,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

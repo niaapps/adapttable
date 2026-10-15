@@ -16,6 +16,18 @@ for (const framework of ["react", "angular", "vue"] as const) {
         const card = page.locator('[data-adapttable-part="card"]').first();
         await expect(card).toBeVisible();
         await card.scrollIntoViewIfNeeded();
+        // Read the kit's settled colors, after entry fades and color transitions.
+        await card.evaluate(async (element) => {
+          await Promise.all(
+            element
+              .getAnimations({ subtree: true })
+              .filter(
+                (animation) =>
+                  animation.effect?.getComputedTiming().iterations !== Infinity
+              )
+              .map((animation) => animation.finished.catch(() => undefined))
+          );
+        });
         await expectNoBlockingAxe(page, '[data-adapttable-part="card"]', {
           colorContrast: true,
         });

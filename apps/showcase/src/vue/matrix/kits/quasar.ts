@@ -12,6 +12,7 @@ import { densityChooser } from "@adapttable/quasar/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/quasar/editing";
 import { exportCsv } from "@adapttable/quasar/export";
@@ -150,6 +151,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

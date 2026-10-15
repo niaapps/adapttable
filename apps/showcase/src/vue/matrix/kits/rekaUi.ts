@@ -12,6 +12,7 @@ import { densityChooser } from "@adapttable/reka-ui/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/reka-ui/editing";
 import { exportCsv } from "@adapttable/reka-ui/export";
@@ -132,6 +133,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

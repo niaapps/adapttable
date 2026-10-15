@@ -16,6 +16,7 @@ import { densityChooser } from "@adapttable/shadcn-vue/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/shadcn-vue/editing";
 import { exportCsv } from "@adapttable/shadcn-vue/export";
@@ -141,6 +142,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

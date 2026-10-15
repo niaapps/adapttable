@@ -351,3 +351,24 @@
   min-inline-size: 44px;
   min-block-size: 44px;
 }
+
+/* Editing and hierarchy actions remain comfortable in embedded phone cards. */
+.adapttable-naive
+  [data-adapttable-part="card"]
+  :is(
+    [data-adapttable-part="row-edit-begin"],
+    [data-adapttable-part="row-edit-save"],
+    [data-adapttable-part="row-edit-cancel"],
+    [data-adapttable-part="expand-button"],
+    [data-adapttable-part="tree-toggle"]
+  ) {
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+}
+
+.adapttable-naive [data-adapttable-part="card"] .n-checkbox {
+  padding: 14px;
+  box-sizing: content-box;
+  align-items: center;
+}

@@ -10,6 +10,7 @@ import type { densityChooser } from "@adapttable/vue-unstyled/density";
 import type {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/vue-unstyled/editing";
 import type { exportCsv } from "@adapttable/vue-unstyled/export";
@@ -104,6 +105,7 @@ export interface ShowcaseKit {
   readonly densityChooser: typeof densityChooser;
   readonly editHistory: typeof editHistory;
   readonly editing: typeof editing;
+  readonly rowEditing: typeof rowEditing;
   readonly undoRedoButtons: typeof undoRedoButtons;
   readonly exportCsv: typeof exportCsv;
   readonly filters: typeof filters;

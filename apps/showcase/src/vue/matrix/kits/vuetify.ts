@@ -12,6 +12,7 @@ import { densityChooser } from "@adapttable/vuetify/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/vuetify/editing";
 import { exportCsv } from "@adapttable/vuetify/export";
@@ -154,6 +155,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

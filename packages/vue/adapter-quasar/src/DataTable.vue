@@ -98,6 +98,7 @@ function controls(): TableChromeSlots<TRow> {
         props
       );
     },
+    card: slots.card,
     cell: slots.cell,
     header: slots.header,
     headerActions: slots.headerActions,

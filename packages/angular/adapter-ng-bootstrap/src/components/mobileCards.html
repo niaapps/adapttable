@@ -84,13 +84,24 @@
             />
           }
           @if (!summary && v.selection; as selection) {
-            <input
-              [attr.aria-label]="v.table.labels().selectRow"
-              class="form-check-input"
-              data-ng-bootstrap-part="checkbox"
-              [class]="classes.checkbox"
-              [adaptAttrs]="selection.rowCheckboxAttrs(rowId(entry.row))"
-            />
+            <label
+              style="
+                display: inline-flex;
+                min-width: 44px;
+                min-height: 44px;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+              "
+            >
+              <input
+                [attr.aria-label]="v.table.labels().selectRow"
+                class="form-check-input"
+                data-ng-bootstrap-part="checkbox"
+                [class]="classes.checkbox"
+                [adaptAttrs]="selection.rowCheckboxAttrs(rowId(entry.row))"
+              />
+            </label>
           }
           @if (v.rowDetail && !summary) {
             <ng-container

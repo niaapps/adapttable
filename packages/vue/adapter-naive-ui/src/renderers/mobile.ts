@@ -44,40 +44,55 @@ export function NaiveMobileCards<TRow>(props: {
             })
           : null,
         row.reorder?.(true),
-        h(
-          "dl",
-          { class: names.cardFields },
-          row.cells.map((cell) =>
-            h(
-              "div",
-              {
-                key: cell.key,
-                class: names.cardRow,
-                "data-adapttable-part": "card-row",
-              },
-              [
-                h(
-                  "dt",
-                  {
-                    class: names.cardLabel,
-                    "data-adapttable-part": "card-label",
-                  },
+        controls.card
+          ? controls.card?.({
+              row: row.row,
+              index: row.index,
+              selected: row.checkboxAttrs?.checked === true,
+              expanded: row.detail?.expanded === true,
+              fields: row.cells.map((cell) => ({
+                column: cell.context.column,
+                label:
                   cell.context.column.mobileLabel ??
-                    cell.context.column.header ??
-                    cell.key
-                ),
+                  cell.context.column.header ??
+                  cell.key,
+                value: naiveCellContent(cell, row, controls, names, true),
+              })),
+            })
+          : h(
+              "dl",
+              { class: names.cardFields },
+              row.cells.map((cell) =>
                 h(
-                  "dd",
-                  mergeVueAttrs(cell.attrs, {
-                    class: names.cardValue,
-                    "data-adapttable-part": "card-value",
-                  }),
-                  [naiveCellContent(cell, row, controls, names, true)]
-                ),
-              ]
-            )
-          )
-        ),
+                  "div",
+                  {
+                    key: cell.key,
+                    class: names.cardRow,
+                    "data-adapttable-part": "card-row",
+                  },
+                  [
+                    h(
+                      "dt",
+                      {
+                        class: names.cardLabel,
+                        "data-adapttable-part": "card-label",
+                      },
+                      cell.context.column.mobileLabel ??
+                        cell.context.column.header ??
+                        cell.key
+                    ),
+                    h(
+                      "dd",
+                      mergeVueAttrs(cell.attrs, {
+                        class: names.cardValue,
+                        "data-adapttable-part": "card-value",
+                      }),
+                      [naiveCellContent(cell, row, controls, names, true)]
+                    ),
+                  ]
+                )
+              )
+            ),
         row.detail?.expanded
           ? h(
               "div",

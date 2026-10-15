@@ -155,7 +155,10 @@ describe("required table surface paint", () => {
   });
 
   it("keeps real refs and stateful content alive across updates and uses only supplied paint", async () => {
-    const props = shallowRef(options);
+    const props = shallowRef<DataTableProps<Row>>({
+      ...options,
+      maxHeight: 360,
+    });
     const rootRef = vi.fn<(element: HTMLElement | null) => void>();
     const scrollRef = vi.fn<(element: HTMLElement | null) => void>();
     const mounts = vi.fn();
@@ -194,7 +197,11 @@ describe("required table surface paint", () => {
     const surface = root.querySelector<HTMLElement>(
       '[data-adapttable-part="root"]'
     );
-    const scroll = root.querySelector('[data-adapttable-part="scroll-box"]');
+    const scroll = root.querySelector<HTMLElement>(
+      '[data-adapttable-part="scroll-box"]'
+    );
+    expect(scroll?.style.maxHeight).toBe("360px");
+    expect(scroll?.tabIndex).toBe(0);
     expect(rootRef).toHaveBeenLastCalledWith(surface);
     expect(scrollRef).toHaveBeenLastCalledWith(scroll);
     expect(surface?.id).toBe("host-root");
@@ -211,10 +218,12 @@ describe("required table surface paint", () => {
     props.value = {
       ...props.value,
       forceMobile: true,
+      maxHeight: "60vh",
       classNames: { root: "kit-root" },
     };
     await nextTick();
     expect(root.querySelector("kit-toolbar")).toBe(toolbar);
+    expect(scroll?.style.maxHeight).toBe("60vh");
     expect(root.querySelector("kit-desktop-body")).toBeNull();
     expect(root.querySelector("kit-mobile-body")).not.toBeNull();
     expect(mounts).toHaveBeenCalledOnce();

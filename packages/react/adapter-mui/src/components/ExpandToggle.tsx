@@ -1,5 +1,7 @@
 import { Box, IconButton } from "@mui/material";
 
+import { useMobileTarget } from "./mobileTarget";
+
 /** Inline chevron pointing at the reading end; rotates down when open. */
 export function ExpandChevron({
   expanded,
@@ -46,8 +48,10 @@ export function ExpandToggle({
   expandLabel: string;
   collapseLabel: string;
 }>) {
+  const targetStyle = useMobileTarget();
   return (
     <IconButton
+      style={targetStyle}
       size="small"
       aria-expanded={expanded}
       aria-label={expanded ? collapseLabel : expandLabel}

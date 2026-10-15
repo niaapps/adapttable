@@ -44,6 +44,7 @@ function checkbox(root: ParentNode, selector: string): HTMLInputElement {
 }
 interface FixtureOptions {
   readonly mobile?: boolean;
+  readonly card?: NonNullable<TableChromeSlots<Row>["card"]>;
   readonly controlled?: readonly string[];
   readonly accept?: boolean;
   readonly defaultSelectedIds?: readonly string[];
@@ -75,6 +76,7 @@ function mount(options: FixtureOptions = {}) {
           },
         }));
         const slots: TableChromeSlots<Row> = {
+          card: options.card,
           SortButton: ({ attrs, content }) => h("button", attrs, [content]),
           SelectionCheckbox: (props) => {
             controls.push(props);
@@ -400,4 +402,31 @@ describe("semantic selection control projection", () => {
     expect(updates).toEqual([["off-page"]]);
     expect([...selection.selectedIds.value]).toEqual(["off-page"]);
   });
+});
+
+it("lets a custom card reuse prepared native values while selection remains outside its body", async () => {
+  const card = vi.fn(
+    (context: Parameters<NonNullable<TableChromeSlots<Row>["card"]>>[0]) =>
+      h(
+        "section",
+        { "data-custom-body": context.row.id },
+        context.fields.map((field) =>
+          h("div", { key: field.column.key }, [field.value])
+        )
+      )
+  );
+  const { root } = mount({ mobile: true, card });
+  await nextTick();
+  expect(root.querySelector('[data-custom-body="a"]')?.textContent).toBe("Ada");
+  expect(
+    root.querySelectorAll('[data-adapttable-part="card"] input')
+  ).toHaveLength(2);
+  expect(card).toHaveBeenCalledWith(
+    expect.objectContaining({
+      row: data[0],
+      index: 0,
+      selected: false,
+      expanded: false,
+    })
+  );
 });

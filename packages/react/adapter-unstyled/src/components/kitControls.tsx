@@ -60,6 +60,7 @@ import { type ChangeEvent, useEffect, useRef } from "react";
 import type { DataTableClassNames } from "../types";
 import { AutoFilterForm } from "./AutoFilterForm";
 import { FiltersIcon, iconForRowEditPart } from "./icons";
+import { useMobileTarget } from "./mobileTarget";
 
 export type {
   AgentApprovalProps,
@@ -411,9 +412,11 @@ function RowEditButton({
   className,
   onClick,
 }: Readonly<RowEditButtonProps>) {
+  const targetStyle = useMobileTarget();
   const glyph = iconForRowEditPart(part, icon);
   return (
     <button
+      style={targetStyle}
       type="button"
       data-adapttable-part={part}
       className={className}
@@ -529,6 +532,7 @@ function TreeButton({
   className,
   onClick,
 }: Readonly<TreeToggleButtonProps>) {
+  const targetStyle = useMobileTarget();
   return (
     <button
       type="button"
@@ -539,7 +543,7 @@ function TreeButton({
       data-loading={loading ? "" : undefined}
       aria-busy={loading ? true : undefined}
       onClick={onClick}
-      style={ICON_BUTTON}
+      style={{ ...ICON_BUTTON, ...targetStyle }}
     >
       <span
         aria-hidden="true"

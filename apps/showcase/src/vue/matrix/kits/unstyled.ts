@@ -15,6 +15,7 @@ import { densityChooser } from "@adapttable/vue-unstyled/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/vue-unstyled/editing";
 import { exportCsv } from "@adapttable/vue-unstyled/export";
@@ -101,6 +102,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

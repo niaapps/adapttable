@@ -67,6 +67,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { FiltersIcon, iconForRowEditPart } from "../icons";
 import { AutoFilterForm } from "./AutoFilterForm";
+import { useMobileTarget } from "./mobileTarget";
 import { Checkbox, NativeSelect } from "./primitives";
 
 export type {
@@ -357,10 +358,12 @@ function RowEditButton({
   className,
   onClick,
 }: Readonly<RowEditButtonProps>) {
+  const targetStyle = useMobileTarget();
   const glyph = iconForRowEditPart(part, icon);
   if (glyph) {
     return (
       <IconButton
+        style={targetStyle}
         type="button"
         size="1"
         variant="ghost"
@@ -376,6 +379,7 @@ function RowEditButton({
   }
   return (
     <Button
+      style={targetStyle}
       type="button"
       size="1"
       variant="soft"
@@ -495,8 +499,10 @@ function TreeButton({
   className,
   onClick,
 }: Readonly<TreeToggleButtonProps>) {
+  const targetStyle = useMobileTarget();
   return (
     <IconButton
+      style={targetStyle}
       type="button"
       size="1"
       variant="ghost"

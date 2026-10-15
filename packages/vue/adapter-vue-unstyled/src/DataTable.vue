@@ -77,7 +77,23 @@ provideClassNames(() => names.value);
 function controls(): TableChromeSlots<TRow> {
   return {
     SortButton: ({ attrs, content }) => h("button", attrs, [content]),
-    SelectionCheckbox: ({ attrs }) => nativeCheckbox(attrs),
+    SelectionCheckbox: (control) =>
+      shell.table.isMobile.value
+        ? h(
+            "label",
+            {
+              style: {
+                display: "inline-flex",
+                minWidth: "44px",
+                minHeight: "44px",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              },
+            },
+            [nativeCheckbox(control.attrs)]
+          )
+        : nativeCheckbox(control.attrs),
     ColumnGroupToggle: nativeColumnGroupToggle,
     ResizeHandle: ({ attrs }) => h("span", attrs),
     RowActions: ({ controls: actions }) =>
@@ -99,6 +115,7 @@ function controls(): TableChromeSlots<TRow> {
         props
       );
     },
+    card: slots.card,
     cell: slots.cell,
     header: slots.header,
     headerActions: slots.headerActions,
@@ -298,5 +315,17 @@ function setScrollElement(element: HTMLElement | null): void {
   [data-adapttable-part="row-actions-trigger"] {
   min-inline-size: 44px;
   min-block-size: 44px;
+}
+.adapttable-vue-unstyled
+  [data-adapttable-part="card"]
+  :is(
+    [data-adapttable-part="row-edit-begin"],
+    [data-adapttable-part="row-edit-save"],
+    [data-adapttable-part="row-edit-cancel"],
+    [data-adapttable-part="expand-button"],
+    [data-adapttable-part="tree-toggle"]
+  ) {
+  min-width: 44px;
+  min-height: 44px;
 }
 </style>

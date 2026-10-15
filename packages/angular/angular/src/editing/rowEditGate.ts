@@ -397,7 +397,12 @@ export class AdaptRowEditCell<TRow> {
       editor,
       selectOptions: editorSelectOptions(editor),
       label: this.editLabel(),
-      validating: false,
+      error: rowEditing.commit?.validation?.find(
+        (failure) =>
+          failure.rowId === rowEditing.activeRowId &&
+          (failure.columnKey === undefined || failure.columnKey === column.key)
+      )?.message,
+      validating: rowEditing.commit?.phase === "validating",
       conflict: ask !== undefined,
       errorId: this.errorId(),
       focusRef: this.takesFocus() ? focusEditorOnMount : () => undefined,

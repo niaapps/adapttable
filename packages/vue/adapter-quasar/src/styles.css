@@ -46,7 +46,7 @@
   flex-wrap: wrap;
 }
 .adapttable-quasar .q-field {
-  min-inline-size: 8rem;
+  min-inline-size: min(100%, 8rem);
 }
 .adapttable-quasar-table-surface {
   overflow: visible;
@@ -452,4 +452,24 @@
   [data-adapttable-part="row-actions-trigger"] {
   min-inline-size: 44px;
   min-block-size: 44px;
+}
+
+/* Editing and hierarchy actions remain comfortable in embedded phone cards. */
+.adapttable-quasar
+  [data-adapttable-part="card"]
+  :is(
+    [data-adapttable-part="row-edit-begin"],
+    [data-adapttable-part="row-edit-save"],
+    [data-adapttable-part="row-edit-cancel"],
+    [data-adapttable-part="expand-button"],
+    [data-adapttable-part="tree-toggle"]
+  ) {
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+}
+
+.adapttable-quasar [data-adapttable-part="card"] .q-checkbox {
+  min-width: 44px;
+  min-height: 44px;
 }

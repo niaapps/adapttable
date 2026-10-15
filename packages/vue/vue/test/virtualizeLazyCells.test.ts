@@ -129,49 +129,51 @@ it("keeps a read row's cells current when the host accessor's state changes", as
   }
 });
 
-it("renders a bounded first window before the table can measure", async () => {
-  const accessor = vi.fn((row: Row) => row.amount);
-  const data = Array.from({ length: 5000 }, (_, index) => ({
-    id: String(index),
-    amount: index,
-  }));
-  let slots: readonly TableBodySlot<Row>[] = [];
-  const app = createSSRApp(
-    defineComponent({
-      setup() {
-        const shell = useDataTableShell({
-          data,
-          columns: [{ key: "amount", accessor }],
-          rowKey: (row: Row) => row.id,
-          urlSync: false,
-          defaults: { limit: data.length },
-          paginationMode: "infinite",
-          features: [virtualize({ maxHeight: 200, estimateRowSize: 50 })],
-        });
-        return () => {
-          slots = shell.desktop.value.bodySlots ?? [];
-          return h(
-            "p",
-            rowsOf(slots).map((row) => String(row.cells[0]?.context.value))
-          );
-        };
-      },
-    })
-  );
-  await renderToString(app);
-  // 200px of 50px rows is four, plus the default overscan of five.
-  expect(rowsOf(slots).map((row) => row.key)).toEqual([
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-  ]);
-  const bottom = slots.find((slot) => slot.key === "pad-bottom");
-  expect(bottom).toMatchObject({ kind: "virtualPad", height: (5000 - 9) * 50 });
-  expect(accessor.mock.calls.length).toBeLessThanOrEqual(9 * 2);
-});
+it.each([
+  { maxHeight: 200, count: 9 },
+  { maxHeight: "60vh", count: 21 },
+])(
+  "renders a bounded first window before measuring $maxHeight",
+  async ({ maxHeight, count }) => {
+    const accessor = vi.fn((row: Row) => row.amount);
+    const data = Array.from({ length: 5000 }, (_, index) => ({
+      id: String(index),
+      amount: index,
+    }));
+    let slots: readonly TableBodySlot<Row>[] = [];
+    const app = createSSRApp(
+      defineComponent({
+        setup() {
+          const shell = useDataTableShell({
+            data,
+            columns: [{ key: "amount", accessor }],
+            rowKey: (row: Row) => row.id,
+            urlSync: false,
+            defaults: { limit: data.length },
+            paginationMode: "infinite",
+            maxHeight,
+            features: [virtualize({ estimateRowSize: 50 })],
+          });
+          return () => {
+            slots = shell.desktop.value.bodySlots ?? [];
+            return h(
+              "p",
+              rowsOf(slots).map((row) => String(row.cells[0]?.context.value))
+            );
+          };
+        },
+      })
+    );
+    await renderToString(app);
+    // A CSS length uses the deterministic 800px pre-measure viewport; both add five overscan rows.
+    expect(rowsOf(slots).map((row) => row.key)).toEqual(
+      Array.from({ length: count }, (_, index) => String(index))
+    );
+    const bottom = slots.find((slot) => slot.key === "pad-bottom");
+    expect(bottom).toMatchObject({
+      kind: "virtualPad",
+      height: (5000 - count) * 50,
+    });
+    expect(accessor.mock.calls.length).toBeLessThanOrEqual(count * 2);
+  }
+);

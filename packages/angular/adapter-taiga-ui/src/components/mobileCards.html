@@ -84,16 +84,27 @@
             />
           }
           @if (!summary && v.selection; as selection) {
-            <input
-              [attr.aria-label]="v.table.labels().selectRow"
-              tuiCheckbox
-              type="checkbox"
-              data-taiga-part="checkbox"
-              [class]="classes.checkbox"
-              [adaptAttrs]="selection.rowCheckboxAttrs(rowId(entry.row))"
-              [ngModel]="selection.isSelected(rowId(entry.row))"
-              [ngModelOptions]="{ standalone: true }"
-            />
+            <label
+              style="
+                display: inline-flex;
+                min-width: 44px;
+                min-height: 44px;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+              "
+            >
+              <input
+                [attr.aria-label]="v.table.labels().selectRow"
+                tuiCheckbox
+                type="checkbox"
+                data-taiga-part="checkbox"
+                [class]="classes.checkbox"
+                [adaptAttrs]="selection.rowCheckboxAttrs(rowId(entry.row))"
+                [ngModel]="selection.isSelected(rowId(entry.row))"
+                [ngModelOptions]="{ standalone: true }"
+              />
+            </label>
           }
           @if (v.rowDetail && !summary) {
             <ng-container

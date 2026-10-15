@@ -237,3 +237,22 @@ rows; cards are useful for reading and acting on one record at a time.
 Related: [Getting started](./getting-started.md) ·
 [API reference](./api.md) ·
 [Live mobile demo](https://adapttable.orwamahmoud.com/react/demo/mantine/mobile-cards/)
+
+## Editing across layouts
+
+Custom framework bindings can call `preserveEditorFocusOnLayoutChange()` from
+`@adapttable/core/binding` immediately before publishing a responsive layout
+change. It captures the active editor and caret, then restores them after the
+DOM replacement. It leaves focus alone if the original control remains mounted,
+the editor inventory changes, or focus moves outside the table. The supplied
+React, Angular and Vue bindings already wire this behavior.
+
+A layout change keeps row drafts, selection, filters and expanded rows in the
+same table state. Native editor focus and text selection follow viewport changes
+when the editor inventory remains unchanged. An explicit layout chooser keeps
+focus on the chooser. Keep stable row keys and render the supplied prepared
+field values in custom cards so native editors remain connected.
+
+Mobile Save/Cancel and hierarchy actions have larger touch targets while desktop
+controls keep their kit sizing. The mobile showcase also exercises bounded
+scrolling and pagination choices.

@@ -175,7 +175,7 @@ function mountVirtualize<TRow>(context: FeatureMountContext<TRow>): void {
         estimateCardSize?: number;
         virtualOverscan?: number;
         virtualScrollMargin?: number;
-        maxHeight?: number;
+        maxHeight?: number | string;
       }
   );
   const mobile = context.table.isMobile;
@@ -418,6 +418,10 @@ function mountVirtualize<TRow>(context: FeatureMountContext<TRow>): void {
   const model: ComputedRef<BodyWindowModel<TRow>> = computed(() => {
     refs.begin();
     const { estimate } = sizing.value;
+    const initialHeight =
+      typeof options.value.maxHeight === "number"
+        ? options.value.maxHeight
+        : INITIAL_VIEWPORT;
     // Until the table is live and measured — the first client render, a
     // server render — a requested window holds the first rows that fit, not
     // every row of the body.
@@ -426,7 +430,7 @@ function mountVirtualize<TRow>(context: FeatureMountContext<TRow>): void {
         ? initialWindow(
             scrollSlots.value.length,
             estimate,
-            options.value.maxHeight ?? INITIAL_VIEWPORT,
+            initialHeight,
             options.value.virtualOverscan ?? 5
           )
         : keyedWindow({

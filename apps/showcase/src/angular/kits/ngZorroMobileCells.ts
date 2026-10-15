@@ -21,12 +21,18 @@ import { ShowcaseMobileCellModel } from "../mobileCells";
   styles: `
     :host {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: 0.75rem;
       min-width: 0;
     }
+    :host > :first-child {
+      flex-shrink: 0;
+    }
     .identity {
       min-width: 0;
+      flex: 1 1 8rem;
+      overflow-wrap: anywhere;
     }
     small {
       display: block;

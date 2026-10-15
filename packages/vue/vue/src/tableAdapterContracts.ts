@@ -18,6 +18,7 @@ import type { SummaryRowFn } from "./aggregate/aggregate";
 import type { TableAssistantProps } from "./assistant/contracts";
 import type {
   CellContext,
+  ColumnDef,
   ColumnInput,
   FooterContext,
   HeaderContext,
@@ -324,6 +325,8 @@ export interface DataTableProps<TRow> {
   readonly searchDebounceMs?: number;
   readonly forceMobile?: boolean;
   readonly mobileBreakpoint?: number;
+  /** Bound the scroll body while keeping the toolbar and pagination outside it. */
+  readonly maxHeight?: number | string;
   readonly paginationMode?: PaginationMode;
   readonly defaults?: NonNullable<TableViewStateConfig["defaults"]>;
   readonly urlSync?: boolean;
@@ -357,6 +360,18 @@ export interface DataTableProps<TRow> {
 
 /** Per-column renderers take precedence over cell/header table slots. */
 export interface DataTableSlots<TRow> {
+  /** Replace only the card body; prepared values retain native renderers and editors. */
+  card?: (context: {
+    readonly row: TRow;
+    readonly index: number;
+    readonly selected: boolean;
+    readonly expanded: boolean;
+    readonly fields: readonly {
+      readonly column: ColumnDef<TRow>;
+      readonly label: string;
+      readonly value: VNodeChild;
+    }[];
+  }) => VNodeChild;
   cell?: (context: CellContext<TRow>) => VNodeChild;
   header?: (context: HeaderContext<TRow>) => VNodeChild;
   /** Column headerActions takes precedence over this fallback. */

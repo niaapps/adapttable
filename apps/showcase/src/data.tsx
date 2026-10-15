@@ -548,7 +548,7 @@ export function makeColumns(
       sortValue: (r) => r.name,
       editable: canEdit,
       editor: "text",
-      editValue: (r) => r.name,
+      editValue: (r) => personName(r, locale),
       // A name adds up to nothing; counting the people in a group does.
       aggregatable: { operations: ["count"] },
       // A rule the reader can trip on purpose: clear the name and commit.
@@ -556,9 +556,12 @@ export function makeColumns(
         String(value).trim() === "" ? s.nameRequired : undefined,
       width: 230,
       accessor: (row) => (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 11 }}>
+        <span
+          className="demo-person-identity"
+          style={{ display: "inline-flex", alignItems: "center", gap: 11 }}
+        >
           <Avatar name={personName(row, locale)} />
-          <span style={cellStack}>
+          <span className="demo-person-identity__details" style={cellStack}>
             <strong style={{ fontWeight: 600 }}>
               {personName(row, locale)}
             </strong>
@@ -651,7 +654,7 @@ export function makeColumns(
       editValue: (r) => localDay(startDate(r)),
       width: 185,
       accessor: (row) => (
-        <span style={cellStack}>
+        <span className="demo-person-identity__details" style={cellStack}>
           <strong style={{ fontWeight: 550 }}>
             {formatDate(startDate(row), locale)}
           </strong>
@@ -745,12 +748,15 @@ export function makeWideColumns(
       sortValue: (r) => r.name,
       editable: canEdit,
       editor: "text",
-      editValue: (r) => r.name,
+      editValue: (r) => personName(r, locale),
       width: 240,
       accessor: (row) => (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 11 }}>
+        <span
+          className="demo-person-identity"
+          style={{ display: "inline-flex", alignItems: "center", gap: 11 }}
+        >
           <Avatar name={personName(row, locale)} />
-          <span style={cellStack}>
+          <span className="demo-person-identity__details" style={cellStack}>
             <strong style={{ fontWeight: 600 }}>
               {personName(row, locale)}
             </strong>
@@ -823,7 +829,7 @@ export function makeWideColumns(
       sortable: true,
       width: 200,
       accessor: (row) => (
-        <span style={cellStack}>
+        <span className="demo-person-identity__details" style={cellStack}>
           <strong style={{ fontWeight: 550 }}>
             {formatDate(startDate(row), locale)}
           </strong>

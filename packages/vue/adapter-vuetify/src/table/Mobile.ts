@@ -59,6 +59,24 @@ export function VuetifyMobile<TRow>(props: {
       )
     );
   }
+  function cardBody(row: TableRowModel<TRow>): VNodeChild {
+    return controls.card
+      ? controls.card?.({
+          row: row.row,
+          index: row.index,
+          selected: row.checkboxAttrs?.checked === true,
+          expanded: row.detail?.expanded === true,
+          fields: row.cells.map((cell) => ({
+            column: cell.context.column,
+            label:
+              cell.context.column.mobileLabel ??
+              cell.context.column.header ??
+              cell.key,
+            value: vuetifyCellContent(cell, row, controls, names, true),
+          })),
+        })
+      : fields(row);
+  }
   function card(row: TableRowModel<TRow>): VNode {
     return h(
       VuetifySurface,
@@ -84,7 +102,13 @@ export function VuetifyMobile<TRow>(props: {
               })
             : null,
           row.reorder?.(true),
-          h(VCardText, {}, { default: () => fields(row) }),
+          h(
+            VCardText,
+            {},
+            {
+              default: () => cardBody(row),
+            }
+          ),
           row.detail?.expanded
             ? h(
                 VCardText,

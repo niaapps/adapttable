@@ -10,6 +10,7 @@ import type {
   Direction,
   EditConflictPolicy,
   ExtraFilters,
+  MobileCardRenderer,
   PaginationMode,
   SummaryRowFn,
   TableAssistantProps,
@@ -55,6 +56,7 @@ export class AdaptShowcaseTable<TRow> implements OnInit {
 
   readonly data = input<readonly TRow[]>();
   readonly source = input<Signal<TableSource<TRow>> | TableSource<TRow>>();
+  readonly mode = input<"frontend" | "server">();
   readonly loading = input<boolean>();
   readonly error = input<Error | null>();
   readonly skeletonRows = input<number>();
@@ -84,6 +86,7 @@ export class AdaptShowcaseTable<TRow> implements OnInit {
     Partial<TableQueryParams> & { extra?: ExtraFilters }
   >();
   readonly paginationMode = input<PaginationMode>();
+  readonly renderCard = input<MobileCardRenderer<TRow>>();
   readonly maxHeight = input<number | string>();
   readonly filtersMode = input<"popover" | "drawer">("popover");
   readonly forceMobile = input<boolean>();
@@ -108,6 +111,7 @@ export class AdaptShowcaseTable<TRow> implements OnInit {
           : []),
         inputBinding("data", this.data),
         inputBinding("source", this.source),
+        inputBinding("mode", this.mode),
         inputBinding("loading", this.loading),
         inputBinding("error", this.error),
         inputBinding("skeletonRows", this.skeletonRows),
@@ -121,6 +125,7 @@ export class AdaptShowcaseTable<TRow> implements OnInit {
         inputBinding("defaults", this.defaults),
         inputBinding("paginationMode", this.paginationMode),
         inputBinding("maxHeight", this.maxHeight),
+        inputBinding("renderCard", this.renderCard),
         inputBinding("filtersMode", this.filtersMode),
         inputBinding("forceMobile", this.forceMobile),
         inputBinding("selectable", this.selectable),

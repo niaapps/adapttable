@@ -125,6 +125,7 @@ function controls(): TableChromeSlots<TRow> {
         props
       );
     },
+    card: slots.card,
     cell: slots.cell,
     header: slots.header,
     headerActions: slots.headerActions,
@@ -761,5 +762,22 @@ function setScrollElement(element: HTMLElement | null): void {
   [data-adapttable-part="row-actions-trigger"] {
   min-inline-size: 44px;
   min-block-size: 44px;
+}
+.adapttable-element-plus [data-adapttable-part="card"] .el-checkbox {
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+}
+.adapttable-element-plus
+  [data-adapttable-part="card"]
+  :is(
+    [data-adapttable-part="row-edit-begin"],
+    [data-adapttable-part="row-edit-save"],
+    [data-adapttable-part="row-edit-cancel"],
+    [data-adapttable-part="expand-button"],
+    [data-adapttable-part="tree-toggle"]
+  ) {
+  min-width: 44px;
+  min-height: 44px;
 }
 </style>

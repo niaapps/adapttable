@@ -35,7 +35,13 @@ import {
   type TreeEntry,
   useSummaryCells,
 } from "@adapttable/react/adapter";
-import { type CSSProperties, memo, type ReactNode, useMemo } from "react";
+import {
+  type CSSProperties,
+  memo,
+  type ReactNode,
+  useId,
+  useMemo,
+} from "react";
 
 import type { BaseUiAccentColor } from "../types";
 import { Box, Card, Flex, Text } from "../ui";
@@ -48,6 +54,7 @@ import {
   OptionalRowReorderButtons,
   OptionalTreeToggle,
 } from "./featureSlots";
+import { MobileTarget } from "./mobileTarget";
 import { Checkbox } from "./primitives";
 import { RowActionButtons } from "./RowActionButtons";
 
@@ -234,6 +241,7 @@ function MobileCardBase<TRow>({
   // Built once and used by both paths, so a custom card shows the very
   // same value node the built-in would have — cell renderers and editors
   // included.
+  const selectionId = useId();
   const fields = columns.map((column) => ({
     column,
     label: resolveMobileLabel(column),
@@ -264,145 +272,160 @@ function MobileCardBase<TRow>({
   );
   const rowConflict = rowEditConflict(editing, id);
   return (
-    <Card
-      ref={measureElement}
-      data-index={index}
-      // A windowed list has only a slice of its items in the DOM, so each
-      // one states where it sits and how many there are; a complete list
-      // needs neither, because assistive tech can simply count.
-      aria-posinset={setSize > rowCount ? windowStart + index + 1 : undefined}
-      aria-setsize={setSize > rowCount ? setSize : undefined}
-      data-adapttable-part={part ?? "card"}
-      data-stagger=""
-      data-selected={selected ? "" : undefined}
-      aria-label={ariaLabel}
-      data-dirty={rowIsDirty(editing, id) ? "" : undefined}
-      size={compact ? "1" : "2"}
-      role="listitem"
-      className={className}
-      {...rowClickProps(row, onRowClick, index)}
-      style={{
-        minHeight: "max-content",
-        ...treeCardStyle(treeEntry?.level ?? 0),
-        ...style,
-      }}
-    >
-      {treeEntry && (
-        <OptionalTreeToggle
-          entry={treeEntry}
-          labels={labels}
-          onToggle={onToggleTree ?? (() => undefined)}
-        />
-      )}
-      {onToggleSelect && (
-        <Box mb="2">
-          <Checkbox
-            aria-label={labels.selectRow}
-            checked={selected}
-            onToggle={() => onToggleSelect(id)}
+    <MobileTarget.Provider value={true}>
+      <Card
+        ref={measureElement}
+        data-index={index}
+        // A windowed list has only a slice of its items in the DOM, so each
+        // one states where it sits and how many there are; a complete list
+        // needs neither, because assistive tech can simply count.
+        aria-posinset={setSize > rowCount ? windowStart + index + 1 : undefined}
+        aria-setsize={setSize > rowCount ? setSize : undefined}
+        data-adapttable-part={part ?? "card"}
+        data-stagger=""
+        data-selected={selected ? "" : undefined}
+        aria-label={ariaLabel}
+        data-dirty={rowIsDirty(editing, id) ? "" : undefined}
+        size={compact ? "1" : "2"}
+        role="listitem"
+        className={className}
+        {...rowClickProps(row, onRowClick, index)}
+        style={{
+          minHeight: "max-content",
+          ...treeCardStyle(treeEntry?.level ?? 0),
+          ...style,
+        }}
+      >
+        {treeEntry && (
+          <OptionalTreeToggle
+            entry={treeEntry}
+            labels={labels}
+            onToggle={onToggleTree ?? (() => undefined)}
           />
-        </Box>
-      )}
-      {onToggleExpand && (
-        <Box mb="2">
-          <OptionalExpandToggle
-            id={id}
-            expanded={Boolean(expanded)}
-            onToggle={onToggleExpand}
-            dir={dir}
-            expandLabel={labels.expandRow}
-            collapseLabel={labels.collapseRow}
-          />
-        </Box>
-      )}
-      {renderCard ? (
-        renderCard(row, { index, fields, selected, expanded })
-      ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(min(100%, 7rem), 1fr))",
-            gap: "0.75rem",
-            minWidth: 0,
-          }}
-        >
-          {fields.map(({ column, label, value }) => (
-            <Box
-              key={column.key}
-              data-adapttable-part="card-row"
+        )}
+        {onToggleSelect && (
+          <Box mb="2">
+            <label
+              htmlFor={selectionId}
               style={{
-                minWidth: 0,
-                overflowWrap: "anywhere",
-                gridColumn: label ? undefined : "1 / -1",
-                background: label ? "var(--adapttable-soft)" : undefined,
-                borderRadius: "var(--adapttable-radius)",
-                padding: label ? "0.5rem" : undefined,
+                display: "inline-flex",
+                minWidth: 44,
+                minHeight: 44,
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
               }}
             >
-              {label && (
-                <Text
-                  data-adapttable-part="card-label"
-                  as="div"
-                  size="1"
-                  style={{ color: "inherit" }}
-                >
-                  {label}
-                </Text>
-              )}
-              <Text
-                as="div"
-                size="2"
-                data-adapttable-part="card-value"
-                data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
+              <Checkbox
+                id={selectionId}
+                aria-label={labels.selectRow}
+                checked={selected}
+                onToggle={() => onToggleSelect(id)}
+              />
+            </label>
+          </Box>
+        )}
+        {onToggleExpand && (
+          <Box mb="2">
+            <OptionalExpandToggle
+              id={id}
+              expanded={Boolean(expanded)}
+              onToggle={onToggleExpand}
+              dir={dir}
+              expandLabel={labels.expandRow}
+              collapseLabel={labels.collapseRow}
+            />
+          </Box>
+        )}
+        {renderCard ? (
+          renderCard(row, { index, fields, selected, expanded })
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit, minmax(min(100%, 7rem), 1fr))",
+              gap: "0.75rem",
+              minWidth: 0,
+            }}
+          >
+            {fields.map(({ column, label, value }) => (
+              <Box
+                key={column.key}
+                data-adapttable-part="card-row"
+                style={{
+                  minWidth: 0,
+                  overflowWrap: "anywhere",
+                  gridColumn: label ? undefined : "1 / -1",
+                  background: label ? "var(--adapttable-soft)" : undefined,
+                  borderRadius: "var(--adapttable-radius)",
+                  padding: label ? "0.5rem" : undefined,
+                }}
               >
-                {value}
-              </Text>
-            </Box>
-          ))}
-        </div>
-      )}
-      {rowReorder && (
-        <OptionalRowReorderButtons
-          reorder={rowReorder}
-          labels={labels}
-          localIndex={index}
-          row={row}
-          windowStart={windowStart}
-          rowCount={rowCount}
-        />
-      )}
-      {expanded && (
-        <Box data-adapttable-part="card-detail" pt="1">
-          {renderDetail?.(row)}
-        </Box>
-      )}
-      {editing?.rowEditing && (
-        <OptionalRowEditActions
-          rowEditing={editing.rowEditing}
-          row={row}
-          rowId={id}
-          showBegin={rowEdit.showBegin}
-          icons={editing.rowEditIcons}
-          conflict={rowConflict}
-          labels={labels}
-        />
-      )}
-      {rowEdit.actions.length > 0 && (
-        <Box data-adapttable-part="card-actions">
-          <RowActionButtons
-            minTargetSize={44}
-            row={row}
-            actions={rowEdit.actions}
-            confirm={confirm}
+                {label && (
+                  <Text
+                    data-adapttable-part="card-label"
+                    as="div"
+                    size="1"
+                    style={{ color: "inherit" }}
+                  >
+                    {label}
+                  </Text>
+                )}
+                <Text
+                  as="div"
+                  size="2"
+                  data-adapttable-part="card-value"
+                  data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
+                >
+                  {value}
+                </Text>
+              </Box>
+            ))}
+          </div>
+        )}
+        {rowReorder && (
+          <OptionalRowReorderButtons
+            reorder={rowReorder}
             labels={labels}
-            layout={rowActionsLayout}
-            render={renderRowActions}
-            accentColor={accentColor}
+            localIndex={index}
+            row={row}
+            windowStart={windowStart}
+            rowCount={rowCount}
           />
-        </Box>
-      )}
-    </Card>
+        )}
+        {expanded && (
+          <Box data-adapttable-part="card-detail" pt="1">
+            {renderDetail?.(row)}
+          </Box>
+        )}
+        {editing?.rowEditing && (
+          <OptionalRowEditActions
+            rowEditing={editing.rowEditing}
+            row={row}
+            rowId={id}
+            showBegin={rowEdit.showBegin}
+            icons={editing.rowEditIcons}
+            conflict={rowConflict}
+            labels={labels}
+          />
+        )}
+        {rowEdit.actions.length > 0 && (
+          <Box data-adapttable-part="card-actions">
+            <RowActionButtons
+              minTargetSize={44}
+              row={row}
+              actions={rowEdit.actions}
+              confirm={confirm}
+              labels={labels}
+              layout={rowActionsLayout}
+              render={renderRowActions}
+              accentColor={accentColor}
+            />
+          </Box>
+        )}
+      </Card>
+    </MobileTarget.Provider>
   );
 }
 

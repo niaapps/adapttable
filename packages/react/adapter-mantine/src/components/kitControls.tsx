@@ -73,6 +73,7 @@ import { useRef, useState } from "react";
 
 import { FiltersIcon, iconForRowEditPart } from "../icons";
 import { AutoFilterForm } from "./AutoFilterForm";
+import { useMobileTarget } from "./mobileTarget";
 
 export type {
   AgentApprovalProps,
@@ -359,10 +360,12 @@ function RowEditButton({
   className,
   onClick,
 }: Readonly<RowEditButtonProps>) {
+  const targetStyle = useMobileTarget();
   const glyph = iconForRowEditPart(part, icon);
   if (!glyph) {
     return (
       <Button
+        style={targetStyle}
         type="button"
         size="xs"
         variant="default"
@@ -378,6 +381,7 @@ function RowEditButton({
   return (
     <Tooltip label={label} withArrow openDelay={200}>
       <ActionIcon
+        style={targetStyle}
         type="button"
         size="sm"
         variant="subtle"
@@ -499,8 +503,10 @@ function TreeButton({
   className,
   onClick,
 }: Readonly<TreeToggleButtonProps>) {
+  const targetStyle = useMobileTarget();
   return (
     <ActionIcon
+      style={targetStyle}
       type="button"
       size="sm"
       variant="subtle"

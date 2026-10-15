@@ -6,6 +6,7 @@ import {
 } from "@adapttable/react/adapter";
 
 import { IconButton } from "../ui";
+import { useMobileTarget } from "./mobileTarget";
 
 /** Chevron toggle for a row's detail panel. */
 export function ExpandToggle({
@@ -19,8 +20,10 @@ export function ExpandToggle({
   labels: Pick<Required<TableLabels>, "expandRow" | "collapseRow">;
   onToggle: () => void;
 }>) {
+  const targetStyle = useMobileTarget();
   return (
     <IconButton
+      style={targetStyle}
       size="1"
       variant="ghost"
       color="gray"

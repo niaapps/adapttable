@@ -31,16 +31,50 @@ function loadingLineWidth(column: number, total: number): string {
   imports: [...TAIGA_CONTROLS],
   selector: "adapt-table-skeleton",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: `
+    [data-adapttable-part="loading-cards"] {
+      display: grid;
+      gap: 12px;
+    }
+    [data-adapttable-part="loading-card"] {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+      border-radius: 8px;
+    }
+    [data-adapttable-part="loading-line"] {
+      display: block;
+      height: 12px;
+      border-radius: 4px;
+      background: color-mix(in srgb, currentColor 14%, transparent);
+    }
+  `,
   template: `
-    <div aria-busy="true" aria-live="polite" data-taiga-part="loading">
+    <div
+      aria-busy="true"
+      aria-live="polite"
+      data-taiga-part="loading"
+      data-adapttable-part="loading"
+    >
       @if (variant() === "table") {
-        <table data-taiga-part="loading-table">
+        <table
+          data-taiga-part="loading-table"
+          data-adapttable-part="loading-table"
+        >
           <thead>
-            <tr data-taiga-part="loading-header-row">
+            <tr
+              data-taiga-part="loading-header-row"
+              data-adapttable-part="loading-header-row"
+            >
               @for (column of columnKeys(); track column) {
-                <th data-taiga-part="loading-header-cell">
+                <th
+                  data-taiga-part="loading-header-cell"
+                  data-adapttable-part="loading-header-cell"
+                >
                   <span
                     data-taiga-part="loading-line"
+                    data-adapttable-part="loading-line"
                     [tuiSkeleton]="true"
                     style="display: block; block-size: 1rem"
                     [style.width]="lineWidth(column)"
@@ -51,11 +85,18 @@ function loadingLineWidth(column: number, total: number): string {
           </thead>
           <tbody>
             @for (row of rowKeys(); track row) {
-              <tr data-taiga-part="loading-row">
+              <tr
+                data-taiga-part="loading-row"
+                data-adapttable-part="loading-row"
+              >
                 @for (column of columnKeys(); track column) {
-                  <td data-taiga-part="loading-cell">
+                  <td
+                    data-taiga-part="loading-cell"
+                    data-adapttable-part="loading-cell"
+                  >
                     <span
                       data-taiga-part="loading-line"
+                      data-adapttable-part="loading-line"
                       [tuiSkeleton]="true"
                       style="display: block; block-size: 1rem"
                       [style.width]="lineWidth(column)"
@@ -67,12 +108,19 @@ function loadingLineWidth(column: number, total: number): string {
           </tbody>
         </table>
       } @else {
-        <div data-taiga-part="loading-cards">
+        <div
+          data-taiga-part="loading-cards"
+          data-adapttable-part="loading-cards"
+        >
           @for (row of rowKeys(); track row) {
-            <div data-taiga-part="loading-card">
+            <div
+              data-taiga-part="loading-card"
+              data-adapttable-part="loading-card"
+            >
               @for (column of cardColumns(); track column) {
                 <span
                   data-taiga-part="loading-line"
+                  data-adapttable-part="loading-line"
                   [tuiSkeleton]="true"
                   style="display: block; block-size: 1rem"
                   [style.width]="lineWidth(column)"

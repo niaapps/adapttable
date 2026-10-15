@@ -42,6 +42,7 @@ import {
   type ReactElement,
   type ReactNode,
   type RefObject,
+  useId,
   useMemo,
 } from "react";
 
@@ -54,6 +55,7 @@ import {
   OptionalRowReorderButtons,
   OptionalTreeToggle,
 } from "./featureSlots";
+import { MobileTarget } from "./mobileTarget";
 import { RowActionButtons } from "./RowActionButtons";
 
 /** Drop row-interaction props on pinned summary cards. */
@@ -274,6 +276,7 @@ function MobileCardBase<TRow>({
   // Built once and used by both paths, so a custom card shows the very
   // same value node the built-in would have — cell renderers and editors
   // included.
+  const selectionId = useId();
   const fields = columns.map((column) => ({
     column,
     label: resolveMobileLabel(column),
@@ -304,170 +307,185 @@ function MobileCardBase<TRow>({
   );
   const rowConflict = rowEditConflict(editing, id);
   return (
-    <Card
-      {...rowClickProps(row, onRowClick, index)}
-      style={{
-        minHeight: "max-content",
-        borderColor: selected
-          ? "var(--mantine-primary-color-filled)"
-          : undefined,
-        ...treeCardStyle(treeEntry?.level ?? 0),
-        ...style,
-      }}
-      className={className}
-      ref={measureElement}
-      data-index={index}
-      // A windowed list has only a slice of its items in the DOM, so each
-      // one states where it sits and how many there are; a complete list
-      // needs neither, because assistive tech can simply count.
-      aria-posinset={setSize > rowCount ? windowStart + index + 1 : undefined}
-      aria-setsize={setSize > rowCount ? setSize : undefined}
-      data-adapttable-part={part ?? "card"}
-      withBorder
-      radius="md"
-      padding={cardPadding}
-      role="listitem"
-      aria-label={ariaLabel}
-      data-stagger=""
-      data-selected={selected ? "" : undefined}
-      data-dirty={rowIsDirty(editing, id) ? "" : undefined}
-    >
-      <Stack gap={cardGap}>
-        {(treeEntry ?? onToggleSelect ?? onToggleExpand) && (
-          <Group justify="space-between" wrap="nowrap" gap="xs">
-            <Group gap="xs">
-              {treeEntry && (
-                <OptionalTreeToggle
-                  entry={treeEntry}
-                  labels={labels}
-                  onToggle={onToggleTree ?? (() => undefined)}
-                />
-              )}
-              {onToggleSelect && (
-                <Checkbox
-                  aria-label={labels.selectRow}
-                  checked={selected}
-                  onChange={() => onToggleSelect(id)}
-                  styles={{
-                    body: { minHeight: 44, alignItems: "center" },
-                    input: { cursor: "pointer" },
-                  }}
+    <MobileTarget.Provider value={true}>
+      <Card
+        {...rowClickProps(row, onRowClick, index)}
+        style={{
+          minHeight: "max-content",
+          borderColor: selected
+            ? "var(--mantine-primary-color-filled)"
+            : undefined,
+          ...treeCardStyle(treeEntry?.level ?? 0),
+          ...style,
+        }}
+        className={className}
+        ref={measureElement}
+        data-index={index}
+        // A windowed list has only a slice of its items in the DOM, so each
+        // one states where it sits and how many there are; a complete list
+        // needs neither, because assistive tech can simply count.
+        aria-posinset={setSize > rowCount ? windowStart + index + 1 : undefined}
+        aria-setsize={setSize > rowCount ? setSize : undefined}
+        data-adapttable-part={part ?? "card"}
+        withBorder
+        radius="md"
+        padding={cardPadding}
+        role="listitem"
+        aria-label={ariaLabel}
+        data-stagger=""
+        data-selected={selected ? "" : undefined}
+        data-dirty={rowIsDirty(editing, id) ? "" : undefined}
+      >
+        <Stack gap={cardGap}>
+          {(treeEntry ?? onToggleSelect ?? onToggleExpand) && (
+            <Group justify="space-between" wrap="nowrap" gap="xs">
+              <Group gap="xs">
+                {treeEntry && (
+                  <OptionalTreeToggle
+                    entry={treeEntry}
+                    labels={labels}
+                    onToggle={onToggleTree ?? (() => undefined)}
+                  />
+                )}
+                {onToggleSelect && (
+                  <label
+                    htmlFor={selectionId}
+                    style={{
+                      display: "inline-flex",
+                      minWidth: 44,
+                      minHeight: 44,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <Checkbox
+                      id={selectionId}
+                      aria-label={labels.selectRow}
+                      checked={selected}
+                      onChange={() => onToggleSelect(id)}
+                      styles={{
+                        body: { minHeight: 44, alignItems: "center" },
+                        input: { cursor: "pointer" },
+                      }}
+                    />
+                  </label>
+                )}
+              </Group>
+              {onToggleExpand && (
+                <OptionalExpandToggle
+                  id={id}
+                  expanded={Boolean(expanded)}
+                  onToggle={onToggleExpand}
+                  expandLabel={labels.expandRow}
+                  collapseLabel={labels.collapseRow}
                 />
               )}
             </Group>
-            {onToggleExpand && (
-              <OptionalExpandToggle
-                id={id}
-                expanded={Boolean(expanded)}
-                onToggle={onToggleExpand}
-                expandLabel={labels.expandRow}
-                collapseLabel={labels.collapseRow}
-              />
-            )}
-          </Group>
-        )}
-        {renderCard ? (
-          renderCard(row, {
-            index,
-            fields,
-            selected,
-            expanded,
-          })
-        ) : (
-          <Box
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(min(100%, 7rem), 1fr))",
-              gap:
-                typeof cardGap === "number"
-                  ? cardGap
-                  : `var(--mantine-spacing-${cardGap})`,
-            }}
-          >
-            {fields.map(({ column, label, value }) => (
-              <Box
-                key={column.key}
-                data-adapttable-part="card-row"
-                style={{
-                  minWidth: 0,
-                  overflowWrap: "anywhere",
-                  gridColumn: label ? undefined : "1 / -1",
-                  borderRadius: "var(--mantine-radius-sm)",
-                }}
-                p={label ? "xs" : 0}
-                bg={label ? "var(--mantine-color-default-hover)" : undefined}
-              >
-                {label && (
-                  <Text
-                    data-adapttable-part="card-label"
-                    fz="xs"
-                    c="var(--mantine-color-text)"
-                    fw={500}
-                  >
-                    {label}
-                  </Text>
-                )}
-                {/* Cells are arbitrary ReactNode (often block elements) —
-                a <p> wrapper would be invalid HTML. */}
-                <Text
-                  component="div"
-                  fz={label ? "sm" : "md"}
-                  fw={label ? undefined : 600}
-                  data-adapttable-part="card-value"
-                  data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
+          )}
+          {renderCard ? (
+            renderCard(row, {
+              index,
+              fields,
+              selected,
+              expanded,
+            })
+          ) : (
+            <Box
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(min(100%, 7rem), 1fr))",
+                gap:
+                  typeof cardGap === "number"
+                    ? cardGap
+                    : `var(--mantine-spacing-${cardGap})`,
+              }}
+            >
+              {fields.map(({ column, label, value }) => (
+                <Box
+                  key={column.key}
+                  data-adapttable-part="card-row"
+                  style={{
+                    minWidth: 0,
+                    overflowWrap: "anywhere",
+                    gridColumn: label ? undefined : "1 / -1",
+                    borderRadius: "var(--mantine-radius-sm)",
+                  }}
+                  p={label ? "xs" : 0}
+                  bg={label ? "var(--mantine-color-default-hover)" : undefined}
                 >
-                  {value}
-                </Text>
-              </Box>
-            ))}
-          </Box>
-        )}
-        {rowReorder && (
-          <OptionalRowReorderButtons
-            reorder={rowReorder}
-            labels={labels}
-            localIndex={index}
-            row={row}
-            windowStart={windowStart}
-            rowCount={rowCount}
-          />
-        )}
-        {expanded && renderDetail && (
-          <div data-adapttable-part="card-detail">{renderDetail(row)}</div>
-        )}
-        {editing?.rowEditing && (
-          <OptionalRowEditActions
-            rowEditing={editing.rowEditing}
-            row={row}
-            rowId={id}
-            showBegin={rowEdit.showBegin}
-            icons={editing.rowEditIcons}
-            conflict={rowConflict}
-            labels={labels}
-          />
-        )}
-        {rowEdit.actions.length > 0 && (
-          <Box
-            data-adapttable-part="card-actions"
-            pt="sm"
-            style={{
-              borderTop: "1px solid var(--mantine-color-default-border)",
-            }}
-          >
-            <RowActionButtons
-              minTargetSize={44}
-              row={row}
-              actions={rowEdit.actions}
-              confirm={confirm}
+                  {label && (
+                    <Text
+                      data-adapttable-part="card-label"
+                      fz="xs"
+                      c="var(--mantine-color-text)"
+                      fw={500}
+                    >
+                      {label}
+                    </Text>
+                  )}
+                  {/* Cells are arbitrary ReactNode (often block elements) —
+                a <p> wrapper would be invalid HTML. */}
+                  <Text
+                    component="div"
+                    fz={label ? "sm" : "md"}
+                    fw={label ? undefined : 600}
+                    data-adapttable-part="card-value"
+                    data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
+                  >
+                    {value}
+                  </Text>
+                </Box>
+              ))}
+            </Box>
+          )}
+          {rowReorder && (
+            <OptionalRowReorderButtons
+              reorder={rowReorder}
               labels={labels}
-              layout={rowActionsLayout}
-              render={renderRowActions}
+              localIndex={index}
+              row={row}
+              windowStart={windowStart}
+              rowCount={rowCount}
             />
-          </Box>
-        )}
-      </Stack>
-    </Card>
+          )}
+          {expanded && renderDetail && (
+            <div data-adapttable-part="card-detail">{renderDetail(row)}</div>
+          )}
+          {editing?.rowEditing && (
+            <OptionalRowEditActions
+              rowEditing={editing.rowEditing}
+              row={row}
+              rowId={id}
+              showBegin={rowEdit.showBegin}
+              icons={editing.rowEditIcons}
+              conflict={rowConflict}
+              labels={labels}
+            />
+          )}
+          {rowEdit.actions.length > 0 && (
+            <Box
+              data-adapttable-part="card-actions"
+              pt="sm"
+              style={{
+                borderTop: "1px solid var(--mantine-color-default-border)",
+              }}
+            >
+              <RowActionButtons
+                minTargetSize={44}
+                row={row}
+                actions={rowEdit.actions}
+                confirm={confirm}
+                labels={labels}
+                layout={rowActionsLayout}
+                render={renderRowActions}
+              />
+            </Box>
+          )}
+        </Stack>
+      </Card>
+    </MobileTarget.Provider>
   );
 }
 

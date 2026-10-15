@@ -152,3 +152,15 @@ Custom body wrappers use your own CSS.
 See [Customization](./customization.md), [Pagination](./pagination.md),
 [Cell editing](./cell-editing.md), [Virtualization](./virtualization.md),
 [Accessibility](./accessibility.md) and [Localization](./i18n-rtl.md).
+
+## Editing across layouts
+
+A layout change keeps row drafts, selection, filters and expanded rows in the
+same table state. Native editor focus and text selection follow viewport changes
+when the editor inventory remains unchanged. An explicit layout chooser keeps
+focus on the chooser. Keep stable row keys and render the supplied prepared
+field values in custom cards so native editors remain connected.
+
+Mobile Save/Cancel and hierarchy actions have larger touch targets while desktop
+controls keep their kit sizing. The mobile showcase also exercises bounded
+scrolling and pagination choices.

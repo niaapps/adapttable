@@ -1493,6 +1493,7 @@ export interface DataTableProps<TRow> {
     readonly labels?: TableLabels;
     // (undocumented)
     readonly locale?: string;
+    readonly maxHeight?: number | string;
     // (undocumented)
     readonly mobileBreakpoint?: number;
     // (undocumented)
@@ -1538,6 +1539,17 @@ export interface DataTableProps<TRow> {
 
 // @public
 export interface DataTableSlots<TRow> {
+    card?: (context: {
+        readonly row: TRow;
+        readonly index: number;
+        readonly selected: boolean;
+        readonly expanded: boolean;
+        readonly fields: readonly {
+            readonly column: ColumnDef<TRow>;
+            readonly label: string;
+            readonly value: VNodeChild;
+        }[];
+    }) => VNodeChild;
     // (undocumented)
     cell?: (context: CellContext<TRow>) => VNodeChild;
     // (undocumented)
@@ -1579,7 +1591,7 @@ export interface DataTableSurfaceChromeProps<TRow> {
     // (undocumented)
     readonly model: UseDataTableShellResult<TRow>;
     // (undocumented)
-    readonly options: Pick<DataTableProps<TRow>, "searchable" | "skeletonRows" | "classNames">;
+    readonly options: Pick<DataTableProps<TRow>, "searchable" | "skeletonRows" | "classNames" | "maxHeight">;
     // (undocumented)
     readonly rootRef: ElementRef;
     // (undocumented)
@@ -3732,6 +3744,8 @@ export interface TableChromeClassNames extends TableSummaryClassNames {
 // @public (undocumented)
 export interface TableChromeSlots<TRow> {
     // (undocumented)
+    readonly card?: NonNullable<DataTableSlots<TRow>["card"]>;
+    // (undocumented)
     readonly cell?: (context: CellContext<TRow>) => VNodeChild;
     // (undocumented)
     readonly ColumnGroupToggle?: (props: ColumnGroupToggleProps) => VNodeChild;
@@ -4437,6 +4451,7 @@ export interface UseDataTableShellOptions<TRow> extends Omit<UseDataTableOptions
     // (undocumented)
     readonly features?: MaybeRefOrGetterOptional<readonly ComposedFeature<NoInfer<TRow>>[]>;
     readonly footer?: (context: FooterContext<TRow>) => VNodeChild;
+    readonly maxHeight?: number | string;
     // (undocumented)
     readonly onCellCut?: (range: CellRange) => void;
     // (undocumented)

@@ -12,6 +12,7 @@ import { densityChooser } from "@adapttable/nuxt-ui/density";
 import {
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
 } from "@adapttable/nuxt-ui/editing";
 import { exportCsv } from "@adapttable/nuxt-ui/export";
@@ -131,6 +132,7 @@ export const kit: ShowcaseKit = {
   densityChooser,
   editHistory,
   editing,
+  rowEditing,
   undoRedoButtons,
   exportCsv,
   filters,

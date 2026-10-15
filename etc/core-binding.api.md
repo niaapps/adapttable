@@ -4586,6 +4586,9 @@ export interface PivotZoneProps<TNode = unknown> {
 }
 
 // @public
+export function preserveEditorFocusOnLayoutChange(): void;
+
+// @public
 export function printToolbarProps(wanted: boolean | undefined, onPrint: (() => void) | undefined, labels: Pick<TableLabels, "print">): {
     onPrint?: () => void;
     printLabel?: string;

@@ -1,7 +1,8 @@
 <!-- Decorative placeholders stay separate from the live loading sentence. -->
-<div aria-busy="true" aria-live="polite">
+<div aria-busy="true" aria-live="polite" data-adapttable-part="loading">
   @if (variant() === "table") {
     <nz-table
+      data-adapttable-part="loading-table"
       aria-hidden="true"
       nzSize="small"
       [nzData]="rowKeys()"
@@ -10,10 +11,11 @@
       [nzTemplateMode]="true"
     >
       <thead>
-        <tr>
+        <tr data-adapttable-part="loading-header-row">
           @for (column of columnKeys(); track column) {
-            <th scope="col">
+            <th scope="col" data-adapttable-part="loading-header-cell">
               <nz-skeleton-element
+                data-adapttable-part="loading-line"
                 nzType="input"
                 nzSize="small"
                 [nzActive]="true"
@@ -26,10 +28,11 @@
       </thead>
       <tbody>
         @for (row of rowKeys(); track row) {
-          <tr>
+          <tr data-adapttable-part="loading-row">
             @for (column of columnKeys(); track column) {
-              <td>
+              <td data-adapttable-part="loading-cell">
                 <nz-skeleton-element
+                  data-adapttable-part="loading-line"
                   nzType="input"
                   nzSize="small"
                   [nzActive]="true"
@@ -43,11 +46,12 @@
       </tbody>
     </nz-table>
   } @else {
-    <div aria-hidden="true">
+    <div aria-hidden="true" data-adapttable-part="loading-cards">
       @for (row of rowKeys(); track row) {
-        <nz-card nzSize="small">
+        <nz-card nzSize="small" data-adapttable-part="loading-card">
           @for (column of cardColumns(); track column) {
             <nz-skeleton-element
+              data-adapttable-part="loading-line"
               nzType="input"
               nzSize="small"
               [nzActive]="true"

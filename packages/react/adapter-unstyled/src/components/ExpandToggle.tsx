@@ -3,6 +3,7 @@ import type { TableLabels } from "@adapttable/react/adapter";
 
 import type { DataTableClassNames } from "../types";
 import { ChevronIcon } from "./icons";
+import { useMobileTarget } from "./mobileTarget";
 
 /**
  * The expand/collapse chevron, shared by desktop rows and mobile cards. The
@@ -20,8 +21,10 @@ export function ExpandButton({
   classNames: DataTableClassNames;
   onToggle: () => void;
 }>) {
+  const targetStyle = useMobileTarget();
   return (
     <button
+      style={targetStyle}
       type="button"
       data-adapttable-part="expand-button"
       data-expanded={expanded ? "" : undefined}

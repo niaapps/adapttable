@@ -169,6 +169,8 @@ export interface UseDataTableShellOptions<TRow>
       "data" | keyof UseDataTableOptions<TRow>
     > {
   readonly source?: MaybeRefOrGetterOptional<TableSource<TRow>>;
+  /** Bound the rendered scroll body; CSS lengths are measured after mount. */
+  readonly maxHeight?: number | string;
   readonly data?: MaybeRefOrGetter<readonly TRow[]>;
   readonly features?: MaybeRefOrGetterOptional<
     readonly ComposedFeature<NoInfer<TRow>>[]

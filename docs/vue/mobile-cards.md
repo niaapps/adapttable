@@ -76,6 +76,53 @@ library's automatic default.
 
 Use `locale` for translated labels and `dir` for reading direction; changing direction alone does not translate text. `classNames` exposes semantic card parts in the Unstyled adapter, where the host supplies appearance. Follow the chosen kit’s provider and stylesheet setup for styled adapters. See [getting started](./getting-started.md#choose-a-ui-kit) and [editing](./cell-editing.md).
 
+## Custom card bodies
+
+All eight kits accept the `card` slot. It replaces only the fields inside the
+native card; selection, expansion, row actions and Save/Cancel remain owned by
+the table. The context contains `row`, `index`, `selected`, `expanded`, and
+`fields`. Each field provides its `column`, resolved `label`, and prepared
+Vue `value`. Render that value to preserve the column's native cell and editor.
+
+```vue
+<script setup lang="ts">
+import type { VNodeChild } from "vue";
+const FieldValue = (props: { value: VNodeChild }) => props.value;
+</script>
+
+<template>
+  <DataTable :data="rows" :columns="columns" :row-key="rowKey">
+    <template #card="{ fields }">
+      <div class="profile-fields">
+        <div v-for="field in fields" :key="field.column.key">
+          <strong v-if="field.label">{{ field.label }}</strong>
+          <FieldValue :value="field.value" />
+        </div>
+      </div>
+    </template>
+  </DataTable>
+</template>
+```
+
+Keep field keys stable and allow values to wrap. A custom body should render
+each prepared value once; recreating raw values would bypass its editor.
+
+## Editing and difficult states
+
+Row drafts, selection, filters and expanded rows share the same state across
+cards and tables. Viewport changes restore the active native editor and its
+text selection when the editor inventory stays the same. Choosing a layout
+button explicitly leaves focus on that button. A custom editor must attach its
+provided focus ref to its native input to participate in focus management.
+
+Use `:max-height="360"` (pixels) or `max-height="60vh"` to bound the scroll
+body while keeping toolbar and pagination visible.
+
+The mobile examples offer editing, custom bodies, bounded scrolling, paged or
+infinite presentation, and empty/loading/error scenarios. Use `isLoading` with
+empty `data` for initial loading, `isFetching` while retaining rows for refresh,
+and `error` for a failed request. The host owns recovery and every saved edit.
+
 ## Try the native adapters
 
 Use the [live demo](/vue/demo/) or [Feature Lab](/vue/demo/all-options/) to switch all eight Vue kits. Dedicated kit examples show the same feature with each UI kit’s controls.

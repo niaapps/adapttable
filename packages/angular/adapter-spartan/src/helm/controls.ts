@@ -114,16 +114,27 @@ export class HlmCheckbox {
   imports: [BrnCheckbox, HlmCheckbox],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
-  template: `<brn-checkbox
-    adaptHlmCheckbox
-    data-spartan-part="checkbox"
-    [class]="userClass() ?? ''"
-    [checked]="attrs()['checked'] === true"
-    [indeterminate]="attrs()['indeterminate'] === true"
-    [disabled]="attrs()['disabled'] === true"
-    [aria-label]="label()"
-    (checkedChange)="toggle()"
-  />`,
+  styles: `
+    :host-context([data-adapttable-part="card"]) label {
+      display: inline-flex;
+      min-width: 44px;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+  `,
+  template: `<label
+    ><brn-checkbox
+      adaptHlmCheckbox
+      data-spartan-part="checkbox"
+      [class]="userClass() ?? ''"
+      [checked]="attrs()['checked'] === true"
+      [indeterminate]="attrs()['indeterminate'] === true"
+      [disabled]="attrs()['disabled'] === true"
+      [aria-label]="label()"
+      (checkedChange)="toggle()"
+  /></label>`,
 })
 export class SpartanSelection {
   readonly attrs = input.required<Attrs>();

@@ -53,9 +53,11 @@ const emit = defineEmits<{
   "update:density": [density: TableDensity];
 }>();
 const slots = defineSlots<DataTableSlots<TRow>>();
+const cardSlot = shallowRef(slots.card);
 const footerSlot = shallowRef(slots.footer);
 onBeforeUpdate(() => {
   footerSlot.value = slots.footer;
+  cardSlot.value = slots.card;
 });
 const shell = useDataTableShell<TRow>(() => ({
   ...props,
@@ -83,7 +85,23 @@ provideNuxtDensity(() => shell.density.value);
 function controls(): TableChromeSlots<TRow> {
   return {
     SortButton: ({ attrs, content }) => h(NuxtButton, { attrs }, () => content),
-    SelectionCheckbox: nuxtSelection,
+    SelectionCheckbox: (control) =>
+      shell.table.isMobile.value
+        ? h(
+            "label",
+            {
+              style: {
+                display: "inline-flex",
+                minWidth: "44px",
+                minHeight: "44px",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              },
+            },
+            [nuxtSelection(control)]
+          )
+        : nuxtSelection(control),
     ColumnGroupToggle: (control) =>
       ColumnGroupToggleChrome({
         ...control,
@@ -143,6 +161,7 @@ function controls(): TableChromeSlots<TRow> {
         control
       );
     },
+    card: cardSlot.value,
     cell: slots.cell,
     header: slots.header,
     headerActions: slots.headerActions,
@@ -431,5 +450,17 @@ function scrollRef(element: HTMLElement | null): void {
   [data-adapttable-part="row-actions-trigger"] {
   min-inline-size: 44px;
   min-block-size: 44px;
+}
+.adapttable-nuxt
+  [data-adapttable-part="card"]
+  :is(
+    [data-adapttable-part="row-edit-begin"],
+    [data-adapttable-part="row-edit-save"],
+    [data-adapttable-part="row-edit-cancel"],
+    [data-adapttable-part="expand-button"],
+    [data-adapttable-part="tree-toggle"]
+  ) {
+  min-width: 44px;
+  min-height: 44px;
 }
 </style>
