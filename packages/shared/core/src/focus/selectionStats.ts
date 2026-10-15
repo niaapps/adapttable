@@ -13,8 +13,9 @@
  * the behaviour nobody wants.
  */
 import type { ColumnMetadata } from "../columnModel";
-import { buildExportTable } from "../export/exportWriter";
-import { type CellRange, cellRangeIndices, cellRangeSize } from "./cellRange";
+import { exportCellValue } from "../export/cellValue";
+import type { CellRange } from "./cellRange";
+import { loadedRangeBounds } from "./loadedRange";
 
 /**
  * The numbers behind a selection.
@@ -22,7 +23,7 @@ import { type CellRange, cellRangeIndices, cellRangeSize } from "./cellRange";
  * @public
  */
 export interface SelectionStats {
-  /** Every selected cell, numeric or not. */
+  /** Every selected cell in the loaded rows and existing columns. */
   cells: number;
   /** How many of them held a number. */
   numeric: number;
@@ -90,42 +91,45 @@ export function selectionStats<TRow>(
 ): SelectionStats | null {
   const { enabled = true, range, rows, columns, firstRowIndex = 0 } = options;
   if (!enabled || !range) return null;
-  const indices = cellRangeIndices(range);
-  const cols = indices.cols.flatMap((index) => {
-    const column = columns[index];
-    return column ? [column] : [];
-  });
-  if (cols.length === 0) return null;
-
-  const selected = indices.rows.flatMap((index) => {
-    const row = rows[index - firstRowIndex];
-    return row === undefined ? [] : [row];
-  });
-  const table = buildExportTable(selected, cols);
-
-  const numbers = table.rows.flatMap((row) =>
-    row.flatMap((value) => {
-      const parsed = numeric(value);
-      return parsed === null ? [] : [parsed];
-    })
+  const bounds = loadedRangeBounds(
+    range,
+    rows.length,
+    columns.length,
+    firstRowIndex
   );
-  if (numbers.length === 0) {
+  if (bounds.fromCol > bounds.toCol) return null;
+  let cells = 0;
+  let count = 0;
+  let sum = 0;
+  let min = Number.POSITIVE_INFINITY;
+  let max = Number.NEGATIVE_INFINITY;
+  for (let rowIndex = bounds.fromRow; rowIndex <= bounds.toRow; rowIndex++) {
+    const row = rows[rowIndex];
+    if (row === undefined) continue;
+    for (
+      let columnIndex = bounds.fromCol;
+      columnIndex <= bounds.toCol;
+      columnIndex++
+    ) {
+      const column = columns[columnIndex];
+      if (column === undefined) continue;
+      cells++;
+      const value = numeric(exportCellValue(row, column));
+      if (value === null) continue;
+      count++;
+      sum += value;
+      min = Math.min(min, value);
+      max = Math.max(max, value);
+    }
+  }
+  if (count === 0)
     return {
-      cells: cellRangeSize(range),
+      cells,
       numeric: 0,
       sum: null,
       average: null,
       min: null,
       max: null,
     };
-  }
-  const sum = numbers.reduce((total, value) => total + value, 0);
-  return {
-    cells: cellRangeSize(range),
-    numeric: numbers.length,
-    sum,
-    average: sum / numbers.length,
-    min: Math.min(...numbers),
-    max: Math.max(...numbers),
-  };
+  return { cells, numeric: count, sum, average: sum / count, min, max };
 }

@@ -11,8 +11,9 @@
  * spreadsheet from a copy and from a downloaded file cannot disagree.
  */
 import type { ColumnMetadata } from "../columnModel";
-import { buildExportTable } from "../export/exportWriter";
-import { type CellRange, cellRangeIndices } from "./cellRange";
+import { exportCellValue } from "../export/cellValue";
+import type { CellRange } from "./cellRange";
+import { loadedRangeBounds } from "./loadedRange";
 
 /**
  * What a copy needs to know: the rectangle, and the data under it.
@@ -63,25 +64,40 @@ export function clipboardRangeText<TRow>(
   options: ClipboardRangeOptions<TRow>
 ): string {
   const { range, rows, columns, firstRowIndex = 0, headers = false } = options;
-  const indices = cellRangeIndices(range);
-  const cols = indices.cols.flatMap((index) => {
-    const column = columns[index];
-    return column ? [column] : [];
-  });
-  if (cols.length === 0) return "";
-
-  const selected = indices.rows.flatMap((index) => {
-    const row = rows[index - firstRowIndex];
-    return row === undefined ? [] : [row];
-  });
-  const table = buildExportTable(selected, cols);
-
-  const lines = table.rows.map((row) =>
-    row.map(cellText).map(escapeCell).join("\t")
+  const bounds = loadedRangeBounds(
+    range,
+    rows.length,
+    columns.length,
+    firstRowIndex
   );
-  return headers
-    ? [table.headers.map(escapeCell).join("\t"), ...lines].join("\n")
-    : lines.join("\n");
+  if (bounds.fromCol > bounds.toCol) return "";
+  const cols: ColumnMetadata<TRow>[] = [];
+  for (let index = bounds.fromCol; index <= bounds.toCol; index++) {
+    const column = columns[index];
+    if (column !== undefined) cols.push(column);
+  }
+  if (cols.length === 0) return "";
+  const lines: string[] = [];
+  if (headers)
+    lines.push(
+      cols
+        .map((column) =>
+          escapeCell(
+            typeof column.header === "string" ? column.header : column.key
+          )
+        )
+        .join("\t")
+    );
+  for (let index = bounds.fromRow; index <= bounds.toRow; index++) {
+    const row = rows[index];
+    if (row === undefined) continue;
+    lines.push(
+      cols
+        .map((column) => escapeCell(cellText(exportCellValue(row, column))))
+        .join("\t")
+    );
+  }
+  return lines.join("\n");
 }
 
 /**

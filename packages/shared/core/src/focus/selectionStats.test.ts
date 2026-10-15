@@ -114,6 +114,48 @@ describe("selectionStats", () => {
     ).toMatchObject({ numeric: 3, sum: 90 });
   });
 
+  it("summarizes 200,000 numeric cells without spreading them into a call", () => {
+    const count = 200_000;
+    const rows = Array.from({ length: count }, (_, budget) => ({
+      id: String(budget),
+      name: "row",
+      budget,
+    }));
+    expect(
+      selectionStats({
+        range: rect(0, 1, count - 1, 1),
+        rows,
+        columns: COLUMNS,
+      })
+    ).toEqual({
+      cells: count,
+      numeric: count,
+      sum: (count * (count - 1)) / 2,
+      average: (count - 1) / 2,
+      min: 0,
+      max: count - 1,
+    });
+  });
+
+  it("counts only loaded rows and existing columns when a persisted range exceeds the view", () => {
+    expect(
+      selectionStats({
+        range: rect(0, 0, 100, 100),
+        rows: ROWS,
+        columns: COLUMNS,
+        firstRowIndex: 50,
+      })
+    ).toMatchObject({ cells: 6, numeric: 3, sum: 90 });
+    expect(
+      selectionStats({
+        range: rect(0, 0, 49, 1),
+        rows: ROWS,
+        columns: COLUMNS,
+        firstRowIndex: 50,
+      })
+    ).toMatchObject({ cells: 0, numeric: 0, sum: null });
+  });
+
   it("offsets by where the page starts", () => {
     expect(
       selectionStats({

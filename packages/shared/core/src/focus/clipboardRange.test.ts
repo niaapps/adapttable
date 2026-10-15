@@ -97,6 +97,40 @@ describe("clipboardRangeText", () => {
     expect(text).toBe("Grace");
   });
 
+  it("clips a persisted selection to the loaded page and available columns", () => {
+    expect(
+      clipboardRangeText({
+        range: range([0, 0], [2_000_000, 2_000_000]),
+        rows: ROWS,
+        columns: COLUMNS,
+        firstRowIndex: 500,
+      })
+    ).toBe("Ada\tCore\t1240\nLinus\tWeb\t90\nGrace\tCore\t500");
+  });
+
+  it.each([
+    [
+      [0, 0],
+      [4, 1],
+    ],
+    [
+      [8, 0],
+      [20, 1],
+    ],
+  ] as const)("skips a rectangle outside the loaded page: %j to %j", (a, h) => {
+    expect(
+      clipboardRangeText({
+        range: {
+          anchor: { row: a[0], col: a[1] },
+          head: { row: h[0], col: h[1] },
+        },
+        rows: ROWS,
+        columns: COLUMNS,
+        firstRowIndex: 5,
+      })
+    ).toBe("");
+  });
+
   it("prefers a column's exportValue, so a copy matches the file", () => {
     const columns: ColumnModel<Row>[] = [
       {
