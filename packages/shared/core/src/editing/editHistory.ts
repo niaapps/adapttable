@@ -163,10 +163,12 @@ export function createEditHistory<TRow>(
       );
     },
     undo() {
+      if (!current.enabled || !current.onCellEdit) return 0;
       const entry = stack.undo();
       return entry ? replay(entry.undo) : 0;
     },
     redo() {
+      if (!current.enabled || !current.onCellEdit) return 0;
       const entry = stack.redo();
       return entry ? replay(entry.redo) : 0;
     },

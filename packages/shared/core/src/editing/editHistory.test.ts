@@ -80,6 +80,42 @@ describe("createEditHistory", () => {
     history.record([{ row: ADA, columnKey: "name", value: "B" }]);
     expect(history.undo()).toBe(1);
   });
+
+  it.each(["disabled", "without a write handler"] as const)(
+    "does not consume or replay history while %s",
+    (mode) => {
+      const { history, onCellEdit } = setup();
+      history.record([{ row: ADA, columnKey: "name", value: "B" }]);
+      const pause = () =>
+        history.configure({
+          enabled: mode !== "disabled",
+          columns: COLUMNS,
+          onCellEdit: mode === "disabled" ? onCellEdit : undefined,
+        });
+      const resume = () =>
+        history.configure({
+          enabled: true,
+          columns: COLUMNS,
+          onCellEdit,
+        });
+
+      pause();
+      expect(history.undo()).toBe(0);
+      expect(history.getSnapshot().past).toBe(1);
+      expect(onCellEdit).not.toHaveBeenCalled();
+      resume();
+      expect(history.undo()).toBe(1);
+      onCellEdit.mockClear();
+
+      pause();
+      expect(history.redo()).toBe(0);
+      expect(history.getSnapshot().future).toBe(1);
+      expect(onCellEdit).not.toHaveBeenCalled();
+      resume();
+      expect(history.redo()).toBe(1);
+      expect(onCellEdit).toHaveBeenCalledExactlyOnceWith(ADA, "name", "B");
+    }
+  );
 });
 
 describe("resolveEditHistory", () => {
