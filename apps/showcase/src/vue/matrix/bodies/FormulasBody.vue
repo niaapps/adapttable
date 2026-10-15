@@ -38,7 +38,9 @@ const columns = computed(() => [
   ...peopleColumns({ status: kit.status }).filter((column) =>
     ["person", "team", "budget"].includes(column.key)
   ),
-  ...derived.value.columns,
+  // Size derived fields alongside the base columns so an unsized formula
+  // does not absorb all remaining table width and squeeze the other fields.
+  ...derived.value.columns.map((column) => ({ ...column, width: 160 })),
 ]);
 const errors = computed(() => Object.entries(derived.value.errors));
 
