@@ -227,4 +227,35 @@ describe("controlled selection", () => {
     expect(result.current.allMatching).toBe(false);
     expect(result.current.selectedCount).toBe(0);
   });
+
+  it("resets all-matching even when no concrete ids were selected", () => {
+    const onChange = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ resetKey }) =>
+        useSelection({ rows, getId, resetKey, onSelectionChange: onChange }),
+      { initialProps: { resetKey: "first-query" } }
+    );
+    act(() => result.current.selectAllMatching());
+    expect(result.current.allMatching).toBe(true);
+    expect(result.current.selectedCount).toBe(0);
+    rerender({ resetKey: "second-query" });
+    expect(result.current.allMatching).toBe(false);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("retires all-matching when the source loses across-page selection", () => {
+    const { result, rerender } = renderHook(
+      ({ acrossPages }) => useSelection({ rows, getId, acrossPages }),
+      { initialProps: { acrossPages: true } }
+    );
+    act(() => result.current.toggle("a"));
+    act(() => result.current.selectAllMatching());
+    rerender({ acrossPages: false });
+    expect(result.current.allMatching).toBe(false);
+    expect(result.current.isSelected("a")).toBe(true);
+    act(() => result.current.selectAllMatching());
+    expect(result.current.allMatching).toBe(false);
+    rerender({ acrossPages: true });
+    expect(result.current.allMatching).toBe(false);
+  });
 });

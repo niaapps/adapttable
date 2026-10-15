@@ -100,11 +100,15 @@ export function useSelection<TRow>(
   const [readIds] = useState(idSetReader);
   const onChange = options.onSelectionChange;
   const [scope] = useState(createAllMatchingScope);
-  const allMatching = useSyncExternalStore(
+  const scopeSnapshot = useSyncExternalStore(
     scope.subscribe,
     scope.getSnapshot,
     scope.getSnapshot
   );
+  const allMatching = acrossPages && scopeSnapshot;
+  useEffect(() => {
+    if (!acrossPages) scope.narrow();
+  }, [acrossPages, scope]);
   // The store's mutators are permanently stable: memoized adapter rows can
   // hold `toggle` forever, and a controlled commit still computes from the
   // selection the host last rendered.
@@ -142,10 +146,12 @@ export function useSelection<TRow>(
   useEffect(() => {
     if (Object.is(lastResetKeyRef.current, resetKey)) return;
     lastResetKeyRef.current = resetKey;
+    // A broad scope can exist even when the explicit id set is empty.
+    scope.narrow();
     // Identity-preserving no-op when there is nothing to clear.
     if (store.current().size === 0) return;
     commit(() => new Set());
-  }, [resetKey, store, commit]);
+  }, [resetKey, store, commit, scope]);
 
   const visibleIds = useMemo(() => rows.map(getId), [rows, getId]);
 
