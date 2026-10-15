@@ -2649,19 +2649,23 @@ export abstract class AdaptDataTableShell<TRow> implements OnInit {
       signal(virtualization)
     );
     currentVirtualization.set(virtualization);
-    const viewTable = resources.use("view-table", [table], () => ({
-      ...table,
-      get canRenameColumns() {
-        return table.canRenameColumns;
-      },
+    const viewTable = resources.use("view-table", [table], () => {
+      // Feature capabilities remain live getters on this stable view identity.
+      const model = Object.defineProperties(
+        { ...table },
+        Object.getOwnPropertyDescriptors(table)
+      );
       // A page sentinel below a bounded virtual body never leaves view.
       // The virtualizer requests more rows only at its own scroll end.
-      canLoadMore: computed(
-        () =>
-          table.canLoadMore() &&
-          !(this.maxHeight() != null && currentVirtualization()().enabled)
-      ),
-    }));
+      Object.defineProperty(model, "canLoadMore", {
+        value: computed(
+          () =>
+            table.canLoadMore() &&
+            !(this.maxHeight() != null && currentVirtualization()().enabled)
+        ),
+      });
+      return model;
+    });
     this.view.set({
       table: viewTable,
       classNames: this.classNames,
