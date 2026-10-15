@@ -107,71 +107,73 @@ export type EditableCellActivateProps =
         [errorClassName]="errorClassName()"
         [slots]="slots()"
       />
-    } @else if (p === "row" && editing()?.rowEditing; as rowEditing) {
-      <adapt-row-edit-cell
-        [rowEditing]="rowEditing"
-        [column]="column()"
-        [display]="display()"
-        [editLabel]="editLabel()"
-        [takesFocus]="takesRowFocus()"
-        [editor]="editor()"
-        [ask]="bundleConflictAsk()"
-        [rowAsking]="rowAsking()"
-        [conflictLabels]="editing()?.conflictLabels"
-        [errorClassName]="errorClassName()"
-        [slots]="slots()"
-      />
-    } @else if (p === "display") {
-      <adapt-editable-cell-display [props]="display()" />
-    } @else if (p === "editor" || p === "custom-editor") {
-      <ng-container
-        [adaptControl]="editor()"
-        [adaptControlProps]="editorCtrl()"
-      />
-      @if (conflictAsk(); as ask) {
-        @if (editing()?.conflictLabels; as conflictLabels) {
-          <adapt-cell-conflict-notice
-            [ask]="ask"
-            [labels]="conflictLabels"
-            [errorId]="errorId()"
-            [errorClassName]="errorClassName()"
-            [slots]="slots()"
-          />
-        }
-      }
-      @if (
-        conflictAsk() === undefined &&
-        ctrl().error !== undefined &&
-        kitRendersError() !== true
-      ) {
-        <span
-          [attr.id]="errorId()"
-          role="alert"
-          data-adapttable-part="edit-cell-error"
-          [class]="errorClassName()"
-        >
-          {{ ctrl().error }}
-        </span>
-      }
     } @else {
-      <ng-container
-        [adaptControl]="slots().Activate"
-        [adaptControlProps]="activateProps()"
-      />
-      @if (ctrl().saveFailure; as failure) {
-        <span
-          role="alert"
-          data-adapttable-part="edit-cell-save-error"
-          [class]="saveErrorClassName()"
-        >
-          {{ failure.message }}
-          @if (ctrl().canRollback && undoLabel() !== undefined) {
-            <ng-container
-              [adaptControl]="slots().Button"
-              [adaptControlProps]="rollbackProps()"
+      @if (p === "row" && editing()?.rowEditing; as rowEditing) {
+        <adapt-row-edit-cell
+          [rowEditing]="rowEditing"
+          [column]="column()"
+          [display]="display()"
+          [editLabel]="editLabel()"
+          [takesFocus]="takesRowFocus()"
+          [editor]="editor()"
+          [ask]="bundleConflictAsk()"
+          [rowAsking]="rowAsking()"
+          [conflictLabels]="editing()?.conflictLabels"
+          [errorClassName]="errorClassName()"
+          [slots]="slots()"
+        />
+      } @else if (p === "display") {
+        <adapt-editable-cell-display [props]="display()" />
+      } @else if (p === "editor" || p === "custom-editor") {
+        <ng-container
+          [adaptControl]="editor()"
+          [adaptControlProps]="editorCtrl()"
+        />
+        @if (conflictAsk(); as ask) {
+          @if (editing()?.conflictLabels; as conflictLabels) {
+            <adapt-cell-conflict-notice
+              [ask]="ask"
+              [labels]="conflictLabels"
+              [errorId]="errorId()"
+              [errorClassName]="errorClassName()"
+              [slots]="slots()"
             />
           }
-        </span>
+        }
+        @if (
+          conflictAsk() === undefined &&
+          ctrl().error !== undefined &&
+          kitRendersError() !== true
+        ) {
+          <span
+            [attr.id]="errorId()"
+            role="alert"
+            data-adapttable-part="edit-cell-error"
+            [class]="errorClassName()"
+          >
+            {{ ctrl().error }}
+          </span>
+        }
+      } @else {
+        <ng-container
+          [adaptControl]="slots().Activate"
+          [adaptControlProps]="activateProps()"
+        />
+        @if (ctrl().saveFailure; as failure) {
+          <span
+            role="alert"
+            data-adapttable-part="edit-cell-save-error"
+            [class]="saveErrorClassName()"
+          >
+            {{ failure.message }}
+            @if (ctrl().canRollback && undoLabel() !== undefined) {
+              <ng-container
+                [adaptControl]="slots().Button"
+                [adaptControlProps]="rollbackProps()"
+              />
+            }
+          </span>
+        }
       }
     }
   `,

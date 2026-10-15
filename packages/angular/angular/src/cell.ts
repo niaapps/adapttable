@@ -77,13 +77,15 @@ export function resolveRenderer<TContext extends object>(
         [ngTemplateOutlet]="template"
         [ngTemplateOutletContext]="context()"
       />
-    } @else if (content?.component; as component) {
-      <ng-container
-        [ngComponentOutlet]="component"
-        [ngComponentOutletInputs]="content?.inputs"
-      />
     } @else {
-      {{ text() }}
+      @if (content?.component; as component) {
+        <ng-container
+          [ngComponentOutlet]="component"
+          [ngComponentOutletInputs]="content?.inputs"
+        />
+      } @else {
+        {{ text() }}
+      }
     }`,
 })
 export class AdaptCell<TRow> {
@@ -139,13 +141,15 @@ export class AdaptCell<TRow> {
         [ngTemplateOutlet]="template"
         [ngTemplateOutletContext]="context()"
       />
-    } @else if (content?.component; as component) {
-      <ng-container
-        [ngComponentOutlet]="component"
-        [ngComponentOutletInputs]="content?.inputs"
-      />
     } @else {
-      {{ column().header ?? "" }}
+      @if (content?.component; as component) {
+        <ng-container
+          [ngComponentOutlet]="component"
+          [ngComponentOutletInputs]="content?.inputs"
+        />
+      } @else {
+        {{ column().header ?? "" }}
+      }
     }`,
 })
 export class AdaptHeader<TRow> {
@@ -181,13 +185,15 @@ export class AdaptHeader<TRow> {
         [ngTemplateOutlet]="template"
         [ngTemplateOutletContext]="context()"
       />
-    } @else if (content?.component; as component) {
-      <ng-container
-        [ngComponentOutlet]="component"
-        [ngComponentOutletInputs]="content?.inputs"
-      />
     } @else {
-      {{ text() }}
+      @if (content?.component; as component) {
+        <ng-container
+          [ngComponentOutlet]="component"
+          [ngComponentOutletInputs]="content?.inputs"
+        />
+      } @else {
+        {{ text() }}
+      }
     }`,
 })
 export class AdaptHeaderActions<TRow> {
@@ -235,13 +241,15 @@ export class AdaptHeaderActions<TRow> {
         [ngTemplateOutlet]="template"
         [ngTemplateOutletContext]="context()"
       />
-    } @else if (content?.component; as component) {
-      <ng-container
-        [ngComponentOutlet]="component"
-        [ngComponentOutletInputs]="content?.inputs"
-      />
     } @else {
-      {{ text() }}
+      @if (content?.component; as component) {
+        <ng-container
+          [ngComponentOutlet]="component"
+          [ngComponentOutletInputs]="content?.inputs"
+        />
+      } @else {
+        {{ text() }}
+      }
     }`,
 })
 export class AdaptFooter<TRow> {

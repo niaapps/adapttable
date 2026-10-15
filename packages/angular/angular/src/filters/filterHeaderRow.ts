@@ -97,55 +97,59 @@ function joinClass(
         [ngTemplateOutlet]="template"
         [ngTemplateOutletContext]="content.context"
       />
-    } @else if (content.renderer?.component; as component) {
-      <ng-container
-        [ngComponentOutlet]="component"
-        [ngComponentOutletInputs]="content.renderer.inputs"
-      />
-    } @else if (content.text; as text) {
-      {{ text }}
     } @else {
-      @switch (kind()) {
-        @case ("text") {
-          <ng-container
-            [adaptControl]="slots().Search"
-            [adaptControlProps]="textProps()"
-          />
-        }
-        @case ("select") {
-          <ng-container
-            [adaptControl]="slots().Select"
-            [adaptControlProps]="selectProps()"
-          />
-        }
-        @case ("boolean") {
-          <ng-container
-            [adaptControl]="slots().Select"
-            [adaptControlProps]="booleanProps()"
-          />
-        }
-        @case ("multi") {
-          <ng-container
-            [adaptControl]="slots().Multi"
-            [adaptControlProps]="multiProps()"
-          />
-        }
-        @case ("range") {
-          <span
-            data-adapttable-part="filter-header-input"
-            [class]="className()"
-          >
-            <ng-container
-              [adaptControl]="slots().Range"
-              [adaptControlProps]="rangeLower()"
-            />
-            @if (rangeUpper(); as upper) {
+      @if (content.renderer?.component; as component) {
+        <ng-container
+          [ngComponentOutlet]="component"
+          [ngComponentOutletInputs]="content.renderer.inputs"
+        />
+      } @else {
+        @if (content.text; as text) {
+          {{ text }}
+        } @else {
+          @switch (kind()) {
+            @case ("text") {
               <ng-container
-                [adaptControl]="slots().Range"
-                [adaptControlProps]="upper"
+                [adaptControl]="slots().Search"
+                [adaptControlProps]="textProps()"
               />
             }
-          </span>
+            @case ("select") {
+              <ng-container
+                [adaptControl]="slots().Select"
+                [adaptControlProps]="selectProps()"
+              />
+            }
+            @case ("boolean") {
+              <ng-container
+                [adaptControl]="slots().Select"
+                [adaptControlProps]="booleanProps()"
+              />
+            }
+            @case ("multi") {
+              <ng-container
+                [adaptControl]="slots().Multi"
+                [adaptControlProps]="multiProps()"
+              />
+            }
+            @case ("range") {
+              <span
+                data-adapttable-part="filter-header-input"
+                [class]="className()"
+              >
+                <ng-container
+                  [adaptControl]="slots().Range"
+                  [adaptControlProps]="rangeLower()"
+                />
+                @if (rangeUpper(); as upper) {
+                  <ng-container
+                    [adaptControl]="slots().Range"
+                    [adaptControlProps]="upper"
+                  />
+                }
+              </span>
+            }
+          }
         }
       }
     }

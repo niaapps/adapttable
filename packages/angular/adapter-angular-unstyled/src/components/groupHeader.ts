@@ -121,10 +121,12 @@ export class AdaptGroupMore {
               [onShowMore]="p.onShowMore"
               [slots]="moreSlots"
             />
-          } @else if (view.footer(); as footer) {
-            {{ p.labels.groupTotal(footer.label) }}
           } @else {
-            {{ view.group()?.label }}
+            @if (view.footer(); as footer) {
+              {{ p.labels.groupTotal(footer.label) }}
+            } @else {
+              {{ view.group()?.label }}
+            }
           }
         </span>
         @if (view.plain()) {
@@ -219,10 +221,12 @@ export class AdaptGroupHeaderRow extends AdaptGroupHeaderRowModel {
               [onShowMore]="p.onShowMore"
               [slots]="moreSlots"
             />
-          } @else if (view.footer(); as footer) {
-            {{ p.labels.groupTotal(footer.label) }}
           } @else {
-            {{ view.group()?.label }}
+            @if (view.footer(); as footer) {
+              {{ p.labels.groupTotal(footer.label) }}
+            } @else {
+              {{ view.group()?.label }}
+            }
           }
         </span>
         @if (!view.plain()) {

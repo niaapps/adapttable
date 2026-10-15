@@ -32,10 +32,12 @@ function isComponentType(value: unknown): value is Type<unknown> {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `@if (template(); as template) {
       <ng-container [ngTemplateOutlet]="template" />
-    } @else if (component(); as component) {
-      <ng-container [ngComponentOutlet]="component" />
     } @else {
-      {{ text() }}
+      @if (component(); as component) {
+        <ng-container [ngComponentOutlet]="component" />
+      } @else {
+        {{ text() }}
+      }
     }`,
 })
 export class AdaptExtraRowContent {

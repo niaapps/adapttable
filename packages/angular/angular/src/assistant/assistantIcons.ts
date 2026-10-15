@@ -36,10 +36,12 @@ export {
   template: `
     @if (template(); as content) {
       <ng-container [ngTemplateOutlet]="content" />
-    } @else if (icon(); as descriptor) {
-      <svg [adaptIcon]="descriptor"></svg>
     } @else {
-      {{ text() }}
+      @if (icon(); as descriptor) {
+        <svg [adaptIcon]="descriptor"></svg>
+      } @else {
+        {{ text() }}
+      }
     }
   `,
 })
