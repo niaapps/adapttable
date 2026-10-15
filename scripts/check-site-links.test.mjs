@@ -5,6 +5,7 @@ import { dirname, join } from "node:path";
 import { after, describe, it } from "node:test";
 
 import {
+  brokenAnchors,
   brokenLinks,
   pageUrl,
   serves,
@@ -15,6 +16,26 @@ import { ORIGIN } from "./site.mjs";
 const temps = [];
 after(() => {
   for (const dir of temps) rmSync(dir, { recursive: true, force: true });
+});
+
+describe("brokenAnchors", () => {
+  it("checks local and cross-page anchors without treating non-HTML fragments as headings", () => {
+    const root = site({
+      "index.html": `<h1 id="home">Home</h1><a href="#home">Home</a>
+        <a href="#missing">Missing</a><a href="/guide/#moved">Moved</a>
+        <a href="/guide#caf%C3%A9">Unicode</a><a href="/guide/#a&amp;b">Entity</a>
+        <a href="/guide/#named">Named</a><a href="/guide/#top">Top</a>
+        <a href="/guide/#:~:text=words">Text fragment</a>
+        <a href="/image.svg#symbol">SVG</a><a href="https://example.com/#missing">External</a>`,
+      "guide/index.html":
+        '<h2 id="café">Café</h2><h2 id="a&amp;b">Entity</h2><a name="named"></a>',
+      "image.svg": '<svg id="symbol"></svg>',
+    });
+    assert.deepEqual(brokenAnchors(root), [
+      { page: "/", link: "#missing" },
+      { page: "/", link: "/guide/#moved" },
+    ]);
+  });
 });
 
 const write = (root, rel, body) => {

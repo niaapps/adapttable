@@ -8,7 +8,8 @@
  * resolved the way the host serves it — a trailing slash is the directory's
  * `index.html`, an extensionless path is the directory or the `.html` file —
  * and fails when neither exists. Absolute URLs on the site's own origin are
- * checked the same way; other origins, fragments and `mailto:` are not.
+ * checked the same way; HTML fragments must name an ID or named anchor.
+ * Other origins and `mailto:` are not checked.
  *
  * Runs in the Site workflow after the compose step, and standalone via
  * `node scripts/check-site-links.mjs [composed-site-root]`.
@@ -93,6 +94,76 @@ export const brokenLinks = (root) => {
   return broken;
 };
 
+/** Decode the character references used in HTML attribute values. */
+const attributeText = (value) =>
+  value.replace(
+    /&(#x[\da-f]+|#\d+|amp|quot|apos|lt|gt);/gi,
+    (match, entity) => {
+      if (entity.startsWith("#")) {
+        const hex = entity[1].toLowerCase() === "x";
+        const code = Number.parseInt(entity.slice(hex ? 2 : 1), hex ? 16 : 10);
+        return code > 0 && code <= 0x10ffff
+          ? String.fromCodePoint(code)
+          : match;
+      }
+      return { amp: "&", quot: '"', apos: "'", lt: "<", gt: ">" }[
+        entity.toLowerCase()
+      ];
+    }
+  );
+
+/** IDs and named anchors in one built HTML page. */
+const anchorIds = (html) => {
+  const ids = new Set();
+  for (const tag of html.matchAll(/<[a-z][^>]*>/gi)) {
+    for (const attr of tag[0].matchAll(
+      /\s(id|name)\s*=\s*(?:"([^"]*)"|'([^']*)')/gi
+    )) {
+      if (attr[1].toLowerCase() === "id" || /^<a\s/i.test(tag[0])) {
+        ids.add(attributeText(attr[2] ?? attr[3]));
+      }
+    }
+  }
+  return ids;
+};
+
+/** Missing files and non-HTML fragments have separate checks/semantics. */
+const missingAnchor = (link, page, targets) => {
+  if (link.includes("${")) return false;
+  const url = new URL(link, `${ORIGIN}${page}`);
+  if (url.origin !== ORIGIN || !url.hash) return false;
+  const anchor = decodeURIComponent(url.hash.slice(1).split(":~:")[0]);
+  if (!anchor || anchor.toLowerCase() === "top") return false;
+  const ids = targets.get(decodeURIComponent(url.pathname));
+  return ids !== undefined && !ids.has(anchor);
+};
+
+/** Find broken section links, including links within the current page. */
+export const brokenAnchors = (root) => {
+  const targets = new Map();
+  const contents = new Map();
+  for (const rel of htmlFiles(root)) {
+    const html = readFileSync(join(root, rel), "utf8");
+    contents.set(rel, html);
+    const ids = anchorIds(html);
+    const path = pageUrl(rel);
+    targets.set(path, ids);
+    if (path.endsWith("/")) targets.set(path.slice(0, -1), ids);
+    if (path.endsWith(".html")) targets.set(path.slice(0, -5), ids);
+  }
+  const broken = [];
+  for (const [rel, html] of contents) {
+    const page = pageUrl(rel);
+    for (const match of html.matchAll(
+      /<a\b[^>]*\shref\s*=\s*(?:"([^"]*)"|'([^']*)')/gi
+    )) {
+      const link = attributeText(match[1] ?? match[2]);
+      if (missingAnchor(link, page, targets)) broken.push({ page, link });
+    }
+  }
+  return broken;
+};
+
 const main = () => {
   const root = resolve(process.argv[2] ?? DEFAULT_ROOT);
   if (!existsSync(join(root, "index.html"))) {
@@ -102,7 +173,7 @@ const main = () => {
     );
     process.exit(1);
   }
-  const broken = brokenLinks(root);
+  const broken = [...brokenLinks(root), ...brokenAnchors(root)];
   const pages = htmlFiles(root).length;
   if (broken.length > 0) {
     const shown = broken

@@ -56,7 +56,7 @@ export class LargeInventory {
 }
 ```
 
-Both kits expose `/virtualize`; change the root and feature imports together to
+All supported kits expose `/virtualize`; change the root and feature imports together to
 `@adapttable/ng-zorro` for NG-ZORRO.
 See [getting started](./getting-started.md) for installation
 and first-release status.

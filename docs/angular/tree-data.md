@@ -57,7 +57,7 @@ export class OrganizationTree {
 ```
 
 NG-ZORRO provides the same feature at `@adapttable/ng-zorro/tree`, paired
-with its root table. Both kits use [workspace setup](./getting-started.md).
+with its root table. Both example kits are published on npm; see [installation](./getting-started.md).
 
 ## Hierarchy and expansion
 

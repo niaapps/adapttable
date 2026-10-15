@@ -1,8 +1,38 @@
 # Angular responsive tables and mobile cards
 
-Both Angular kits switch from a desktop table to a labeled card list on narrow
+All nine supported Angular kits switch from a desktop table to a labeled card list on narrow
 screens. `forceMobile` can choose the layout explicitly. The same source,
 column definitions, host callbacks and optional features drive both layouts.
+
+## Automatic cards or a scrolling table
+
+Omit `forceMobile` for automatic cards below the default 768px viewport
+breakpoint. Set `[forceMobile]="true"` to preview cards at any width, or
+`[forceMobile]="false"` to keep the desktop table with horizontal scrolling on
+phones. No second table instance is needed, so sorting, filtering and selection
+remain with the same table.
+
+```html
+<adapt-data-table
+  [data]="people"
+  [columns]="columns"
+  [rowKey]="rowKey"
+  [forceMobile]="false"
+  paginationMode="paged"
+  tableLabel="People"
+/>
+```
+
+The built-in card body groups fields according to the available card width.
+Labels sit above values, and `mobileLabel: ""` gives a self-explanatory field
+the full width. Native cells remain native: status tags, progress indicators,
+custom components and composed editors still render through their kit.
+Long values wrap, and small containers reduce the number of field columns.
+Custom `renderCard` bodies keep their own layout.
+
+The [mobile demo](/angular/demo/ng-zorro/mobile-cards/) offers Automatic,
+Phone cards and Scrollable table choices. Its preview starts with forced cards
+so desktop visitors can see the phone presentation; the library default is automatic.
 
 ## Customize a card's fields
 

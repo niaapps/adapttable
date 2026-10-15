@@ -207,7 +207,7 @@ export const DESCRIPTIONS = {
   "vue/selection.md":
     "Control selected Vue row IDs, retain stable row identity and compose native bulk actions without transferring ownership of data.",
   "vue/mobile-cards.md":
-    "Render responsive Vue table cards with native controls, shared columns, editing, selection and RTL across eight adapters.",
+    "Responsive Vue tables with automatic mobile cards or horizontal scrolling. Keep native kit cells, editing, selection and RTL across eight adapters.",
   "vue/data-tiers.md":
     "Choose Vue frontend or server data sources, reactive refs and headless controllers with host-owned fetching and query state.",
   "vue/filtering.md":
@@ -343,7 +343,7 @@ export const DESCRIPTIONS = {
   "angular/virtualization.md":
     "Window Angular table rows, columns and mobile cards with optional virtualization. Configure sizing and overscan while maintaining table behavior.",
   "angular/mobile.md":
-    "Render Angular table data as responsive mobile cards. Preserve field templates, selection and editing when supplying a custom card body.",
+    "Angular tables with automatic mobile cards or horizontal scrolling across nine native kits. Preserve custom cells, selection, editing and RTL.",
   "angular/url-state.md":
     "Synchronize Angular table state with browser History or Angular Router. Namespace table keys and handle request URLs during server rendering.",
   "angular/exporting.md":
@@ -423,7 +423,7 @@ export const DESCRIPTIONS = {
   "virtualization.md":
     "Virtualize rows, columns and mobile cards in large React tables. Configure overscan, row sizes and scrolling without rendering the entire dataset at once.",
   "mobile.md":
-    "A React table that becomes a card list on phones automatically — same filters, search, selection and URL state. Tunable per column, no second layout to build.",
+    "React tables with automatic mobile cards or horizontal scrolling. Native kit cells, responsive field layouts, shared filters, selection and URL state.",
   "data-tiers.md":
     "One React table API for in-memory rows and server-paginated APIs. Swap client data for a fetch function without rewriting the UI — TableSource is the contract.",
   "customization.md":

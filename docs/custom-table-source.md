@@ -406,7 +406,7 @@ by identity.
 
 To back a custom source with an engine, build it with `createTableEngine` from
 `@adapttable/core` — see
-[the engine, and why it has no React in it](./concepts.md#the-engine-and-why-it-has-no-react-in-it).
+[the engine, and why it has no React in it](./concepts.md#the-framework-neutral-engine).
 
 ## Notes
 

@@ -144,8 +144,8 @@ matches unstyled feature-for-feature.
   has an interactive grouping panel, pivoting, range selection, the fill
   handle, clipboard and Excel export under MIT, but they are assembled from
   composable features rather than one spreadsheet surface.
-- You're on a framework other than React → **TanStack Table** (multi-
-  framework). AdaptTable is React-only.
+- You need a binding outside React, Angular or Vue. AdaptTable supports those
+  three frameworks; check the alternative's supported frameworks for your stack.
 - You need a spreadsheet-like editing surface today, not a responsive data
   table for application lists.
 

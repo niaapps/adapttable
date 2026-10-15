@@ -349,6 +349,14 @@ describe("the generated showcase pages", () => {
     assert.equal(new Set(descriptions).size, live.length);
     for (const description of descriptions) {
       assert.ok(description && description.length > 40, description);
+      // Decode the entities the HTML writer uses before applying the snippet budget.
+      const text = description
+        .replaceAll("&amp;", "&")
+        .replaceAll("&quot;", '"')
+        .replaceAll("&#39;", "'")
+        .replaceAll("&lt;", "<")
+        .replaceAll("&gt;", ">");
+      assert.ok(text.length <= 160, `${text.length} characters: ${text}`);
     }
   });
 

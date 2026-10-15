@@ -197,7 +197,7 @@ filters and density. With `urlSync: false`, the fallback table source and
 installed view features share an in-memory backend. Column layout participates when explicitly wired through
 `useColumnLayoutUrlState` and its flush callback; selection, tree/detail
 expansion and edit drafts are not captured. See
-[what a view restores](./features.md#what-a-view-restores).
+[what a view restores](./saved-views.md#what-a-view-restores).
 
 ## Reactive sources and headless use
 

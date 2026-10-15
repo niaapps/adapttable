@@ -60,8 +60,8 @@ export class NotedPeople {
 }
 ```
 
-NG-ZORRO has the matching `/extra-rows` factory and root table. Both kits
-currently use [workspace setup](./getting-started.md).
+NG-ZORRO has the matching `/extra-rows` factory and root table. Both example
+kits are published on npm; see [installation](./getting-started.md).
 
 ## Position and identity
 

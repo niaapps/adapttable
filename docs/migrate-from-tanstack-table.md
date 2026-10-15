@@ -11,9 +11,10 @@ already wired: a filter UI, a toolbar, pagination, URL-synced state, and saved
 views. And when you _don't_ need bespoke markup, an adapter renders native kit
 components so you can delete the table UI entirely.
 
-TanStack is multi-framework (React, Vue, Svelte, Solid, …); AdaptTable is
-React-only. If you're not on React, stay on TanStack. This page is for React
-teams tired of rebuilding the same chrome.
+AdaptTable provides React, Angular and Vue bindings with native UI-kit adapters.
+This migration guide uses React. For the other bindings, see
+[Angular setup](./angular/getting-started.md) and
+[Vue setup](./vue/getting-started.md).
 
 ## What you gain
 
@@ -160,8 +161,8 @@ but with filters, pagination, and URL state already handled.
 
 ## Gotchas
 
-- **React only.** On Vue/Svelte/Solid/Angular, keep TanStack — AdaptTable has no
-  adapter for those.
+- **Choose the matching binding.** These examples use React. AdaptTable also
+  supports Angular and Vue; it does not currently provide Svelte or Solid bindings.
 - **`rowKey` is required** (AdaptTable's `getRowId`).
 - **Delete the opt-in row models.** No `getSortedRowModel` /
   `getFilteredRowModel` / `getPaginationRowModel` imports — those run for you.
