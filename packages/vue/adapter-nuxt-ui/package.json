@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/nuxt-ui",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Nuxt UI components for the AdaptTable headless Vue binding.",
   "license": "MIT",
   "author": "Orwa Mahmoud",

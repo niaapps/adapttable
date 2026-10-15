@@ -1,5 +1,12 @@
 # @adapttable/nuxt-ui
 
+## 0.3.1
+
+### Patch Changes
+
+- a20969e: Document the Nuxt SSR adapter transpilation setting needed to compile imported vendor Vue components and avoid HTTP 500 errors in the production server.
+- aff7cbd: Clarify generated theme aliases, auto-import declarations and build-before-typecheck ordering for plain Vue applications. Link the tested strict dependency declaration limitations.
+
 ## 0.3.0
 
 ### Minor Changes

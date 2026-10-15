@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/ai-angular",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Angular bindings for AdaptTable AI — tableAgent, injectTableAssistant and injectSpeechInput.",
   "keywords": [
     "angular",
@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@adapttable/ai": "0.6.3",
-    "@adapttable/angular": "0.6.1",
+    "@adapttable/angular": "0.6.2",
     "tslib": "^2.8.1"
   },
   "publishConfig": {

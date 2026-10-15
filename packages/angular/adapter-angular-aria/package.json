@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/angular-aria",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Angular Aria accessible composite controls and adapter-owned styling for AdaptTable",
   "keywords": [
     "angular",
@@ -216,7 +216,7 @@
   },
   "dependencies": {
     "@adapttable/core": "3.11.0",
-    "@adapttable/angular": "0.6.1",
+    "@adapttable/angular": "0.6.2",
     "tslib": "^2.8.1"
   },
   "engines": {
