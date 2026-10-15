@@ -40,6 +40,7 @@ import {
   useFilterField,
   useFilterOptions,
   useFilterTreeModel,
+  useRangeFilter,
 } from "../src/filters";
 import {
   headerFilterModelKey,
@@ -84,6 +85,48 @@ const fieldControls: FilterFieldSlots = {
   Checkbox: (props) => h("u", props.attrs, props.label),
 };
 describe("complete filter control contracts", () => {
+  it("preserves local range previews until that field's persisted values change", () => {
+    const scope = effectScope();
+    const { source, extra } = bag();
+    extra.value = { numberMin: "2", numberMax: "6", numberOp: "between" };
+    const range = scope.run(() =>
+      useRangeFilter<Row>({ key: "number", type: "numberRange" }, source)
+    )!;
+    range.value.setOp(undefined);
+    expect(range.value.op).toBeUndefined();
+    extra.value = { ...extra.value, name: "Ada" };
+    expect(range.value.op).toBeUndefined();
+    extra.value = { ...extra.value, numberMax: "8" };
+    expect(range.value).toMatchObject({ op: "between", b: "8" });
+    extra.value = {};
+    expect(range.value.op).toBeUndefined();
+    range.value.setOp("gte");
+    expect(range.value.op).toBe("gte");
+    scope.stop();
+  });
+  it("refreshes a mounted range operator when a saved view replaces its filter", () => {
+    const scope = effectScope();
+    const { source, extra } = bag();
+    const model = scope.run(() =>
+      useFilterField(() => ({
+        id: "saved-range",
+        def: { key: "number", type: "numberRange" },
+        source: source.value,
+        labels,
+      }))
+    )!;
+    const operator = model.value.controls[0]!;
+    if (operator.kind !== "select") throw new Error("operator missing");
+    operator.props.onChange("gte");
+    extra.value = { numberMin: "2", numberMax: "6", numberOp: "between" };
+    expect(model.value.controls[0]).toMatchObject({
+      props: { value: "between" },
+    });
+    expect(model.value.controls).toHaveLength(3);
+    expect(model.value.controls[1]).toMatchObject({ props: { value: "2" } });
+    expect(model.value.controls[2]).toMatchObject({ props: { value: "6" } });
+    scope.stop();
+  });
   it.each(["numberRange", "dateRange"] as const)(
     "writes %s operators and both bounds through neutral writers",
     (type) => {
