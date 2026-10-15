@@ -314,6 +314,31 @@ describe("createExportController", () => {
       });
     });
 
+    it.each(["success", "failure"] as const)(
+      "ignores late progress after %s and dismissal",
+      async (outcome) => {
+        const { controls, controller, listener, job } = startServerRun();
+        controls.setProgress?.(40);
+        if (outcome === "success") job.resolve({ url: "/exports/ready.csv" });
+        else job.reject(new Error("Export unavailable"));
+        await settle();
+        const finished = controller.getSnapshot();
+        listener.mockClear();
+        controls.setProgress?.(70);
+        controls.setMessage?.("Still working");
+        expect(controller.getSnapshot()).toBe(finished);
+        expect(listener).not.toHaveBeenCalled();
+
+        controller.dismiss();
+        const dismissed = controller.getSnapshot();
+        listener.mockClear();
+        controls.setProgress?.(90);
+        controls.setMessage?.("Almost done");
+        expect(controller.getSnapshot()).toBe(dismissed);
+        expect(listener).not.toHaveBeenCalled();
+      }
+    );
+
     it("cancels: aborts the signal, clears the surface, ignores the late rejection", async () => {
       const { controls, controller, listener, job } = startServerRun();
       controls.setProgress?.(30);

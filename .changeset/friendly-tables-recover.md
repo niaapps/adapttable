@@ -32,3 +32,4 @@ Keep table state and editing history consistent across async work and framework 
 - Replace obsolete field errors from row validation when the row is checked again, preserving independent cell-validator errors and clearing both sources on reset.
 - Share one Reka runtime across showcase kits so Nuxt UI shortcut menus can receive focus inside the mobile assistant sheet and Escape closes the menu alone.
 - Keep assistant receipts readable without compounded opacity, improve neutral status and secondary control contrast, and use Naive UI's text token for the composer placeholder. Verify all supported assistants in light and dark themes with browser contrast checks.
+- Ignore server export progress callbacks after the run succeeds, fails or is dismissed, keeping terminal outcomes stable.
