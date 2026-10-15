@@ -63,7 +63,7 @@ export default defineConfig({
     starlight({
       title: "AdaptTable",
       description:
-        "React and Angular data tables with a framework-neutral engine, native UI-kit adapters and optional filtering, editing, pivoting and AI integration.",
+        "React, Angular and Vue data tables with a framework-neutral engine, native UI-kit adapters and optional filtering, editing, pivoting and AI integration.",
       head: [
         // Social-share image is per-page (PNG, 1200x630): sync-docs injects a
         // distinct og:image/twitter:image into each page's frontmatter `head`.
@@ -90,7 +90,7 @@ export default defineConfig({
             "@type": "SoftwareApplication",
             name: "AdaptTable",
             description:
-              "Headless React and Angular data tables with a framework-neutral engine and native UI-kit adapters, including Angular unstyled and NG-ZORRO workspace kits. Optional URL state, filters, editing, virtualization, i18n and RTL.",
+              "React, Angular and Vue data tables with a headless framework-neutral engine and native UI-kit adapters. Optional URL state, filters, editing, virtualization, i18n and RTL.",
             url: siteUrl("/"),
             applicationCategory: "DeveloperApplication",
             operatingSystem: "Any",

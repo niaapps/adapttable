@@ -4034,7 +4034,7 @@ Applications should use the documented table, feature and provider APIs instead.
   `RTL_LANGUAGES`, `locales` (keyed by `LocaleKey`) and the bundled
   presets (`en`, `ar`, `cs`, `de`, `es`, `fr`, `he`, `it`, `ja`, `pt`, `zh`,
   … including `zhTW`) — see [i18n & RTL](./i18n-rtl.md).
-- `@adapttable/cli` — binary `adapttable init [--force]`; programmatic
+- `@adapttable/cli` — binary `adapttable init [--kit <kit>] [--force]`; programmatic
   `detectFramework`, `detectKit`, `choosePackageManager`, `installCommand`,
   `scaffoldFiles`, `runInit` plus the pieces they compose: `KITS` / `KitInfo` / `SHADCN`
   describe the detectable kits, `packagesFor` and `mergeDependencies`
@@ -4042,15 +4042,17 @@ Applications should use the documented table, feature and provider APIs instead.
   `STARTER_PATH` describe the scaffold, `PackageManager` names the
   supported managers, `InitError` is the typed failure, and
   `InitOptions` / `InitResult` / `InitIO` parameterize `runInit` for
-  testing. `Framework` is `"react" | "angular"`; `detectFramework` requires both
+  testing. `Framework` is `"react" | "angular" | "vue"`; `detectFramework` requires both
   an `@angular/core` dependency and `hasAngularJson: true` to select Angular.
   `detectKit` accepts `framework` alongside the existing shadcn context, and
   `InitResult.framework` reports the choice. Angular scaffolds a standalone
   `PeopleTable` in `src/app/peopleTable.ts`; React keeps `src/PeopleTable.tsx`.
-  `angular-unstyled` and `ng-zorro` are public npm packages. The seven private
-  Angular previews above are also detected: `KitInfo.privatePreview` marks
-  them, and init prints local-linking guidance rather than an npm install
-  command for an unpublished adapter. Init only prints guidance; it does not
+  A declared Vue dependency selects Vue, which scaffolds `src/PeopleTable.vue`
+  and native kit setup for plain Vue/Vite applications. Nuxt projects receive
+  module setup guidance instead of generated Vite files. All nine Angular and
+  eight Vue kits are published. `KitInfo.privatePreview` is optional metadata
+  for unpublished kits; none of the supported kits currently needs it.
+  Init writes starter files and prints install guidance; it does not
   install packages or query registry availability.
 - **React adapter packages** — each exports its `DataTable` with `DataTableProps`,
   `DataTablePropsBase`, `DataTableSlots` and `SavedViewsMenuProps` (plus the

@@ -87,6 +87,15 @@ Vue `value`. Render that value to preserve the column's native cell and editor.
 ```vue
 <script setup lang="ts">
 import type { VNodeChild } from "vue";
+import { DataTable, type ColumnDef } from "@adapttable/vue-unstyled";
+
+interface Person {
+  id: string;
+  name: string;
+}
+const rows: Person[] = [{ id: "ada", name: "Ada" }];
+const columns: ColumnDef<Person>[] = [{ key: "name", header: "Name" }];
+const rowKey = (row: Person) => row.id;
 const FieldValue = (props: { value: VNodeChild }) => props.value;
 </script>
 
