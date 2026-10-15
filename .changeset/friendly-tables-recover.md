@@ -42,3 +42,4 @@ Keep table state and editing history consistent across async work and framework 
 - Retire pending clipboard reads and cuts when the grid detaches, preventing delayed host writes after unmount or remount.
 - Reset Vue row selection when search, filters or grouping change, retain it across paging and sorting, and respect controlled host refusal. Include compound filters in React's selection reset key.
 - Improve warning status and approval button contrast with native kit colors, including light and dark approval/rejection states.
+- Announce copy value-conversion failures without throwing, writing an incomplete clipboard or clearing cut cells.

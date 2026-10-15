@@ -575,12 +575,18 @@ export function createGridFocusController<TRow>(
   /** Ctrl/Cmd+C and Ctrl/Cmd+X — the rectangle, as a spreadsheet reads it. */
   const copySelection = (selection: CellRange, cut: boolean): void => {
     const version = clipboardVersion;
-    const text = clipboardRangeText({
-      range: selection,
-      rows: options.rows,
-      columns: options.columns,
-      firstRowIndex: firstRow(),
-    });
+    let text: string;
+    try {
+      text = clipboardRangeText({
+        range: selection,
+        rows: options.rows,
+        columns: options.columns,
+        firstRowIndex: firstRow(),
+      });
+    } catch {
+      say(labels()?.gridRangeCopyFailed ?? defaultLabels.gridRangeCopyFailed);
+      return;
+    }
     void writeClipboardText(text).then((ok) => {
       if (!options.enabled || version !== clipboardVersion) return;
       say(

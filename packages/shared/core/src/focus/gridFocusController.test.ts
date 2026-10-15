@@ -465,6 +465,36 @@ describe("modified keys", () => {
     expect(grid.getSnapshot().announcement).toBe("4 cells copied");
   });
 
+  it.each(["c", "x"])(
+    "reports value conversion failure for %s without writing or cutting",
+    (shortcut) => {
+      const onCut = vi.fn();
+      const grid = createGridFocusController(
+        base({
+          onCut,
+          columns: [
+            {
+              ...COLUMNS[0]!,
+              exportValue: () => {
+                throw new Error("Value unavailable");
+              },
+            },
+          ],
+        })
+      );
+      grid.selectRange({
+        anchor: { row: 0, col: 0 },
+        head: { row: 1, col: 0 },
+      });
+      const event = key(shortcut, { ctrlKey: true });
+      expect(() => grid.keyDown(event)).not.toThrow();
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(grid.getSnapshot().announcement).toBe("Copy failed");
+      expect(clipboard.writeText).not.toHaveBeenCalled();
+      expect(onCut).not.toHaveBeenCalled();
+    }
+  );
+
   it("leaves copy to the browser with nothing selected", () => {
     const grid = createGridFocusController(base());
     const event = key("c", { ctrlKey: true });
