@@ -25,6 +25,7 @@ import {
   Text,
   Textarea,
   Tooltip,
+  useMantineTheme,
 } from "@mantine/core";
 
 const BADGE_COLOR: Record<string, string> = {
@@ -54,6 +55,7 @@ function AssistantButton({
   tooltip,
   variant = "secondary",
 }: Readonly<TableAssistantButtonProps>) {
+  const theme = useMantineTheme();
   const launcher = part === "assistant-launcher";
   if (iconOnly) {
     // Mantine's own icon control, so the header's controls are the size and
@@ -88,6 +90,8 @@ function AssistantButton({
   return (
     <Button
       type="button"
+      autoContrast
+      color={variant === "primary" ? `${theme.primaryColor}.8` : undefined}
       size="xs"
       variant={KIT_VARIANT[variant]}
       aria-label={label}
@@ -181,6 +185,9 @@ function AssistantBadge({
     <Badge
       size="sm"
       variant="light"
+      style={
+        tone === "warning" ? { color: "var(--mantine-color-text)" } : undefined
+      }
       color={BADGE_COLOR[tone]}
       data-adapttable-part={part}
       data-tone={tone}

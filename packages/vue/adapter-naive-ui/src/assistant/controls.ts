@@ -83,6 +83,7 @@ export const naiveAssistantControls: TableAssistantSlots = {
         "data-adapttable-part": props.part,
         "data-tone": props.tone,
         type: TAG_TYPE[props.tone],
+        style: props.tone === "warning" ? { color: "inherit" } : undefined,
         size: "small",
         bordered: false,
         class: props.className,

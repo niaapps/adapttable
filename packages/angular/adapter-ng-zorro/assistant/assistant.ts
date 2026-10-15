@@ -134,6 +134,7 @@ export class AdaptAssistantInput {
   host: { style: "display: contents" },
   template: `<nz-tag
     [nzColor]="color()"
+    [style.color]="props().tone === 'warning' ? 'inherit' : null"
     [attr.data-adapttable-part]="props().part"
     [attr.data-tone]="props().tone"
     [class]="props().className"

@@ -87,6 +87,7 @@ export const quasarAssistantControls: TableAssistantSlots = {
         "data-adapttable-part": props.part,
         "data-tone": props.tone,
         color: BADGE_COLOR[props.tone],
+        textColor: props.tone === "warning" ? "black" : undefined,
         class: props.className,
       },
       () => props.label

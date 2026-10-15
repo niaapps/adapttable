@@ -146,6 +146,7 @@ function AssistantBadge({
       size="small"
       variant="outlined"
       color={CHIP_COLOR[tone]}
+      sx={tone === "warning" ? { color: "text.primary" } : undefined}
       label={label}
       data-adapttable-part={part}
       data-tone={tone}

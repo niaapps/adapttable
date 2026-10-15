@@ -61,7 +61,7 @@ export const elementAssistantControls: TableAssistantSlots = {
         size: "small",
         effect: "light",
         style:
-          props.tone === "neutral"
+          props.tone === "neutral" || props.tone === "warning"
             ? { "--el-tag-text-color": "var(--el-text-color-regular)" }
             : undefined,
         class: props.className,

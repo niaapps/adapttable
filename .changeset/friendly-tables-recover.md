@@ -10,6 +10,11 @@
 "@adapttable/mui": patch
 "@adapttable/element-plus": patch
 "@adapttable/naive-ui": patch
+"@adapttable/mantine": patch
+"@adapttable/antd": patch
+"@adapttable/ng-zorro": patch
+"@adapttable/nuxt-ui": patch
+"@adapttable/quasar": patch
 ---
 
 Keep table state and editing history consistent across async work and framework lifecycles.
@@ -36,3 +41,4 @@ Keep table state and editing history consistent across async work and framework 
 - Retire React's all-matching selection on query reset even without explicit selected IDs, and when across-page selection becomes unavailable.
 - Retire pending clipboard reads and cuts when the grid detaches, preventing delayed host writes after unmount or remount.
 - Reset Vue row selection when search, filters or grouping change, retain it across paging and sorting, and respect controlled host refusal. Include compound filters in React's selection reset key.
+- Improve warning status and approval button contrast with native kit colors, including light and dark approval/rejection states.

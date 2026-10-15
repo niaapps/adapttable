@@ -73,6 +73,8 @@ export const nuxtAssistantControls: TableAssistantSlots = {
         "data-tone": props.tone,
         color: BADGE_COLOR[props.tone],
         variant: "subtle",
+        style:
+          props.tone === "warning" ? { color: "var(--ui-text)" } : undefined,
         class: props.className,
       },
       () => props.label
