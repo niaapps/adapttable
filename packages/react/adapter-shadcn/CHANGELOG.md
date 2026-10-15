@@ -1,5 +1,16 @@
 # @adapttable/shadcn
 
+## 3.4.1
+
+### Patch Changes
+
+- 07b4440: Improve mobile cards with responsive field tiles, clearer identity and action sections, native kit surfaces, larger mobile action targets, and readable light and dark theme labels. Preserve automatic mobile cards and the explicit horizontal table option. Fix horizontal table scrolling in Reka UI and mobile action contrast in Taiga UI. Mobile selection, Save/Cancel and hierarchy controls also receive comfortable native touch surfaces. Restore visible loading placeholders and shared loading parts across Angular kits.
+- Updated dependencies [b33a9ee]
+- Updated dependencies [07b4440]
+- Updated dependencies [426d44f]
+  - @adapttable/react@1.7.4
+  - @adapttable/unstyled@3.4.1
+
 ## 3.4.0
 
 ### Minor Changes

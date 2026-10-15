@@ -1,5 +1,19 @@
 # @adapttable/shadcn-vue
 
+## 0.2.0
+
+### Minor Changes
+
+- 426d44f: Add `maxHeight` for bounded Vue table/card scrolling and a custom `card` body slot to all Vue kits, supplying prepared native field renderers and editors while retaining selection, expansion and row actions. Preserve active editor focus and text selection through responsive layout changes, and leave focus on explicit layout controls. Expose the neutral `preserveEditorFocusOnLayoutChange` binding helper. Connect React and Angular row-validation failures to the affected native editors.
+
+### Patch Changes
+
+- 07b4440: Improve mobile cards with responsive field tiles, clearer identity and action sections, native kit surfaces, larger mobile action targets, and readable light and dark theme labels. Preserve automatic mobile cards and the explicit horizontal table option. Fix horizontal table scrolling in Reka UI and mobile action contrast in Taiga UI. Mobile selection, Save/Cancel and hierarchy controls also receive comfortable native touch surfaces. Restore visible loading placeholders and shared loading parts across Angular kits.
+- Updated dependencies [b33a9ee]
+- Updated dependencies [426d44f]
+- Updated dependencies [2bdf4e3]
+  - @adapttable/vue@0.2.0
+
 ## 0.1.4
 
 ### Patch Changes
