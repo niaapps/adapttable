@@ -6,7 +6,7 @@ the buttons, inputs, selects, checkboxes, popovers, drawers and menus.
 
 ## Availability and versions
 
-This is a public `0.1.0` package. Install `@adapttable/nuxt-ui`
+This is a public package. Install `@adapttable/nuxt-ui`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
@@ -31,6 +31,31 @@ export default defineConfig({
   resolve: { dedupe: ["vue", "@nuxt/ui"] },
 });
 ```
+
+Nuxt UI generates theme types when Vite runs. Add its theme aliases to the
+application's TypeScript configuration, preserving any existing paths:
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "#build/ui/*": ["./node_modules/.nuxt-ui/ui/*"]
+    }
+  }
+}
+```
+
+If `vite.config.ts` has a separate TypeScript configuration, add
+`"#build/ui": ["./node_modules/.nuxt-ui/ui"]` to that configuration's
+`compilerOptions.paths`. Include `auto-imports.d.ts` and `components.d.ts` in
+the application configuration when using Nuxt UI's default auto-imports.
+Keep these generated files out of source control.
+
+On a clean checkout, run Vite before type checking so the generated files
+exist: for example, `vite build && vue-tsc --noEmit -p tsconfig.app.json`.
+Running those commands in parallel can make the first type check fail.
+For full dependency declaration checking, see the
+[strict dependency compatibility notes](./getting-started.md#strict-dependency-type-checking).
 
 ```ts
 // main.ts
