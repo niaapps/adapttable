@@ -26,7 +26,7 @@ import {
   reportedCellRange,
 } from "@adapttable/core";
 import {
-  afterRenderEffect,
+  afterEveryRender,
   assertInInjectionContext,
   computed,
   effect,
@@ -53,6 +53,8 @@ export interface GridFocusOptions<TRow> {
   readonly table: DataTable<TRow>;
   /** Whether cell navigation is on. Off, the table is a plain table. */
   readonly enabled: MaybeSignal<boolean>;
+  /** Ask a virtual window to render a dataset row before moving DOM focus. */
+  readonly scrollToRow?: (rowIndex: number) => void;
   /** Enter or F2 on a cell. */
   readonly onActivate?: (cell: GridCell) => void;
   /**
@@ -176,6 +178,7 @@ export function injectGridFocus<TRow>(
     dir: table.dir(),
     labels: table.labels(),
     onActivate: options.onActivate,
+    scrollToRow: options.scrollToRow,
     onFind: options.find
       ? () => {
           options.find?.().openBar?.();
@@ -195,10 +198,8 @@ export function injectGridFocus<TRow>(
 
   // The DOM follows the state: once a render has produced the cell a move
   // was waiting for, focus it.
-  afterRenderEffect(
+  afterEveryRender(
     () => {
-      snapshot();
-      table.rows();
       if (enabled()) controller.syncFocus();
     },
     { injector }

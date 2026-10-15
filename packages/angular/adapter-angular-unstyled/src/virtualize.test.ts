@@ -4,6 +4,7 @@
  * nothing out, so each test gives elements the sizes a browser would.
  */
 import type { AdaptTableFeature, ColumnDef } from "@adapttable/angular";
+import { cellNavigation } from "@adapttable/angular-unstyled/cell-navigation";
 import { virtualize } from "@adapttable/angular-unstyled/virtualize";
 import { Component, input } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
@@ -48,6 +49,7 @@ function stub(target: object, name: string, descriptor: PropertyDescriptor) {
   Object.defineProperty(target, name, { configurable: true, ...descriptor });
   restore.push(() => {
     if (previous) Object.defineProperty(target, name, previous);
+    else Reflect.deleteProperty(target, name);
   });
 }
 
@@ -99,7 +101,7 @@ afterEach(() => {
   imports: [AdaptDataTable],
   template: `
     <adapt-data-table
-      [data]="data"
+      [data]="data()"
       [columns]="columns()"
       [rowKey]="rowKey"
       [urlSync]="false"
@@ -115,7 +117,7 @@ class Host {
   readonly features = input<readonly AdaptTableFeature[]>([]);
   readonly columns = input<readonly ColumnDef<Item>[]>(COLUMNS.slice(0, 2));
   readonly maxHeight = input<number | undefined>(undefined);
-  readonly data = ITEMS;
+  readonly data = input(ITEMS);
   readonly rowKey = (row: Item) => row.id;
   readonly defaults = { limit: 25 };
   readonly columnLayout = {
@@ -167,6 +169,87 @@ describe("virtualize (unstyled Angular)", () => {
     );
   });
 
+  it("measures newly attached rows after their cell content is rendered", async () => {
+    const measured = vi.fn((index: number) => {
+      const row = document.querySelector(
+        `[data-adapttable-part="row"][data-index="${String(index)}"]`
+      );
+      expect(row?.textContent).toContain(`r${String(index)}c0`);
+      return 40;
+    });
+    layout.row = measured;
+    await mount({
+      features: [virtualize({ estimateRowSize: 40, virtualOverscan: 0 })],
+      maxHeight: 200,
+    });
+    expect(measured).toHaveBeenCalled();
+  });
+
+  it("leaves bounded virtual loading to the window instead of a page sentinel", async () => {
+    await mount({
+      features: [virtualize({ estimateRowSize: 40, virtualOverscan: 0 })],
+      maxHeight: 200,
+      data: Array.from({ length: 1000 }, (_, index) => ({
+        id: String(index),
+        c0: "row",
+        c1: "value",
+      })),
+    });
+    expect(renderedRowIds()).toEqual(["0", "1", "2", "3", "4"]);
+    expect(
+      document.querySelector('[data-adapttable-part="load-more"]')
+    ).toBeNull();
+  });
+
+  it("reveals an unmounted keyboard destination and focuses it after rendering", async () => {
+    let scrollTop = 0;
+    stub(Element.prototype, "scrollHeight", {
+      get() {
+        return 25 * 40;
+      },
+    });
+    stub(Element.prototype, "clientHeight", {
+      get() {
+        return 200;
+      },
+    });
+    stub(Element.prototype, "scrollTop", {
+      get() {
+        return scrollTop;
+      },
+    });
+    stub(Element.prototype, "scrollTo", {
+      value(this: Element, options: ScrollToOptions) {
+        scrollTop = options.top ?? scrollTop;
+        this.dispatchEvent(new Event("scroll"));
+      },
+    });
+    const fixture = await mount({
+      features: [
+        cellNavigation(),
+        virtualize({ estimateRowSize: 40, virtualOverscan: 0 }),
+      ],
+      maxHeight: 200,
+    });
+    const first = document.querySelector<HTMLElement>(
+      '[data-grid-cell="0:0"]'
+    )!;
+    first.focus();
+    first.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "End", ctrlKey: true, bubbles: true })
+    );
+    await fixture.whenStable();
+    await fixture.whenStable();
+    await vi.waitFor(async () => {
+      await fixture.whenStable();
+      expect(scrollTop).toBeGreaterThan(0);
+      expect(document.activeElement?.getAttribute("data-grid-cell")).toBe(
+        "24:1"
+      );
+    });
+    expect(scrollTop).toBeGreaterThan(0);
+  });
+
   it("switches between bounded and page windows without remounting the table", async () => {
     layout.listTop = 400;
     const disposed = vi.fn();
@@ -216,7 +299,7 @@ describe("virtualize (unstyled Angular)", () => {
     expect(mounted.mock.calls[0]![0].runtime).toBe(runtime);
     expect(runtime.rowAt(0)).toBe(ITEMS[0]);
     expect(document.activeElement).toBe(search);
-    expect(fixture.componentInstance.data).toBe(ITEMS);
+    expect(fixture.componentInstance.data()).toBe(ITEMS);
     fixture.destroy();
     expect(disposed).toHaveBeenCalledOnce();
   });
