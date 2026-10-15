@@ -1,5 +1,13 @@
 # @adapttable/angular-unstyled
 
+## 0.2.6
+
+### Patch Changes
+
+- 0f1df5a: Restore Angular 20 template compatibility by keeping conditional aliases on primary `@if` blocks. Preserve component renderers, filters, row details, mobile cards and editing branches when consuming the built packages with the minimum supported compiler.
+- Updated dependencies [0f1df5a]
+  - @adapttable/angular@0.6.2
+
 ## 0.2.5
 
 ### Patch Changes

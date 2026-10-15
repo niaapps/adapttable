@@ -1,5 +1,13 @@
 # @adapttable/angular-material
 
+## 0.2.6
+
+### Patch Changes
+
+- a20969e: Document the tested Angular 22.1 requirement for Material 22.2.1, whose Forms imports fail in an Angular 22.0 application despite the accepted peer ranges.
+- Updated dependencies [0f1df5a]
+  - @adapttable/angular@0.6.2
+
 ## 0.2.5
 
 ### Patch Changes

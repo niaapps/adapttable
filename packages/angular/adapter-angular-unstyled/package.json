@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/angular-unstyled",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "AdaptTable's Angular DataTable with native HTML controls, responsive cards, opt-in features and no theme of its own.",
   "keywords": [
     "angular",
@@ -210,7 +210,7 @@
   },
   "dependencies": {
     "@adapttable/core": "3.11.0",
-    "@adapttable/angular": "0.6.1",
+    "@adapttable/angular": "0.6.2",
     "tslib": "^2.8.1"
   },
   "engines": {

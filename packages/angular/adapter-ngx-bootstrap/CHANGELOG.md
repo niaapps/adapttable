@@ -1,5 +1,12 @@
 # @adapttable/ngx-bootstrap
 
+## 0.2.6
+
+### Patch Changes
+
+- Updated dependencies [0f1df5a]
+  - @adapttable/angular@0.6.2
+
 ## 0.2.5
 
 ### Patch Changes

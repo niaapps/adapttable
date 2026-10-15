@@ -1,6 +1,6 @@
 {
   "name": "@adapttable/ng-zorro",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "AdaptTable's Angular DataTable rendered with NG-ZORRO components.",
   "keywords": [
     "angular",
@@ -215,7 +215,7 @@
   },
   "dependencies": {
     "@adapttable/core": "3.11.0",
-    "@adapttable/angular": "0.6.1",
+    "@adapttable/angular": "0.6.2",
     "tslib": "^2.8.1"
   },
   "engines": {
