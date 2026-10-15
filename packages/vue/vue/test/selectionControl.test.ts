@@ -150,12 +150,39 @@ describe("semantic selection control projection", () => {
     expect([...view.shell.selection.value!.selectedIds.value]).toEqual(["a"]);
   });
 
-  it("retains an explicit host selection restored alongside a new query", async () => {
-    const view = mount({ controlled: ["a"], accept: true });
-    view.shell.source.value.setSearch("Bea");
+  it.each([
+    { ids: ["b"], queryFirst: true },
+    { ids: ["b"], queryFirst: false },
+    { ids: [], queryFirst: true },
+    { ids: [], queryFirst: false },
+  ])(
+    "narrows all-matching while retaining restored host ids: %j",
+    async ({ ids, queryFirst }) => {
+      const view = mount({ controlled: ["a"], accept: true });
+      const selection = view.shell.selection.value!;
+      selection.selectAllMatching();
+      expect(selection.allMatching.value).toBe(true);
+      if (queryFirst) view.shell.source.value.setSearch("Bea");
+      view.selectedIds.value = ids;
+      if (!queryFirst) view.shell.source.value.setSearch("Bea");
+      // A bulk action invoked in the same turn must already see concrete ids.
+      expect(selection.state.value.allMatching).toBe(false);
+      await nextTick();
+      expect([...selection.selectedIds.value]).toEqual(ids);
+      expect(selection.allMatching.value).toBe(false);
+      expect(view.updates).toEqual([]);
+    }
+  );
+
+  it("narrows all-matching when the host replaces ids without changing the query", async () => {
+    const view = mount({ controlled: ["a"] });
+    const selection = view.shell.selection.value!;
+    selection.selectAllMatching();
+    expect(selection.allMatching.value).toBe(true);
     view.selectedIds.value = ["b"];
+    expect(selection.state.value.allMatching).toBe(false);
     await nextTick();
-    expect([...view.shell.selection.value!.selectedIds.value]).toEqual(["b"]);
+    expect([...selection.selectedIds.value]).toEqual(["b"]);
     expect(view.updates).toEqual([]);
   });
 
