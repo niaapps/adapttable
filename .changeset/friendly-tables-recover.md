@@ -34,3 +34,4 @@ Keep table state and editing history consistent across async work and framework 
 - Keep assistant receipts readable without compounded opacity, improve neutral status and secondary control contrast, and use Naive UI's text token for the composer placeholder. Verify all supported assistants in light and dark themes with browser contrast checks.
 - Ignore server export progress callbacks after the run succeeds, fails or is dismissed, keeping terminal outcomes stable.
 - Retire React's all-matching selection on query reset even without explicit selected IDs, and when across-page selection becomes unavailable.
+- Retire pending clipboard reads and cuts when the grid detaches, preventing delayed host writes after unmount or remount.

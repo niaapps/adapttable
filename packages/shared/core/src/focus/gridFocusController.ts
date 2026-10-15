@@ -875,7 +875,10 @@ export function createGridFocusController<TRow>(
       options = { ...next };
     },
     attach(node) {
-      if (node === null) gestureVersion++;
+      if (node === null) {
+        gestureVersion++;
+        clipboardVersion++;
+      }
       container = node;
     },
     syncFocus,
