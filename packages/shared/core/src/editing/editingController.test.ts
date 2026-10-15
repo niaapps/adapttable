@@ -407,6 +407,57 @@ describe("createEditValidationStore", () => {
     ).resolves.toEqual({ allowed: true });
   });
 
+  it("replaces row-validator field errors while preserving independent cell errors", async () => {
+    const store = createEditValidationStore<Row>({
+      validateRow: () => ({
+        start: "Before end",
+        end: "After start",
+        role: "Row role error",
+      }),
+    });
+    await store.check({ target, value: "x", row: ada });
+    await store.check({
+      target: { rowId: "1", columnKey: "role" },
+      value: "",
+      row: ada,
+      validateCell: () => "Role required",
+    });
+    store.configure({ validateRow: () => ({ end: "Still invalid" }) });
+    await store.check({ target, value: "x", row: ada });
+    expect(
+      validationErrorFor(store.getSnapshot(), "1", "start")
+    ).toBeUndefined();
+    expect(validationErrorFor(store.getSnapshot(), "1", "end")).toBe(
+      "Still invalid"
+    );
+    store.configure({ validateRow: () => undefined });
+    await store.check({ target, value: "x", row: ada });
+    expect(validationErrorFor(store.getSnapshot(), "1", "end")).toBeUndefined();
+    expect(validationErrorFor(store.getSnapshot(), "1", "role")).toBe(
+      "Role required"
+    );
+    store.clear("1", "role");
+    expect(rowHasValidationError(store.getSnapshot(), "1")).toBe(false);
+  });
+
+  it("clears row field messages without reviving them on a later check", async () => {
+    const store = createEditValidationStore<Row>({
+      validateRow: () => ({ name: "Row name error", role: "Row role error" }),
+    });
+    await store.check({ target, value: "x", row: ada });
+    store.clear("1", "name");
+    expect(
+      validationErrorFor(store.getSnapshot(), "1", "name")
+    ).toBeUndefined();
+    expect(validationErrorFor(store.getSnapshot(), "1", "role")).toBe(
+      "Row role error"
+    );
+    store.clearAll();
+    store.configure({});
+    await store.check({ target, value: "x", row: ada });
+    expect(store.getSnapshot().cellErrors.size).toBe(0);
+  });
+
   it("ignores a superseded check and clears what it marked", async () => {
     let resolveFirst!: (value: string | undefined) => void;
     const store = createEditValidationStore<Row>();

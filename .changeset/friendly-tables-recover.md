@@ -25,3 +25,4 @@ Keep table state and editing history consistent across async work and framework 
 - Detect a fill series once per source lane instead of recomputing it for every destination cell, keeping large drag-fill gestures responsive.
 - Handle copy/cut/paste/fill/find shortcuts with Caps Lock and report rejected fill parsing without throwing or extending the selected range.
 - Compute pivot min/max without spreading large groups into function arguments, avoiding stack-limit failures on large datasets.
+- Replace obsolete field errors from row validation when the row is checked again, preserving independent cell-validator errors and clearing both sources on reset.
