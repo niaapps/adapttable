@@ -25,6 +25,7 @@ import type {
   RowValidator,
   ValidationTarget,
 } from "./editContracts";
+import { recordedGesture } from "./recordedGesture";
 import { isThenable, listenerSet } from "./storePlumbing";
 
 /* ── Observers ─────────────────────────────────────────────────────── */
@@ -946,10 +947,7 @@ export function asGesture<TRow>(
   record: (edits: readonly CellEdit<TRow>[]) => void
 ): ((edits: CellEdit<TRow>[]) => void) | undefined {
   if (!apply) return undefined;
-  return (edits) => {
-    record(edits);
-    apply(edits);
-  };
+  return (edits) => recordedGesture(record, edits, () => apply(edits));
 }
 
 /**
@@ -979,8 +977,6 @@ export function asBatchGesture<TRow>(
   record: (edits: readonly CellEdit<TRow>[]) => void
 ): ((edits: readonly BatchRowEdit<TRow>[]) => unknown) | undefined {
   if (!apply) return undefined;
-  return (edits) => {
-    record(cellsOfBatch(edits));
-    return apply(edits);
-  };
+  return (edits) =>
+    recordedGesture(record, cellsOfBatch(edits), () => apply(edits));
 }

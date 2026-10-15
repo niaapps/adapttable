@@ -277,9 +277,12 @@ export function useEditHistory<TRow>(
   const redo = () =>
     !disposed && active.value && toValue(input).enabled ? store.redo() : 0;
   watch(
-    () => toValue(input),
+    () => ({
+      ...toValue(input),
+      enabled: toValue(input).enabled && active.value,
+    }),
     (options) => store.configure(options),
-    { flush: "sync" }
+    { flush: "sync", immediate: true }
   );
   const snapshot = useExternalStore(store, activity);
   onScopeDispose(() => {
@@ -386,9 +389,7 @@ export function useTableEditing<TRow>(
     }),
     lifecycle
   );
-  const record = (edits: Parameters<EditHistoryState<TRow>["record"]>[0]) => {
-    if (!disposed && active.value) history.value.record(edits);
-  };
+  const record = history.value.record;
   const onCellEdit = recordingCellEdit(commit, record);
   const unitSaves = createCellSaveStore<TRow>();
   const trackUnit = (edits: readonly BatchRowEdit<TRow>[], result: unknown) => {

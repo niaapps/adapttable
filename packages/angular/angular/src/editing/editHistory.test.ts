@@ -24,6 +24,20 @@ class Host {
 }
 
 describe("injectTableEditHistory", () => {
+  it("does not offer undo for a rejected inline save", async () => {
+    const fixture = TestBed.createComponent(Host);
+    const host = fixture.componentInstance;
+    const error = new Error("Save rejected");
+    host.options.update((options) => ({
+      ...options,
+      onCellEdit: () => Promise.reject(error),
+    }));
+    fixture.detectChanges();
+    await expect(
+      host.state().onCellEdit!({ name: "Before" }, "name", "After")
+    ).rejects.toBe(error);
+    expect(host.state().history.canUndo).toBe(false);
+  });
   it("records a cell before the host changes it and replays without recording again", () => {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();

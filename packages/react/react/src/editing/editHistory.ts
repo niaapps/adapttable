@@ -106,8 +106,8 @@ export interface TableEditHistoryProps<TRow> {
 /**
  * The history a `<DataTable>` runs, plus the commit channel to hand the chrome.
  *
- * The returned `onCellEdit` records each inline commit as a one-cell gesture
- * before passing it on. Batch routes (paste, fill) must NOT go through it —
+ * The returned `onCellEdit` captures the previous value before the host runs
+ * and records successful inline commits as one-cell gestures. Batch routes (paste, fill) must NOT go through it —
  * they record themselves through {@link asGesture}, so that two hundred pasted
  * cells undo in one press rather than two hundred.
  *

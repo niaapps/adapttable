@@ -63,7 +63,7 @@ function mountNavigation<TRow>(context: FeatureMountContext<TRow>): void {
           firstRowIndex: table.windowStart.value,
           pinOffset: table.layout.value.pinOffset,
           host,
-          record: (edits) => history.value?.record(edits),
+          record: history.value?.record ?? (() => undefined),
           undo: () => history.value?.undo() ?? 0,
           redo: () => history.value?.redo() ?? 0,
         }),
