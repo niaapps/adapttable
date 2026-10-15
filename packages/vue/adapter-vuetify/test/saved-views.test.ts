@@ -307,7 +307,7 @@ it("uses the binding model to validate rename and persist the accepted order and
     },
   });
   const host = mount(() => h(View));
-  await settle();
+  await vi.waitFor(() => expect(row(host, "Second")).toBeTruthy());
   action(row(host, "Second"), labels.renameView).click();
   await settle();
   await write(node<HTMLInputElement>(host, "input"), "  ");
@@ -325,7 +325,9 @@ it("uses the binding model to validate rename and persist the accepted order and
   action(row(host, "Personal"), labels.moveViewUp).click();
   await settle();
   expect(node(host, part("saved-view-row")).textContent).toContain("Personal");
-  expect(reorder).toHaveBeenLastCalledWith(["Personal", "First", "Team"]);
+  await vi.waitFor(() =>
+    expect(reorder).toHaveBeenLastCalledWith(["Personal", "First", "Team"])
+  );
   action(row(host, "Personal"), labels.setDefaultView).click();
   await settle();
   expect(
@@ -336,7 +338,7 @@ it("uses the binding model to validate rename and persist the accepted order and
   ).toBeNull();
   action(row(host, "Personal"), labels.deleteView).click();
   await settle();
-  expect(f.remove).toHaveBeenCalledWith("Personal");
+  await vi.waitFor(() => expect(f.remove).toHaveBeenCalledWith("Personal"));
   expect(host.querySelectorAll(part("saved-view-row"))).toHaveLength(2);
 });
 
