@@ -1771,7 +1771,7 @@ const rowKey = (row: Person) => row.id;
     },
     label: "Mobile cards",
     h1: "Mobile cards in {kit}",
-    title: "{kit} responsive table and mobile cards — AdaptTable",
+    title: "{kit} responsive mobile cards — AdaptTable",
     description:
       "Responsive {kit} tables with automatic mobile cards or horizontal scrolling, native kit cells, readable field groups and shared selection and query state.",
     intro: [
@@ -1994,7 +1994,7 @@ const features = [columnMenu(), resizableColumns()];
     },
     label: "Columns",
     h1: "Column management in {kit}",
-    title: "{kit} table column pinning and resizing — AdaptTable",
+    title: "{kit} column pinning and resizing — AdaptTable",
     description:
       "Pin, resize, reorder, rename and hide {kit} table columns. Try the column menu and persist layouts to URLs, storage or your application.",
     intro: [
@@ -2996,7 +2996,7 @@ export function People({ rows, columns, setRows }) {
     slug: "rows",
     label: "Rows",
     h1: "Rows in {kit}",
-    title: "{kit} table row pinning and cell spanning — AdaptTable",
+    title: "{kit} row pinning and cell spanning — AdaptTable",
     description:
       "Try {kit} table row pinning, merged cells and row-action menus. Keep rows at the top or bottom and handle add/delete operations in your application.",
     intro: [
@@ -3098,13 +3098,13 @@ const features = [rowPinning(), cellSpan(spanTeam), rowActions<Person>([])];
     },
     heads: {
       angular: {
-        title: "{kit} table row pinning and cell spanning — AdaptTable",
+        title: "{kit} row pinning and cell spanning — AdaptTable",
         description:
           "Try {kit} table row pinning and merged cells. Keep rows at the top or bottom using row menus, and span repeated values across adjacent rows.",
         card: "Pin rows from a 3-dot menu, and merge a team that runs down the page.",
       },
       "ng-zorro": {
-        title: "{kit} table row pinning and cell spanning — AdaptTable",
+        title: "{kit} row pinning and cell spanning — AdaptTable",
         description:
           "Try {kit} table row pinning and merged cells. Keep rows at the top or bottom using row menus, and span repeated values across adjacent rows.",
         card: "Pin rows from a 3-dot menu, and merge a team that runs down the page.",
@@ -3162,7 +3162,7 @@ export function People({ rows, columns, setPinned, spanTeam }) {
     slug: "nested-tables",
     label: "Nested tables",
     h1: "Nested tables in {kit}",
-    title: "{kit} nested tables and expandable rows — AdaptTable",
+    title: "{kit} expandable nested tables — AdaptTable",
     description:
       "Expand a {kit} table row to a nested detail table. Each child has its own columns, row IDs and controls; explore the working {framework} example.",
     intro: [
