@@ -56,7 +56,12 @@ describe("Element Plus mobile semantic targets", () => {
       };
       const { root } = mount(() =>
         ElementMobileCards<Row>({
-          model: { attrs: { role: "list" }, rows: [row] },
+          model: {
+            attrs: { role: "list" },
+            rows: [row],
+            summary: undefined,
+            bodySlots: undefined,
+          },
           controls: paint,
         })
       );
