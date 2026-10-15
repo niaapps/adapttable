@@ -170,7 +170,7 @@ for (const framework of ["react", "angular", "vue"] as const) {
         const card = root.locator('[data-adapttable-part="card"]').first();
         await expect(card).toBeVisible();
         await card
-          .locator('[data-adapttable-part="action-button"]')
+          .locator('[data-adapttable-part="row-edit-begin"]')
           .first()
           .click();
         const name = card
