@@ -150,6 +150,15 @@ describe("semantic selection control projection", () => {
     expect([...view.shell.selection.value!.selectedIds.value]).toEqual(["a"]);
   });
 
+  it("retains an explicit host selection restored alongside a new query", async () => {
+    const view = mount({ controlled: ["a"], accept: true });
+    view.shell.source.value.setSearch("Bea");
+    view.selectedIds.value = ["b"];
+    await nextTick();
+    expect([...view.shell.selection.value!.selectedIds.value]).toEqual(["b"]);
+    expect(view.updates).toEqual([]);
+  });
+
   it("keeps selection through paging and sorting, and avoids empty query-reset callbacks", async () => {
     const view = mount();
     view.shell.source.value.setSearch("a");

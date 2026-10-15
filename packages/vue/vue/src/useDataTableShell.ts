@@ -89,6 +89,10 @@ import {
 } from "./features/tableFeature";
 import { createFeatureState, provideFeatureState } from "./featureState";
 import {
+  filterTreeSnapshot,
+  sameFilterTree,
+} from "./filters/filterTreeSnapshot";
+import {
   groupingModelKey,
   rowDetailModelKey,
   treeModelKey,
@@ -395,14 +399,27 @@ export function useDataTableShell<TRow>(
   watch(
     () => {
       const current = source.value;
-      return stableKey([
-        current.search,
-        current.extra,
-        current.filterTree,
-        current.groupBy,
-      ]);
+      return {
+        key: stableKey([current.search, current.extra, current.groupBy]),
+        tree: current.filterTree,
+        snapshot: current.filterTree
+          ? filterTreeSnapshot(current.filterTree)
+          : undefined,
+        selectedIds: toValue(resolved.value.selectedIds),
+      };
     },
-    () => {
+    (current, previous) => {
+      const sameTree = current.tree
+        ? sameFilterTree(current.tree, previous.snapshot)
+        : previous.snapshot === undefined;
+      if (current.key === previous.key && sameTree) return;
+      // An explicit host selection arriving with a restored query owns that
+      // scope. Ordinary query edits keep the same controlled value until reset.
+      if (
+        current.selectedIds !== undefined &&
+        current.selectedIds !== previous.selectedIds
+      )
+        return;
       // Query changes start a new selection scope; page and sort changes do not.
       if (
         selectionState.selectedCount.value > 0 ||
@@ -410,7 +427,7 @@ export function useDataTableShell<TRow>(
       )
         selectionState.clear();
     },
-    { flush: "sync" }
+    { flush: "post" }
   );
   const editHistory = state.get(editHistoryModelKey<TRow>());
   const gridFocus = state.get(GRID_FOCUS_MODEL);
