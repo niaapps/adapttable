@@ -135,7 +135,9 @@ export function useTableVirtualizer<TRow>({
   );
   // Both hooks must run unconditionally (rules of hooks); exactly one is
   // enabled. Window mode tracks the page; element mode tracks the box.
+  // Row refs measure during React commits; let React batch those updates.
   const windowVirtualizer = useWindowVirtualizer({
+    useFlushSync: false,
     count: rows.length,
     enabled: enabled && !elementMode,
     estimateSize: asSizeEstimator(estimateSize),
@@ -144,6 +146,7 @@ export function useTableVirtualizer<TRow>({
     scrollMargin,
   });
   const elementVirtualizer = useVirtualizer({
+    useFlushSync: false,
     count: rows.length,
     enabled: enabled && elementMode,
     getScrollElement: getScrollElement ?? (() => null),
@@ -237,7 +240,9 @@ export function useKeyedVirtualizer(
   const elementMode = getScrollElement !== undefined;
   const getItemKey = (index: number): string => keys[index] ?? String(index);
   const sizeOf = asSizeEstimator(estimateSize);
+  // Row refs measure during React commits; let React batch those updates.
   const windowVirtualizer = useWindowVirtualizer({
+    useFlushSync: false,
     count: keys.length,
     enabled: enabled && !elementMode,
     estimateSize: sizeOf,
@@ -246,6 +251,7 @@ export function useKeyedVirtualizer(
     scrollMargin,
   });
   const elementVirtualizer = useVirtualizer({
+    useFlushSync: false,
     count: keys.length,
     enabled: enabled && elementMode,
     getScrollElement: getScrollElement ?? (() => null),
