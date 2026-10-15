@@ -8,6 +8,7 @@ import {
   type DataTableShellResult,
   useDataTableShell,
 } from "../useDataTableShell";
+import { RowScrollContext } from "../virtual/rowScroll";
 import { cellNavigation } from "./cell-navigation";
 import { DataTableShellView } from "./chromeBodyGate";
 import { editHistory } from "./edit-history";
@@ -46,7 +47,10 @@ const columns: ColumnDef<Row>[] = [
 
 const noForm = () => null;
 
-function mount(features: readonly TableFeature<Row>[]) {
+function mount(
+  features: readonly TableFeature<Row>[],
+  scrollToRow: ((row: never) => void) | null = null
+) {
   const props = applyTableFeatures({
     features,
     data: ROWS,
@@ -68,7 +72,9 @@ function mount(features: readonly TableFeature<Row>[]) {
   }
   render(
     <FeatureProviders props={props}>
-      <Probe />
+      <RowScrollContext.Provider value={scrollToRow}>
+        <Probe />
+      </RowScrollContext.Provider>
     </FeatureProviders>
   );
   return {
@@ -93,6 +99,15 @@ describe("a table that composed none of the live features", () => {
 });
 
 describe("each live feature replaces its stand-in with the real hook", () => {
+  it("cell navigation brings its destination into a virtualized body", () => {
+    const scrollToRow = vi.fn();
+    const view = mount([cellNavigation()], scrollToRow);
+
+    act(() => view.current.gridFocus.focusCell({ row: 1, col: 0 }));
+    expect(scrollToRow).toHaveBeenCalledExactlyOnceWith(ROWS[1]);
+    expect(view.current.gridFocus.active).toEqual({ row: 1, col: 0 });
+  });
+
   it("findInTable opens a real find walk", () => {
     const view = mount([findInTable()]);
 

@@ -12,11 +12,18 @@ import {
   reportedCellRange,
 } from "@adapttable/core";
 import { coreCellNavigation } from "@adapttable/core/binding";
-import { type ReactNode, useEffect, useRef } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+} from "react";
 
 import { useFindFocus } from "../find/useFindInTable";
 import { GridFocusAnnouncer } from "../focus/GridFocusAnnouncer";
 import { useGridFocus } from "../focus/useGridFocus";
+import { RowScrollContext } from "../virtual/rowScroll";
 import { slotRender } from "./providers";
 import {
   CELL_NAV_LIVE,
@@ -37,8 +44,17 @@ function LiveCellNav({
   currentMatch,
   children,
 }: CellNavLiveSlotProps<never>): ReactNode {
+  const scrollToRow = useContext(RowScrollContext);
+  const scrollToIndex = useCallback(
+    (index: number) => {
+      const row = options.rows[index - (options.firstRowIndex ?? 0)];
+      if (row !== undefined) scrollToRow?.(row);
+    },
+    [options.rows, options.firstRowIndex, scrollToRow]
+  );
   const gridFocus = useGridFocus({
     ...options,
+    scrollToRow: options.scrollToRow ?? scrollToIndex,
     enabled: true,
     ...cellNavigationChannels({
       rows: options.rows,
