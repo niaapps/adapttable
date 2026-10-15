@@ -264,6 +264,7 @@ function MobileCardBase<TRow>({
     id
   );
   const rowConflict = rowEditConflict(editing, id);
+  const fieldPadding = compact ? "0.375rem" : "0.5rem";
   return (
     <MobileTarget.Provider value={true}>
       <Card.Root
@@ -330,7 +331,7 @@ function MobileCardBase<TRow>({
                 display: "grid",
                 gridTemplateColumns:
                   "repeat(auto-fit, minmax(min(100%, 7rem), 1fr))",
-                gap: "0.75rem",
+                gap: compact ? "0.5rem" : "0.75rem",
                 minWidth: 0,
               }}
             >
@@ -346,7 +347,7 @@ function MobileCardBase<TRow>({
                       ? "var(--chakra-colors-bg-muted)"
                       : undefined,
                     borderRadius: "var(--chakra-radii-md)",
-                    padding: label ? "0.5rem" : undefined,
+                    padding: label ? fieldPadding : undefined,
                   }}
                 >
                   {label && (
