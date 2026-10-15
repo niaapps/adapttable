@@ -569,6 +569,53 @@ function movingTable(): {
 }
 
 describe("putting one action of a turn back", () => {
+  it("restores a single search action's pagination side effect from its card", async () => {
+    let page = 4;
+    let search = "";
+    let revision = 1;
+    const session = createAgentSession({
+      observe: () =>
+        observation({ page, search, viewRevision: revision, hasSearch: true }),
+      apply: {
+        setPage: (value) => {
+          page = value;
+          revision += 1;
+        },
+        setSearch: (value) => {
+          search = value;
+          page = 1;
+          revision += 1;
+        },
+      },
+    });
+    const store = createTableAssistant({
+      session,
+      contextInputs: () => ({ view: { page, search, limit: 10 } }),
+      transport: {
+        send: async ({ session: live }) => ({
+          text: "Showing Ada",
+          keys: ["view.setSearch"],
+          results: [
+            await live.execute(
+              "view.setSearch",
+              { query: "Ada" },
+              revision,
+              "search-once"
+            ),
+          ],
+        }),
+      },
+    });
+    store.connect();
+    await store.send("Show Ada");
+    expect(page).toBe(1);
+
+    await store.undoAction("search-once");
+
+    expect(search).toBe("");
+    expect(page).toBe(4);
+  });
+
   /** A table whose page and search both move, and report where they landed. */
   function twoWayTable(): {
     readonly session: AgentSession;
