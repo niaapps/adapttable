@@ -300,6 +300,7 @@ export function useTableAssistant(
   // store during render must not open a connection — a render can be thrown
   // away, and Strict Mode throws the first one away on purpose.
   const storeRef = useRef<ReturnType<typeof createTableAssistant> | null>(null);
+  const mountRef = useRef<{ superseded: boolean } | null>(null);
   storeRef.current ??= createTableAssistant(
     inputsOf(options, approval, alwaysAllow, viewState, progress)
   );
@@ -313,18 +314,21 @@ export function useTableAssistant(
   });
 
   useEffect(() => {
+    const mount = { superseded: false };
+    if (mountRef.current) mountRef.current.superseded = true;
+    mountRef.current = mount;
     store.connect();
     return () => {
-      store.dispose();
-      // A disposed store is never reused. Strict Mode's second setup, and any
-      // later remount, builds a fresh one rather than reviving one that has
-      // already released its connection.
-      storeRef.current = null;
+      // React may replay this effect without rendering a replacement store.
+      // Release the connection, retaining the inert controller for that next
+      // setup. This also hands durable work to the host before unmounting.
+      // useSyncExternalStore removes its own subscription on cleanup.
+      store.disconnect();
+      queueMicrotask(() => {
+        if (!mount.superseded) store.dispose();
+      });
     };
-    // Mount and unmount only: every other change reaches the store through
-    // `update` above, which is what keeps connection effects out of render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [store]);
 
   const state = useSyncExternalStore(
     store.subscribe,
