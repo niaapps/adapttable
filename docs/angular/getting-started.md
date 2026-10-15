@@ -31,8 +31,8 @@ styling and assets. Their local showcase routes are `/material/`,
   for any Angular kit or your own renderer
 
 The Angular binding, all nine kits and the optional AI binding are available
-on npm. Features described for the upcoming 0.5 binding require that release;
-see the migration guide before upgrading an existing installation.
+on npm. When upgrading from before the 0.5 import reorganization, follow the
+[migration guide](./migrating-to-0-5.md) for the canonical entry points.
 Package versions are independent; each kit declares its compatible binding and
 engine dependencies. Do not force core, binding and kit to share a version.
 

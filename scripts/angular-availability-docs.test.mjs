@@ -26,10 +26,12 @@ describe("published Angular kit documentation", () => {
     });
   }
 
-  it("keeps the upcoming binding migration distinct from registry availability", () => {
+  it("describes the published binding migration as an upgrade path", () => {
     const text = source("docs/angular/getting-started.md");
     assert.match(text, /All nine Angular kits are available on npm/);
-    assert.match(text, /upcoming 0\.5 binding require that release/);
+    assert.match(text, /upgrading from before the 0\.5 import reorganization/);
+    assert.match(text, /\[migration guide\]\(\.\/migrating-to-0-5\.md\)/);
+    assert.doesNotMatch(text, /upcoming 0\.5/);
     assert.doesNotMatch(text, staleAvailability);
   });
 

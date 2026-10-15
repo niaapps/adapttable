@@ -14,6 +14,13 @@ and CDK **22.2.1**. Material requires the same CDK version. Keep Material and
 CDK together; AdaptTable packages have independent versions. Node.js must meet
 Angular 22's supported floor: 22.22.3+, 24.15.0+, or Node 26+.
 
+Use Angular **22.1 or newer** with Material 22.2.1. In the 2026-10-15
+packed-consumer audit, Angular 22.0.0 failed because Material imports
+`isFieldTree` from `@angular/forms/signals`, which that Forms version does not
+export. The same application built successfully with Angular 22.1.0 and
+22.2.0. Keep the application's Angular framework packages on matching versions;
+the declared peer ranges alone do not exclude this incompatible combination.
+
 Install in an existing Angular 22 application:
 
 ```sh
