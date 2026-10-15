@@ -453,23 +453,37 @@ export const DataTableSurfaceChrome = /* @__PURE__ */ Object.assign(
               "div",
               { "data-adapttable-part": "footer", class: names.footer },
               [
-                h("div", [
-                  h("span", labels.rowsPerPage),
-                  slots.Select({
-                    attrs: {
-                      "aria-label": labels.rowsPerPage,
-                      "data-adapttable-part": "rows-per-page",
-                      class: names.rowsPerPage,
+                h(
+                  "div",
+                  {
+                    style: {
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
                     },
-                    label: labels.rowsPerPage,
-                    value: String(source.limit),
-                    options: table.pageSizeOptions.value.map((size) => ({
-                      value: String(size),
-                      label: String(size),
-                    })),
-                    onChange: (value) => table.setLimit(Number(value)),
-                  }),
-                ]),
+                  },
+                  [
+                    h(
+                      "span",
+                      { style: { whiteSpace: "nowrap" } },
+                      labels.rowsPerPage
+                    ),
+                    slots.Select({
+                      attrs: {
+                        "aria-label": labels.rowsPerPage,
+                        "data-adapttable-part": "rows-per-page",
+                        class: names.rowsPerPage,
+                      },
+                      label: labels.rowsPerPage,
+                      value: String(source.limit),
+                      options: table.pageSizeOptions.value.map((size) => ({
+                        value: String(size),
+                        label: String(size),
+                      })),
+                      onChange: (value) => table.setLimit(Number(value)),
+                    }),
+                  ]
+                ),
                 h(
                   "span",
                   labels.showing({
@@ -480,7 +494,17 @@ export const DataTableSurfaceChrome = /* @__PURE__ */ Object.assign(
                 ),
                 h(
                   "div",
-                  { "data-adapttable-part": "pager", class: names.pager },
+                  {
+                    "data-adapttable-part": "pager",
+                    class: names.pager,
+                    style: {
+                      display: "flex",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      gap: "0.5rem",
+                      minWidth: 0,
+                    },
+                  },
                   [
                     h(
                       "span",

@@ -33,7 +33,7 @@ Render.props = renderProps;
   color: inherit;
   margin-inline-end: 0.5rem;
 }
-.adapttable-quasar-grouping-layout [data-adapttable-part="grouping-add"] {
+.adapttable-quasar-grouping-layout .adapttable-quasar-grouping-add-select {
   flex: 0 1 15rem;
   inline-size: 15rem;
   min-inline-size: 0;
@@ -68,11 +68,18 @@ Render.props = renderProps;
   margin: 0;
 }
 .adapttable-quasar-grouping-layout
-  [data-adapttable-part="grouping-aggregation-operation"] {
+  .adapttable-quasar-grouping-operation-select {
   flex: 0 1 8rem;
   inline-size: 8rem;
   min-inline-size: 0;
   max-inline-size: 100%;
+}
+@media (min-width: 640px) {
+  .adapttable-quasar-grouping-layout
+    [data-adapttable-part="grouping-aggregation-item"] {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
 }
 .adapttable-quasar-grouping-layout
   [data-adapttable-part="grouping-aggregation-add"] {
