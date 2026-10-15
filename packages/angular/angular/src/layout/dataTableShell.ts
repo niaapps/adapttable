@@ -2645,17 +2645,25 @@ export abstract class AdaptDataTableShell<TRow> implements OnInit {
             : undefined,
       };
     };
-    this.view.set({
-      table: {
-        ...table,
-        // A page sentinel below a bounded virtual body never leaves view.
-        // The virtualizer requests more rows only at its own scroll end.
-        canLoadMore: computed(
-          () =>
-            table.canLoadMore() &&
-            !(this.maxHeight() != null && virtualization().enabled)
-        ),
+    const currentVirtualization = resources.use("view-virtualization", [], () =>
+      signal(virtualization)
+    );
+    currentVirtualization.set(virtualization);
+    const viewTable = resources.use("view-table", [table], () => ({
+      ...table,
+      get canRenameColumns() {
+        return table.canRenameColumns;
       },
+      // A page sentinel below a bounded virtual body never leaves view.
+      // The virtualizer requests more rows only at its own scroll end.
+      canLoadMore: computed(
+        () =>
+          table.canLoadMore() &&
+          !(this.maxHeight() != null && currentVirtualization()().enabled)
+      ),
+    }));
+    this.view.set({
+      table: viewTable,
       classNames: this.classNames,
       renderCard: this.renderCard,
       renderRowActions: this.renderRowActions,
