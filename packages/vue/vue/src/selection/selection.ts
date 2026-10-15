@@ -121,6 +121,9 @@ export function useRowSelection<TRow>(
   );
   const scope = createAllMatchingScope();
   const allMatching = useExternalStore(scope);
+  // Host-provided ids replace the broad scope without emitting a write back.
+  // Narrow synchronously so same-turn bulk actions see only those ids.
+  watch(controlled, () => scope.narrow(), { flush: "sync" });
   const acrossPages = computed(
     () => toValue(options.value.acrossPages) ?? false
   );
