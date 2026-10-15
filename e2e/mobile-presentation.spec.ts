@@ -31,7 +31,11 @@ for (const framework of ["react", "angular", "vue"] as const) {
       ).toEqual([]);
       const actions = cards
         .first()
-        .locator('[data-adapttable-part="action-button"]');
+        .locator(
+          framework === "react"
+            ? '[data-adapttable-part="row-edit-begin"]'
+            : '[data-adapttable-part="action-button"]'
+        );
       await expect(actions.first()).toBeVisible();
       expect(
         await actions.evaluateAll((buttons) =>
@@ -55,17 +59,17 @@ for (const framework of ["react", "angular", "vue"] as const) {
       if (framework === "react") {
         await cards
           .first()
-          .getByRole("button", { name: "Edit", exact: true })
+          .locator('[data-adapttable-part="row-edit-begin"]')
           .click();
         await expect(
-          cards.first().getByRole("button", { name: "Save row", exact: true })
+          cards.first().locator('[data-adapttable-part="row-edit-save"]')
         ).toBeVisible();
         await cards
           .first()
-          .getByRole("button", { name: "Cancel", exact: true })
+          .locator('[data-adapttable-part="row-edit-cancel"]')
           .click();
         await expect(
-          cards.first().getByRole("button", { name: "Edit", exact: true })
+          cards.first().locator('[data-adapttable-part="row-edit-begin"]')
         ).toBeVisible();
       } else {
         await cards
