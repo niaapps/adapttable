@@ -136,7 +136,7 @@ const MUI_CELLS: DemoCells = {
         fontSize: 14,
         fontWeight: 700,
         bgcolor: `hsl(${nameHue(name)} 60% 90%)`,
-        color: `hsl(${nameHue(name)} 45% 35%)`,
+        color: `hsl(${nameHue(name)} 45% 25%)`,
       }}
     >
       {initials(name)}
@@ -145,13 +145,16 @@ const MUI_CELLS: DemoCells = {
   Status: ({ status, label }: StatusCellProps) => (
     <Chip
       label={label}
+      variant="outlined"
+      sx={{ color: "text.primary" }}
       size="small"
       color={MUI_CHIP_COLOR[statusTone(status)]}
     />
   ),
-  Load: ({ value, meta }: LoadCellProps) => (
+  Load: ({ value, meta, label }: LoadCellProps) => (
     <Box sx={{ minWidth: 90 }}>
       <LinearProgress
+        aria-label={label}
         variant="determinate"
         value={value}
         sx={{ height: 6, borderRadius: 999 }}

@@ -32,9 +32,11 @@ import {
   arDZ,
   darkTheme,
   enUS,
+  NAvatar,
   NButton,
   NConfigProvider,
   NInput,
+  NProgress,
   NSelect,
   NTag,
 } from "naive-ui";
@@ -121,10 +123,37 @@ export const kit: ShowcaseKit = {
       onUpdateValue: onChange,
     }),
   Root,
+  avatar: (initials) =>
+    h(
+      NAvatar,
+      {
+        round: true,
+        size: 40,
+        "aria-hidden": "true",
+        style: {
+          color: "inherit",
+          backgroundColor: "color-mix(in srgb, currentColor 8%, transparent)",
+        },
+      },
+      () => initials
+    ),
+  progress: (value, label) =>
+    h(NProgress, {
+      type: "line",
+      percentage: value,
+      showIndicator: false,
+      "aria-label": label,
+    }),
   status: (tone, label) =>
     h(
       NTag,
-      { type: TAG_TYPE[tone], size: "small", round: true, bordered: false },
+      {
+        type: TAG_TYPE[tone],
+        size: "small",
+        round: true,
+        bordered: false,
+        style: { color: "inherit" },
+      },
       () => label
     ),
   button: ({ label, part, disabled, onClick }) =>

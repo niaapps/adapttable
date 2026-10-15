@@ -31,8 +31,10 @@ import { statusBar } from "@adapttable/nuxt-ui/status-bar";
 import { tree } from "@adapttable/nuxt-ui/tree";
 import { virtualize } from "@adapttable/nuxt-ui/virtualize";
 import UApp from "@nuxt/ui/components/App.vue";
+import UAvatar from "@nuxt/ui/components/Avatar.vue";
 import UBadge from "@nuxt/ui/components/Badge.vue";
 import UButton from "@nuxt/ui/components/Button.vue";
+import UProgress from "@nuxt/ui/components/Progress.vue";
 import USelect from "@nuxt/ui/components/Select.vue";
 import { ar, en } from "@nuxt/ui/locale";
 import ui from "@nuxt/ui/vue-plugin";
@@ -70,9 +72,24 @@ export const kit: ShowcaseKit = {
     app.use(ui);
   },
   Root,
+  avatar: (initials) =>
+    h(UAvatar, {
+      text: initials,
+      size: "md",
+      "aria-hidden": "true",
+      ui: { fallback: "text-default" },
+    }),
+  progress: (value, label) =>
+    h(UProgress, {
+      modelValue: value,
+      max: 100,
+      size: "sm",
+      "aria-label": label,
+    }),
   status: (tone, label) =>
     h(UBadge, {
       color: BADGE_COLOR[tone],
+      style: { color: "var(--ui-text)" },
       size: "sm",
       variant: "subtle",
       label,

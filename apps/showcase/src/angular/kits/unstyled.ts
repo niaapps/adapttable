@@ -51,6 +51,7 @@ import { virtualize } from "@adapttable/angular-unstyled/virtualize";
 
 import type { ShowcaseKit } from "../showcaseKit";
 import { ShowcaseConnectionField } from "./unstyledConnectionField";
+import { ShowcaseLoad, ShowcasePerson } from "./unstyledMobileCells";
 import { ShowcaseStatus } from "./unstyledStatus";
 
 /** Components and feature factories are always from this one kit. */
@@ -59,6 +60,8 @@ export const kit = {
   providers: [],
   table: AdaptDataTable,
   statusCell: ShowcaseStatus,
+  personCell: ShowcasePerson,
+  loadCell: ShowcaseLoad,
   pivotPanel: AdaptPivotPanel,
   assistant: AdaptTableAssistant,
   assistantButton: AdaptAssistantButton,

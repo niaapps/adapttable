@@ -465,7 +465,7 @@ adapt-showcase-matrix-page *::after {
 .mx-ng--unstyled [data-adapttable-part="card-value"] {
   min-width: 0;
   font-weight: 500;
-  text-align: end;
+  text-align: start;
 }
 
 /* The phone-width frame the mobile-cards page renders into. */

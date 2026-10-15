@@ -53,6 +53,7 @@ import { virtualize } from "@adapttable/ngx-bootstrap/virtualize";
 
 import type { ShowcaseKit } from "../showcaseKit";
 import { ShowcaseConnectionField } from "./ngxBootstrapConnectionField";
+import { ShowcaseLoad, ShowcasePerson } from "./ngxBootstrapMobileCells";
 import { ShowcaseStatus } from "./ngxBootstrapStatus";
 
 /** Components and feature factories are always from this one kit. */
@@ -61,6 +62,8 @@ export const kit = {
   providers: [],
   table: AdaptDataTable,
   statusCell: ShowcaseStatus,
+  personCell: ShowcasePerson,
+  loadCell: ShowcaseLoad,
   pivotPanel: AdaptPivotPanel,
   assistant: AdaptTableAssistant,
   assistantButton: AdaptAssistantButton,

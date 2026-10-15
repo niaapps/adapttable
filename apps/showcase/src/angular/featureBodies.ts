@@ -652,15 +652,42 @@ class ScaleBody {
   imports: [AdaptShowcaseTable],
   template: `
     <div class="mx-demo">
-      <div class="mx-demo__body mx-phone">
+      <div class="hint-row" role="group" aria-label="Layout">
+        <button
+          type="button"
+          class="seg__btn"
+          [attr.aria-pressed]="mobile() === undefined"
+          (click)="mobile.set(undefined)"
+        >
+          Automatic
+        </button>
+        <button
+          type="button"
+          class="seg__btn"
+          [attr.aria-pressed]="mobile() === true"
+          (click)="mobile.set(true)"
+        >
+          Phone cards
+        </button>
+        <button
+          type="button"
+          class="seg__btn"
+          [attr.aria-pressed]="mobile() === false"
+          (click)="mobile.set(false)"
+        >
+          Scrollable table
+        </button>
+      </div>
+      <div class="mx-demo__body" [class.mx-phone]="mobile() === true">
         <adapt-showcase-table
           [dir]="presentation.dir"
           [labels]="presentation.labels"
           [attr.lang]="presentation.locale"
           tableLabel="People"
           [urlSync]="false"
-          [forceMobile]="true"
+          [forceMobile]="mobile()"
           [selectable]="true"
+          [features]="features"
           [onRowClick]="activateRow"
           [data]="rows"
           [columns]="columns"
@@ -673,13 +700,25 @@ class ScaleBody {
   `,
 })
 class MobileCardsBody {
+  readonly mobile = signal<boolean | undefined>(true);
   readonly presentation = SHOWCASE_PRESENTATION;
   readonly log = signal("Activate a person to see the host callback.");
   readonly activateRow = (row: Person): void =>
     this.log.set(`Activated ${row.name}`);
   readonly rows = PEOPLE;
-  readonly columns = COLUMNS;
+  private readonly kit = inject(SHOWCASE_KIT);
+  readonly columns = COLUMNS.map((column) => {
+    if (column.key === "person")
+      return { ...column, cell: this.kit.personCell };
+    if (column.key === "load") return { ...column, cell: this.kit.loadCell };
+    return column;
+  });
   readonly rowKey = rowKey;
+  readonly features = [
+    this.kit.rowActions<Person>([
+      { key: "profile", label: "View profile", onClick: this.activateRow },
+    ]),
+  ];
 }
 
 /** Saved views: name the table's state and pick it again from the menu. */

@@ -30,7 +30,16 @@ import { savedViews } from "@adapttable/quasar/saved-views";
 import { statusBar } from "@adapttable/quasar/status-bar";
 import { tree } from "@adapttable/quasar/tree";
 import { virtualize } from "@adapttable/quasar/virtualize";
-import { Dark, QBadge, QBtn, QInput, QSelect, Quasar } from "quasar";
+import {
+  Dark,
+  QAvatar,
+  QBadge,
+  QBtn,
+  QInput,
+  QLinearProgress,
+  QSelect,
+  Quasar,
+} from "quasar";
 import quasarStyles from "quasar/dist/quasar.rtl.css?inline";
 import ar from "quasar/lang/ar";
 import en from "quasar/lang/en-US";
@@ -74,8 +83,31 @@ export const kit: ShowcaseKit = {
   setDark: (dark) => {
     Dark.set(dark);
   },
+  avatar: (initials) =>
+    h(
+      QAvatar,
+      {
+        size: "40px",
+        color: "primary",
+        textColor: "white",
+        "aria-hidden": "true",
+      },
+      () => initials
+    ),
+  progress: (value, label) =>
+    h(QLinearProgress, {
+      value: value / 100,
+      rounded: true,
+      size: "6px",
+      "aria-label": label,
+    }),
   status: (tone, label) =>
-    h(QBadge, { color: BADGE_COLOR[tone], rounded: true, label }),
+    h(QBadge, {
+      color: BADGE_COLOR[tone],
+      textColor: tone === "info" ? "black" : "white",
+      rounded: true,
+      label,
+    }),
   button: ({ label, part, disabled, onClick }) =>
     h(QBtn, {
       "data-adapttable-part": part,

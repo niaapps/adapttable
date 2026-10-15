@@ -315,18 +315,35 @@ function MobileCardBase<TRow>({
             collapseLabel={labels.collapseRow}
           />
         )}
-        {renderCard
-          ? renderCard(row, {
-              index,
-              fields,
-              selected,
-              expanded,
-            })
-          : fields.map(({ column, label, value }) => (
+        {renderCard ? (
+          renderCard(row, {
+            index,
+            fields,
+            selected,
+            expanded,
+          })
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit, minmax(min(100%, 7rem), 1fr))",
+              gap: "0.75rem",
+              minWidth: 0,
+            }}
+          >
+            {fields.map(({ column, label, value }) => (
               <Box
                 key={column.key}
                 data-adapttable-part="card-row"
-                sx={{ mb: compact ? 0.5 : 1 }}
+                sx={{
+                  minWidth: 0,
+                  overflowWrap: "anywhere",
+                  gridColumn: label ? undefined : "1 / -1",
+                  backgroundColor: label ? "action.hover" : undefined,
+                  borderRadius: 1,
+                  p: label ? 1 : 0,
+                }}
               >
                 {label && (
                   <Typography
@@ -350,6 +367,8 @@ function MobileCardBase<TRow>({
                 </Typography>
               </Box>
             ))}
+          </div>
+        )}
         {rowReorder && (
           <OptionalRowReorderButtons
             reorder={rowReorder}
@@ -374,6 +393,7 @@ function MobileCardBase<TRow>({
         {rowEdit.actions.length > 0 && (
           <div data-adapttable-part="card-actions">
             <RowActionButtons
+              minTargetSize={44}
               row={row}
               actions={rowEdit.actions}
               confirm={confirm}

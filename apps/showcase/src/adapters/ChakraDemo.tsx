@@ -143,14 +143,19 @@ const CHAKRA_CELLS: DemoCells = {
       {label}
     </Badge>
   ),
-  Load: ({ value, meta }: LoadCellProps) => (
+  Load: ({ value, meta, label }: LoadCellProps) => (
     <Box minW="90px">
-      <Progress.Root value={value} size="sm" colorPalette="blue">
+      <Progress.Root
+        aria-label={label}
+        value={value}
+        size="sm"
+        colorPalette="blue"
+      >
         <Progress.Track borderRadius="full">
           <Progress.Range />
         </Progress.Track>
       </Progress.Root>
-      <Text fontSize="xs" color="gray.500" mt={1}>
+      <Text fontSize="xs" color="fg" mt={1}>
         {meta}
       </Text>
     </Box>

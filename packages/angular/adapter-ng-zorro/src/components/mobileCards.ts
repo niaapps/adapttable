@@ -10,7 +10,11 @@ import {
   AdaptSlot,
 } from "@adapttable/angular/adapter";
 import { NgComponentOutlet, NgTemplateOutlet } from "@angular/common";
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ViewEncapsulation,
+} from "@angular/core";
 import { NzCardModule } from "ng-zorro-antd/card";
 import { NzDescriptionsModule } from "ng-zorro-antd/descriptions";
 
@@ -41,7 +45,9 @@ import { AdaptSelectionCheckbox } from "./selectionCheckbox";
     NgTemplateOutlet,
   ],
   templateUrl: "./mobileCards.html",
+  encapsulation: ViewEncapsulation.None,
+  styleUrl: "./mobileCards.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { style: "display: contents" },
+  host: { style: "display: contents", class: "adapt-ng-zorro-mobile" },
 })
 export class AdaptMobileCards<TRow> extends AdaptMobileCardsModel<TRow> {}

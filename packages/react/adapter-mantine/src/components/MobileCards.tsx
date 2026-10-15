@@ -35,7 +35,7 @@ import {
   type TreeEntry,
   useSummaryCells,
 } from "@adapttable/react/adapter";
-import { Card, Checkbox, Group, Stack, Text } from "@mantine/core";
+import { Box, Card, Checkbox, Group, Stack, Text } from "@mantine/core";
 import {
   type CSSProperties,
   memo,
@@ -308,6 +308,9 @@ function MobileCardBase<TRow>({
       {...rowClickProps(row, onRowClick, index)}
       style={{
         minHeight: "max-content",
+        borderColor: selected
+          ? "var(--mantine-primary-color-filled)"
+          : undefined,
         ...treeCardStyle(treeEntry?.level ?? 0),
         ...style,
       }}
@@ -330,46 +333,76 @@ function MobileCardBase<TRow>({
       data-dirty={rowIsDirty(editing, id) ? "" : undefined}
     >
       <Stack gap={cardGap}>
-        {treeEntry && (
-          <OptionalTreeToggle
-            entry={treeEntry}
-            labels={labels}
-            onToggle={onToggleTree ?? (() => undefined)}
-          />
-        )}
-        {onToggleSelect && (
-          <Checkbox
-            aria-label={labels.selectRow}
-            checked={selected}
-            onChange={() => onToggleSelect(id)}
-          />
-        )}
-        {onToggleExpand && (
-          <Group justify="flex-end">
-            <OptionalExpandToggle
-              id={id}
-              expanded={Boolean(expanded)}
-              onToggle={onToggleExpand}
-              expandLabel={labels.expandRow}
-              collapseLabel={labels.collapseRow}
-            />
+        {(treeEntry ?? onToggleSelect ?? onToggleExpand) && (
+          <Group justify="space-between" wrap="nowrap" gap="xs">
+            <Group gap="xs">
+              {treeEntry && (
+                <OptionalTreeToggle
+                  entry={treeEntry}
+                  labels={labels}
+                  onToggle={onToggleTree ?? (() => undefined)}
+                />
+              )}
+              {onToggleSelect && (
+                <Checkbox
+                  aria-label={labels.selectRow}
+                  checked={selected}
+                  onChange={() => onToggleSelect(id)}
+                  styles={{
+                    body: { minHeight: 44, alignItems: "center" },
+                    input: { cursor: "pointer" },
+                  }}
+                />
+              )}
+            </Group>
+            {onToggleExpand && (
+              <OptionalExpandToggle
+                id={id}
+                expanded={Boolean(expanded)}
+                onToggle={onToggleExpand}
+                expandLabel={labels.expandRow}
+                collapseLabel={labels.collapseRow}
+              />
+            )}
           </Group>
         )}
-        {renderCard
-          ? renderCard(row, {
-              index,
-              fields,
-              selected,
-              expanded,
-            })
-          : fields.map(({ column, label, value }) => (
-              <div key={column.key} data-adapttable-part="card-row">
+        {renderCard ? (
+          renderCard(row, {
+            index,
+            fields,
+            selected,
+            expanded,
+          })
+        ) : (
+          <Box
+            style={{
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit, minmax(min(100%, 7rem), 1fr))",
+              gap:
+                typeof cardGap === "number"
+                  ? cardGap
+                  : `var(--mantine-spacing-${cardGap})`,
+            }}
+          >
+            {fields.map(({ column, label, value }) => (
+              <Box
+                key={column.key}
+                data-adapttable-part="card-row"
+                style={{
+                  minWidth: 0,
+                  overflowWrap: "anywhere",
+                  gridColumn: label ? undefined : "1 / -1",
+                  borderRadius: "var(--mantine-radius-sm)",
+                }}
+                p={label ? "xs" : 0}
+                bg={label ? "var(--mantine-color-default-hover)" : undefined}
+              >
                 {label && (
                   <Text
                     data-adapttable-part="card-label"
                     fz="xs"
-                    c="dimmed"
-                    tt="uppercase"
+                    c="var(--mantine-color-text)"
                     fw={500}
                   >
                     {label}
@@ -379,14 +412,17 @@ function MobileCardBase<TRow>({
                 a <p> wrapper would be invalid HTML. */}
                 <Text
                   component="div"
-                  fz="sm"
+                  fz={label ? "sm" : "md"}
+                  fw={label ? undefined : 600}
                   data-adapttable-part="card-value"
                   data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
                 >
                   {value}
                 </Text>
-              </div>
+              </Box>
             ))}
+          </Box>
+        )}
         {rowReorder && (
           <OptionalRowReorderButtons
             reorder={rowReorder}
@@ -412,8 +448,15 @@ function MobileCardBase<TRow>({
           />
         )}
         {rowEdit.actions.length > 0 && (
-          <div data-adapttable-part="card-actions">
+          <Box
+            data-adapttable-part="card-actions"
+            pt="sm"
+            style={{
+              borderTop: "1px solid var(--mantine-color-default-border)",
+            }}
+          >
             <RowActionButtons
+              minTargetSize={44}
               row={row}
               actions={rowEdit.actions}
               confirm={confirm}
@@ -421,7 +464,7 @@ function MobileCardBase<TRow>({
               layout={rowActionsLayout}
               render={renderRowActions}
             />
-          </div>
+          </Box>
         )}
       </Stack>
     </Card>

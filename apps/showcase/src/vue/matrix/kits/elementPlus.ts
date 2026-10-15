@@ -35,10 +35,12 @@ import { statusBar } from "@adapttable/element-plus/status-bar";
 import { tree } from "@adapttable/element-plus/tree";
 import { virtualize } from "@adapttable/element-plus/virtualize";
 import {
+  ElAvatar,
   ElButton,
   ElConfigProvider,
   ElInput,
   ElOption,
+  ElProgress,
   ElSelect,
   ElTag,
 } from "element-plus";
@@ -82,10 +84,35 @@ export const kit: ShowcaseKit = {
       "onUpdate:modelValue": onChange,
     }),
   Root,
+  avatar: (initials) =>
+    h(
+      ElAvatar,
+      {
+        size: 40,
+        "aria-hidden": "true",
+        style: {
+          color: "inherit",
+          backgroundColor: "color-mix(in srgb, currentColor 8%, transparent)",
+        },
+      },
+      () => initials
+    ),
+  progress: (value, label) =>
+    h(ElProgress, {
+      percentage: value,
+      showText: false,
+      strokeWidth: 6,
+      "aria-label": label,
+    }),
   status: (tone, label) =>
     h(
       ElTag,
-      { type: TAG_TYPE[tone], size: "small", effect: "light" },
+      {
+        type: TAG_TYPE[tone],
+        size: "small",
+        effect: "light",
+        style: { "--el-tag-text-color": "var(--el-text-color-regular)" },
+      },
       () => label
     ),
   button: ({ label, part, disabled, onClick }) =>

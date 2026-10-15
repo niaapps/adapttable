@@ -58,6 +58,7 @@ import { TUI_ENGLISH_LANGUAGE } from "@taiga-ui/i18n/languages/english";
 import { SHOWCASE_PRESENTATION } from "../data";
 import { SHOWCASE_ASSET_ROOT, type ShowcaseKit } from "../showcaseKit";
 import { ShowcaseConnectionField } from "./taigaUiConnectionField";
+import { ShowcaseLoad, ShowcasePerson } from "./taigaUiMobileCells";
 import { ShowcaseStatus } from "./taigaUiStatus";
 
 /** Components and feature factories are always from this one kit. */
@@ -82,6 +83,8 @@ export const kit = {
   ],
   table: AdaptDataTable,
   statusCell: ShowcaseStatus,
+  personCell: ShowcasePerson,
+  loadCell: ShowcaseLoad,
   pivotPanel: AdaptPivotPanel,
   assistant: AdaptTableAssistant,
   assistantButton: AdaptAssistantButton,

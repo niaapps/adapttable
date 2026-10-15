@@ -89,6 +89,8 @@ export interface ShowcaseKit {
   readonly TableAssistant: Component;
   /** The status column's cell, drawn as the kit's own tag or badge. */
   readonly status: StatusRenderer;
+  readonly avatar: (initials: string) => VNodeChild;
+  readonly progress: (value: number, label: string) => VNodeChild;
   readonly button: (props: ShowcaseButtonProps) => VNodeChild;
   readonly select: (props: ShowcaseSelectProps) => VNodeChild;
   readonly input: (props: ShowcaseInputProps) => VNodeChild;

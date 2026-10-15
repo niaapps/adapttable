@@ -39,6 +39,7 @@ import { AdaptSelectionCheckbox } from "./selectionCheckbox";
     NgTemplateOutlet,
   ],
   templateUrl: "./mobileCards.html",
+  styleUrl: "./mobileCards.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: "display: contents" },
 })

@@ -156,10 +156,11 @@ const BASE_UI_CELLS: DemoCells = {
       {label}
     </span>
   ),
-  Load: ({ value, meta }: LoadCellProps) => (
+  Load: ({ value, meta, label }: LoadCellProps) => (
     <div style={{ minWidth: 90 }}>
       <div
         role="progressbar"
+        aria-label={label}
         aria-valuenow={value}
         style={{
           height: 4,

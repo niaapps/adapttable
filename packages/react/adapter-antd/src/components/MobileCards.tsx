@@ -47,6 +47,7 @@ import {
   ConfigProvider,
   Descriptions,
   Space,
+  theme,
   Typography,
 } from "antd";
 import {
@@ -69,14 +70,19 @@ import { ADAPTTABLE_GROUP, type AdaptTableGroupRow } from "./grouping";
 import { RowActionButtons } from "./RowActionButtons";
 
 /** Name the real kit-owned field rows and label spans, without extra markup. */
-function CardDescriptions({ children }: Readonly<{ children: ReactNode }>) {
+function CardDescriptions({
+  children,
+  vertical = false,
+}: Readonly<{ children: ReactNode; vertical?: boolean }>) {
   const { getPrefixCls } = useContext(ConfigProvider.ConfigContext);
   const prefix = getPrefixCls("descriptions");
   return (
     <Descriptions
       column={1}
+      layout={vertical ? "vertical" : "horizontal"}
       size="small"
       colon={false}
+      styles={{ label: { color: "inherit" } }}
       ref={(descriptions) => {
         const root = descriptions?.nativeElement;
         if (!root) return;
@@ -282,6 +288,7 @@ function CardItemBase<TRow>(props: Readonly<CardItemProps<TRow>>) {
   const actions = rowEdit.actions.length > 0 ? rowEdit.actions : null;
   // Built once and used by both paths, so a custom card shows the very same
   // value node the built-in would have — cell renderers and editors included.
+  const { token } = theme.useToken();
   const fields = columns.map((column) => ({
     column,
     label: resolveMobileLabel(column),
@@ -364,6 +371,7 @@ function CardItemBase<TRow>(props: Readonly<CardItemProps<TRow>>) {
             )}
             {actions && (
               <RowActionButtons
+                minTargetSize={44}
                 row={row}
                 actions={actions}
                 confirm={confirm}
@@ -381,18 +389,39 @@ function CardItemBase<TRow>(props: Readonly<CardItemProps<TRow>>) {
       ) : (
         // The whole `Descriptions` goes, not just its items: a
         // `Descriptions.Item` only means anything inside one.
-        <CardDescriptions>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(min(100%, 7rem), 1fr))",
+            gap: 12,
+          }}
+        >
           {fields.map(({ column, label, value }) => (
-            <Descriptions.Item key={column.key} label={label}>
-              <span
-                data-adapttable-part="card-value"
-                data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
-              >
-                {value}
-              </span>
-            </Descriptions.Item>
+            <div
+              key={column.key}
+              style={{
+                minWidth: 0,
+                overflowWrap: "anywhere",
+                gridColumn: label ? undefined : "1 / -1",
+                padding: label ? 8 : 0,
+                background: label ? token.colorFillQuaternary : undefined,
+                borderRadius: token.borderRadiusSM,
+              }}
+            >
+              <CardDescriptions vertical>
+                <Descriptions.Item label={label}>
+                  <div
+                    data-adapttable-part="card-value"
+                    data-flash={cellFlashAttr(isCellFlashing, id, column.key)}
+                  >
+                    {value}
+                  </div>
+                </Descriptions.Item>
+              </CardDescriptions>
+            </div>
           ))}
-        </CardDescriptions>
+        </div>
       )}
       {rowReorder && (
         <OptionalRowReorderButtons

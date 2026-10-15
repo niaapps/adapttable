@@ -32,8 +32,10 @@ import { tree } from "@adapttable/vuetify/tree";
 import { virtualize } from "@adapttable/vuetify/virtualize";
 import { defineComponent, h } from "vue";
 import { VApp } from "vuetify/components/VApp";
+import { VAvatar } from "vuetify/components/VAvatar";
 import { VBtn } from "vuetify/components/VBtn";
 import { VChip } from "vuetify/components/VChip";
+import { VProgressLinear } from "vuetify/components/VProgressLinear";
 import { VSelect } from "vuetify/components/VSelect";
 import { VTextField } from "vuetify/components/VTextField";
 import { createVuetify } from "vuetify/framework";
@@ -96,6 +98,20 @@ export const kit: ShowcaseKit = {
   setDark: (dark) => {
     void vuetify?.theme.change(dark ? "dark" : "light");
   },
+  avatar: (initials) =>
+    h(
+      VAvatar,
+      { size: 40, color: "primary", variant: "tonal", "aria-hidden": "true" },
+      () => initials
+    ),
+  progress: (value, label) =>
+    h(VProgressLinear, {
+      modelValue: value,
+      color: "primary",
+      height: 6,
+      rounded: true,
+      "aria-label": label,
+    }),
   status: (tone, label) =>
     h(
       VChip,

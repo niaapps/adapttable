@@ -34,7 +34,15 @@ import { savedViews } from "@adapttable/shadcn-vue/saved-views";
 import { statusBar } from "@adapttable/shadcn-vue/status-bar";
 import { tree } from "@adapttable/shadcn-vue/tree";
 import { virtualize } from "@adapttable/shadcn-vue/virtualize";
-import { Primitive, ToggleGroupItem, ToggleGroupRoot } from "reka-ui";
+import {
+  AvatarFallback,
+  AvatarRoot,
+  Primitive,
+  ProgressIndicator,
+  ProgressRoot,
+  ToggleGroupItem,
+  ToggleGroupRoot,
+} from "reka-ui";
 import { h } from "vue";
 
 import type { ShowcaseKit } from "../showcaseKit";
@@ -58,6 +66,26 @@ export const kit: ShowcaseKit = {
           onChange(event.target.value);
       },
     }),
+  avatar: (initials) =>
+    h(
+      AvatarRoot,
+      {
+        class: "demo-mobile-avatar bg-muted text-foreground",
+        "aria-hidden": "true",
+      },
+      () => h(AvatarFallback, null, () => initials)
+    ),
+  progress: (value, label) =>
+    h(
+      ProgressRoot,
+      {
+        modelValue: value,
+        max: 100,
+        class: "demo-mobile-progress",
+        "aria-label": label,
+      },
+      () => h(ProgressIndicator, { style: { width: `${value}%` } })
+    ),
   status: (tone, label) =>
     h(
       Primitive,

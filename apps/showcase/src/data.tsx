@@ -254,6 +254,8 @@ export interface LoadCellProps {
   value: number;
   /** Caption rendered under the bar, e.g. `"78% · 4"`. */
   meta: string;
+  /** Localized accessible name for the workload indicator. */
+  label: string;
 }
 
 export interface DemoCells {
@@ -560,7 +562,7 @@ export function makeColumns(
             <strong style={{ fontWeight: 600 }}>
               {personName(row, locale)}
             </strong>
-            <small style={{ opacity: 0.55, fontSize: "0.8em" }}>
+            <small style={{ fontSize: "0.8em", fontWeight: 400 }}>
               {personRole(row, locale)}
             </small>
           </span>
@@ -704,6 +706,7 @@ export function makeColumns(
       width: 175,
       accessor: (row) => (
         <Load
+          label={s.load}
           value={utilization(row)}
           meta={`${formatPercent(utilization(row), locale)} · ${allocationCount(row)}`}
         />
@@ -859,6 +862,7 @@ export function makeWideColumns(
       width: 190,
       accessor: (row) => (
         <Load
+          label={s.load}
           value={utilization(row)}
           meta={`${formatPercent(utilization(row), locale)} · ${allocationCount(row)}`}
         />

@@ -142,10 +142,9 @@ export const tailwindClassNames: DataTableClassNames = {
   // it, pushing the page sideways on a phone.
   card: "min-w-0 list-none rounded-xl border border-gray-200 bg-white p-3 shadow-sm dark:border-zinc-700 dark:bg-zinc-900",
   cardRow:
-    "flex items-start justify-between gap-3 py-1 text-sm first-of-type:mb-1 first-of-type:border-b first-of-type:border-gray-100 first-of-type:pb-2 dark:first-of-type:border-zinc-800",
-  cardLabel:
-    "pt-0.5 text-[10px] font-medium uppercase tracking-wide text-gray-500 dark:text-zinc-400",
-  cardValue: "min-w-0 text-right font-medium text-gray-900 dark:text-zinc-100",
+    "flex flex-col items-stretch gap-1 rounded-md bg-gray-50 p-2 text-sm dark:bg-zinc-800 [&:not(:has([data-adapttable-part=card-label]))]:bg-transparent [&:not(:has([data-adapttable-part=card-label]))]:p-0",
+  cardLabel: "text-xs font-medium text-gray-600 dark:text-zinc-400",
+  cardValue: "min-w-0 text-start font-medium text-gray-900 dark:text-zinc-100",
   cardActions:
     "mt-2 flex justify-end gap-1 border-t border-gray-100 pt-2 dark:border-zinc-800",
   cardDetail: "mt-2 border-t border-gray-200 pt-2 text-sm dark:border-zinc-700",

@@ -243,10 +243,9 @@ export const shadcnClassNames = {
   // it, pushing the page sideways on a phone.
   card: "min-w-0 list-none rounded-xl border border-border bg-card p-3 shadow-sm [[data-density=compact]_&]:p-2",
   cardRow:
-    "flex items-start justify-between gap-3 py-1 text-sm first-of-type:mb-1 first-of-type:border-b first-of-type:border-border first-of-type:pb-2",
-  cardLabel:
-    "pt-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground",
-  cardValue: "min-w-0 text-right font-medium",
+    "flex flex-col items-stretch gap-1 rounded-md bg-muted/50 p-2 text-sm [&:not(:has([data-adapttable-part=card-label]))]:bg-transparent [&:not(:has([data-adapttable-part=card-label]))]:p-0",
+  cardLabel: "text-xs font-medium text-muted-foreground",
+  cardValue: "min-w-0 text-start font-medium",
   // ── Structure & scroll ──────────────────────────────────────────
   thead: "bg-card",
   headerRow: "align-middle",

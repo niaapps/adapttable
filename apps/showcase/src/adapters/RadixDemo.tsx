@@ -138,9 +138,9 @@ const RADIX_CELLS: DemoCells = {
       {label}
     </Badge>
   ),
-  Load: ({ value, meta }: LoadCellProps) => (
+  Load: ({ value, meta, label }: LoadCellProps) => (
     <Box style={{ minWidth: "90px" }}>
-      <Progress value={value} size="1" />
+      <Progress aria-label={label} value={value} size="1" />
       <Text as="div" size="1" color="gray" mt="1">
         {meta}
       </Text>

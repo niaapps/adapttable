@@ -48,6 +48,8 @@ import { AdaptCdkMenuDirection } from "./cdkMenuDirection";
   templateUrl: "./rowActionButtons.html",
 })
 export class AdaptRowActions<TRow> {
+  /** Minimum native control size for the mobile card surface. */
+  readonly minTargetSize = input<number>();
   /** The row. */
   readonly row = input.required<TRow>();
   /** Its actions. */

@@ -54,6 +54,15 @@ export const kit: ShowcaseKit = {
           onChange(event.target.value);
       },
     }),
+  avatar: (initials) =>
+    h("span", { class: "demo-mobile-avatar", "aria-hidden": "true" }, initials),
+  progress: (value, label) =>
+    h("progress", {
+      value,
+      max: 100,
+      "aria-label": label,
+      style: { width: "100%" },
+    }),
   status: (tone, label) =>
     h("span", { class: "mx-status", "data-status-tone": tone }, label),
   button: ({ label, part, disabled, onClick }) =>

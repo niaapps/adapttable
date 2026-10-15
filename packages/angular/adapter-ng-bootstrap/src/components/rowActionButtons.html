@@ -24,6 +24,8 @@
       ngbDropdownToggle
       class="btn btn-outline-secondary btn-sm"
       data-adapttable-part="row-actions-trigger"
+      [style.min-width.px]="minTargetSize()"
+      [style.min-height.px]="minTargetSize()"
       [attr.aria-controls]="menuId"
       aria-haspopup="menu"
       [class]="classNames().rowActionsTrigger"
@@ -40,6 +42,8 @@
           ngbDropdownItem
           type="button"
           data-adapttable-part="action-button"
+          [style.min-width.px]="minTargetSize()"
+          [style.min-height.px]="minTargetSize()"
           [class]="classNames().actionButton"
           [attr.aria-label]="item.action.label"
           [attr.title]="item.reason ?? null"
@@ -58,6 +62,8 @@
       class="btn btn-outline-secondary btn-sm"
       type="button"
       data-adapttable-part="action-button"
+      [style.min-width.px]="minTargetSize()"
+      [style.min-height.px]="minTargetSize()"
       [class]="classNames().actionButton"
       [attr.aria-label]="item.action.label"
       [attr.title]="item.reason ?? null"

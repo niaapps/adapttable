@@ -30,7 +30,15 @@ import { savedViews } from "@adapttable/reka-ui/saved-views";
 import { statusBar } from "@adapttable/reka-ui/status-bar";
 import { tree } from "@adapttable/reka-ui/tree";
 import { virtualize } from "@adapttable/reka-ui/virtualize";
-import { Primitive, ToggleGroupItem, ToggleGroupRoot } from "reka-ui";
+import {
+  AvatarFallback,
+  AvatarRoot,
+  Primitive,
+  ProgressIndicator,
+  ProgressRoot,
+  ToggleGroupItem,
+  ToggleGroupRoot,
+} from "reka-ui";
 import { h } from "vue";
 
 import type { ShowcaseKit } from "../showcaseKit";
@@ -54,6 +62,21 @@ export const kit: ShowcaseKit = {
           onChange(event.target.value);
       },
     }),
+  avatar: (initials) =>
+    h(AvatarRoot, { class: "demo-mobile-avatar", "aria-hidden": "true" }, () =>
+      h(AvatarFallback, null, () => initials)
+    ),
+  progress: (value, label) =>
+    h(
+      ProgressRoot,
+      {
+        modelValue: value,
+        max: 100,
+        class: "demo-mobile-progress",
+        "aria-label": label,
+      },
+      () => h(ProgressIndicator, { style: { width: `${value}%` } })
+    ),
   status: (tone, label) =>
     h(
       Primitive,
