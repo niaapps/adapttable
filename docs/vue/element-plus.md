@@ -7,11 +7,14 @@ checkboxes, selects, popovers, drawers and message boxes.
 
 ## Availability and versions
 
-This is a public `0.1.0` package. Install `@adapttable/element-plus`
+This is a public package. Install `@adapttable/element-plus`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
 Peers: Vue `^3.5.0` and Element Plus `^2.14.7`. Node.js 22.12.0 or newer.
+
+Applications checking dependency declarations should read the
+[strict dependency compatibility notes](./getting-started.md#strict-dependency-type-checking).
 
 ## Application setup
 

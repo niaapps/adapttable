@@ -6,11 +6,14 @@ supplies the buttons, fields, selects, checkboxes, menus and dialogs.
 
 ## Availability and versions
 
-This is a public `0.1.0` package. Install `@adapttable/vuetify`
+This is a public package. Install `@adapttable/vuetify`
 and its UI-kit peers using [Get started with Vue](./getting-started.md#choose-a-ui-kit),
 then complete the application setup below.
 
 Peers: Vue `^3.5.0` and Vuetify `^4.2.4`. Node.js 22.12.0 or newer.
+
+Applications checking dependency declarations should read the
+[strict dependency compatibility notes](./getting-started.md#strict-dependency-type-checking).
 
 ## Application setup
 

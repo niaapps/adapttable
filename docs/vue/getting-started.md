@@ -9,7 +9,7 @@ Each adapter supplies its own controls; the binding owns the table model.
 ## Availability and scope
 
 The Vue binding, Unstyled adapter and all seven styled adapters are public
-public packages. Install the native kit in your Vue application:
+packages. Install the native kit in your Vue application:
 
 ```sh
 pnpm add @adapttable/vue-unstyled vue@^3.5.0
@@ -49,6 +49,47 @@ If your template checker restricts custom data attributes, its
 `vueCompilerOptions.dataAttributes` can include `"data-*"` for the documented
 semantic hooks. Row types, renderer props and selection model events remain
 checked in both directions.
+
+### Strict dependency type checking
+
+`strict: true` checks application types. Separately, `skipLibCheck: false`
+also checks dependency declaration files. A successful Vite build does not
+prove that either type check passed.
+
+The 2026-10-15 packed-package audit found unresolved declaration errors in
+these vendor versions with Vue 3.5.44, TypeScript 6.0.3 and vue-tsc 3.3.12:
+
+| Vendor              | Remaining errors with dependency checking enabled                                               |
+| ------------------- | ----------------------------------------------------------------------------------------------- |
+| Element Plus 2.14.7 | Vue `GlobalComponents` constraints and a recursive `h` declaration.                             |
+| Nuxt UI 4.12.0      | Nuxt schema/tooling dependencies, h3 declarations and theme variant constraints.                |
+| Vuetify 4.2.6       | Vue `GlobalComponents` constraints and a conflicting DOM `ViewTransition.finished` declaration. |
+
+Each case reproduces with vendor-only imports, without importing AdaptTable.
+Every public AdaptTable entry in these three kits passes a separate strict
+declaration check. TypeScript 5.9.3 did not resolve the vendor failures either.
+These results do not establish a fully passing dependency-type gate for the
+three host applications; projects requiring that gate should wait for a
+verified compatible vendor release.
+
+Before diagnosing an upstream error, complete the host configuration:
+
+- Nuxt UI needs generated theme aliases and Vite generation before type
+  checking; follow the [Nuxt UI setup](./nuxt-ui.md#application-setup).
+- If an explicit `compilerOptions.types` list excludes Bluetooth globals
+  needed by VueUse declarations, install `@types/web-bluetooth` and add
+  `"web-bluetooth"` to that list.
+- Element Plus 2.14.7's VueUse 15 declarations reference Temporal. With
+  TypeScript 6, include `"ESNext.Temporal"` alongside the application's other
+  `lib` entries. Its root declarations also reference Vue Router types;
+  install `vue-router@^4` when importing that entry. Adding a type library
+  does not add a runtime polyfill or require enabling router integration.
+
+Those setup corrections remove missing-type errors but do not repair the
+vendor declaration conflicts listed above. Keep dependency checking enabled
+when validating a fix; do not treat `skipLibCheck: true`, broad ambient module
+shims or an index signature added to Vue's global component registry as
+evidence that these errors are resolved.
 
 ## Choose a UI kit
 

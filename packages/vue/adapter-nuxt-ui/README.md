@@ -164,8 +164,15 @@ scoped to that SDK; separate peer contexts can otherwise load Nuxt-only imports.
 
 The Vite plugin generates theme declarations. For Vue type checking, map
 `#build/ui/*` to `./node_modules/.nuxt-ui/ui/*` in the application tsconfig and run
-Vite before the first type check. Keep the generated directory out of source
-control. `prose: true` generates the public Prose table-part themes used by the
+Vite before the first type check, for example
+`vite build && vue-tsc --noEmit -p tsconfig.app.json`. Do not run these steps
+in parallel on a clean checkout. In a separate tsconfig for `vite.config.ts`,
+map `#build/ui` to `./node_modules/.nuxt-ui/ui`. Include `auto-imports.d.ts` and
+`components.d.ts` when using the plugin's default auto-imports. Keep generated
+files out of source control. See the
+[strict dependency compatibility notes](https://adapttable.orwamahmoud.com/vue/getting-started/#strict-dependency-type-checking)
+for remaining vendor declaration errors with full dependency checking enabled.
+`prose: true` generates the public Prose table-part themes used by the
 adapter. Import controls from documented `@nuxt/ui/components/*.vue` paths;
 `@nuxt/ui` itself is the Nuxt module entry, not a component barrel.
 
