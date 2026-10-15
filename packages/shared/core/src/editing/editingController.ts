@@ -891,7 +891,8 @@ export function createEditHistoryStack<TRow>(): EditHistoryStack<TRow> {
     getSnapshot: () => snapshot,
     subscribe,
     record(entry, depth) {
-      past = [...past, entry].slice(-depth);
+      const limit = Math.max(0, Math.trunc(depth));
+      past = limit > 0 ? [...past, entry].slice(-limit) : [];
       future = [];
       sync();
     },
@@ -954,7 +955,7 @@ export function editHistoryEntry<TRow>(
       ? [{ row: edit.row, columnKey: edit.columnKey, value: read.value }]
       : [];
   });
-  return { redo: edits, undo };
+  return { redo: edits.map((edit) => ({ ...edit })), undo };
 }
 
 /**

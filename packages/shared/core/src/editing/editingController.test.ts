@@ -511,6 +511,29 @@ describe("createEditValidationStore", () => {
 describe("undo and redo", () => {
   const edit = { row: ada, columnKey: "name", value: "A" };
 
+  it.each([0, -1, 0.5, Number.NaN])(
+    "retains no gestures for a nonpositive whole depth: %s",
+    (depth) => {
+      const stack = createEditHistoryStack<Row>();
+      stack.record({ redo: [edit], undo: [] }, 2);
+      stack.undo();
+      stack.record({ redo: [edit], undo: [] }, depth);
+      expect(stack.getSnapshot()).toEqual({ past: 0, future: 0 });
+      expect(stack.undo()).toBeUndefined();
+      expect(stack.redo()).toBeUndefined();
+    }
+  );
+
+  it("captures gesture descriptors before a host reuses its batch", () => {
+    const edits = [{ ...edit }];
+    const entry = editHistoryEntry(edits, () => ({ value: "Ada" }));
+    edits[0]!.value = "Changed later";
+    edits[0]!.columnKey = "role";
+    edits.length = 0;
+    expect(entry.redo).toEqual([edit]);
+    expect(entry.undo).toEqual([{ ...edit, value: "Ada" }]);
+  });
+
   it("keeps at most the depth, drops redo on a new gesture, and clears", () => {
     const stack = createEditHistoryStack<Row>();
     const listener = vi.fn();
