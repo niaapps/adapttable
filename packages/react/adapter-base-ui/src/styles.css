@@ -220,6 +220,11 @@
   color: var(--adapttable-accent);
 }
 
+.adapttable-badge[data-color="gray"] {
+  background: var(--adapttable-soft);
+  color: inherit;
+}
+
 .adapttable-text {
   margin: 0;
 }

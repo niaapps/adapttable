@@ -183,7 +183,6 @@ function Receipt({
               flexWrap: "wrap",
               alignItems: "baseline",
               gap: "0 0.45em",
-              opacity: 0.6,
               fontSize: "0.9em",
               overflowWrap: "anywhere",
             }}

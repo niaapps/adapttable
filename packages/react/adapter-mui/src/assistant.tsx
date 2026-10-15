@@ -85,6 +85,7 @@ function AssistantButton({
       startIcon={icon}
       size="small"
       variant={KIT_VARIANT[variant]}
+      color={variant === "primary" ? "primary" : "inherit"}
       aria-label={label}
       aria-expanded={expanded}
       data-adapttable-part={part}

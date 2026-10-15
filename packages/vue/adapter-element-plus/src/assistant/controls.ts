@@ -60,6 +60,10 @@ export const elementAssistantControls: TableAssistantSlots = {
         type: TAG_TYPE[props.tone],
         size: "small",
         effect: "light",
+        style:
+          props.tone === "neutral"
+            ? { "--el-tag-text-color": "var(--el-text-color-regular)" }
+            : undefined,
         class: props.className,
       },
       { default: () => props.label }

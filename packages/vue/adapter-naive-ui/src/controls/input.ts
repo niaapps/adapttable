@@ -1,6 +1,6 @@
 import type { Attrs, ElementRef } from "@adapttable/vue";
 import { mergeVueAttrs, useElementRef } from "@adapttable/vue/adapter";
-import { type InputInst, NInput } from "naive-ui";
+import { type InputInst, type InputProps, NInput } from "naive-ui";
 import {
   defineComponent,
   h,
@@ -18,6 +18,7 @@ export interface NaiveInputControl {
   readonly value: string;
   readonly type?: "text" | "number" | "date" | "textarea";
   readonly prefix?: () => VNodeChild;
+  readonly themeOverrides?: NonNullable<InputProps["themeOverrides"]>;
   readonly onChange: (value: string) => void;
 }
 
@@ -52,6 +53,7 @@ const NaiveInputControl = defineComponent(
         NInput,
         {
           size: "small",
+          themeOverrides: control.themeOverrides,
           value: control.value,
           type: inputType === "textarea" ? "textarea" : "text",
           disabled: attrs.disabled === true,

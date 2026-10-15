@@ -64,6 +64,7 @@ export const naiveAssistantControls: TableAssistantSlots = {
     naiveInput({
       type: "textarea",
       value: props.value,
+      themeOverrides: { placeholderColor: "var(--n-text-color)" },
       attrs: {
         "data-adapttable-part": props.part,
         "aria-label": props.label,

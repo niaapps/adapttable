@@ -6,6 +6,10 @@
 "@adapttable/ai-react": patch
 "@adapttable/angular": patch
 "@adapttable/vue": patch
+"@adapttable/base-ui": patch
+"@adapttable/mui": patch
+"@adapttable/element-plus": patch
+"@adapttable/naive-ui": patch
 ---
 
 Keep table state and editing history consistent across async work and framework lifecycles.
@@ -27,3 +31,4 @@ Keep table state and editing history consistent across async work and framework 
 - Compute pivot min/max without spreading large groups into function arguments, avoiding stack-limit failures on large datasets.
 - Replace obsolete field errors from row validation when the row is checked again, preserving independent cell-validator errors and clearing both sources on reset.
 - Share one Reka runtime across showcase kits so Nuxt UI shortcut menus can receive focus inside the mobile assistant sheet and Escape closes the menu alone.
+- Keep assistant receipts readable without compounded opacity, improve neutral status and secondary control contrast, and use Naive UI's text token for the composer placeholder. Verify all supported assistants in light and dark themes with browser contrast checks.
