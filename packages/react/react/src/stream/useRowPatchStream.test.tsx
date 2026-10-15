@@ -43,6 +43,43 @@ function mount(over: Partial<UseRowPatchStreamOptions<Row>> = {}) {
  * become patches, patches go back through the host's own setter.
  */
 describe("useRowPatchStream", () => {
+  it("keeps a live socket when an inline protocol list has unchanged values", () => {
+    const sockets: FakeSocket[] = [];
+    let rows: readonly Row[] = ROWS;
+    const createWebSocket = vi.fn((url: string) => {
+      const socket = new FakeSocket(url);
+      sockets.push(socket);
+      return socket;
+    });
+    const { result, rerender } = renderHook(
+      ({ protocol }) =>
+        useRowPatchStream<Row>({
+          websocket: "wss://test/rows",
+          protocols: [protocol],
+          getRowId: (row) => row.id,
+          onPatch: (update) => {
+            rows = update(rows);
+          },
+          createWebSocket,
+        }),
+      { initialProps: { protocol: "rows.v1" } }
+    );
+    expect(sockets).toHaveLength(1);
+    act(() => sockets[0]?.open());
+    rerender({ protocol: "rows.v1" });
+    expect(sockets).toHaveLength(1);
+    expect(result.current.status).toBe("open");
+    act(() => sockets[0]?.push('{"type":"remove","id":"a"}'));
+    expect(rows.map((row) => row.id)).toEqual(["b"]);
+
+    rerender({ protocol: "rows.v2" });
+    expect(sockets[0]?.readyState).toBe(3);
+    expect(sockets).toHaveLength(2);
+    expect(createWebSocket).toHaveBeenLastCalledWith("wss://test/rows", [
+      "rows.v2",
+    ]);
+  });
+
   it("applies a frame to the host's rows", () => {
     const { sockets, view, current } = mount();
     act(() => sockets[0]?.open());
