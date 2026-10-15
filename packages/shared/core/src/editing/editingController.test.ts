@@ -277,6 +277,70 @@ describe("createCellSaveStore", () => {
     expect(defaultSaveErrorMessage("")).toBe("Could not save");
     expect(defaultSaveErrorMessage(42)).toBe("Could not save");
   });
+
+  it("a successful synchronous save retires an older pending failure", async () => {
+    const onEditError = vi.fn();
+    const store = createCellSaveStore<Row>({ onEditError });
+    const base = {
+      rowId: "1",
+      columnKey: "name",
+      previous: ada,
+      attempted: "A",
+    };
+    let reject!: (error: Error) => void;
+    const pending = store.track({
+      ...base,
+      result: new Promise((_, fail) => {
+        reject = fail;
+      }),
+    });
+    await expect(
+      store.track({ ...base, attempted: "B", result: undefined })
+    ).resolves.toBe(true);
+    expect(cellSaveStatus(store.getSnapshot(), "1", "name")).toBeUndefined();
+    reject(new Error("Obsolete failure"));
+    await expect(pending).resolves.toBe(false);
+    expect(cellSaveFailure(store.getSnapshot(), "1", "name")).toBeUndefined();
+    expect(onEditError).not.toHaveBeenCalled();
+  });
+
+  it("a synchronous retry clears a previous save error", async () => {
+    const store = createCellSaveStore<Row>();
+    const base = {
+      rowId: "1",
+      columnKey: "name",
+      previous: ada,
+      attempted: "A",
+    };
+    await store.track({
+      ...base,
+      result: Promise.reject(new Error("Offline")),
+    });
+    expect(cellSaveStatus(store.getSnapshot(), "1", "name")).toBe("failed");
+    await store.track({ ...base, result: undefined });
+    expect(cellSaveStatus(store.getSnapshot(), "1", "name")).toBeUndefined();
+  });
+
+  it("keeps the save failure visible if the host's error formatter throws", async () => {
+    const store = createCellSaveStore<Row>({
+      formatError: () => {
+        throw new Error("Formatter error");
+      },
+    });
+    await expect(
+      store.track({
+        rowId: "1",
+        columnKey: "name",
+        previous: ada,
+        attempted: "A",
+        result: Promise.reject(new Error("Offline")),
+      })
+    ).resolves.toBe(false);
+    expect(cellSaveFailure(store.getSnapshot(), "1", "name")?.message).toBe(
+      "Offline"
+    );
+    expect(store.getSnapshot().saving.size).toBe(0);
+  });
 });
 
 describe("createEditValidationStore", () => {
@@ -387,6 +451,59 @@ describe("createEditValidationStore", () => {
 
     await store.check({ target, value: "", row: ada, validateCell: () => "x" });
     store.clearAll();
+    expect(store.getSnapshot().cellErrors.size).toBe(0);
+  });
+
+  it("does not revive a cleared check when the same cell starts validating again", async () => {
+    const store = createEditValidationStore<Row>();
+    let finishFirst!: (message: string | undefined) => void;
+    let finishSecond!: (message: string | undefined) => void;
+    const first = store.check({
+      target,
+      value: "first",
+      row: ada,
+      validateCell: () =>
+        new Promise((resolve) => {
+          finishFirst = resolve;
+        }),
+    });
+    store.clearAll();
+    const second = store.check({
+      target,
+      value: "second",
+      row: ada,
+      validateCell: () =>
+        new Promise((resolve) => {
+          finishSecond = resolve;
+        }),
+    });
+    finishFirst("Obsolete error");
+    await expect(first).resolves.toEqual({ allowed: false });
+    expect(store.getSnapshot().cellErrors.size).toBe(0);
+    expect(store.getSnapshot().validating.size).toBe(1);
+    finishSecond(undefined);
+    await expect(second).resolves.toEqual({ allowed: true });
+    expect(store.getSnapshot().validating.size).toBe(0);
+  });
+
+  it("retires pending checks when validation is removed from a cell", async () => {
+    const store = createEditValidationStore<Row>();
+    let finish!: (message: string | undefined) => void;
+    const pending = store.check({
+      target,
+      value: "before",
+      row: ada,
+      validateCell: () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    });
+    await expect(
+      store.check({ target, value: "after", row: ada })
+    ).resolves.toEqual({ allowed: true });
+    expect(store.getSnapshot().validating.size).toBe(0);
+    finish("Obsolete error");
+    await expect(pending).resolves.toEqual({ allowed: false });
     expect(store.getSnapshot().cellErrors.size).toBe(0);
   });
 });

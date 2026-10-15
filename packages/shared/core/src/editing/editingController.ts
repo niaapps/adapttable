@@ -464,7 +464,7 @@ export function createCellSaveStore<TRow>(
     saving: new Set(),
     failures: new Map(),
   };
-  const tokens = new Map<string, number>();
+  const tokens = new Map<string, symbol>();
   const { subscribe, notify } = listenerSet();
 
   const markSaving = (key: string, busy: boolean): void => {
@@ -497,9 +497,14 @@ export function createCellSaveStore<TRow>(
     async track(input) {
       const { rowId, columnKey, previous, attempted, previousValue, result } =
         input;
-      if (!isThenable(result)) return true;
       const key = cellSaveKey(rowId, columnKey);
-      const token = (tokens.get(key) ?? 0) + 1;
+      if (!isThenable(result)) {
+        tokens.delete(key);
+        setFailure(key, undefined);
+        markSaving(key, false);
+        return true;
+      }
+      const token = Symbol();
       tokens.set(key, token);
       const live = (): boolean => tokens.get(key) === token;
       setFailure(key, undefined);
@@ -510,7 +515,12 @@ export function createCellSaveStore<TRow>(
         return true;
       } catch (error) {
         if (!live()) return false;
-        const message = (current.formatError ?? defaultSaveErrorMessage)(error);
+        let message: string;
+        try {
+          message = (current.formatError ?? defaultSaveErrorMessage)(error);
+        } catch {
+          message = defaultSaveErrorMessage(error);
+        }
         setFailure(key, { previous, attempted, message });
         observeEdit(current.onEditError, {
           row: previous,
@@ -523,7 +533,10 @@ export function createCellSaveStore<TRow>(
         });
         return false;
       } finally {
-        if (live()) markSaving(key, false);
+        if (live()) {
+          tokens.delete(key);
+          markSaving(key, false);
+        }
       }
     },
     rollback(rowId, columnKey) {
@@ -691,7 +704,7 @@ export function createEditValidationStore<TRow>(
     rowErrors: new Map(),
     validating: new Set(),
   };
-  const tokens = new Map<string, number>();
+  const tokens = new Map<string, symbol>();
   const { subscribe, notify } = listenerSet();
 
   const setMap = (
@@ -757,9 +770,13 @@ export function createEditValidationStore<TRow>(
     async check(input) {
       const { target, value, row, validateCell } = input;
       const { validateRow, applyEdit = shallowApplyEdit } = current;
-      if (!validateCell && !validateRow) return { allowed: true };
       const key = validationKey(target.rowId, target.columnKey);
-      const token = (tokens.get(key) ?? 0) + 1;
+      if (!validateCell && !validateRow) {
+        tokens.delete(key);
+        markValidating(key, false);
+        return settle(undefined, target);
+      }
+      const token = Symbol();
       tokens.set(key, token);
       const live = (): boolean => tokens.get(key) === token;
       markValidating(key, true);
@@ -777,12 +794,15 @@ export function createEditValidationStore<TRow>(
         if (!live()) return { allowed: false };
         return settle(rowVerdict, target);
       } finally {
-        if (live()) markValidating(key, false);
+        if (live()) {
+          tokens.delete(key);
+          markValidating(key, false);
+        }
       }
     },
     clear(rowId, columnKey) {
       const key = validationKey(rowId, columnKey);
-      tokens.set(key, (tokens.get(key) ?? 0) + 1);
+      tokens.delete(key);
       setCellError(key);
       setRowError(rowId);
       markValidating(key, false);
