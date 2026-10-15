@@ -149,6 +149,7 @@ it("uses a real USlideover with one close request, nested menu Escape and contro
   await flush();
   const item = element<HTMLElement>('[role="menuitem"]');
   expect(sheet.contains(item)).toBe(false);
+  expect(document.activeElement).toBe(item);
   await key(item, "Escape");
   expect(open.value).toBe(true);
   expect(document.activeElement).toBe(menu);

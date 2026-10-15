@@ -26,3 +26,4 @@ Keep table state and editing history consistent across async work and framework 
 - Handle copy/cut/paste/fill/find shortcuts with Caps Lock and report rejected fill parsing without throwing or extending the selected range.
 - Compute pivot min/max without spreading large groups into function arguments, avoiding stack-limit failures on large datasets.
 - Replace obsolete field errors from row validation when the row is checked again, preserving independent cell-validator errors and clearing both sources on reset.
+- Share one Reka runtime across showcase kits so Nuxt UI shortcut menus can receive focus inside the mobile assistant sheet and Escape closes the menu alone.

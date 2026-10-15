@@ -483,6 +483,9 @@ export default defineConfig({
     dedupe: [
       "vue",
       "@nuxt/ui",
+      // Nuxt UI imports both reka-ui and reka-ui/namespaced. They must share
+      // one overlay/focus stack even when other kits resolve a newer version.
+      "reka-ui",
       "react",
       "react-dom",
       "@mui/material",
