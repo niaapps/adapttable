@@ -422,6 +422,7 @@ export const ko: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells}개 셀 붙여넣기`,
   gridRangePasteFailed: "붙여넣기 실패",
   gridRangeFilled: (cells) => `${cells}개 셀 채우기`,
+  gridRangeFillFailed: "채우기 실패",
   gridFillHandle: "선택 영역에서 채우기",
   selectionCount: "개수",
   selectionSum: "합계",

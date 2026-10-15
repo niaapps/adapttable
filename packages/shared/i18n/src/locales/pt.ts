@@ -430,6 +430,7 @@ export const pt: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} células coladas`,
   gridRangePasteFailed: "Falha ao colar",
   gridRangeFilled: (cells) => `${cells} células preenchidas`,
+  gridRangeFillFailed: "Falha ao preencher",
   gridFillHandle: "Preencher a partir da seleção",
   selectionCount: "Contagem",
   selectionSum: "Soma",

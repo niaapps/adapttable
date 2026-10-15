@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import type { ColumnMetadata } from "../columnModel";
+import { createEditHistory } from "../editing/editHistory";
 import type { CellEdit } from "./cellEdits";
 import {
   cellNavigationChannels,
@@ -62,6 +63,31 @@ describe("cellNavigationChannels", () => {
     expect(channels.onUndo?.()).toBe(2);
     expect(channels.onRedo?.()).toBe(3);
   });
+
+  it.each(["onPaste", "onFill"] as const)(
+    "waits for async inline saves before recording %s",
+    async (channel) => {
+      let accept!: () => void;
+      const saved = new Promise<void>((resolve) => {
+        accept = resolve;
+      });
+      const onCellEdit = vi.fn(() => saved);
+      const history = createEditHistory({ enabled: true, columns, onCellEdit });
+      const channels = cellNavigationChannels<Row>({
+        rows,
+        columns,
+        host: { onCellEdit },
+        record: history.record,
+        undo: history.undo,
+        redo: history.redo,
+      });
+      const result = channels[channel]?.([edit]);
+      expect(history.getSnapshot()).toEqual({ past: 0, future: 0 });
+      accept();
+      await result;
+      expect(history.getSnapshot()).toEqual({ past: 1, future: 0 });
+    }
+  );
 
   it("falls back to the inline-edit channel, and to nothing without one", () => {
     const onCellEdit = vi.fn();

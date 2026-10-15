@@ -463,6 +463,99 @@ describe("modified keys", () => {
     expect(grid.getSnapshot().announcement).toBe("Paste failed");
   });
 
+  it("announces an async paste only after the save succeeds", async () => {
+    let accept!: () => void;
+    const grid = createGridFocusController(
+      base({
+        onPaste: () =>
+          new Promise<void>((resolve) => {
+            accept = resolve;
+          }),
+      })
+    );
+    grid.focusCell({ row: 0, col: 0 });
+    clipboard.readText.mockResolvedValue("Edited");
+    grid.keyDown(key("v", { ctrlKey: true }));
+    await settle();
+    expect(grid.getSnapshot().announcement).not.toContain("pasted");
+    accept();
+    await settle();
+    expect(grid.getSnapshot().announcement).toBe("1 cell pasted");
+  });
+
+  it.each(["throw", "reject"])(
+    "announces a refused paste when the host saves %s",
+    async (mode) => {
+      const grid = createGridFocusController(
+        base({
+          onPaste: () => {
+            if (mode === "throw") throw new Error("Save refused");
+            return Promise.reject(new Error("Save refused"));
+          },
+        })
+      );
+      grid.focusCell({ row: 0, col: 0 });
+      clipboard.readText.mockResolvedValue("Edited");
+      grid.keyDown(key("v", { ctrlKey: true }));
+      await settle();
+      expect(grid.getSnapshot().announcement).toBe("Paste failed");
+    }
+  );
+
+  it("reports a rejected clipboard value without invoking the save", async () => {
+    const onPaste = vi.fn();
+    const grid = createGridFocusController(
+      base({
+        columns: [
+          {
+            ...COLUMNS[0]!,
+            parseValue: () => {
+              throw new Error("Invalid cell value");
+            },
+          },
+        ],
+        onPaste,
+      })
+    );
+    grid.focusCell({ row: 0, col: 0 });
+    clipboard.readText.mockResolvedValue("invalid");
+    grid.keyDown(key("v", { ctrlKey: true }));
+    await settle();
+    expect(onPaste).not.toHaveBeenCalled();
+    expect(grid.getSnapshot().announcement).toBe("Paste failed");
+  });
+
+  it("announces a failed async fill without reporting success", async () => {
+    const grid = createGridFocusController(
+      base({ onFill: () => Promise.reject(new Error("Save refused")) })
+    );
+    grid.focusCell({ row: 0, col: 0 });
+    grid.selectRange({ anchor: { row: 0, col: 0 }, head: { row: 2, col: 0 } });
+    grid.keyDown(key("d", { ctrlKey: true }));
+    await settle();
+    expect(grid.getSnapshot().announcement).toBe("Fill failed");
+  });
+
+  it("retires an async write announcement when the grid detaches", async () => {
+    let accept!: () => void;
+    const grid = createGridFocusController(
+      base({
+        onPaste: () =>
+          new Promise<void>((resolve) => {
+            accept = resolve;
+          }),
+      })
+    );
+    grid.focusCell({ row: 0, col: 0 });
+    clipboard.readText.mockResolvedValue("Edited");
+    grid.keyDown(key("v", { ctrlKey: true }));
+    await settle();
+    grid.attach(null);
+    accept();
+    await settle();
+    expect(grid.getSnapshot().announcement).not.toContain("pasted");
+  });
+
   it("leaves paste to the browser without a paste handler", () => {
     const grid = createGridFocusController(base());
     const event = key("v", { ctrlKey: true });

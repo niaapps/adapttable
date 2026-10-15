@@ -419,6 +419,7 @@ export const fa: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} خانه جای‌گذاری شد`,
   gridRangePasteFailed: "جای‌گذاری ناموفق بود",
   gridRangeFilled: (cells) => `${cells} خانه پر شد`,
+  gridRangeFillFailed: "پر کردن ناموفق بود",
   gridFillHandle: "پر کردن از انتخاب",
   selectionCount: "تعداد",
   selectionSum: "مجموع",

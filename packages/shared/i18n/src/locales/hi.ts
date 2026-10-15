@@ -424,6 +424,7 @@ export const hi: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} सेल चिपकाए गए`,
   gridRangePasteFailed: "पेस्ट विफल",
   gridRangeFilled: (cells) => `${cells} सेल भरे गए`,
+  gridRangeFillFailed: "भरना विफल रहा",
   gridFillHandle: "चयन से भरें",
   selectionCount: "गिनती",
   selectionSum: "योग",

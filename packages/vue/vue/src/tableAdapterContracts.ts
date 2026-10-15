@@ -306,8 +306,8 @@ export interface DataTableClassNames {
 /** Shared adapter props. Query state is owned by the supplied source when present. */
 export interface DataTableProps<TRow> {
   readonly assistant?: TableAssistantProps;
-  readonly onCellPaste?: (edits: CellEdit<TRow>[]) => void;
-  readonly onCellFill?: (edits: CellEdit<TRow>[]) => void;
+  readonly onCellPaste?: (edits: CellEdit<TRow>[]) => unknown;
+  readonly onCellFill?: (edits: CellEdit<TRow>[]) => unknown;
   readonly onCellCut?: (range: CellRange) => void;
   readonly data?: readonly TRow[];
   readonly source?: TableSource<TRow>;

@@ -420,6 +420,7 @@ export const ja: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} 件のセルを貼り付けました`,
   gridRangePasteFailed: "貼り付けに失敗しました",
   gridRangeFilled: (cells) => `${cells} 件のセルを入力しました`,
+  gridRangeFillFailed: "入力の反映に失敗しました",
   gridFillHandle: "選択範囲からフィル",
   selectionCount: "個数",
   selectionSum: "合計",

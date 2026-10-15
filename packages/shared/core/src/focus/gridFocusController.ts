@@ -26,6 +26,7 @@
  */
 import type { ColumnMetadata } from "../columnModel";
 import { columnText } from "../columns/columnText";
+import { isThenable } from "../editing/storePlumbing";
 import { defaultLabels } from "../labels";
 import type { Direction, TableLabels } from "../types";
 import type { CellEdit } from "./cellEdits";
@@ -164,14 +165,14 @@ export interface GridFocusControllerOptions<TRow> {
    * without paste knowing. Applying them stays the host's job — the table never
    * writes to data it does not own.
    */
-  onPaste?: (edits: CellEdit<TRow>[]) => void;
+  onPaste?: (edits: CellEdit<TRow>[]) => unknown;
   /**
    * A fill — the handle dragged from the selection's corner, or Ctrl/Cmd+D —
    * already turned into ordinary cell edits. Same shape and same contract as
    * {@link GridFocusControllerOptions.onPaste}: the table proposes, the host
    * writes.
    */
-  onFill?: (edits: CellEdit<TRow>[]) => void;
+  onFill?: (edits: CellEdit<TRow>[]) => unknown;
   /**
    * Ctrl/Cmd+Z. Returns how many cells came back, so the grid can say — zero
    * means the history was empty, which is worth announcing rather than
@@ -361,6 +362,7 @@ export function createGridFocusController<TRow>(
 ): GridFocusController<TRow> {
   let options = { ...initial };
   let clipboardVersion = 0;
+  let gestureVersion = 0;
   let clipboardRows = [...initial.rows];
   let clipboardRowIds = initial.rows.map((row) => initial.getRowId?.(row));
   const columnIdentity = (column: ColumnMetadata<TRow>) => ({
@@ -515,6 +517,29 @@ export function createGridFocusController<TRow>(
     write({});
   };
 
+  /** Announce writes only after the host accepts them, and observe rejections. */
+  const applyGesture = (
+    apply: () => unknown,
+    done: () => void,
+    failed: string
+  ): void => {
+    const version = ++gestureVersion;
+    const complete = (callback: () => void): void => {
+      if (options.enabled && version === gestureVersion) callback();
+    };
+    try {
+      const result = apply();
+      if (isThenable(result)) {
+        void Promise.resolve(result).then(
+          () => complete(done),
+          () => complete(() => say(failed))
+        );
+      } else complete(done);
+    } catch {
+      complete(() => say(failed));
+    }
+  };
+
   const commitFill = (to: GridCell): void => {
     const { range } = snapshot;
     const { onFill } = options;
@@ -527,17 +552,22 @@ export function createGridFocusController<TRow>(
       firstRowIndex: firstRow(),
     });
     if (edits.length === 0) return;
-    onFill(edits);
     // The filled rectangle stays selected, as it does in a spreadsheet: the
     // next fill continues from what was just written.
-    batch(() => {
-      write({ range: fillTargetRange(range, to) });
-      say(
-        (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(
-          edits.length
-        )
-      );
-    });
+    applyGesture(
+      () => onFill(edits),
+      () =>
+        batch(() => {
+          if (snapshot.range === range)
+            write({ range: fillTargetRange(range, to) });
+          say(
+            (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(
+              edits.length
+            )
+          );
+        }),
+      labels()?.gridRangeFillFailed ?? defaultLabels.gridRangeFillFailed
+    );
   };
 
   /** Ctrl/Cmd+C and Ctrl/Cmd+X — the rectangle, as a spreadsheet reads it. */
@@ -577,9 +607,15 @@ export function createGridFocusController<TRow>(
       columns: options.columns,
       firstRowIndex: firstRow(),
     });
-    options.onFill?.(edits);
-    say(
-      (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(edits.length)
+    applyGesture(
+      () => options.onFill?.(edits),
+      () =>
+        say(
+          (labels()?.gridRangeFilled ?? defaultLabels.gridRangeFilled)(
+            edits.length
+          )
+        ),
+      labels()?.gridRangeFillFailed ?? defaultLabels.gridRangeFillFailed
     );
   };
 
@@ -594,18 +630,24 @@ export function createGridFocusController<TRow>(
         );
         return;
       }
-      const edits = pasteRangeEdits({
-        text,
-        range: target,
-        rows: options.rows,
-        columns: options.columns,
-        firstRowIndex: firstRow(),
-      });
-      options.onPaste?.(edits);
-      say(
-        (labels()?.gridRangePasted ?? defaultLabels.gridRangePasted)(
-          edits.length
-        )
+      let count = 0;
+      applyGesture(
+        () => {
+          const edits = pasteRangeEdits({
+            text,
+            range: target,
+            rows: options.rows,
+            columns: options.columns,
+            firstRowIndex: firstRow(),
+          });
+          count = edits.length;
+          return options.onPaste?.(edits);
+        },
+        () =>
+          say(
+            (labels()?.gridRangePasted ?? defaultLabels.gridRangePasted)(count)
+          ),
+        labels()?.gridRangePasteFailed ?? defaultLabels.gridRangePasteFailed
       );
     });
   };
@@ -788,6 +830,11 @@ export function createGridFocusController<TRow>(
       };
     },
     configure(next) {
+      if (
+        next.enabled !== options.enabled ||
+        (next.firstRowIndex ?? 0) !== firstRow()
+      )
+        gestureVersion++;
       // A pending request owns its original address space. Keep copied
       // identities: hosts may replace/reorder entries in the same array.
       const changed =
@@ -823,6 +870,7 @@ export function createGridFocusController<TRow>(
       options = { ...next };
     },
     attach(node) {
+      if (node === null) gestureVersion++;
       container = node;
     },
     syncFocus,

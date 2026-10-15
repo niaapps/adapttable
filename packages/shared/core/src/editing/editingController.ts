@@ -943,9 +943,9 @@ export function editHistoryEntry<TRow>(
  * @public
  */
 export function asGesture<TRow>(
-  apply: ((edits: CellEdit<TRow>[]) => void) | undefined,
+  apply: ((edits: CellEdit<TRow>[]) => unknown) | undefined,
   record: (edits: readonly CellEdit<TRow>[]) => void
-): ((edits: CellEdit<TRow>[]) => void) | undefined {
+): ((edits: CellEdit<TRow>[]) => unknown) | undefined {
   if (!apply) return undefined;
   return (edits) => recordedGesture(record, edits, () => apply(edits));
 }

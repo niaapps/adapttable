@@ -187,8 +187,8 @@ export interface UseDataTableShellOptions<TRow>
   readonly selectedIds?: MaybeRefOrGetterOptional<readonly string[]>;
   readonly defaultSelectedIds?: readonly string[];
   readonly onSelectionChange?: (ids: string[]) => void;
-  readonly onCellPaste?: (edits: CellEdit<TRow>[]) => void;
-  readonly onCellFill?: (edits: CellEdit<TRow>[]) => void;
+  readonly onCellPaste?: (edits: CellEdit<TRow>[]) => unknown;
+  readonly onCellFill?: (edits: CellEdit<TRow>[]) => unknown;
   readonly onCellCut?: (range: CellRange) => void;
   readonly runtimeChannels?: MaybeRefOrGetter<
     Pick<
@@ -225,8 +225,8 @@ export interface ResolvedTableOptions<TRow>
   readonly statusBar?: boolean;
   readonly onCellRangeChange?: (range: CellRange | null) => void;
   readonly onCellCut?: (range: CellRange) => void;
-  readonly onCellPaste?: (edits: CellEdit<TRow>[]) => void;
-  readonly onCellFill?: (edits: CellEdit<TRow>[]) => void;
+  readonly onCellPaste?: (edits: CellEdit<TRow>[]) => unknown;
+  readonly onCellFill?: (edits: CellEdit<TRow>[]) => unknown;
   readonly rowActions?: readonly RowAction<TRow>[];
   readonly bulkActions?: readonly BulkAction[];
   readonly [key: string]: unknown;

@@ -429,6 +429,7 @@ export const ru: Required<TableLabels> = {
   gridRangePasted: (cells) => `Вставлено ячеек: ${cells}`,
   gridRangePasteFailed: "Не удалось вставить",
   gridRangeFilled: (cells) => `Заполнено ячеек: ${cells}`,
+  gridRangeFillFailed: "Не удалось заполнить",
   gridFillHandle: "Заполнить из выделения",
   selectionCount: "Количество",
   selectionSum: "Сумма",

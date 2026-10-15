@@ -430,6 +430,7 @@ export const it: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} celle incollate`,
   gridRangePasteFailed: "Incolla non riuscito",
   gridRangeFilled: (cells) => `${cells} celle riempite`,
+  gridRangeFillFailed: "Riempimento non riuscito",
   gridFillHandle: "Riempi dalla selezione",
   selectionCount: "Conteggio",
   selectionSum: "Somma",

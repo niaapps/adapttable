@@ -422,6 +422,7 @@ export const cs: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} buněk vloženo`,
   gridRangePasteFailed: "Chyba vkládání",
   gridRangeFilled: (cells) => `${cells} buněk vyplněno`,
+  gridRangeFillFailed: "Vyplnění se nezdařilo",
   gridFillHandle: "Vyplnit z výběru",
   selectionCount: "Počet",
   selectionSum: "Součet",

@@ -162,9 +162,9 @@ export function pasteRangeEdits<TRow>(
  */
 export interface CellPasteHandlerOptions<TRow> {
   /** Takes the batch whole — one transaction, one undo entry. */
-  onCellPaste?: (edits: CellEdit<TRow>[]) => void;
+  onCellPaste?: (edits: CellEdit<TRow>[]) => unknown;
   /** The ordinary inline-edit channel, used one edit at a time. */
-  onCellEdit?: (row: TRow, key: string, nextValue: unknown) => void;
+  onCellEdit?: (row: TRow, key: string, nextValue: unknown) => unknown;
 }
 
 /**
@@ -180,7 +180,7 @@ export interface CellPasteHandlerOptions<TRow> {
  */
 export function cellPasteHandler<TRow>(
   options: CellPasteHandlerOptions<TRow>
-): ((edits: CellEdit<TRow>[]) => void) | undefined {
+): ((edits: CellEdit<TRow>[]) => unknown) | undefined {
   return batchEditHandler(options.onCellPaste, options.onCellEdit);
 }
 
@@ -191,9 +191,9 @@ export function cellPasteHandler<TRow>(
  */
 export interface CellFillHandlerOptions<TRow> {
   /** Takes the batch whole — one transaction, one undo entry. */
-  onCellFill?: (edits: CellEdit<TRow>[]) => void;
+  onCellFill?: (edits: CellEdit<TRow>[]) => unknown;
   /** The ordinary inline-edit channel, used one edit at a time. */
-  onCellEdit?: (row: TRow, key: string, nextValue: unknown) => void;
+  onCellEdit?: (row: TRow, key: string, nextValue: unknown) => unknown;
 }
 
 /**
@@ -209,6 +209,6 @@ export interface CellFillHandlerOptions<TRow> {
  */
 export function cellFillHandler<TRow>(
   options: CellFillHandlerOptions<TRow>
-): ((edits: CellEdit<TRow>[]) => void) | undefined {
+): ((edits: CellEdit<TRow>[]) => unknown) | undefined {
   return batchEditHandler(options.onCellFill, options.onCellEdit);
 }

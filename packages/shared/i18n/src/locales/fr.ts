@@ -435,6 +435,7 @@ export const fr: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} cellules collées`,
   gridRangePasteFailed: "Échec du collage",
   gridRangeFilled: (cells) => `${cells} cellules remplies`,
+  gridRangeFillFailed: "Échec du remplissage",
   gridFillHandle: "Remplir depuis la sélection",
   selectionCount: "Nombre",
   selectionSum: "Somme",

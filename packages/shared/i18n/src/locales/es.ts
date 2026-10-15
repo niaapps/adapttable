@@ -427,6 +427,7 @@ export const es: Required<TableLabels> = {
   gridRangePasted: (cells) => `${cells} celdas pegadas`,
   gridRangePasteFailed: "Error al pegar",
   gridRangeFilled: (cells) => `${cells} celdas rellenadas`,
+  gridRangeFillFailed: "Error al rellenar",
   gridFillHandle: "Rellenar desde la selección",
   selectionCount: "Recuento",
   selectionSum: "Suma",

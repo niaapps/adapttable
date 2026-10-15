@@ -413,6 +413,7 @@ export const zhTW: Required<TableLabels> = {
   gridRangePasted: (cells) => `已貼上 ${cells} 個儲存格`,
   gridRangePasteFailed: "貼上失敗",
   gridRangeFilled: (cells) => `已填滿 ${cells} 個儲存格`,
+  gridRangeFillFailed: "填滿失敗",
   gridFillHandle: "從選取範圍填滿",
   selectionCount: "計數",
   selectionSum: "總和",
