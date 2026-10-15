@@ -388,7 +388,10 @@ describe("the showcase page manifest", () => {
         assert.ok(routes.has(route), route);
       }
     }
-    assert.equal(routes.has(demoRoute("unregistered-kit/row-reordering")), false);
+    assert.equal(
+      routes.has(demoRoute("unregistered-kit/row-reordering")),
+      false
+    );
     assert.equal(routes.has(demoRoute("unregistered-kit/aggregation")), false);
   });
 

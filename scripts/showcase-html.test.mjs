@@ -31,6 +31,20 @@ const ANGULAR_MODES = new Map([
   ],
 ]);
 
+const HTML_ENTITIES = new Map([
+  ["&amp;", "&"],
+  ["&quot;", '"'],
+  ["&#39;", "'"],
+  ["&lt;", "<"],
+  ["&gt;", ">"],
+]);
+
+function decodeHtmlText(text) {
+  return text.replace(/&(?:amp|quot|#39|lt|gt);/g, (entity) =>
+    HTML_ENTITIES.get(entity)
+  );
+}
+
 /**
  * The showcase's generated HTML is what is on disk.
  *
@@ -45,6 +59,13 @@ const ANGULAR_MODES = new Map([
  */
 describe("the generated showcase pages", () => {
   const files = showcaseHtmlFiles();
+
+  it("decodes writer entities once without decoding the resulting text again", () => {
+    assert.equal(
+      decodeHtmlText("&amp;quot; &quot; &#39; &lt; &gt; &amp;"),
+      "&quot; \" ' < > &"
+    );
+  });
 
   it("writes one page per matrix entry and per replaced address", () => {
     // Twenty-two pages per React adapter — a landing plus twenty-one
@@ -350,12 +371,7 @@ describe("the generated showcase pages", () => {
     for (const description of descriptions) {
       assert.ok(description && description.length > 40, description);
       // Decode the entities the HTML writer uses before applying the snippet budget.
-      const text = description
-        .replaceAll("&amp;", "&")
-        .replaceAll("&quot;", '"')
-        .replaceAll("&#39;", "'")
-        .replaceAll("&lt;", "<")
-        .replaceAll("&gt;", ">");
+      const text = decodeHtmlText(description);
       assert.ok(text.length <= 160, `${text.length} characters: ${text}`);
     }
   });
