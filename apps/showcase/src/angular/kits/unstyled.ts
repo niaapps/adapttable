@@ -50,6 +50,7 @@ import { tree } from "@adapttable/angular-unstyled/tree";
 import { virtualize } from "@adapttable/angular-unstyled/virtualize";
 
 import type { ShowcaseKit } from "../showcaseKit";
+import { ShowcaseConnectionField } from "./unstyledConnectionField";
 import { ShowcaseStatus } from "./unstyledStatus";
 
 /** Components and feature factories are always from this one kit. */
@@ -61,6 +62,7 @@ export const kit = {
   pivotPanel: AdaptPivotPanel,
   assistant: AdaptTableAssistant,
   assistantButton: AdaptAssistantButton,
+  connectionField: ShowcaseConnectionField,
   assistantSelect: AdaptAssistantLanguageChip,
   savedViewsPanel: AdaptSavedViewsPanel,
   bulkActions,

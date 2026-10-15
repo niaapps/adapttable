@@ -39,6 +39,7 @@ import ui from "@nuxt/ui/vue-plugin";
 import { defineComponent, h } from "vue";
 
 import type { ShowcaseKit } from "../showcaseKit";
+import NuxtConnectionInput from "./NuxtConnectionInput.vue";
 import DataTable from "./tables/NuxtUiDataTable.vue";
 
 const BADGE_COLOR = {
@@ -63,6 +64,7 @@ const Root = defineComponent(
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "nuxt-ui",
+  input: (props) => h(NuxtConnectionInput, props),
   install: (app) => {
     document.querySelector("#root")?.classList.add("isolate");
     app.use(ui);

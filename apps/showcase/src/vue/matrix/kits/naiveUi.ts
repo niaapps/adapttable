@@ -34,6 +34,7 @@ import {
   enUS,
   NButton,
   NConfigProvider,
+  NInput,
   NSelect,
   NTag,
 } from "naive-ui";
@@ -109,6 +110,16 @@ const Select = defineComponent(
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "naive-ui",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h(NInput, {
+      inputProps: { "aria-label": label },
+      "data-adapttable-part": part,
+      value,
+      type: type ?? "text",
+      disabled,
+      autocomplete: "off",
+      onUpdateValue: onChange,
+    }),
   Root,
   status: (tone, label) =>
     h(

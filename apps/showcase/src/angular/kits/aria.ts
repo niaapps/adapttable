@@ -54,6 +54,7 @@ import { tree } from "@adapttable/angular-aria/tree";
 import { virtualize } from "@adapttable/angular-aria/virtualize";
 
 import type { ShowcaseKit } from "../showcaseKit";
+import { ShowcaseConnectionField } from "./ariaConnectionField";
 import { ShowcaseStatus } from "./ariaStatus";
 
 /** Components and feature factories are always from this one kit. */
@@ -65,6 +66,7 @@ export const kit = {
   pivotPanel: AdaptPivotPanel,
   assistant: AdaptTableAssistant,
   assistantButton: AdaptAssistantButton,
+  connectionField: ShowcaseConnectionField,
   assistantSelect: AdaptAssistantLanguageChip,
   savedViewsPanel: AdaptSavedViewsPanel,
   bulkActions,

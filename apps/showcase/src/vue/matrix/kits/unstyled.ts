@@ -41,6 +41,19 @@ import DataTable from "./tables/UnstyledDataTable.vue";
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "vue-unstyled",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h("input", {
+      "aria-label": label,
+      "data-adapttable-part": part,
+      value,
+      type: type ?? "text",
+      disabled,
+      autocomplete: "off",
+      onInput: (event: Event) => {
+        if (event.target instanceof HTMLInputElement)
+          onChange(event.target.value);
+      },
+    }),
   status: (tone, label) =>
     h("span", { class: "mx-status", "data-status-tone": tone }, label),
   button: ({ label, part, disabled, onClick }) =>

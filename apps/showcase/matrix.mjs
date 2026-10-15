@@ -3709,17 +3709,17 @@ export function Sales({ rows, columns, teamTotal, grandTotal }) {
     },
     intros: {
       vue: [
-        "This deterministic local demo mounts a real {kit} {framework} table and its {kit} assistant. Ask to sort salaries, choose a person, or propose Grace's salary as 150. No language model or API key is needed.",
+        "This demo mounts a real {kit} {framework} table and its {kit} assistant. Start with scripted sorting, questions and approved edits, or connect your HTTP backend for free-form AI requests. The scripted mode needs no model or API key.",
         "A question filters the table only after you answer. A proposed edit waits for your approval in the assistant, the table or a dialog; an approved write updates the host's data and its status line. Rejecting leaves the data unchanged, and the conversation records the execution result.",
         "`tableAgent` and `useTableAssistant` from `@adapttable/ai-vue` share the mounted table's session. The snippet below shows a minimal local sorting transport; the demo also includes questions and governed edits. JSON, OpenAI, HTTP, MCP, MCP Apps, WebMCP, AG-UI and AI SDK helpers can use the same session in your application.",
       ],
       angular: [
-        "This deterministic local demo mounts a real {kit} {framework} table and its {kit} assistant. Ask to sort salaries, choose a person, or propose Grace's salary as 150. No language model or API key is needed.",
+        "This demo mounts a real {kit} {framework} table and its {kit} assistant. Start with scripted sorting, questions and approved edits, or connect your HTTP backend for free-form AI requests. The scripted mode needs no model or API key.",
         "A question filters the table only after you answer. A proposed edit waits for your approval in the assistant, the table or a dialog; an approved write updates the host's data and its status line. Rejecting leaves the data unchanged, and the conversation records the execution result.",
         "`tableAgent` and `injectTableAssistant` from `@adapttable/ai-angular` share the mounted table's session. The snippet below shows a minimal local sorting transport; the demo also includes questions and governed edits. JSON, OpenAI, HTTP, MCP, MCP Apps, WebMCP, AG-UI and AI SDK helpers can use the same session in your application.",
       ],
       "ng-zorro": [
-        "This deterministic local demo mounts a real {kit} {framework} table and its NG-ZORRO assistant. Ask to sort salaries, choose a person, or propose Grace's salary as 150. No language model or API key is needed.",
+        "This demo mounts a real {kit} {framework} table and its NG-ZORRO assistant. Start with scripted sorting, questions and approved edits, or connect your HTTP backend for free-form AI requests. The scripted mode needs no model or API key.",
         "A question filters the table only after you answer. A proposed edit waits for your approval in the assistant, the table or a dialog; an approved write updates the host's data and its status line. Rejecting leaves the data unchanged, and the conversation records the execution result.",
         "`tableAgent` and `injectTableAssistant` from `@adapttable/ai-angular` share the mounted table's session. The snippet below shows a minimal local sorting transport; the demo also includes questions and governed edits. JSON, OpenAI, HTTP, MCP, MCP Apps, WebMCP, AG-UI and AI SDK helpers can use the same session in your application.",
       ],
@@ -3928,7 +3928,7 @@ const features = [tableAgent({
     },
     notes: {
       unstyled:
-        "The assistant, question choices and approval controls are native HTML. This page runs a local script only; the host status line records approved writes, and the approval-surface selector chooses assistant, table or dialog review.",
+        "The assistant, question choices and approval controls are native HTML. Start with the local script or connect your HTTP backend. The host status line records approved writes, and the approval-surface selector chooses assistant, table or dialog review.",
       mantine:
         "The optional assistant, filters and approval controls use Mantine. Import the assistant separately, or build your own conversation UI on the headless controller.",
       mui: "The optional assistant uses MUI controls alongside the Material table and approval strip. Its separate import keeps chat UI out of tables that do not need it.",

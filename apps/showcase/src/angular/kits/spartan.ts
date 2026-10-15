@@ -50,6 +50,7 @@ import { tree } from "@adapttable/spartan/tree";
 import { virtualize } from "@adapttable/spartan/virtualize";
 
 import type { ShowcaseKit } from "../showcaseKit";
+import { ShowcaseConnectionField } from "./spartanConnectionField";
 import { ShowcaseStatus } from "./spartanStatus";
 
 /** Components and feature factories are always from this one kit. */
@@ -61,6 +62,7 @@ export const kit = {
   pivotPanel: AdaptPivotPanel,
   assistant: AdaptTableAssistant,
   assistantButton: AdaptAssistantButton,
+  connectionField: ShowcaseConnectionField,
   assistantSelect: AdaptAssistantLanguageChip,
   savedViewsPanel: AdaptSavedViewsPanel,
   bulkActions,

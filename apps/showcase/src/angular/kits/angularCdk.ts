@@ -53,6 +53,7 @@ import { tree } from "@adapttable/angular-cdk/tree";
 import { virtualize } from "@adapttable/angular-cdk/virtualize";
 
 import type { ShowcaseKit } from "../showcaseKit";
+import { ShowcaseConnectionField } from "./angularCdkConnectionField";
 import { ShowcaseStatus } from "./angularCdkStatus";
 
 /** Components and feature factories are always from this one kit. */
@@ -64,6 +65,7 @@ export const kit = {
   pivotPanel: AdaptPivotPanel,
   assistant: AdaptTableAssistant,
   assistantButton: AdaptAssistantButton,
+  connectionField: ShowcaseConnectionField,
   assistantSelect: AdaptAssistantLanguageChip,
   savedViewsPanel: AdaptSavedViewsPanel,
   bulkActions,

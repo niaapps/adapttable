@@ -395,7 +395,7 @@ describe("the generated showcase pages", () => {
       assert.match(file.html, /tableAgent/);
       assert.match(file.html, /@adapttable\/ai-vue/);
       assert.match(file.html, /session\.execute/);
-      assert.match(file.html, /No language model or API key is needed/);
+      assert.match(file.html, /The scripted mode needs no model or API key/);
       assert.doesNotMatch(file.html, /ai-angular|injectTableAssistant/);
     }
     const angularDirs = new Set(
@@ -419,7 +419,7 @@ describe("the generated showcase pages", () => {
       assert.match(file.html, /injectTableAssistant/);
       assert.match(file.html, /tableAgent/);
       assert.match(file.html, /session\.execute/);
-      assert.match(file.html, /No language model or API key is needed/);
+      assert.match(file.html, /The scripted mode needs no model or API key/);
       assert.match(file.html, /approved write updates the host/);
       assert.doesNotMatch(file.html, /Connect backend/);
     }

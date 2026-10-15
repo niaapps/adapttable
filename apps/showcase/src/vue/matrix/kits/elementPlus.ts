@@ -37,6 +37,7 @@ import { virtualize } from "@adapttable/element-plus/virtualize";
 import {
   ElButton,
   ElConfigProvider,
+  ElInput,
   ElOption,
   ElSelect,
   ElTag,
@@ -70,6 +71,16 @@ const Root = defineComponent(
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "element-plus",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h(ElInput, {
+      "aria-label": label,
+      "data-adapttable-part": part,
+      modelValue: value,
+      type,
+      disabled,
+      autocomplete: "off",
+      "onUpdate:modelValue": onChange,
+    }),
   Root,
   status: (tone, label) =>
     h(

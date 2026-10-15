@@ -39,6 +39,21 @@ import DataTable from "./tables/RekaUiDataTable.vue";
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "reka-ui",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h(Primitive, {
+      as: "input",
+      "aria-label": label,
+      "data-adapttable-part": part,
+      class: "mx-kit-input",
+      value,
+      type: type ?? "text",
+      disabled,
+      autocomplete: "off",
+      onInput: (event: Event) => {
+        if (event.target instanceof HTMLInputElement)
+          onChange(event.target.value);
+      },
+    }),
   status: (tone, label) =>
     h(
       Primitive,

@@ -63,6 +63,7 @@ export interface ShowcaseKit {
   readonly pivotPanel: Type<unknown>;
   readonly assistant: Type<unknown>;
   readonly assistantButton: Type<unknown>;
+  readonly connectionField: Type<unknown>;
   readonly assistantSelect: Type<unknown>;
   readonly savedViewsPanel: Type<unknown>;
   readonly bulkActions: typeof bulkActions;

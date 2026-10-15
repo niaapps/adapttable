@@ -35,6 +35,7 @@ import { VApp } from "vuetify/components/VApp";
 import { VBtn } from "vuetify/components/VBtn";
 import { VChip } from "vuetify/components/VChip";
 import { VSelect } from "vuetify/components/VSelect";
+import { VTextField } from "vuetify/components/VTextField";
 import { createVuetify } from "vuetify/framework";
 import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
 import { ar, en } from "vuetify/locale";
@@ -66,6 +67,19 @@ const Root = defineComponent(
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "vuetify",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h(VTextField, {
+      "aria-label": label,
+      "data-adapttable-part": part,
+      modelValue: value,
+      type,
+      disabled,
+      autocomplete: "off",
+      hideDetails: true,
+      density: "compact",
+      variant: "outlined",
+      "onUpdate:modelValue": onChange,
+    }),
   install: (app, appearance) => {
     vuetify = createVuetify({
       theme: { defaultTheme: appearance.dark ? "dark" : "light" },

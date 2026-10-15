@@ -53,6 +53,7 @@ import { tree } from "@adapttable/ng-bootstrap/tree";
 import { virtualize } from "@adapttable/ng-bootstrap/virtualize";
 
 import type { ShowcaseKit } from "../showcaseKit";
+import { ShowcaseConnectionField } from "./ngBootstrapConnectionField";
 import { ShowcaseStatus } from "./ngBootstrapStatus";
 
 /** Components and feature factories are always from this one kit. */
@@ -64,6 +65,7 @@ export const kit = {
   pivotPanel: AdaptPivotPanel,
   assistant: AdaptTableAssistant,
   assistantButton: AdaptAssistantButton,
+  connectionField: ShowcaseConnectionField,
   assistantSelect: AdaptAssistantLanguageChip,
   savedViewsPanel: AdaptSavedViewsPanel,
   bulkActions,

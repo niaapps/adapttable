@@ -38,6 +38,7 @@ import {
   ViewContainerRef,
 } from "@angular/core";
 
+import type { ConnectionFieldProps } from "./connectionField";
 import { SHOWCASE_DARK, SHOWCASE_KIT } from "./showcaseKit";
 
 /** The demo's table inputs, forwarded reactively to its actual kit table. */
@@ -212,5 +213,20 @@ export class AdaptShowcaseAction {
 export class AdaptShowcaseChoice {
   protected readonly kit = inject(SHOWCASE_KIT);
   readonly props = input.required<TableAssistantLanguageChipProps>();
+  protected readonly inputs = computed(() => ({ props: this.props() }));
+}
+
+/** Endpoint and token fields are rendered by the active kit. */
+@Component({
+  selector: "adapt-showcase-connection-field",
+  imports: [NgComponentOutlet],
+  template: `<ng-container
+    [ngComponentOutlet]="kit.connectionField"
+    [ngComponentOutletInputs]="inputs()"
+  />`,
+})
+export class AdaptShowcaseConnectionField {
+  protected readonly kit = inject(SHOWCASE_KIT);
+  readonly props = input.required<ConnectionFieldProps>();
   protected readonly inputs = computed(() => ({ props: this.props() }));
 }

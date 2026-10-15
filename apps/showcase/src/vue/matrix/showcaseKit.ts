@@ -58,6 +58,16 @@ export interface ShowcaseSelectProps {
   readonly onChange: (value: string) => void;
 }
 
+/** A kit-owned text field for demo settings. */
+export interface ShowcaseInputProps {
+  readonly label: string;
+  readonly part: string;
+  readonly value: string;
+  readonly type?: "text" | "password";
+  readonly disabled?: boolean;
+  readonly onChange: (value: string) => void;
+}
+
 /** The page's appearance, as a kit's root and plugins read it. */
 export interface ShowcaseAppearance {
   readonly dark: boolean;
@@ -81,6 +91,7 @@ export interface ShowcaseKit {
   readonly status: StatusRenderer;
   readonly button: (props: ShowcaseButtonProps) => VNodeChild;
   readonly select: (props: ShowcaseSelectProps) => VNodeChild;
+  readonly input: (props: ShowcaseInputProps) => VNodeChild;
   readonly agentApproval: typeof agentApproval;
   readonly bulkActions: typeof bulkActions;
   readonly cellNavigation: typeof cellNavigation;

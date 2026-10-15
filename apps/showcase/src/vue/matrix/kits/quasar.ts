@@ -30,7 +30,7 @@ import { savedViews } from "@adapttable/quasar/saved-views";
 import { statusBar } from "@adapttable/quasar/status-bar";
 import { tree } from "@adapttable/quasar/tree";
 import { virtualize } from "@adapttable/quasar/virtualize";
-import { Dark, QBadge, QBtn, QSelect, Quasar } from "quasar";
+import { Dark, QBadge, QBtn, QInput, QSelect, Quasar } from "quasar";
 import quasarStyles from "quasar/dist/quasar.rtl.css?inline";
 import ar from "quasar/lang/ar";
 import en from "quasar/lang/en-US";
@@ -52,6 +52,19 @@ const BADGE_COLOR = {
 /** Components and feature factories are always from this one kit. */
 export const kit: ShowcaseKit = {
   key: "quasar",
+  input: ({ label, part, value, type, disabled, onChange }) =>
+    h(QInput, {
+      "aria-label": label,
+      "data-adapttable-part": part,
+      modelValue: value,
+      type: type ?? "text",
+      disable: disabled,
+      autocomplete: "off",
+      outlined: true,
+      dense: true,
+      "onUpdate:modelValue": (next: string | number | null) =>
+        onChange(String(next ?? "")),
+    }),
   install: (app, appearance) => {
     app.use(Quasar, {
       config: { dark: appearance.dark },
