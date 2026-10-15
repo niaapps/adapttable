@@ -238,6 +238,7 @@ function MobileCardBase<TRow>({
   part,
   ariaLabel,
 }: Readonly<MobileCardProps<TRow>>) {
+  "use no memo";
   // Built once and used by both paths, so a custom card shows the very
   // same value node the built-in would have — cell renderers and editors
   // included.
